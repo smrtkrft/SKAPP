@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LebensSpur · Dashboard</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   SKAPP · LebensSpur Dashboard · Tactile Neumorphic edition
+   ---------------------------------------------------------------------
+   Two surface primitives:
+     .neu-well   — INSET well, used for the hero bowl and config cards.
+     .neu-raised — RAISED, used for icon slots, buttons, toggle tracks.
+   Background sits one step warmer/darker than pure cream so that wells
+   read as depressions and raised elements lift correctly.
+   All accent restricted to mustard + warn-red.
+   ===================================================================== */
+
+:root {
+  /* ── Surface tokens · light (mirrors sk_neu_card defaults) ─── */
+  --cream:        #F5F2EC;
+  --neu-bg:       #EBE6D8;   /* warmer/darker zemin, wells sit here */
+  --bg:           var(--neu-bg);
+  --fg:           #0A0A0A;
+
+  /* Foreground opacity scale */
+  --fg-90:        rgba(10,10,10,0.90);
+  --fg-70:        rgba(10,10,10,0.70);
+  --fg-50:        rgba(10,10,10,0.50);
+  --fg-35:        rgba(10,10,10,0.35);
+  --fg-18:        rgba(10,10,10,0.18);
+  --fg-08:        rgba(10,10,10,0.08);
+  --fg-04:        rgba(10,10,10,0.04);
+
+  /* Hairlines */
+  --hairline:     rgba(10,10,10,0.07);
+  --hairline-soft:rgba(10,10,10,0.04);
+
+  /* Accent */
+  --mustard:      #D4A017;
+  --mustard-soft: rgba(212,160,23,0.12);
+  --warn:         #D32F2F;
+  --warn-soft:    rgba(211,47,47,0.10);
+
+  /* Neumorphic shadow colors · light theme */
+  --neu-light:    rgba(255,251,237,0.95);   /* highlight, top-left */
+  --neu-dark:     rgba(120,108,86,0.30);    /* drop, bottom-right */
+  --neu-light-in: rgba(255,251,237,0.50);   /* inset highlight */
+  --neu-dark-in:  rgba(10,10,10,0.09);      /* inset drop */
+
+  /* Ring */
+  --ring-track:   rgba(10,10,10,0.07);
+  --ring-fg:      #0A0A0A;
+  --ring-accent:  rgba(212,160,23,0.55);
+
+  /* Spacing scale */
+  --s-1:  4px;  --s-2:  8px;  --s-3: 12px;  --s-4: 16px;
+  --s-5: 20px;  --s-6: 24px;  --s-7: 32px;  --s-8: 40px;
+  --s-9: 48px;  --s-10: 64px;
+
+  /* Type scale */
+  --t-10: 10px; --t-11: 11px; --t-12: 12px; --t-14: 14px;
+  --t-16: 16px; --t-20: 20px; --t-28: 28px; --t-40: 40px;
+
+  /* Radii */
+  --r-card: 18px;
+  --r-pill: 999px;
+  --r-input: 12px;
+
+  /* Motion */
+  --ease:        cubic-bezier(.4, 0, .2, 1);
+  --d-fast:      100ms;
+  --d-press:     50ms;
+  --d-toggle:    160ms;
+  --d-section:   240ms;
+  --d-theme:     300ms;
+
+  /* Font */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  --cream:        #0E0D0A;
+  --neu-bg:       #1A1814;
+  --bg:           var(--neu-bg);
+  --fg:           #F5EFDE;
+
+  --fg-90:        rgba(245,239,222,0.92);
+  --fg-70:        rgba(245,239,222,0.72);
+  --fg-50:        rgba(245,239,222,0.50);
+  --fg-35:        rgba(245,239,222,0.35);
+  --fg-18:        rgba(245,239,222,0.18);
+  --fg-08:        rgba(245,239,222,0.08);
+  --fg-04:        rgba(245,239,222,0.04);
+
+  --hairline:     rgba(245,239,222,0.08);
+  --hairline-soft:rgba(245,239,222,0.04);
+
+  --mustard-soft: rgba(212,160,23,0.18);
+  --warn-soft:    rgba(211,47,47,0.18);
+
+  --ring-track:   rgba(245,239,222,0.08);
+  --ring-fg:      #F5EFDE;
+  --ring-accent:  rgba(212,160,23,0.65);
+
+  /* Dark neumorphic shadows (stronger drop, fainter highlight) */
+  --neu-light:    rgba(42,38,32,0.95);
+  --neu-dark:     rgba(0,0,0,0.55);
+  --neu-light-in: rgba(245,239,222,0.04);
+  --neu-dark-in:  rgba(0,0,0,0.45);
+}
+
+/* ─── Base ─────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: var(--t-14);
+  font-weight: 400;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background var(--d-theme) var(--ease), color var(--d-theme) var(--ease);
+  min-height: 100vh;
+  padding-bottom: var(--s-10);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+input, select {
+  font: inherit;
+  color: var(--fg);
+}
+
+/* =====================================================================
+   NEUMORPHIC PRIMITIVES
+   ===================================================================== */
+
+/* Inset well — surface depressed into background.
+   Implemented as a wrapper that paints two inset box-shadows; the dark
+   shadow at bottom-right (so the top-left edge reads as the lit ledge)
+   plus a light highlight at top-left of the inner cavity. This mirrors
+   the dual-shadow inset effect from sk_neu_card.dart. */
+.neu-well {
+  background: var(--bg);
+  border-radius: var(--r-card);
+  box-shadow:
+    inset 4px 4px 8px var(--neu-dark-in),
+    inset -4px -4px 8px var(--neu-light-in);
+}
+
+/* Raised — surface lifted above background.
+   Dual outer box-shadow: highlight pushed to top-left, drop to bottom
+   right. Tight blur keeps the lip crisp (matches SkNeuIconSlot). */
+.neu-raised {
+  background: var(--bg);
+  border-radius: 30%;
+  box-shadow:
+    -2px -2px 3px var(--neu-light),
+     2px  2px 3px var(--neu-dark);
+}
+
+.neu-pill {
+  background: var(--bg);
+  border-radius: var(--r-pill);
+  box-shadow:
+    -2px -2px 3px var(--neu-light),
+     2px  2px 3px var(--neu-dark);
+  transition: box-shadow var(--d-fast) var(--ease),
+              transform var(--d-press) var(--ease),
+              color var(--d-fast) var(--ease);
+}
+.neu-pill:hover { background: var(--fg-04); }
+.neu-pill:active {
+  transform: scale(0.98);
+  box-shadow:
+    inset 2px 2px 4px var(--neu-dark-in),
+    inset -2px -2px 4px var(--neu-light-in);
+}
+.neu-pill[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pressed-active state for sticky buttons (e.g. selected). */
+.neu-pill.is-active {
+  color: var(--mustard);
+  box-shadow:
+    inset 2px 2px 4px var(--neu-dark-in),
+    inset -2px -2px 4px var(--neu-light-in);
+}
+
+/* Raised input · for fields inside wells. The input itself feels like it
+   sits proud of the well's depressed surface, mirroring the way Dart
+   forms read inside an SkNeuCard. */
+.neu-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg);
+  color: var(--fg);
+  border: none;
+  border-radius: var(--r-input);
+  box-shadow:
+    -2px -2px 3px var(--neu-light),
+     2px  2px 3px var(--neu-dark);
+  outline: none;
+  font-size: var(--t-14);
+  transition: box-shadow var(--d-fast) var(--ease);
+}
+.neu-input:focus {
+  box-shadow:
+    -2px -2px 3px var(--neu-light),
+     2px  2px 3px var(--neu-dark),
+    0 0 0 2px var(--mustard-soft);
+}
+.neu-input::placeholder { color: var(--fg-35); }
+select.neu-input {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A0A0A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px 14px;
+  padding-right: 32px;
+}
+[data-theme="dark"] select.neu-input {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F5EFDE' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+}
+
+/* Toggle · raised pill track with thumb that flips inset (off) → raised
+   (on, mustard rim) following the SkNeuSwitch contract. */
+.neu-toggle {
+  width: 50px; height: 28px;
+  position: relative;
+  border-radius: var(--r-pill);
+  background: var(--bg);
+  box-shadow:
+    -1px -1px 2px var(--neu-light),
+     1px  1px 2px var(--neu-dark);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.neu-toggle .thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--fg-35);
+  transition: left var(--d-toggle) var(--ease),
+              background var(--d-toggle) var(--ease),
+              box-shadow var(--d-toggle) var(--ease);
+  box-shadow:
+    inset 1.5px 1.5px 1.5px var(--neu-dark-in),
+    inset -1.5px -1.5px 1.5px var(--neu-light-in);
+}
+.neu-toggle.is-on .thumb {
+  left: 25px;
+  background: var(--fg);
+  box-shadow:
+    -1px -1px 2px var(--neu-light),
+     1px  1px 2px var(--neu-dark);
+}
+
+/* =====================================================================
+   APP BAR
+   ===================================================================== */
+.appbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-6);
+  border-bottom: 1px solid var(--hairline);
+}
+.brand {
+  font-size: var(--t-14);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.brand .dim { color: var(--fg-50); font-weight: 400; margin-left: var(--s-2); }
+.appbar .spacer { flex: 1; }
+.identity {
+  font-size: var(--t-12);
+  color: var(--fg-50);
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.02em;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--fg-35);
+  box-shadow: 0 0 0 3px var(--bg);
+  position: relative;
+}
+.dot.is-on  { background: var(--mustard); }
+.dot.is-off { background: var(--fg-35); }
+.dot.is-warn{ background: var(--warn); }
+
+.icon-btn {
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 30%;
+  color: var(--fg-70);
+  transition: color var(--d-fast) var(--ease),
+              transform var(--d-press) var(--ease),
+              box-shadow var(--d-fast) var(--ease);
+  background: var(--bg);
+  box-shadow:
+    -2px -2px 3px var(--neu-light),
+     2px  2px 3px var(--neu-dark);
+}
+.icon-btn:hover { color: var(--fg); }
+.icon-btn:active {
+  transform: scale(0.96);
+  box-shadow:
+    inset 2px 2px 3px var(--neu-dark-in),
+    inset -2px -2px 3px var(--neu-light-in);
+}
+.icon-btn svg { width: 18px; height: 18px; stroke-width: 1.5; }
+
+/* =====================================================================
+   PAGE
+   ===================================================================== */
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--s-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+/* =====================================================================
+   HERO · big well bowl, ring sits inside
+   ===================================================================== */
+.hero {
+  padding: var(--s-8) var(--s-6) var(--s-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-5);
+}
+
+.ring-wrap {
+  position: relative;
+  width: 260px;
+  height: 260px;
+}
+
+.ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  display: block;
+}
+.ring-track-path {
+  fill: none;
+  stroke: var(--ring-track);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.ring-progress {
+  fill: none;
+  stroke: var(--ring-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 600ms var(--ease), stroke 200ms var(--ease);
+}
+
+/* Centered overlay for digits.
+   Ring viewBox is 100, outer r=46, inner usable r ≈ 41 → diameter ≈ 218
+   units. We allow text to occupy ~75% of that inner diameter and keep
+   a 12% breathing margin from the inner stroke edge.
+
+   At 260px outer the inner area is ~232px. 75% gives ~174px width for
+   the "23:45:12" string. Inter at font-size 40 / tabular-nums measures
+   ~165px for 8 chars → fits comfortably. We cap at 40px so digits
+   never push the ring even on smaller (240px) widths.                  */
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 12%;
+}
+.ring-digits {
+  font-size: var(--t-40);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+  line-height: 1;
+  color: var(--fg);
+}
+.ring-state {
+  margin-top: 6px;
+  font-size: var(--t-10);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-50);
+  font-weight: 500;
+}
+.ring-sub {
+  margin-top: 2px;
+  font-size: var(--t-10);
+  color: var(--fg-35);
+  font-weight: 400;
+}
+
+/* Wider digit fallback for narrow ring: shrink only the digits */
+@media (max-width: 360px) {
+  .ring-wrap { width: 220px; height: 220px; }
+  .ring-digits { font-size: 30px; }
+}
+
+/* Ring control row */
+.hero-controls {
+  display: flex;
+  gap: var(--s-3);
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 10px 16px;
+  font-size: var(--t-14);
+  font-weight: 500;
+  color: var(--fg-90);
+}
+.ctrl svg { width: 14px; height: 14px; stroke-width: 1.75; }
+.ctrl.icon-only { padding: 10px; width: 40px; justify-content: center; }
+.ctrl.is-primary { color: var(--mustard); }
+
+.hero-state-label {
+  font-size: var(--t-11);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-50);
+  font-weight: 500;
+}
+
+/* =====================================================================
+   STATUS CHIPS (BLE + Mail only — sk_core/WiFi handled by outer shell)
+   ===================================================================== */
+.chips {
+  display: flex;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--bg);
+  font-size: var(--t-12);
+  color: var(--fg-70);
+  box-shadow:
+    -1px -1px 2px var(--neu-light),
+     1px  1px 2px var(--neu-dark);
+}
+.chip .lbl { color: var(--fg-50); }
+.chip .val { color: var(--fg); font-weight: 500; }
+.chip.is-warn .val { color: var(--warn); }
+
+/* =====================================================================
+   CLUSTER + SECTION
+   ===================================================================== */
+.cluster {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.cluster-label {
+  font-size: var(--t-11);
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--fg-50);
+  font-weight: 500;
+  padding: 0 var(--s-3);
+}
+
+.section {
+  background: var(--bg);
+  border-radius: var(--r-card);
+  box-shadow:
+    inset 4px 4px 8px var(--neu-dark-in),
+    inset -4px -4px 8px var(--neu-light-in);
+  overflow: hidden;
+}
+.section-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-5);
+  text-align: left;
+  transition: background var(--d-fast) var(--ease);
+}
+.section-head:hover { background: var(--fg-04); }
+.section-icon {
+  width: 38px; height: 38px;
+  border-radius: 30%;
+  background: var(--bg);
+  box-shadow:
+    -2px -2px 3px var(--neu-light),
+     2px  2px 3px var(--neu-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-70);
+  flex-shrink: 0;
+}
+.section-icon svg { width: 18px; height: 18px; stroke-width: 1.5; }
+.section-icon.is-mustard { color: var(--mustard); }
+.section-icon.is-warn    { color: var(--warn); }
+
+.section-title-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.section-title {
+  font-size: var(--t-14);
+  font-weight: 500;
+  color: var(--fg);
+}
+.section-status {
+  font-size: var(--t-12);
+  color: var(--fg-50);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.section-status.is-mustard { color: var(--mustard); }
+.section-status.is-warn    { color: var(--warn); }
+
+.section-chev {
+  color: var(--fg-35);
+  flex-shrink: 0;
+  transition: transform var(--d-section) var(--ease);
+}
+.section-chev svg { width: 14px; height: 14px; stroke-width: 1.5; }
+.section.is-open .section-chev { transform: rotate(90deg); }
+
+.section-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--d-section) var(--ease);
+}
+.section.is-open .section-body { grid-template-rows: 1fr; }
+.section-body > .clip { overflow: hidden; }
+.section-body-inner {
+  padding: 0 var(--s-5) var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  border-top: 1px solid var(--hairline-soft);
+  margin-top: -1px;
+}
+.section-body-inner > .pad-top { padding-top: var(--s-4); }
+
+/* Form row pattern — label above input, hairline divider between rows */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--hairline-soft);
+}
+.field:last-of-type { border-bottom: none; }
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.field-label {
+  font-size: var(--t-12);
+  color: var(--fg-70);
+  letter-spacing: 0.01em;
+}
+.field-hint {
+  font-size: var(--t-11);
+  color: var(--fg-35);
+}
+.field-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-3);
+}
+@media (max-width: 460px) {
+  .field-2col { grid-template-columns: 1fr; }
+}
+
+/* Sub-action card row (mail group / sub-config inside section) */
+.subrow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--hairline-soft);
+}
+.subrow:last-child { border-bottom: none; }
+.subrow .grow { flex: 1; min-width: 0; }
+.subrow .title { font-size: var(--t-14); color: var(--fg); font-weight: 500; }
+.subrow .status { font-size: var(--t-12); color: var(--fg-50); margin-top: 2px; }
+
+/* Action button at the bottom of an expanded section */
+.actions-row {
+  display: flex;
+  gap: var(--s-3);
+  justify-content: flex-end;
+  padding-top: var(--s-3);
+  margin-top: var(--s-2);
+  border-top: 1px solid var(--hairline-soft);
+  flex-wrap: wrap;
+}
+.btn-primary {
+  padding: 9px 18px;
+  font-size: var(--t-12);
+  font-weight: 500;
+  color: var(--fg);
+  letter-spacing: 0.02em;
+  border-radius: var(--r-pill);
+  background: var(--bg);
+  box-shadow:
+    -2px -2px 3px var(--neu-light),
+     2px  2px 3px var(--neu-dark);
+  transition: box-shadow var(--d-fast) var(--ease),
+              transform var(--d-press) var(--ease),
+              color var(--d-fast) var(--ease);
+}
+.btn-primary:hover { color: var(--mustard); }
+.btn-primary:active {
+  transform: scale(0.98);
+  box-shadow:
+    inset 2px 2px 4px var(--neu-dark-in),
+    inset -2px -2px 4px var(--neu-light-in);
+}
+.btn-warn:hover { color: var(--warn); }
+
+/* Mount fade-in */
+.mount-fade { opacity: 0; transform: translateY(4px); animation: mount 320ms var(--ease) forwards; }
+.mount-fade.d1 { animation-delay: 30ms; }
+.mount-fade.d2 { animation-delay: 90ms; }
+.mount-fade.d3 { animation-delay: 150ms; }
+.mount-fade.d4 { animation-delay: 210ms; }
+@keyframes mount { to { opacity: 1; transform: translateY(0); } }
+
+/* Per-digit fade */
+.digit { transition: opacity 150ms var(--ease); display: inline-block; min-width: 0.6em; text-align: center; }
+.digit.swap { opacity: 0; }
+
+/* Numeric / monospace digit grouping aid */
+.tabular { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+
+</style>
+</head>
+<body>
+
+<!-- ─── App bar ─────────────────────────────────────────────────── -->
+<header class="appbar">
+  <span class="brand">LebensSpur <span class="dim">· Dashboard</span></span>
+  <span class="spacer"></span>
+  <span class="identity">LS-A1B2C3D4</span>
+  <span class="dot is-on" title="Connected"></span>
+  <button class="icon-btn" id="themeToggle" title="Toggle theme">
+    <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+    </svg>
+  </button>
+</header>
+
+<main class="page">
+
+  <!-- ─── HERO ────────────────────────────────────────────────── -->
+  <section class="neu-well hero mount-fade d1" id="hero">
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="ring-track-path" cx="50" cy="50" r="46"/>
+        <circle class="ring-progress" id="ringProgress"
+                cx="50" cy="50" r="46"
+                stroke-dasharray="289.027"
+                stroke-dashoffset="86.7"/>
+      </svg>
+      <div class="ring-center">
+        <div>
+          <div class="ring-digits tabular" id="ringDigits">
+            <span class="digit">2</span><span class="digit">3</span><span>:</span><span class="digit">4</span><span class="digit">5</span><span>:</span><span class="digit">1</span><span class="digit">2</span>
+          </div>
+          <div class="ring-state" id="ringState">Remaining</div>
+          <div class="ring-sub" id="ringSub">ends 14 May 18:30</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-controls">
+      <button class="neu-pill ctrl is-primary" id="btnStart" title="Start">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="6 4 20 12 6 20 6 4"/>
+        </svg>
+        <span>Start</span>
+      </button>
+      <button class="neu-pill ctrl" id="btnReset" title="Reset">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"/>
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+        </svg>
+        <span>Reset</span>
+      </button>
+      <button class="neu-pill ctrl" id="btnStop" title="Stop">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="6" width="12" height="12" rx="1"/>
+        </svg>
+        <span>Stop</span>
+      </button>
+      <button class="neu-pill ctrl icon-only" id="btnVacation" title="Vacation mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2c2 2 3.5 4.5 3.5 7s-1.5 5-3.5 7c-2-2-3.5-4.5-3.5-7S10 4 12 2z"/>
+          <path d="M5 22c2-1.5 4-3 7-3s5 1.5 7 3"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="hero-state-label" id="heroStateLabel">Running</div>
+  </section>
+
+  <!-- ─── Status chips (BLE + Mail) ───────────────────────────── -->
+  <div class="chips mount-fade d2">
+    <span class="chip">
+      <span class="dot is-on"></span>
+      <span class="lbl">BLE</span>
+      <span class="val" id="bleStatus">bonded</span>
+    </span>
+    <span class="chip">
+      <span class="dot is-on"></span>
+      <span class="lbl">Mail</span>
+      <span class="val" id="mailStatus">SMTP ready</span>
+    </span>
+  </div>
+
+  <!-- ─── CONFIGURATION cluster ───────────────────────────────── -->
+  <div class="cluster mount-fade d2">
+    <div class="cluster-label">Configuration</div>
+
+    <!-- Duration & Alarms -->
+    <section class="section" id="sec-duration" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="13" r="8"/>
+            <path d="M12 9v4l2 2"/>
+            <path d="M9 2h6"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">Duration & Alarms</span>
+          <span class="section-status" id="durationStatus">30 days · 3 alarms</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="field-2col">
+          <div class="field">
+            <span class="field-label">Unit</span>
+            <select class="neu-input" id="durUnit">
+              <option>days</option>
+              <option>hours</option>
+              <option>minutes</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="field-label">Value</span>
+            <input class="neu-input" type="number" id="durValue" value="30" min="1">
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-row">
+            <span class="field-label">Alarm count</span>
+            <input class="neu-input" type="number" id="alarmCount" value="3" min="0" max="10" style="max-width: 96px; text-align: right;">
+          </div>
+          <span class="field-hint">Number of early-warning ticks emitted before the deadline.</span>
+        </div>
+        <div class="actions-row">
+          <button class="btn-primary" data-save="duration">Save</button>
+        </div>
+      </div></div></div>
+    </section>
+
+    <!-- Vacation Mode -->
+    <section class="section" id="sec-vacation" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 22c2-1.5 4-3 7-3s5 1.5 7 3"/>
+            <path d="M12 2c2 2 3.5 4.5 3.5 7s-1.5 5-3.5 7c-2-2-3.5-4.5-3.5-7S10 4 12 2z"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">Vacation Mode</span>
+          <span class="section-status" id="vacationStatus">off</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="field">
+          <div class="field-row">
+            <span class="field-label">Enable vacation mode</span>
+            <div class="neu-toggle" data-toggle-switch id="vacationEnabled"><div class="thumb"></div></div>
+          </div>
+          <span class="field-hint">Pauses the countdown for the chosen number of days.</span>
+        </div>
+        <div class="field">
+          <div class="field-row">
+            <span class="field-label">Days</span>
+            <input class="neu-input" type="number" id="vacationDays" value="7" min="1" style="max-width: 96px; text-align: right;">
+          </div>
+        </div>
+        <div class="actions-row">
+          <button class="btn-primary" data-save="vacation">Save</button>
+        </div>
+      </div></div></div>
+    </section>
+
+    <!-- Mail Setup -->
+    <section class="section" id="sec-mail" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="14" rx="2"/>
+            <polyline points="3 7 12 13 21 7"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">Mail Setup (SMTP)</span>
+          <span class="section-status" id="smtpStatus">smtp.gmail.com</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="field-2col">
+          <div class="field">
+            <span class="field-label">Host</span>
+            <input class="neu-input" type="text" value="smtp.gmail.com" id="smtpHost">
+          </div>
+          <div class="field">
+            <span class="field-label">Port</span>
+            <input class="neu-input" type="number" value="465" id="smtpPort">
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">Sender address</span>
+          <input class="neu-input" type="email" value="lebensspur@example.com" id="smtpSender">
+        </div>
+        <div class="field">
+          <span class="field-label">API key / app password</span>
+          <input class="neu-input" type="password" placeholder="•••••••••••••" id="smtpKey">
+        </div>
+        <div class="actions-row">
+          <button class="btn-primary" data-save="smtp">Save</button>
+        </div>
+      </div></div></div>
+    </section>
+
+    <!-- Reset API endpoint -->
+    <section class="section" id="sec-resetapi" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 3-6.7"/>
+            <polyline points="3 4 3 10 9 10"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">Reset API endpoint</span>
+          <span class="section-status" id="resetApiStatus">enabled · port 80</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="field">
+          <div class="field-row">
+            <span class="field-label">Enable reset endpoint</span>
+            <div class="neu-toggle is-on" data-toggle-switch id="resetApiEnabled"><div class="thumb"></div></div>
+          </div>
+          <span class="field-hint">When enabled, an HTTP POST to the endpoint URL with the matching key resets the deadline.</span>
+        </div>
+        <div class="field">
+          <span class="field-label">Endpoint URL</span>
+          <input class="neu-input" type="text" value="http://192.168.1.42/reset" id="resetApiUrl">
+        </div>
+        <div class="field">
+          <span class="field-label">Shared key</span>
+          <input class="neu-input" type="password" placeholder="•••••••••••••" id="resetApiKey">
+        </div>
+        <div class="actions-row">
+          <button class="btn-primary" data-save="resetapi">Save</button>
+        </div>
+      </div></div></div>
+    </section>
+  </div>
+
+  <!-- ─── TRIGGER ACTIONS cluster ─────────────────────────────── -->
+  <div class="cluster mount-fade d3">
+    <div class="cluster-label">Trigger Actions</div>
+
+    <!-- Mail Groups -->
+    <section class="section" id="sec-mailgroups" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+            <circle cx="10" cy="7" r="4"/>
+            <path d="M21 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M17 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">Mail Groups</span>
+          <span class="section-status" id="mailGroupsStatus">2 of 10 · 8 recipients</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="subrow">
+          <span class="section-icon" style="width:32px;height:32px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+          </span>
+          <div class="grow">
+            <div class="title">Family</div>
+            <div class="status">5 recipients · enabled</div>
+          </div>
+          <div class="neu-toggle is-on" data-toggle-switch><div class="thumb"></div></div>
+        </div>
+        <div class="subrow">
+          <span class="section-icon" style="width:32px;height:32px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+          </span>
+          <div class="grow">
+            <div class="title">Lawyer</div>
+            <div class="status">3 recipients · enabled</div>
+          </div>
+          <div class="neu-toggle is-on" data-toggle-switch><div class="thumb"></div></div>
+        </div>
+        <div class="subrow">
+          <span class="section-icon" style="width:32px;height:32px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+          <div class="grow">
+            <div class="title">Add group</div>
+            <div class="status">up to 10 groups · 32 recipients each</div>
+          </div>
+          <button class="btn-primary">New</button>
+        </div>
+      </div></div></div>
+    </section>
+
+    <!-- Relay -->
+    <section class="section" id="sec-relay" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">Relay</span>
+          <span class="section-status" id="relayStatus">GPIO 19 · 60s pulse</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="field">
+          <div class="field-row">
+            <span class="field-label">Enable relay output</span>
+            <div class="neu-toggle is-on" data-toggle-switch id="relayEnabled"><div class="thumb"></div></div>
+          </div>
+        </div>
+        <div class="field-2col">
+          <div class="field">
+            <span class="field-label">GPIO pin</span>
+            <input class="neu-input" type="number" value="19" id="relayPin">
+          </div>
+          <div class="field">
+            <span class="field-label">Pulse (seconds)</span>
+            <input class="neu-input" type="number" value="60" id="relayPulse" min="1">
+          </div>
+        </div>
+        <div class="actions-row">
+          <button class="btn-primary" data-save="relay">Save</button>
+        </div>
+      </div></div></div>
+    </section>
+
+    <!-- LS API webhook -->
+    <section class="section" id="sec-lsapi" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15 15 0 0 1 0 20"/>
+            <path d="M12 2a15 15 0 0 0 0 20"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">LS API webhook</span>
+          <span class="section-status" id="lsApiStatus">not configured</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="field">
+          <div class="field-row">
+            <span class="field-label">Enable webhook</span>
+            <div class="neu-toggle" data-toggle-switch id="lsApiEnabled"><div class="thumb"></div></div>
+          </div>
+          <span class="field-hint">Fires on timer.triggered with HMAC-signed payload.</span>
+        </div>
+        <div class="field">
+          <span class="field-label">URL</span>
+          <input class="neu-input" type="text" placeholder="https://example.com/ls/trigger" id="lsApiUrl">
+        </div>
+        <div class="field">
+          <span class="field-label">Shared key</span>
+          <input class="neu-input" type="password" placeholder="•••••••••••••" id="lsApiKey">
+        </div>
+        <div class="actions-row">
+          <button class="btn-primary" data-save="lsapi">Save</button>
+        </div>
+      </div></div></div>
+    </section>
+  </div>
+
+  <!-- ─── EARLY WARNING cluster ───────────────────────────────── -->
+  <div class="cluster mount-fade d3">
+    <div class="cluster-label">Early Warning</div>
+
+    <!-- Telegram -->
+    <section class="section" id="sec-telegram" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 4L3 11l6 2 2 7 4-4 5 4 1-16z"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">Telegram</span>
+          <span class="section-status" id="telegramStatus">not set</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="field">
+          <div class="field-row">
+            <span class="field-label">Enable Telegram</span>
+            <div class="neu-toggle" data-toggle-switch id="telegramEnabled"><div class="thumb"></div></div>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">Bot token</span>
+          <input class="neu-input" type="password" placeholder="•••••••••••••" id="telegramToken">
+        </div>
+        <div class="field">
+          <span class="field-label">Chat ID</span>
+          <input class="neu-input" type="text" placeholder="-1001234567890" id="telegramChat">
+        </div>
+        <div class="actions-row">
+          <button class="btn-primary" data-save="telegram">Save</button>
+        </div>
+      </div></div></div>
+    </section>
+
+    <!-- Reminder Mail -->
+    <section class="section" id="sec-remindmail" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">Reminder Mail</span>
+          <span class="section-status" id="reminderMailStatus">not set</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="field">
+          <div class="field-row">
+            <span class="field-label">Enable reminder mail</span>
+            <div class="neu-toggle" data-toggle-switch id="reminderMailEnabled"><div class="thumb"></div></div>
+          </div>
+          <span class="field-hint">Sent to a single address on each alarm tick.</span>
+        </div>
+        <div class="field">
+          <span class="field-label">Recipient address</span>
+          <input class="neu-input" type="email" placeholder="you@example.com" id="reminderMailAddr">
+        </div>
+        <div class="actions-row">
+          <button class="btn-primary" data-save="remindmail">Save</button>
+        </div>
+      </div></div></div>
+    </section>
+
+    <!-- Alarm API webhook -->
+    <section class="section" id="sec-alarmapi" data-toggle>
+      <button class="section-head" type="button">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </span>
+        <span class="section-title-wrap">
+          <span class="section-title">Alarm API webhook</span>
+          <span class="section-status" id="alarmApiStatus">not set</span>
+        </span>
+        <span class="section-chev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+      </button>
+      <div class="section-body"><div class="clip"><div class="section-body-inner pad-top">
+        <div class="field">
+          <div class="field-row">
+            <span class="field-label">Enable webhook</span>
+            <div class="neu-toggle" data-toggle-switch id="alarmApiEnabled"><div class="thumb"></div></div>
+          </div>
+          <span class="field-hint">Fires on each timer.alarm event.</span>
+        </div>
+        <div class="field">
+          <span class="field-label">URL</span>
+          <input class="neu-input" type="text" placeholder="https://example.com/ls/alarm" id="alarmApiUrl">
+        </div>
+        <div class="field">
+          <span class="field-label">Shared key</span>
+          <input class="neu-input" type="password" placeholder="•••••••••••••" id="alarmApiKey">
+        </div>
+        <div class="actions-row">
+          <button class="btn-primary" data-save="alarmapi">Save</button>
+        </div>
+      </div></div></div>
+    </section>
+  </div>
+
+</main>
+
+<script>
+/* ─── Theme toggle ─────────────────────────────────────────────── */
+(function () {
+  const root = document.documentElement;
+  const icon = document.getElementById('themeIcon');
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    icon.innerHTML = next === 'dark'
+      ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+      : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>';
+  });
+})();
+
+/* ─── Section accordion ───────────────────────────────────────── */
+document.querySelectorAll('.section[data-toggle]').forEach(sec => {
+  const head = sec.querySelector('.section-head');
+  head.addEventListener('click', () => {
+    sec.classList.toggle('is-open');
+  });
+});
+
+/* ─── Toggle switches ─────────────────────────────────────────── */
+document.querySelectorAll('[data-toggle-switch]').forEach(t => {
+  t.addEventListener('click', (e) => {
+    e.stopPropagation();
+    t.classList.toggle('is-on');
+  });
+});
+
+/* ─── Ring countdown (demo) ──────────────────────────────────── */
+(function () {
+  // Demo: 30 day total, ~12d remaining.
+  const total   = 30 * 24 * 3600;
+  let remaining = 12 * 24 * 3600 + 23 * 3600 + 45 * 60 + 12;
+
+  const digitsEl = document.getElementById('ringDigits');
+  const progress = document.getElementById('ringProgress');
+  const CIRC     = 2 * Math.PI * 46; // ≈ 289.027
+
+  function fmt(secs) {
+    const days = Math.floor(secs / 86400);
+    const h = Math.floor((secs % 86400) / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    const s = secs % 60;
+    if (days > 0) return `${days}d ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  function render() {
+    const txt = fmt(remaining);
+    const prev = digitsEl.dataset.txt || '';
+    if (prev === txt) return;
+    digitsEl.dataset.txt = txt;
+
+    // Per-character diff so only changed glyphs fade
+    const out = [];
+    for (let i = 0; i < txt.length; i++) {
+      const ch = txt[i];
+      const prevCh = prev[i];
+      const changed = ch !== prevCh;
+      out.push(`<span class="digit${changed ? ' swap' : ''}">${ch === ' ' ? '&nbsp;' : ch}</span>`);
+    }
+    digitsEl.innerHTML = out.join('');
+    requestAnimationFrame(() => {
+      digitsEl.querySelectorAll('.digit.swap').forEach(el => el.classList.remove('swap'));
+    });
+
+    const frac = remaining / total;
+    progress.setAttribute('stroke-dashoffset', String((1 - frac) * CIRC));
+  }
+
+  render();
+  setInterval(() => { remaining = Math.max(0, remaining - 1); render(); }, 1000);
+})();
+</script>
+
+</body>
+</html>
