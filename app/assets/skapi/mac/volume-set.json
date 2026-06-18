@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "volume-set",
+  "platform": "mac",
+  "group": "display-audio",
+  "tier": 1,
+  "runtime": "applescript-bash",
+  "scriptFile": "volume-set.sh",
+  "i18n": {
+    "title": "skapiScriptVolumeSetTitle",
+    "summaryWhat": "skapiScriptVolumeSetSummaryWhat",
+    "summaryHow": "skapiScriptVolumeSetSummaryHow",
+    "note": "skapiScriptVolumeSetNote"
+  },
+  "params": [
+    {
+      "name": "level",
+      "type": "int",
+      "default": 50,
+      "i18nLabel": "skapiScriptVolumeSetParamLevelLabel",
+      "i18nHint": "skapiScriptVolumeSetParamLevelHint",
+      "min": 0,
+      "max": 100
+    }
+  ],
+  "remoteRunnable": true
+}

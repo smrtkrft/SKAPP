@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "browser-close-all",
+  "platform": "win",
+  "group": "programs",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "browser-close-all.ps1",
+  "i18n": {
+    "title": "skapiScriptBrowserCloseAllTitle",
+    "summaryWhat": "skapiScriptBrowserCloseAllSummaryWhat",
+    "summaryHow": "skapiScriptBrowserCloseAllSummaryHow",
+    "note": "skapiScriptBrowserCloseAllNote"
+  },
+  "params": []
+}

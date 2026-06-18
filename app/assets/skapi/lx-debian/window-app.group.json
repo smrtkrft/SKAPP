@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "window-app",
+  "platform": "lx-debian",
+  "i18nTitle": "skapiGroupWindowAppTitle",
+  "i18nDesc": "skapiGroupWindowAppDesc",
+  "i18nFoot": "skapiGroupWindowAppFoot",
+  "scripts": [
+    "minimize-window",
+    "close-window",
+    "kill-app",
+    "launch-app"
+  ]
+}

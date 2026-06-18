@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "close-with-save",
+  "platform": "win",
+  "group": "programs",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "close-with-save.ps1",
+  "i18n": {
+    "title": "skapiScriptCloseWithSaveTitle",
+    "summaryWhat": "skapiScriptCloseWithSaveSummaryWhat",
+    "summaryHow": "skapiScriptCloseWithSaveSummaryHow",
+    "note": "skapiScriptCloseWithSaveNote"
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptCloseWithSaveParamProcessLabel",
+      "i18nHint": "skapiScriptCloseWithSaveParamProcessHint"
+    },
+    {
+      "name": "wait",
+      "type": "int",
+      "default": 1,
+      "i18nLabel": "skapiScriptCloseWithSaveParamWaitLabel",
+      "i18nHint": "skapiScriptCloseWithSaveParamWaitHint",
+      "unit": "seconds"
+    }
+  ]
+}

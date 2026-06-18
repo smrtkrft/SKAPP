@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "brightness",
+  "platform": "lx-debian",
+  "group": "display-audio",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "brightness.sh",
+  "i18n": {
+    "title": "skapiScriptBrightnessTitle",
+    "summaryWhat": "skapiScriptBrightnessSummaryWhat",
+    "summaryHow": "skapiScriptBrightnessSummaryHowLxDebian",
+    "note": "skapiScriptBrightnessNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "level",
+      "type": "int",
+      "default": 70,
+      "i18nLabel": "skapiScriptBrightnessParamLevelLabel",
+      "i18nHint": "skapiScriptBrightnessParamLevelHint",
+      "min": 0,
+      "max": 100
+    }
+  ],
+  "remoteRunnable": true
+}

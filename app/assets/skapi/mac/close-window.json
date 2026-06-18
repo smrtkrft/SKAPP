@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "close-window",
+  "platform": "mac",
+  "group": "window-app",
+  "tier": 2,
+  "runtime": "applescript-bash",
+  "scriptFile": "close-window.sh",
+  "i18n": {
+    "title": "skapiScriptCloseWindowTitle",
+    "summaryWhat": "skapiScriptCloseWindowSummaryWhat",
+    "summaryHow": "skapiScriptCloseWindowSummaryHow",
+    "note": "skapiScriptCloseWindowNote"
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptCloseWindowParamProcessLabel",
+      "i18nHint": "skapiScriptCloseWindowParamProcessHint"
+    }
+  ]
+}

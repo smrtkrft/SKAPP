@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "launch-app",
+  "platform": "mac",
+  "group": "window-app",
+  "tier": 1,
+  "runtime": "applescript-bash",
+  "scriptFile": "launch-app.sh",
+  "i18n": {
+    "title": "skapiScriptLaunchAppTitle",
+    "summaryWhat": "skapiScriptLaunchAppSummaryWhat",
+    "summaryHow": "skapiScriptLaunchAppSummaryHow",
+    "note": "skapiScriptLaunchAppNote"
+  },
+  "params": [
+    {
+      "name": "path",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptLaunchAppParamPathLabel",
+      "i18nHint": "skapiScriptLaunchAppParamPathHint"
+    },
+    {
+      "name": "cmdArgs",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptLaunchAppParamArgsLabel",
+      "i18nHint": "skapiScriptLaunchAppParamArgsHint"
+    }
+  ]
+}

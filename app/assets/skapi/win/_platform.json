@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "platform": "win",
+  "runtime": "powershell-5.1",
+  "groups": [
+    "power",
+    "display-audio",
+    "window-app",
+    "notify",
+    "visual-break",
+    "programs",
+    "save-work"
+  ]
+}

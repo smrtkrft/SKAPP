@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "launch-app",
+  "platform": "lx-debian",
+  "group": "window-app",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "launch-app.sh",
+  "i18n": {
+    "title": "skapiScriptLaunchAppTitle",
+    "summaryWhat": "skapiScriptLaunchAppSummaryWhat",
+    "summaryHow": "skapiScriptLaunchAppSummaryHowLxDebian",
+    "note": "skapiScriptLaunchAppNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "path",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptLaunchAppParamPathLabel",
+      "i18nHint": "skapiScriptLaunchAppParamPathHintLxDebian"
+    },
+    {
+      "name": "args",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptLaunchAppParamArgsLabel",
+      "i18nHint": "skapiScriptLaunchAppParamArgsHint"
+    }
+  ]
+}

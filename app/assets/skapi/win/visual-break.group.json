@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "visual-break",
+  "platform": "win",
+  "i18nTitle": "skapiGroupVisualBreakTitle",
+  "i18nDesc": "skapiGroupVisualBreakDesc",
+  "i18nFoot": "skapiGroupVisualBreakFoot",
+  "scripts": [
+    "show-desktop",
+    "fade-screen",
+    "pulse-brightness",
+    "grayscale",
+    "blur-timed",
+    "find-mouse-shake",
+    "blocking-focus"
+  ]
+}

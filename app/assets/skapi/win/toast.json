@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "toast",
+  "platform": "win",
+  "group": "notify",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "toast.ps1",
+  "i18n": {
+    "title": "skapiScriptToastTitle",
+    "summaryWhat": "skapiScriptToastSummaryWhat",
+    "summaryHow": "skapiScriptToastSummaryHow",
+    "note": "skapiScriptToastNote"
+  },
+  "params": [
+    {
+      "name": "title",
+      "type": "string",
+      "default": "SmartKraft",
+      "i18nLabel": "skapiScriptToastParamTitleLabel",
+      "i18nHint": "skapiScriptToastParamTitleHint"
+    },
+    {
+      "name": "body",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptToastParamBodyLabel",
+      "i18nHint": "skapiScriptToastParamBodyHint"
+    },
+    {
+      "name": "durationMs",
+      "type": "int",
+      "default": 5000,
+      "min": 500,
+      "max": 30000,
+      "i18nLabel": "skapiScriptToastParamAumidLabel",
+      "i18nHint": "skapiScriptToastParamAumidHint"
+    }
+  ],
+  "remoteRunnable": true
+}

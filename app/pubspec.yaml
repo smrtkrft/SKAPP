@@ -1,0 +1,143 @@
+name: skapp
+description: "SmartKraft device configuration app"
+publish_to: 'none'
+
+version: 0.2.0+2
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^3.3.1
+  shared_preferences: ^2.5.5
+  # SKAPI override storage — kullanıcının düzenlediği script kopyaları
+  # %APPDATA%\SKAPP\skapi\overrides\ (Windows) altında tutulur.
+  # path_provider.getApplicationSupportDirectory() ile çözülür.
+  path_provider: ^2.1.4
+  intl: ^0.20.2
+  permission_handler: ^12.0.1
+  flutter_blue_plus: ^2.2.1
+  connectivity_plus: ^6.1.0
+  google_fonts: ^6.2.1
+  package_info_plus: ^8.3.1
+  # SKAPP CLI + security
+  crypto: ^3.0.6
+  convert: ^3.1.2
+  cryptography: ^2.7.0
+  flutter_secure_storage: ^9.2.2
+  # Self-signed X.509 cert generation for the Desktop HTTP listener
+  # (Faz B step 4). Pure Dart so no native dep is dragged in.
+  basic_utils: ^5.7.0
+  # Desktop window mode toggle (maximize vs. mini "phone screen").
+  # Provides cross-platform setSize / setMinimumSize / setMaximumSize /
+  # maximize APIs without dragging in a custom titlebar.
+  window_manager: ^0.4.3
+  # Desktop "kapatınca tray'e in" davranışı (item 22): system tray ikonu
+  # + sade menü (Aç + Çıkış). window_manager'ın preventClose hook'u ile
+  # birlikte kullanılır. Mobile platformlarda yüklenmez (no-op gate).
+  tray_manager: ^0.5.0
+  # OS başlangıcında SKAPP'i otomatik başlat (gizli pencere ile). Windows
+  # registry Run anahtarı, macOS LaunchAgent, Linux ~/.config/autostart
+  # .desktop entry yazar.
+  launch_at_startup: ^0.5.1
+  # Factory Reset için Windows autostart registry entry'sini silmek
+  # gerekiyor; launch_at_startup paketinde disable() API'si yok, manuel
+  # Registry erişimi şart. launch_at_startup zaten transitive'den getirir
+  # ama explicit ekledik ki Reset Service direct import edebilsin.
+  win32_registry: ^2.1.0
+  url_launcher: ^6.3.1
+  # mDNS service discovery for the device's _skapp._tcp announcement
+  # (sk_mdns) so we can talk over WiFi without BLE once the device joins
+  # the LAN.
+  multicast_dns: ^0.3.2+8
+  # mDNS PUBLISH for the SKAPP Desktop instance itself: announce
+  # `_skappdesktop._tcp.local` so paired SKAPP nodes on the LAN can
+  # discriminate one host from another by user-given name. multicast_dns
+  # only supports browsing; nsd wraps the platform-native NSD APIs
+  # (Android NSD / NSNetService / dnssd / Avahi). Mobile is unsupported
+  # by design (no listener to back the announcement).
+  nsd: ^5.0.0
+  # OS brand icons (Apple / Windows / Linux logos) shown on the SKAPI
+  # platform cards. Theme-adaptive coloring is handled at the call site
+  # via cs.onSurface, not by the package.
+  font_awesome_flutter: ^10.7.0
+  # Dev Mod = USB CLI Konsolu — Settings → Geliştirici modu ON iken
+  # USB-takılı BF cihazına ham CLI komutları gönderme. Sadece desktop
+  # (Windows başlangıçta; Mac/Linux Faz 2'de aynı FFI yaklaşımıyla).
+  # Android USB CLI 2026-05-13'te kaldırıldı: niş kullanım + flutter_
+  # libserialport AGP 8 uyumsuzluğunu fork etmek yerine direkt Win32
+  # API'lerine FFI ile bağlanmayı seçtik; native plugin yok, paket
+  # bağımlılığı azaldı, plug-and-play (SetupAPI USB enum + VID/PID)
+  # mümkün oldu. Detay: project_usb_cli_desktop.md memory.
+  # `win32` paketi (mevcut transitive: win32_registry üzerinden 5.15.0)
+  # explicit yapıyoruz ki CreateFile/SetupDiGetClassDevs API'lerini
+  # core/cli/win_serial_transport.dart ve win_port_scanner.dart direkt
+  # import edebilsin.
+  win32: ^5.15.0
+  # win32 + WinSerialTransport için pointer/struct allocation. win32
+  # paketinin transitive bağımlılığı, explicit yapıyoruz.
+  ffi: ^2.1.3
+  # Faz K: SKAPP Desktop HTTP listener and Mobile peer client.
+  # `shelf` runs the local script-runner endpoint on Desktop hosts;
+  # `http` is the cross-platform client both Desktop and Mobile use to
+  # talk to a paired Desktop. `qr_flutter` generates the pairing QR
+  # the Desktop shows; `mobile_scanner` scans it on the phone.
+  shelf: ^1.4.1
+  shelf_router: ^1.1.4
+  http: ^1.2.2
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/branding/
+    - assets/skapi/win/
+    - assets/skapi/mac/
+    - assets/skapi/lx/
+    - assets/skapi/lx-debian/
+    - assets/skapi/lx-arch/
+    - assets/skapi/other/
+    - assets/skapi/other-syndimm/
+    - assets/skapi/other-lebensspur/
+    - assets/skapi/other-blockingfocus/
+    - assets/skapi/other-iot/
+    - assets/skapi/other-server/
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: false
+  # Mobile (Android) iconu Windows iconundan AYRI tutuluyor: telefon
+  # ekranında daha yüksek kontrast için siyah zemin + beyaz logo. Windows
+  # bloku aşağıda kendi `icon_full.png` referansını korur, masaüstü
+  # taskbar / start menü ikonu krem/siyah kalmaya devam eder.
+  #
+  # Android 7 ve altı (legacy, <SDK 26): image_path tek bir PNG kullanır,
+  # bu yüzden zemini önceden composite edilmiş `icon_mobile_full.png`
+  # (1024x1024, siyah #0A0A0A + 720x720 beyaz logo) verildi.
+  #
+  # Android 8+ (adaptive icon): foreground transparent `logo_white.png`,
+  # background renk palette siyah #0A0A0A. Sistem dış maskeyi kırpınca
+  # merkezde logo, dış halka siyah kalır.
+  image_path: "assets/branding/icon_mobile_full.png"
+  adaptive_icon_background: "#0A0A0A"
+  adaptive_icon_foreground: "assets/branding/logo_white.png"
+  min_sdk_android: 21
+  windows:
+    generate: true
+    image_path: "assets/branding/icon_full.png"
+    icon_size: 256

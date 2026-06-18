@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "lock",
+  "platform": "mac",
+  "group": "power",
+  "tier": 1,
+  "runtime": "applescript-bash",
+  "scriptFile": "lock.sh",
+  "i18n": {
+    "title": "skapiScriptLockTitle",
+    "summaryWhat": "skapiScriptLockSummaryWhat",
+    "summaryHow": "skapiScriptLockSummaryHow",
+    "note": null
+  },
+  "params": []
+}

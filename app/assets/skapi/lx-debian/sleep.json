@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "sleep",
+  "platform": "lx-debian",
+  "group": "power",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "sleep.sh",
+  "i18n": {
+    "title": "skapiScriptSleepTitle",
+    "summaryWhat": "skapiScriptSleepSummaryWhat",
+    "summaryHow": "skapiScriptSleepSummaryHowLxDebian",
+    "note": null
+  },
+  "params": [
+    {
+      "name": "delay",
+      "type": "int",
+      "default": 0,
+      "i18nLabel": "skapiScriptSleepParamDelayLabel",
+      "i18nHint": "skapiScriptSleepParamDelayHint",
+      "unit": "seconds"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "mute-toggle",
+  "platform": "win",
+  "group": "display-audio",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "mute-toggle.ps1",
+  "i18n": {
+    "title": "skapiScriptMuteToggleTitle",
+    "summaryWhat": "skapiScriptMuteToggleSummaryWhat",
+    "summaryHow": "skapiScriptMuteToggleSummaryHow",
+    "note": null
+  },
+  "params": [],
+  "remoteRunnable": true
+}

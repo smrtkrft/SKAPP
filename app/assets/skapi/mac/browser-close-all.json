@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "browser-close-all",
+  "platform": "mac",
+  "group": "programs",
+  "tier": 1,
+  "runtime": "applescript-bash",
+  "scriptFile": "browser-close-all.sh",
+  "i18n": {
+    "title": "skapiScriptBrowserCloseAllTitle",
+    "summaryWhat": "skapiScriptBrowserCloseAllSummaryWhat",
+    "summaryHow": "skapiScriptBrowserCloseAllSummaryHow",
+    "note": "skapiScriptBrowserCloseAllNote"
+  },
+  "params": []
+}

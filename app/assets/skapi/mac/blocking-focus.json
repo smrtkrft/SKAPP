@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "blocking-focus",
+  "platform": "mac",
+  "group": "visual-break",
+  "tier": 2,
+  "runtime": "applescript-bash",
+  "scriptFile": "blocking-focus.sh",
+  "i18n": {
+    "title": "skapiScriptBlockingFocusTitle",
+    "summaryWhat": "skapiScriptBlockingFocusSummaryWhat",
+    "summaryHow": "skapiScriptBlockingFocusSummaryHow",
+    "note": "skapiScriptBlockingFocusNote"
+  },
+  "params": [
+    {
+      "name": "duration",
+      "type": "int",
+      "default": 100,
+      "i18nLabel": "skapiScriptBlockingFocusParamDurationLabel",
+      "i18nHint": "skapiScriptBlockingFocusParamDurationHint",
+      "unit": "seconds",
+      "min": 10,
+      "max": 600
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "default": "Blocking Focus",
+      "i18nLabel": "skapiScriptBlockingFocusParamTitleLabel",
+      "i18nHint": "skapiScriptBlockingFocusParamTitleHint"
+    },
+    {
+      "name": "shakeRadius",
+      "type": "int",
+      "default": 300,
+      "i18nLabel": "skapiScriptBlockingFocusParamShakeRadiusLabel",
+      "i18nHint": "skapiScriptBlockingFocusParamShakeRadiusHint",
+      "unit": "pixels",
+      "min": 50,
+      "max": 800
+    },
+    {
+      "name": "enableSave",
+      "type": "bool",
+      "default": true,
+      "i18nLabel": "skapiScriptBlockingFocusParamEnableSaveLabel",
+      "i18nHint": "skapiScriptBlockingFocusParamEnableSaveHint"
+    }
+  ],
+  "remoteRunnable": true
+}

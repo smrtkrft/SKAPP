@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "close-with-save",
+  "platform": "lx-debian",
+  "group": "programs",
+  "tier": 2,
+  "runtime": "bash",
+  "scriptFile": "close-with-save.sh",
+  "i18n": {
+    "title": "skapiScriptCloseWithSaveTitle",
+    "summaryWhat": "skapiScriptCloseWithSaveSummaryWhat",
+    "summaryHow": "skapiScriptCloseWithSaveSummaryHowLxDebian",
+    "note": "skapiScriptCloseWithSaveNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptCloseWithSaveParamProcessLabel",
+      "i18nHint": "skapiScriptCloseWithSaveParamProcessHintLxDebian"
+    },
+    {
+      "name": "wait",
+      "type": "int",
+      "default": 1,
+      "i18nLabel": "skapiScriptCloseWithSaveParamWaitLabel",
+      "i18nHint": "skapiScriptCloseWithSaveParamWaitHint",
+      "unit": "seconds"
+    }
+  ]
+}

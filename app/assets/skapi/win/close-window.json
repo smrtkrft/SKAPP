@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "close-window",
+  "platform": "win",
+  "group": "window-app",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "close-window.ps1",
+  "i18n": {
+    "title": "skapiScriptCloseWindowTitle",
+    "summaryWhat": "skapiScriptCloseWindowSummaryWhat",
+    "summaryHow": "skapiScriptCloseWindowSummaryHow",
+    "note": "skapiScriptCloseWindowNote"
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptCloseWindowParamProcessLabel",
+      "i18nHint": "skapiScriptCloseWindowParamProcessHint"
+    }
+  ]
+}

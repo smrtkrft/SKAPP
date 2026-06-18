@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "blur-timed",
+  "platform": "lx-debian",
+  "group": "visual-break",
+  "tier": 2,
+  "runtime": "bash",
+  "scriptFile": "blur-timed.sh",
+  "i18n": {
+    "title": "skapiScriptBlurTimedTitle",
+    "summaryWhat": "skapiScriptBlurTimedSummaryWhat",
+    "summaryHow": "skapiScriptBlurTimedSummaryHow",
+    "note": "skapiScriptBlurTimedNote"
+  },
+  "params": [
+    {
+      "name": "duration",
+      "type": "int",
+      "default": 120,
+      "i18nLabel": "skapiScriptBlurTimedParamDurationLabel",
+      "i18nHint": "skapiScriptBlurTimedParamDurationHint",
+      "unit": "seconds",
+      "min": 5,
+      "max": 600
+    },
+    {
+      "name": "opacity",
+      "type": "string",
+      "default": "0.55",
+      "i18nLabel": "skapiScriptBlurTimedParamOpacityLabel",
+      "i18nHint": "skapiScriptBlurTimedParamOpacityHint"
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "default": "#0A0A0A",
+      "i18nLabel": "skapiScriptBlurTimedParamColorLabel",
+      "i18nHint": "skapiScriptBlurTimedParamColorHint"
+    }
+  ],
+  "remoteRunnable": true
+}

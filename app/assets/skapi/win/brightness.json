@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "brightness",
+  "platform": "win",
+  "group": "display-audio",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "brightness.ps1",
+  "i18n": {
+    "title": "skapiScriptBrightnessTitle",
+    "summaryWhat": "skapiScriptBrightnessSummaryWhat",
+    "summaryHow": "skapiScriptBrightnessSummaryHow",
+    "note": "skapiScriptBrightnessNote"
+  },
+  "params": [
+    {
+      "name": "level",
+      "type": "int",
+      "default": 70,
+      "i18nLabel": "skapiScriptBrightnessParamLevelLabel",
+      "i18nHint": "skapiScriptBrightnessParamLevelHint",
+      "min": 0,
+      "max": 100
+    },
+    {
+      "name": "timeout",
+      "type": "int",
+      "default": 1,
+      "i18nLabel": "skapiScriptBrightnessParamTimeoutLabel",
+      "i18nHint": "skapiScriptBrightnessParamTimeoutHint",
+      "unit": "seconds",
+      "min": 0,
+      "max": 60
+    }
+  ],
+  "remoteRunnable": true
+}

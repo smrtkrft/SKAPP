@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "close-all-instances",
+  "platform": "mac",
+  "group": "programs",
+  "tier": 1,
+  "runtime": "applescript-bash",
+  "scriptFile": "close-all-instances.sh",
+  "i18n": {
+    "title": "skapiScriptCloseAllInstancesTitle",
+    "summaryWhat": "skapiScriptCloseAllInstancesSummaryWhat",
+    "summaryHow": "skapiScriptCloseAllInstancesSummaryHow",
+    "note": null
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptCloseAllInstancesParamProcessLabel",
+      "i18nHint": "skapiScriptCloseAllInstancesParamProcessHint"
+    }
+  ]
+}

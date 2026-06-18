@@ -1,0 +1,71 @@
+# ============================================================
+#  SKAPP .gitignore
+#  GitHub'a gitmemesi gereken geçici / üretilen / yerel dosyalar
+# ============================================================
+
+# --- macOS ---
+.DS_Store
+**/.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# --- Yerel-özel (paylaşılmayan) klasör ---
+no_github/
+
+# ============================================================
+#  Flutter / Dart  (app/)
+# ============================================================
+**/build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+**/doc/api/
+*.iml
+*.ipr
+*.iws
+.idea/
+.metadata
+# NOT: pubspec.lock bir UYGULAMA için commit edilmeli (ignore EDİLMEZ)
+
+# Flutter platform ephemeral
+app/ios/Flutter/Generated.xcconfig
+app/ios/Flutter/flutter_export_environment.sh
+app/ios/Flutter/ephemeral/
+app/macos/Flutter/ephemeral/
+app/linux/flutter/ephemeral/
+app/windows/flutter/ephemeral/
+
+# CocoaPods
+**/Pods/
+**/.symlinks/
+
+# Android (app/android)
+app/android/.gradle/
+app/android/local.properties
+app/android/key.properties
+**/*.keystore
+**/*.jks
+
+# ============================================================
+#  ESP-IDF  (esp32/)
+# ============================================================
+# Derleme çıktıları
+esp32/**/build/
+# İndirilen bağımlılıklar (dependencies.lock commit edilir, bunlar değil)
+esp32/**/managed_components/
+# Eski/yedek sdkconfig (sdkconfig ve sdkconfig.defaults commit edilir)
+**/sdkconfig.old
+
+# ============================================================
+#  Genel
+# ============================================================
+*.log
+*.tmp
+*~
+.env
+.env.*
+*.swp

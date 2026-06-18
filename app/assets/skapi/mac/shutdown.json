@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "shutdown",
+  "platform": "mac",
+  "group": "power",
+  "tier": 1,
+  "runtime": "applescript-bash",
+  "scriptFile": "shutdown.sh",
+  "i18n": {
+    "title": "skapiScriptShutdownTitle",
+    "summaryWhat": "skapiScriptShutdownSummaryWhat",
+    "summaryHow": "skapiScriptShutdownSummaryHow",
+    "note": "skapiScriptShutdownNote"
+  },
+  "params": [
+    {
+      "name": "delay",
+      "type": "int",
+      "default": 30,
+      "i18nLabel": "skapiScriptShutdownParamDelayLabel",
+      "i18nHint": "skapiScriptShutdownParamDelayHint",
+      "unit": "seconds"
+    },
+    {
+      "name": "force",
+      "type": "bool",
+      "default": false,
+      "i18nLabel": "skapiScriptShutdownParamForceLabel",
+      "i18nHint": "skapiScriptShutdownParamForceHint"
+    }
+  ]
+}

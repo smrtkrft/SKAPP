@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "save-work",
+  "platform": "win",
+  "i18nTitle": "skapiGroupSaveWorkTitle",
+  "i18nDesc": "skapiGroupSaveWorkDesc",
+  "i18nFoot": "skapiGroupSaveWorkFoot",
+  "scripts": [
+    "save-active-window",
+    "save-all-open",
+    "autosave-trigger"
+  ]
+}

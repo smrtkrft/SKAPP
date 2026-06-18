@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>SKAPP Cihaz CLI Monitör (BF + LS)</title>
+<style>
+  :root {
+    --page-bg: #1a1714;
+    --panel-bg: #0d0c0b;
+    --panel-border: #2a2620;
+    --header-bg: #161412;
+    --ink: #d8cdb0;
+    --dim: #8a7f68;
+    --very-dim: #5b5343;
+    --prompt: #f0e9d2;
+    --user-input: #ffffff;
+    --cat: #d4a017;
+    --topic: #c6b378;
+    --name: #e7d999;
+    --summary: #b8ad8e;
+    --usage: #9aa7a8;
+    --critical: #e0573a;
+    --hidden: #d4a017;
+    --auth: #62a0d8;
+    --mark: #d4a017;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--page-bg); color: var(--ink);
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Inter, system-ui, sans-serif;
+    font-size: 13px; line-height: 1.45; }
+
+  header { padding: 14px 20px 8px; border-bottom: 1px solid var(--panel-border); background: var(--header-bg); }
+  header h1 { margin: 0 0 2px; font-size: 15px; font-weight: 600; color: var(--prompt); letter-spacing: 0.3px; }
+  header .sub { color: var(--dim); font-size: 11.5px; }
+
+  .toolbar { display: flex; gap: 10px; align-items: center; padding: 8px 20px;
+    border-bottom: 1px solid var(--panel-border); background: var(--header-bg); flex-wrap: wrap; }
+  .toolbar input[type="search"] {
+    flex: 1; min-width: 220px; padding: 7px 12px; border: 1px solid var(--panel-border);
+    border-radius: 4px; font-size: 12.5px; background: #0d0c0b; color: var(--ink);
+    outline: none; font-family: inherit;
+  }
+  .toolbar input[type="search"]:focus { border-color: var(--cat); }
+  .toolbar input[type="search"]::placeholder { color: var(--very-dim); }
+  .toolbar label { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px;
+    color: var(--dim); cursor: pointer; user-select: none; }
+  .toolbar label input { accent-color: var(--cat); }
+  .toolbar .legend { display: flex; gap: 6px; margin-left: auto; align-items: center; }
+
+  main { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 20px 0; }
+  @media (max-width: 980px) { main { grid-template-columns: 1fr; } }
+
+  .term { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 6px;
+    overflow: hidden; display: flex; flex-direction: column; }
+
+  .term-titlebar { display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+    background: #15110d; border-bottom: 1px solid var(--panel-border); user-select: none; }
+  .term-titlebar .dots { display: flex; gap: 5px; }
+  .term-titlebar .dot { width: 10px; height: 10px; border-radius: 50%; background: #3a342a; }
+  .term-titlebar .dot.r { background: #c44d3a; }
+  .term-titlebar .dot.y { background: #d4a017; }
+  .term-titlebar .dot.g { background: #6a8e3a; }
+  .term-titlebar .title { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 11px; color: var(--dim); margin-left: 4px; }
+  .term-titlebar .count { margin-left: auto; font-family: ui-monospace, Consolas, monospace;
+    font-size: 10.5px; color: var(--very-dim); }
+
+  .term-body { padding: 10px 14px 14px; font-family: ui-monospace, "Cascadia Mono", Consolas, "DejaVu Sans Mono", monospace;
+    font-size: 12.5px; line-height: 1.55; color: var(--ink);
+    max-height: calc(100vh - 380px); overflow-y: auto;
+    white-space: pre-wrap; word-break: break-word; }
+
+  /* Banner-like boot line at top */
+  .boot-line { color: var(--dim); font-size: 11.5px; margin-bottom: 6px; }
+  .boot-line .iquote { color: var(--very-dim); }
+  .boot-line .id { color: var(--name); }
+
+  /* Input line: "<prompt> help all" */
+  .input-line { margin: 6px 0 8px; }
+  .prompt { color: var(--prompt); }
+  .user-input { color: var(--user-input); }
+
+  .cat-header { color: var(--cat); margin: 14px 0 2px; font-weight: 700; }
+  .cat-header::before { content: "== "; }
+  .cat-header::after  { content: " =="; }
+
+  .topic-header { color: var(--topic); margin: 8px 0 2px; }
+  .topic-header .topic-desc { color: var(--very-dim); font-size: 11.5px; margin-left: 6px; }
+
+  .cmd-line { display: flex; align-items: baseline; gap: 6px; padding-left: 2px; }
+  .cmd-name { color: var(--name); white-space: nowrap; }
+  .cmd-sep { color: var(--very-dim); }
+  .cmd-summary { color: var(--summary); }
+  .cmd-usage-line { color: var(--usage); padding-left: 4ch; font-size: 12px; }
+  .cmd-usage-line::before { content: "Usage: "; color: var(--very-dim); }
+
+  .badge { display: inline-block; font-size: 9.5px; font-weight: 700; padding: 1px 5px;
+    border-radius: 2px; letter-spacing: 0.4px; margin-left: 4px; line-height: 1.4;
+    font-family: ui-sans-serif, system-ui, sans-serif; vertical-align: 1px; }
+  .badge.critical { background: var(--critical); color: #1a1714; }
+  .badge.hidden   { background: var(--hidden);   color: #1a1714; }
+  .badge.auth     { background: var(--auth);     color: #1a1714; }
+
+  .cmd-block { padding: 2px 0; }
+  .cmd-block.hidden-cmd { opacity: 0.55; }
+  body.hide-hidden .cmd-block.hidden-cmd { display: none; }
+
+  .empty { color: var(--very-dim); font-style: italic; padding: 6px 0; }
+
+  mark { background: var(--mark); color: #1a1714; padding: 0 1px; border-radius: 1px; }
+
+  /* Custom scrollbar so it matches the terminal feel */
+  .term-body::-webkit-scrollbar { width: 8px; }
+  .term-body::-webkit-scrollbar-track { background: transparent; }
+  .term-body::-webkit-scrollbar-thumb { background: #2a2620; border-radius: 4px; }
+  .term-body::-webkit-scrollbar-thumb:hover { background: #3a342a; }
+
+  /* Notes section as a third terminal */
+  .notes { padding: 14px 20px 24px; }
+  .notes-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .notes-head h3 { margin: 0; font-size: 13px; font-weight: 600; color: var(--prompt); }
+  .notes-head .saved { font-size: 11px; color: var(--dim); font-family: ui-monospace, Consolas, monospace; }
+
+  .notes-term { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 6px; overflow: hidden; }
+  textarea.notes-area { width: 100%; min-height: 170px; padding: 12px 14px;
+    background: transparent; border: 0; border-radius: 0;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 12.5px;
+    color: var(--ink); resize: vertical; outline: none; line-height: 1.55; }
+  textarea.notes-area::placeholder { color: var(--very-dim); }
+  .notes-actions { margin-top: 8px; display: flex; gap: 8px; }
+  .notes-actions button { padding: 6px 12px; background: var(--header-bg); color: var(--ink);
+    border: 1px solid var(--panel-border); border-radius: 4px; font-size: 11.5px;
+    cursor: pointer; font-family: ui-monospace, Consolas, monospace; letter-spacing: 0.3px; }
+  .notes-actions button:hover { border-color: var(--cat); color: var(--prompt); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SKAPP Cihaz CLI Monitör</h1>
+  <div class="sub">Gerçek `idf.py monitor` çıktısı simülasyonu. Solda BlockingFocus, sağda LebensSpur. Bayraklar: <span class="badge critical">CRITICAL</span> = confirm-token gerekir, <span class="badge hidden">HIDDEN</span> = SKAPP-only, <span class="badge auth">REQUIRES AUTH</span> = USB CLI'dan çağrılamaz.</div>
+</header>
+
+<div class="toolbar">
+  <input type="search" id="filter" placeholder="Komut, özet veya kullanım içinde ara (örn: wifi, relay, pairing)..." autocomplete="off">
+  <label><input type="checkbox" id="toggle-hidden"> HIDDEN komutları göster</label>
+</div>
+
+<main>
+  <section class="term">
+    <div class="term-titlebar">
+      <span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span>
+      <span class="title">BF-A06TMFSQT  /dev/ttyACM0  115200 baud</span>
+      <span class="count" id="count-bf"></span>
+    </div>
+    <div class="term-body" id="body-bf"></div>
+  </section>
+
+  <section class="term">
+    <div class="term-titlebar">
+      <span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span>
+      <span class="title">LS-AXXXXXXXX  /dev/ttyACM1  115200 baud</span>
+      <span class="count" id="count-ls"></span>
+    </div>
+    <div class="term-body" id="body-ls"></div>
+  </section>
+</main>
+
+<section class="notes">
+  <div class="notes-head">
+    <h3>Notlar</h3>
+    <span class="saved" id="saved-indicator">otomatik kaydedilir (tarayıcı localStorage)</span>
+  </div>
+  <div class="notes-term">
+    <div class="term-titlebar">
+      <span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span>
+      <span class="title">notlar.txt</span>
+    </div>
+    <textarea class="notes-area" id="notes" placeholder="# Buraya not yazabilirsin. Her tuş vuruşunda tarayıcıya kaydedilir.&#10;# Sayfayı yeniden açtığında aynı not gelir.&#10;&#10;# Örn:&#10;# - BF'de api.* hepsi REQUIRES_AUTH, USB CLI'dan çağrılamıyor.&#10;# - LS'de timer.set unit/value ile çalışıyor, vacation ayrı topic."></textarea>
+  </div>
+  <div class="notes-actions">
+    <button id="copy-notes">Kopyala</button>
+    <button id="download-notes">İndir (.txt)</button>
+    <button id="clear-notes">Temizle</button>
+  </div>
+</section>
+
+<script>
+/* ============ Data: command catalogs derived from CLI_REFERENCE.md ============ */
+/* Flags: C=critical, H=hidden, A=requires_auth */
+
+const BF_DATA = {
+  device: 'BF-A06TMFSQT',
+  prompt: 'BF-A06TMFSQT> ',
+  banner: 'I (412) main: BlockingFocus 1.2.0 up, id=BF-A06TMFSQT',
+  topics: [
+    { key:'wifi',      cat:'SETUP',  desc:'Network connection' },
+    { key:'ble',       cat:'SETUP',  desc:'Bluetooth transport' },
+    { key:'pairing',   cat:'SETUP',  desc:'BLE pairing window' },
+    { key:'ota',       cat:'SETUP',  desc:'Firmware updates' },
+    { key:'api',       cat:'OUTPUT', desc:'Outbound webhook presets' },
+    { key:'vibration', cat:'OUTPUT', desc:'Vibration motor master switch' },
+    { key:'tilt',      cat:'OUTPUT', desc:'Tilt alert' },
+    { key:'low_batt',  cat:'OUTPUT', desc:'Low-battery alert' },
+    { key:'device',    cat:'SYSTEM', desc:'Identity, restart, factory reset' },
+    { key:'auth',      cat:'SYSTEM', desc:'Passphrase + token' },
+    { key:'bond',      cat:'SYSTEM', desc:'Paired SKAPP installs' },
+    { key:'battery',   cat:'SYSTEM', desc:'Battery voltage and threshold events' },
+    { key:'logs',      cat:'SYSTEM', desc:'Log entries (ring buffer)' },
+    { key:'time',      cat:'SYSTEM', desc:'Clock push' },
+    { key:'power',     cat:'SYSTEM', desc:'Power state and wakeup' },
+    { key:'secure',    cat:'SYSTEM', desc:'Encrypted KV store (SKAPP-only)' },
+    { key:'userdata',  cat:'SYSTEM', desc:'User-script blob (SKAPP-only)' },
+    { key:'json',      cat:'SYSTEM', desc:'CLI mode switch' },
+    { key:'help',      cat:'SYSTEM', desc:'Help system' },
+  ],
+  cmds: [
+    { n:'help',                        t:'help',      f:'',    s:'List commands or show detail of one',                                          u:'help [<command>]' },
+    { n:'json.on',                     t:'json',      f:'H',   s:'Switch to NDJSON machine mode',                                                u:'json on' },
+    { n:'json.off',                    t:'json',      f:'H',   s:'Switch to human mode',                                                          u:'json off' },
+    { n:'device.info',                 t:'device',    f:'',    s:'Identity + runtime snapshot (merged info+status)',                              u:'device info' },
+    { n:'device.status',               t:'device',    f:'',    s:'Runtime state (uptime, wifi, ble, time)',                                       u:'device status' },
+    { n:'device.commands',             t:'device',    f:'H',   s:'List every registered command (JSON array)',                                    u:'device commands' },
+    { n:'device.manifest',             t:'device',    f:'H',   s:'Runtime UI manifest for SKAPP',                                                 u:'device manifest' },
+    { n:'device.capabilities',         t:'device',    f:'H',   s:'List loaded books and command versions',                                        u:'device capabilities' },
+    { n:'device.restart',              t:'device',    f:'C',   s:'Restart the device',                                                            u:'device restart' },
+    { n:'device.factory-reset',        t:'device',    f:'C',   s:'Wipe bond, settings, return to factory state',                                  u:'device factory-reset' },
+    { n:'device.confirm-token',        t:'device',    f:'',    s:'Issue a single-use token to authorize a critical command',                      u:'device confirm-token' },
+    { n:'logs.get',                    t:'logs',      f:'',    s:'Read recent log entries from the ring buffer',                                  u:'logs get [--limit N] [--level LVL]' },
+    { n:'time.set',                    t:'time',      f:'H',   s:'Push UNIX time to device (SKAPP-only, when no NTP)',                            u:'time set <unix>' },
+    { n:'pairing.status',              t:'pairing',   f:'',    s:'Show pairing window state and how many bond slots are occupied',                u:'pairing status' },
+    { n:'pairing.start',               t:'pairing',   f:'',    s:'Open a 60-second BLE pairing window for SKAPP to discover the device',         u:'pairing start' },
+    { n:'pairing.stop',                t:'pairing',   f:'',    s:'Close the pairing window early',                                                u:'pairing stop' },
+    { n:'ble.status',                  t:'ble',       f:'',    s:'Show BLE radio state and connected peer (if any)',                              u:'ble status' },
+    { n:'ble.unpair',                  t:'ble',       f:'C',   s:'Forget every paired phone (clears all bond slots)',                             u:'ble unpair' },
+    { n:'auth.token.rotate',           t:'auth',      f:'CH',  s:'Rotate the active session token (SKAPP-only)',                                  u:'auth token rotate' },
+    { n:'bond.list',                   t:'bond',      f:'A',   s:'List paired SKAPP installs (slot, peer_id, label, paired_at)',                  u:'bond list' },
+    { n:'bond.remove',                 t:'bond',      f:'CA',  s:'Remove a paired peer by slot (forgets that SKAPP install)',                     u:'bond remove --slot <0..7>' },
+    { n:'auth.passphrase.status',      t:'auth',      f:'',    s:'Show passphrase configuration (set / mode / attempts left)',                    u:'auth passphrase status' },
+    { n:'auth.passphrase.set',         t:'auth',      f:'C',   s:'Set the content-access passphrase (first time)',                                u:'auth passphrase set <plain>' },
+    { n:'auth.passphrase.change',      t:'auth',      f:'C',   s:'Rotate the passphrase (verifies old, sets new)',                                u:'auth passphrase change <old> <new>' },
+    { n:'auth.passphrase.clear',       t:'auth',      f:'C',   s:'Remove the passphrase (verifies old)',                                          u:'auth passphrase clear <old>' },
+    { n:'auth.passphrase.mode.set',    t:'auth',      f:'C',   s:'Set the two enforcement toggles (pairing / always)',                            u:'auth passphrase mode set --pairing <0|1> --always <0|1>' },
+    { n:'wifi.status',                 t:'wifi',      f:'',    s:'Show current connection state, SSID, IP, signal strength',                      u:'wifi status' },
+    { n:'wifi.scan',                   t:'wifi',      f:'',    s:'Scan visible WiFi networks nearby (up to 12)',                                  u:'wifi scan' },
+    { n:'wifi.list',                   t:'wifi',      f:'',    s:'List saved WiFi networks',                                                      u:'wifi list' },
+    { n:'wifi.connect',                t:'wifi',      f:'',    s:'Connect to a WiFi network (saves credentials)',                                 u:'wifi connect <ssid> [password] [192.168.1.50[/24]] [primary|backup]' },
+    { n:'wifi.disconnect',             t:'wifi',      f:'',    s:'Disconnect from the current WiFi network',                                      u:'wifi disconnect' },
+    { n:'wifi.forget',                 t:'wifi',      f:'C',   s:'Delete saved WiFi credentials (one slot or both)',                              u:'wifi forget [--slot primary|backup]' },
+    { n:'ota.status',                  t:'ota',       f:'',    s:'Show update state, current/available versions, active partition',               u:'ota status' },
+    { n:'ota.check',                   t:'ota',       f:'',    s:'Ask the update server if a newer firmware exists (no install)',                 u:'ota check' },
+    { n:'ota.update',                  t:'ota',       f:'C',   s:'Install the new firmware found by `ota check` (reboots automatically)',         u:'ota update' },
+    { n:'ota.rollback',                t:'ota',       f:'C',   s:'Boot back into the previous firmware',                                          u:'ota rollback' },
+    { n:'api.on',                      t:'api',       f:'A',   s:'Master switch: allow stored endpoints to fire',                                 u:'api on' },
+    { n:'api.off',                     t:'api',       f:'A',   s:'Master switch: block all API calls (records kept)',                             u:'api off' },
+    { n:'api.status',                  t:'api',       f:'A',   s:'Show master switch state and endpoint counts',                                  u:'api status' },
+    { n:'api.endpoint.list',           t:'api',       f:'A',   s:'List stored endpoints (USER + SYSTEM)',                                         u:'api endpoint list' },
+    { n:'api.endpoint.add',            t:'api',       f:'CA',  s:'Add or update a USER (manual) endpoint',                                        u:'api endpoint add --name X --type generic|ifttt|webhook_post --url ... [...]' },
+    { n:'api.endpoint.remove',         t:'api',       f:'CA',  s:'Delete a USER endpoint by name',                                                u:'api endpoint remove --name X' },
+    { n:'api.system.add',              t:'api',       f:'A',   s:"Register the calling peer's SKAPP listener as a SYSTEM slot",                   u:'api system add --url http://<host>:<port>/api/events/incoming [--delay-after <0-300>]' },
+    { n:'api.system.remove',           t:'api',       f:'A',   s:"Unregister the calling peer's SYSTEM slot",                                     u:'api system remove' },
+    { n:'api.system.purge',            t:'api',       f:'A',   s:'Wipe ALL SYSTEM slots (orphan cleanup)',                                        u:'api system purge' },
+    { n:'api.system.list',             t:'api',       f:'A',   s:'List SYSTEM slots only (auto-managed by paired SKAPPs)',                        u:'api system list' },
+    { n:'api.send',                    t:'api',       f:'A',   s:'Fire one endpoint right now (manual test)',                                     u:"api send --name X [--payload '...']" },
+    { n:'api.chain.run',               t:'api',       f:'A',   s:'Fire every endpoint (USER then SYSTEM, in order)',                              u:"api chain run [--payload '...']" },
+    { n:'battery.status',              t:'battery',   f:'',    s:'Show battery voltage, percent, and threshold state',                            u:'battery status' },
+    { n:'vibration.on',                t:'vibration', f:'',    s:'Turn vibration motor on (master switch)',                                       u:'vibration on' },
+    { n:'vibration.off',               t:'vibration', f:'',    s:'Turn vibration motor off (master switch)',                                      u:'vibration off' },
+    { n:'vibration.status',            t:'vibration', f:'',    s:'Show vibration master switch state',                                            u:'vibration status' },
+    { n:'vibration.burst',             t:'vibration', f:'',    s:'Trigger expire-pattern burst (4 x 500/250 ms) for diagnosis',                   u:'vibration burst' },
+    { n:'tilt.warn.on',                t:'tilt',      f:'',    s:'Enable alert when the cube is tilted (no clear top face)',                      u:'tilt warn on' },
+    { n:'tilt.warn.off',               t:'tilt',      f:'',    s:'Disable tilt alert',                                                            u:'tilt warn off' },
+    { n:'tilt.warn.status',            t:'tilt',      f:'',    s:'Show tilt alert state',                                                         u:'tilt warn status' },
+    { n:'low_batt.warn.on',            t:'low_batt',  f:'',    s:'Enable alert when battery falls below threshold',                               u:'low_batt warn on' },
+    { n:'low_batt.warn.off',           t:'low_batt',  f:'',    s:'Disable low-battery alert',                                                     u:'low_batt warn off' },
+    { n:'low_batt.warn.status',        t:'low_batt',  f:'',    s:'Show low-battery alert state',                                                  u:'low_batt warn status' },
+    { n:'power.status',                t:'power',     f:'',    s:'Show power state, idle timers, and thresholds',                                 u:'power status' },
+    { n:'power.kick',                  t:'power',     f:'',    s:'Force the device awake (equivalent to a button press)',                         u:'power kick' },
+    { n:'secure.get',                  t:'secure',    f:'HA',  s:'Read encrypted KV value (SKAPP-only)',                                          u:'secure get --key <name>' },
+    { n:'secure.set',                  t:'secure',    f:'HA',  s:'Write encrypted KV value (SKAPP-only)',                                         u:'secure set --key <name> --value <utf8>' },
+    { n:'secure.erase',                t:'secure',    f:'HA',  s:'Delete an encrypted KV entry',                                                  u:'secure erase --key <name>' },
+    { n:'secure.list',                 t:'secure',    f:'HA',  s:'List encrypted KV key names',                                                   u:'secure list' },
+    { n:'userdata.size',               t:'userdata',  f:'HA',  s:'Logical size of the user-script blob',                                          u:'userdata size' },
+    { n:'userdata.read',               t:'userdata',  f:'HA',  s:'Read a slice from the user-script blob (base64)',                               u:'userdata read --offset <n> --len <n>' },
+    { n:'userdata.write',              t:'userdata',  f:'HA',  s:'Write a slice into the user-script blob',                                       u:'userdata write --offset <n> --data_b64 <base64>' },
+    { n:'userdata.truncate',           t:'userdata',  f:'HA',  s:'Set logical size (zero-pads on growth)',                                        u:'userdata truncate --size <n>' },
+    { n:'userdata.clear',              t:'userdata',  f:'CHA', s:'Wipe the user-script blob (confirm token)',                                     u:'userdata clear' },
+  ]
+};
+
+const LS_DATA = {
+  device: 'LS-AXXXXXXXX',
+  prompt: 'LS-AXXXXXXXX> ',
+  banner: 'I (412) main: LebensSpur Faz 1 (1.6) up, id=LS-AXXXXXXXX',
+  topics: [
+    { key:'timer',     cat:'TIMER',         desc:'Countdown timer' },
+    { key:'vacation',  cat:'TIMER',         desc:'Vacation mode' },
+    { key:'wifi',      cat:'SETUP',         desc:'Network connection (primary + backup)' },
+    { key:'ble',       cat:'SETUP',         desc:'Bluetooth transport' },
+    { key:'pairing',   cat:'SETUP',         desc:'BLE pairing window' },
+    { key:'auth',      cat:'SETUP',         desc:'Passphrase + token' },
+    { key:'ota',       cat:'SETUP',         desc:'Firmware updates' },
+    { key:'smtp',      cat:'ALARM OUTPUT',  desc:'SMTPS mail server' },
+    { key:'api',       cat:'ALARM OUTPUT',  desc:'Outbound webhook presets' },
+    { key:'mail',      cat:'LS OUTPUT',     desc:'Mail groups (recipients + subject + body)' },
+    { key:'relay',     cat:'LS OUTPUT',     desc:'Output relay (GPIO + delay + duration + pulse)' },
+    { key:'device',    cat:'SYSTEM',        desc:'Identity, restart, factory reset' },
+    { key:'bond',      cat:'SYSTEM',        desc:'Paired SKAPP installs' },
+    { key:'reset_api', cat:'SYSTEM',        desc:'Inbound HTTP /api/reset endpoint' },
+    { key:'logs',      cat:'SYSTEM',        desc:'Log entries (ring buffer)' },
+    { key:'time',      cat:'SYSTEM',        desc:'Clock push' },
+    { key:'json',      cat:'SYSTEM',        desc:'CLI mode switch' },
+    { key:'help',      cat:'SYSTEM',        desc:'Help system' },
+  ],
+  cmds: [
+    { n:'help',                        t:'help',      f:'',    s:'List commands or show detail of one',                                          u:'help [<command>]' },
+    { n:'json.on',                     t:'json',      f:'H',   s:'Switch to NDJSON machine mode',                                                u:'json on' },
+    { n:'json.off',                    t:'json',      f:'H',   s:'Switch to human mode',                                                          u:'json off' },
+    { n:'device.info',                 t:'device',    f:'',    s:'Identity + runtime snapshot (merged info+status)',                              u:'device info' },
+    { n:'device.status',               t:'device',    f:'',    s:'Runtime state (uptime, wifi, ble, time)',                                       u:'device status' },
+    { n:'device.commands',             t:'device',    f:'H',   s:'List every registered command (JSON array)',                                    u:'device commands' },
+    { n:'device.manifest',             t:'device',    f:'H',   s:'Runtime UI manifest for SKAPP',                                                 u:'device manifest' },
+    { n:'device.capabilities',         t:'device',    f:'H',   s:'List loaded books and command versions',                                        u:'device capabilities' },
+    { n:'device.restart',              t:'device',    f:'C',   s:'Restart the device',                                                            u:'device restart' },
+    { n:'device.factory-reset',        t:'device',    f:'C',   s:'Wipe bond, settings, return to factory state',                                  u:'device factory-reset' },
+    { n:'device.confirm-token',        t:'device',    f:'',    s:'Issue a single-use token to authorize a critical command',                      u:'device confirm-token' },
+    { n:'logs.get',                    t:'logs',      f:'',    s:'Read recent log entries from the ring buffer',                                  u:'logs get [--limit N] [--level LVL]' },
+    { n:'time.set',                    t:'time',      f:'H',   s:'Push UNIX time to device (SKAPP-only, when no NTP)',                            u:'time set <unix>' },
+    { n:'pairing.status',              t:'pairing',   f:'',    s:'Show pairing window state and how many bond slots are occupied',                u:'pairing status' },
+    { n:'pairing.start',               t:'pairing',   f:'',    s:'Open a 60-second BLE pairing window for SKAPP to discover the device',         u:'pairing start' },
+    { n:'pairing.stop',                t:'pairing',   f:'',    s:'Close the pairing window early',                                                u:'pairing stop' },
+    { n:'ble.status',                  t:'ble',       f:'',    s:'Show BLE radio state and connected peer (if any)',                              u:'ble status' },
+    { n:'ble.unpair',                  t:'ble',       f:'C',   s:'Forget every paired phone (clears all bond slots)',                             u:'ble unpair' },
+    { n:'auth.token.rotate',           t:'auth',      f:'CH',  s:'Rotate the active session token (SKAPP-only)',                                  u:'auth token rotate' },
+    { n:'bond.list',                   t:'bond',      f:'A',   s:'List paired SKAPP installs (slot, peer_id, label, paired_at)',                  u:'bond list' },
+    { n:'bond.remove',                 t:'bond',      f:'CA',  s:'Remove a paired peer by slot (forgets that SKAPP install)',                     u:'bond remove --slot <0..7>' },
+    { n:'auth.passphrase.status',      t:'auth',      f:'',    s:'Show passphrase configuration (set / mode / attempts left)',                    u:'auth passphrase status' },
+    { n:'auth.passphrase.set',         t:'auth',      f:'C',   s:'Set the content-access passphrase (first time)',                                u:'auth passphrase set <plain>' },
+    { n:'auth.passphrase.change',      t:'auth',      f:'C',   s:'Rotate the passphrase (verifies old, sets new)',                                u:'auth passphrase change <old> <new>' },
+    { n:'auth.passphrase.clear',       t:'auth',      f:'C',   s:'Remove the passphrase (verifies old)',                                          u:'auth passphrase clear <old>' },
+    { n:'auth.passphrase.mode.set',    t:'auth',      f:'C',   s:'Set the two enforcement toggles (pairing / always)',                            u:'auth passphrase mode set --pairing <0|1> --always <0|1>' },
+    { n:'wifi.status',                 t:'wifi',      f:'',    s:'Show current connection state, SSID, IP, signal strength',                      u:'wifi status' },
+    { n:'wifi.scan',                   t:'wifi',      f:'',    s:'Scan visible WiFi networks nearby (up to 12)',                                  u:'wifi scan' },
+    { n:'wifi.list',                   t:'wifi',      f:'',    s:'List saved WiFi networks',                                                      u:'wifi list' },
+    { n:'wifi.connect',                t:'wifi',      f:'',    s:'Connect to a WiFi network (saves credentials)',                                 u:'wifi connect <ssid> [password] [192.168.1.50[/24]] [primary|backup]' },
+    { n:'wifi.disconnect',             t:'wifi',      f:'',    s:'Disconnect from the current WiFi network',                                      u:'wifi disconnect' },
+    { n:'wifi.forget',                 t:'wifi',      f:'C',   s:'Delete saved WiFi credentials (one slot or both)',                              u:'wifi forget [--slot primary|backup]' },
+    { n:'ota.status',                  t:'ota',       f:'',    s:'Show update state, current/available versions, active partition',               u:'ota status' },
+    { n:'ota.check',                   t:'ota',       f:'',    s:'Ask the update server if a newer firmware exists (no install)',                 u:'ota check' },
+    { n:'ota.update',                  t:'ota',       f:'C',   s:'Install the new firmware found by `ota check` (reboots automatically)',         u:'ota update' },
+    { n:'ota.rollback',                t:'ota',       f:'C',   s:'Boot back into the previous firmware',                                          u:'ota rollback' },
+    { n:'api.on',                      t:'api',       f:'A',   s:'Master switch: allow stored endpoints to fire',                                 u:'api on' },
+    { n:'api.off',                     t:'api',       f:'A',   s:'Master switch: block all API calls (records kept)',                             u:'api off' },
+    { n:'api.status',                  t:'api',       f:'A',   s:'Show master switch state and endpoint counts',                                  u:'api status' },
+    { n:'api.endpoint.list',           t:'api',       f:'A',   s:'List stored endpoints (USER + SYSTEM)',                                         u:'api endpoint list' },
+    { n:'api.endpoint.add',            t:'api',       f:'CA',  s:'Add or update a USER (manual) endpoint',                                        u:'api endpoint add --name X --type generic|ifttt|webhook_post --url ... [...]' },
+    { n:'api.endpoint.remove',         t:'api',       f:'CA',  s:'Delete a USER endpoint by name',                                                u:'api endpoint remove --name X' },
+    { n:'api.system.add',              t:'api',       f:'A',   s:"Register the calling peer's SKAPP listener as a SYSTEM slot",                   u:'api system add --url http://<host>:<port>/api/events/incoming [--delay-after <0-300>]' },
+    { n:'api.system.remove',           t:'api',       f:'A',   s:"Unregister the calling peer's SYSTEM slot",                                     u:'api system remove' },
+    { n:'api.system.purge',            t:'api',       f:'A',   s:'Wipe ALL SYSTEM slots (orphan cleanup)',                                        u:'api system purge' },
+    { n:'api.system.list',             t:'api',       f:'A',   s:'List SYSTEM slots only (auto-managed by paired SKAPPs)',                        u:'api system list' },
+    { n:'api.send',                    t:'api',       f:'A',   s:'Fire one endpoint right now (manual test)',                                     u:"api send --name X [--payload '...']" },
+    { n:'api.chain.run',               t:'api',       f:'A',   s:'Fire every endpoint (USER then SYSTEM, in order)',                              u:"api chain run [--payload '...']" },
+    { n:'timer.set',                   t:'timer',     f:'',    s:'Set duration: <unit> <value> (minute|hour|day, 1..60) [alarm <0..10>]',         u:'timer set <unit> <value> [alarm <N>]' },
+    { n:'timer.get',                   t:'timer',     f:'',    s:'Show current timer configuration',                                              u:'timer get' },
+    { n:'timer.start',                 t:'timer',     f:'',    s:'Start the countdown from full duration',                                        u:'timer start' },
+    { n:'timer.stop',                  t:'timer',     f:'',    s:'Stop the countdown (state -> inactive)',                                        u:'timer stop' },
+    { n:'timer.reset',                 t:'timer',     f:'',    s:'Reset countdown back to full duration',                                         u:'timer reset' },
+    { n:'timer.status',                t:'timer',     f:'',    s:'Show current timer runtime state',                                              u:'timer status' },
+    { n:'vacation.set',                t:'vacation',  f:'',    s:'Enter vacation mode for N days (1..60), countdown paused',                      u:'vacation set <days>' },
+    { n:'vacation.cancel',             t:'vacation',  f:'',    s:'Exit vacation mode and resume countdown',                                       u:'vacation cancel' },
+    { n:'smtp.host',                   t:'smtp',      f:'',    s:'Set SMTPS server hostname (e.g. smtp.gmail.com)',                               u:'smtp host <hostname>' },
+    { n:'smtp.port',                   t:'smtp',      f:'',    s:'Set SMTPS port (1..65535)',                                                     u:'smtp port <N>' },
+    { n:'smtp.sender',                 t:'smtp',      f:'',    s:'Set sender email, also SMTP AUTH user',                                         u:'smtp sender <email>' },
+    { n:'smtp.key',                    t:'smtp',      f:'',    s:'Set SMTP AUTH password (Gmail App Password / API key)',                         u:'smtp key <api_key>' },
+    { n:'smtp.get',                    t:'smtp',      f:'',    s:'Show SMTP configuration (api_key masked)',                                      u:'smtp get' },
+    { n:'smtp.test',                   t:'smtp',      f:'',    s:'Send a test mail to the configured sender',                                     u:'smtp test' },
+    { n:'mail.group.add',              t:'mail',      f:'',    s:'Create a new mail group, returns id (max 10)',                                  u:'mail group add <name>' },
+    { n:'mail.group.delete',           t:'mail',      f:'',    s:'Delete a mail group',                                                           u:'mail group delete <id>' },
+    { n:'mail.group.enable',           t:'mail',      f:'',    s:'Enable/disable a group',                                                        u:'mail group enable <id> <on|off>' },
+    { n:'mail.group.name',             t:'mail',      f:'',    s:'Rename a group',                                                                u:'mail group name <id> <new name>' },
+    { n:'mail.group.subject',          t:'mail',      f:'',    s:'Set email subject',                                                             u:'mail group subject <id> <subject>' },
+    { n:'mail.group.body',             t:'mail',      f:'',    s:'Set email body',                                                                u:'mail group body <id> <text>' },
+    { n:'mail.group.list',             t:'mail',      f:'',    s:'List all configured groups',                                                    u:'mail group list' },
+    { n:'mail.group.get',              t:'mail',      f:'',    s:"Show a single group's full detail",                                             u:'mail group get <id>' },
+    { n:'mail.group.recipient.add',    t:'mail',      f:'',    s:'Add recipient (max 20)',                                                        u:'mail group recipient add <id> <email>' },
+    { n:'mail.group.recipient.remove', t:'mail',      f:'',    s:'Remove recipient',                                                              u:'mail group recipient remove <id> <email>' },
+    { n:'relay.gpio',                  t:'relay',     f:'',    s:'Set relay output GPIO pin (0..30)',                                             u:'relay gpio <N>' },
+    { n:'relay.invert',                t:'relay',     f:'',    s:'Set relay polarity (idle/active level swap)',                                   u:'relay invert <on|off>' },
+    { n:'relay.delay',                 t:'relay',     f:'',    s:'Set start delay in seconds (0..10)',                                            u:'relay delay <s>' },
+    { n:'relay.duration',              t:'relay',     f:'',    s:'Set total active duration in seconds (1..3600)',                                u:'relay duration <s>' },
+    { n:'relay.pulse',                 t:'relay',     f:'',    s:'Pulse mode: on | off | <half-cycle seconds 1..60>',                             u:'relay pulse <on|off>  /  relay pulse <s>' },
+    { n:'relay.get',                   t:'relay',     f:'',    s:'Show current relay configuration',                                              u:'relay get' },
+    { n:'relay.test',                  t:'relay',     f:'',    s:'Manually fire the relay using current config',                                  u:'relay test' },
+    { n:'relay.fire',                  t:'relay',     f:'H',   s:'Alias of relay.test',                                                           u:'relay fire' },
+    { n:'relay.abort',                 t:'relay',     f:'',    s:'Abort an in-progress fire sequence',                                            u:'relay abort' },
+    { n:'relay.off',                   t:'relay',     f:'',    s:'Force relay to idle (also aborts in-progress fire)',                            u:'relay off' },
+    { n:'relay.status',                t:'relay',     f:'',    s:'Show current relay runtime status',                                             u:'relay status' },
+    { n:'reset_api.enable',            t:'reset_api', f:'',    s:'Enable/disable remote reset HTTP server',                                       u:'reset_api enable <on|off>' },
+    { n:'reset_api.key',               t:'reset_api', f:'',    s:'Set the API key (ls_ + 12 lowercase hex)',                                      u:'reset_api key <ls_xxxxxxxxxxxx>' },
+    { n:'reset_api.regen',             t:'reset_api', f:'',    s:'Generate a fresh random API key',                                               u:'reset_api regen' },
+    { n:'reset_api.get',               t:'reset_api', f:'',    s:'Show remote reset API config (key partially masked)',                           u:'reset_api get' },
+    { n:'reset_api.status',            t:'reset_api', f:'',    s:'Show HTTP server runtime status',                                               u:'reset_api status' },
+  ]
+};
+
+/* ============ Render: real `help all` output simulation ============ */
+
+const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+  '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+}[c]));
+
+function flagBadges(f) {
+  let out = '';
+  if (f.includes('C')) out += '<span class="badge critical" title="Confirm-token gerekir">CRITICAL</span>';
+  if (f.includes('H')) out += '<span class="badge hidden"   title="help overview\'de gizli, SKAPP/makine kullanımı için">HIDDEN</span>';
+  if (f.includes('A')) out += '<span class="badge auth"     title="Sadece authenticated transport: BLE/TCP. USB CLI reddeder">REQUIRES AUTH</span>';
+  return out;
+}
+
+function highlight(text, q) {
+  if (!q) return escapeHtml(text);
+  const esc = escapeHtml(text);
+  try {
+    const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+    return esc.replace(re, '<mark>$1</mark>');
+  } catch (e) { return esc; }
+}
+
+function render(target, data, q) {
+  const ql = q.trim().toLowerCase();
+  const byTopic = {};
+  data.cmds.forEach(c => {
+    if (ql) {
+      const hay = (c.n + ' ' + c.s + ' ' + c.u).toLowerCase();
+      if (!hay.includes(ql)) return;
+    }
+    (byTopic[c.t] = byTopic[c.t] || []).push(c);
+  });
+
+  // Compute max name length for alignment (per device).
+  let maxName = 0;
+  Object.values(byTopic).forEach(list => list.forEach(c => { if (c.n.length > maxName) maxName = c.n.length; }));
+  const pad = (s) => s + ' '.repeat(Math.max(0, maxName - s.length));
+
+  // Group topics by category, in declared order.
+  const cats = [];
+  const catSeen = {};
+  data.topics.forEach(tp => {
+    if (!catSeen[tp.cat]) { catSeen[tp.cat] = []; cats.push(tp.cat); }
+    catSeen[tp.cat].push(tp);
+  });
+
+  let html = '';
+
+  // Boot banner
+  html += '<div class="boot-line">' + escapeHtml(data.banner) + '</div>';
+  // Simulated user typing `help all`
+  html += '<div class="input-line"><span class="prompt">' + escapeHtml(data.prompt) + '</span><span class="user-input">help all</span></div>';
+
+  let count = 0;
+  let any = false;
+  cats.forEach(cat => {
+    const topicsInCat = catSeen[cat].filter(tp => byTopic[tp.key] && byTopic[tp.key].length);
+    if (!topicsInCat.length) return;
+    any = true;
+    html += '<div class="cat-header">' + escapeHtml(cat) + '</div>';
+    topicsInCat.forEach(tp => {
+      const list = byTopic[tp.key];
+      count += list.length;
+      html += '<div class="topic-header">  ' + escapeHtml(tp.key)
+            + '<span class="topic-desc">' + escapeHtml(tp.desc) + '</span></div>';
+      list.forEach(c => {
+        const isHidden = c.f.includes('H');
+        html += '<div class="cmd-block' + (isHidden ? ' hidden-cmd' : '') + '">'
+              + '<div class="cmd-line">'
+              + '<span class="cmd-name">    ' + highlight(pad(c.n), q) + '</span>'
+              + '<span class="cmd-sep">-</span>'
+              + '<span class="cmd-summary">' + highlight(c.s, q) + '</span>'
+              + flagBadges(c.f)
+              + '</div>'
+              + '<div class="cmd-usage-line">' + highlight(c.u, q) + '</div>'
+              + '</div>';
+      });
+    });
+  });
+
+  if (!any) html += '<div class="empty">  no matching commands.</div>';
+
+  // Final trailing prompt to mimic returned shell
+  html += '<div class="input-line" style="margin-top:10px"><span class="prompt">' + escapeHtml(data.prompt) + '</span><span class="user-input"></span></div>';
+
+  document.getElementById(target).innerHTML = html;
+  return count;
+}
+
+function renderAll() {
+  const q = document.getElementById('filter').value;
+  const bfN = render('body-bf', BF_DATA, q);
+  const lsN = render('body-ls', LS_DATA, q);
+  document.getElementById('count-bf').textContent = bfN + ' commands';
+  document.getElementById('count-ls').textContent = lsN + ' commands';
+}
+
+document.getElementById('filter').addEventListener('input', renderAll);
+document.getElementById('toggle-hidden').addEventListener('change', (e) => {
+  document.body.classList.toggle('hide-hidden', !e.target.checked);
+});
+document.body.classList.add('hide-hidden');
+
+renderAll();
+
+/* ============ Notes: localStorage + actions ============ */
+
+const NOTES_KEY = 'skapp-cli-ref-notes';
+const ta = document.getElementById('notes');
+const saved = document.getElementById('saved-indicator');
+ta.value = localStorage.getItem(NOTES_KEY) || '';
+
+let saveTimer;
+ta.addEventListener('input', () => {
+  clearTimeout(saveTimer);
+  saved.textContent = '...yazılıyor';
+  saveTimer = setTimeout(() => {
+    localStorage.setItem(NOTES_KEY, ta.value);
+    const now = new Date();
+    saved.textContent = 'kaydedildi ' + now.toLocaleTimeString();
+  }, 250);
+});
+
+document.getElementById('copy-notes').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(ta.value);
+    saved.textContent = 'panoya kopyalandı';
+  } catch (e) {
+    ta.select(); document.execCommand('copy');
+    saved.textContent = 'panoya kopyalandı';
+  }
+});
+
+document.getElementById('download-notes').addEventListener('click', () => {
+  const blob = new Blob([ta.value], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
+  a.href = url; a.download = 'skapp-cli-notlar-' + stamp + '.txt';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+});
+
+document.getElementById('clear-notes').addEventListener('click', () => {
+  if (ta.value && !confirm('Notları temizlemek istediğine emin misin?')) return;
+  ta.value = '';
+  localStorage.removeItem(NOTES_KEY);
+  saved.textContent = 'temizlendi';
+  ta.focus();
+});
+</script>
+</body>
+</html>

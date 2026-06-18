@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "grayscale",
+  "platform": "win",
+  "group": "visual-break",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "grayscale.ps1",
+  "i18n": {
+    "title": "skapiScriptGrayscaleTitle",
+    "summaryWhat": "skapiScriptGrayscaleSummaryWhat",
+    "summaryHow": "skapiScriptGrayscaleSummaryHow",
+    "note": "skapiScriptGrayscaleNote"
+  },
+  "params": [
+    {
+      "name": "on",
+      "type": "bool",
+      "default": true,
+      "i18nLabel": "skapiScriptGrayscaleParamOnLabel",
+      "i18nHint": "skapiScriptGrayscaleParamOnHint"
+    },
+    {
+      "name": "durationSec",
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 3600,
+      "unit": "seconds",
+      "i18nLabel": "skapiScriptGrayscaleParamDurationLabel",
+      "i18nHint": "skapiScriptGrayscaleParamDurationHint"
+    }
+  ],
+  "remoteRunnable": true
+}

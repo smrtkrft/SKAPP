@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "platform": "mac",
+  "runtime": "applescript-bash",
+  "groups": [
+    "power",
+    "display-audio",
+    "window-app",
+    "notify",
+    "visual-break",
+    "programs",
+    "save-work"
+  ]
+}

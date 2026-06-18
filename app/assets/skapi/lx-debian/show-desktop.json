@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "show-desktop",
+  "platform": "lx-debian",
+  "group": "visual-break",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "show-desktop.sh",
+  "i18n": {
+    "title": "skapiScriptShowDesktopTitle",
+    "summaryWhat": "skapiScriptShowDesktopSummaryWhat",
+    "summaryHow": "skapiScriptShowDesktopSummaryHowLxDebian",
+    "note": "skapiScriptShowDesktopNoteLxDebian"
+  },
+  "params": [],
+  "remoteRunnable": true
+}

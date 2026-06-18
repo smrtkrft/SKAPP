@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "save-active-window",
+  "platform": "win",
+  "group": "save-work",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "save-active-window.ps1",
+  "i18n": {
+    "title": "skapiScriptSaveActiveWindowTitle",
+    "summaryWhat": "skapiScriptSaveActiveWindowSummaryWhat",
+    "summaryHow": "skapiScriptSaveActiveWindowSummaryHow",
+    "note": null
+  },
+  "params": [
+    {
+      "name": "timeout",
+      "type": "int",
+      "default": 2,
+      "i18nLabel": "skapiScriptSaveActiveWindowParamTimeoutLabel",
+      "i18nHint": "skapiScriptSaveActiveWindowParamTimeoutHint",
+      "unit": "seconds"
+    },
+    {
+      "name": "verbose",
+      "type": "bool",
+      "default": true,
+      "i18nLabel": "skapiScriptSaveActiveWindowParamVerboseLabel",
+      "i18nHint": null
+    }
+  ]
+}

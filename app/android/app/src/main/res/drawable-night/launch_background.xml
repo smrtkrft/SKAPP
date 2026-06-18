@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark mode native splash — siyah zemin + beyaz logo. Light mode için
+     drawable/launch_background.xml beyaz zemin + siyah logo gösterir;
+     Android sistem mode'una göre Doğru variant'ı seçer. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/black" />
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/skapp_logo" />
+    </item>
+</layer-list>

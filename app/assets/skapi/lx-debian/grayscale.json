@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "grayscale",
+  "platform": "lx-debian",
+  "group": "visual-break",
+  "tier": 2,
+  "runtime": "bash",
+  "scriptFile": "grayscale.sh",
+  "i18n": {
+    "title": "skapiScriptGrayscaleTitle",
+    "summaryWhat": "skapiScriptGrayscaleSummaryWhat",
+    "summaryHow": "skapiScriptGrayscaleSummaryHowLxDebian",
+    "note": "skapiScriptGrayscaleNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "on",
+      "type": "bool",
+      "default": true,
+      "i18nLabel": "skapiScriptGrayscaleParamOnLabel",
+      "i18nHint": "skapiScriptGrayscaleParamOnHint"
+    }
+  ],
+  "remoteRunnable": true
+}

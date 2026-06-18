@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "save-all-open",
+  "platform": "lx-debian",
+  "group": "save-work",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "save-all-open.sh",
+  "i18n": {
+    "title": "skapiScriptSaveAllOpenTitle",
+    "summaryWhat": "skapiScriptSaveAllOpenSummaryWhat",
+    "summaryHow": "skapiScriptSaveAllOpenSummaryHowLxDebian",
+    "note": "skapiScriptSaveAllOpenNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "apps",
+      "type": "stringList",
+      "default": [
+        "soffice.bin",
+        "code",
+        "gedit",
+        "kate"
+      ],
+      "i18nLabel": "skapiScriptSaveAllOpenParamAppsLabel",
+      "i18nHint": "skapiScriptSaveAllOpenParamAppsHintLxDebian"
+    },
+    {
+      "name": "timeoutPerApp",
+      "type": "int",
+      "default": 2,
+      "i18nLabel": "skapiScriptSaveAllOpenParamTimeoutLabel",
+      "i18nHint": null,
+      "unit": "seconds"
+    },
+    {
+      "name": "verbose",
+      "type": "bool",
+      "default": true,
+      "i18nLabel": "skapiScriptSaveAllOpenParamVerboseLabel",
+      "i18nHint": null
+    }
+  ]
+}

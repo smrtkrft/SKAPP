@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "pulse-brightness",
+  "platform": "lx-debian",
+  "group": "visual-break",
+  "tier": 2,
+  "runtime": "bash",
+  "scriptFile": "pulse-brightness.sh",
+  "i18n": {
+    "title": "skapiScriptPulseBrightnessTitle",
+    "summaryWhat": "skapiScriptPulseBrightnessSummaryWhat",
+    "summaryHow": "skapiScriptPulseBrightnessSummaryHow",
+    "note": "skapiScriptPulseBrightnessNote"
+  },
+  "params": [
+    {
+      "name": "period",
+      "type": "int",
+      "default": 2,
+      "i18nLabel": "skapiScriptPulseBrightnessParamPeriodLabel",
+      "i18nHint": "skapiScriptPulseBrightnessParamPeriodHint",
+      "unit": "seconds",
+      "min": 1,
+      "max": 10
+    },
+    {
+      "name": "lowPercent",
+      "type": "int",
+      "default": 60,
+      "i18nLabel": "skapiScriptPulseBrightnessParamLowPercentLabel",
+      "i18nHint": "skapiScriptPulseBrightnessParamLowPercentHint",
+      "min": 0,
+      "max": 90
+    },
+    {
+      "name": "cycles",
+      "type": "int",
+      "default": 5,
+      "i18nLabel": "skapiScriptPulseBrightnessParamCyclesLabel",
+      "i18nHint": "skapiScriptPulseBrightnessParamCyclesHint",
+      "min": 1,
+      "max": 30
+    }
+  ],
+  "remoteRunnable": true
+}
