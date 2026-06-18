@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "programs",
+  "platform": "win",
+  "i18nTitle": "skapiGroupProgramsTitle",
+  "i18nDesc": "skapiGroupProgramsDesc",
+  "i18nFoot": "skapiGroupProgramsFoot",
+  "scripts": [
+    "close-with-save",
+    "close-all-instances",
+    "browser-close-all"
+  ]
+}

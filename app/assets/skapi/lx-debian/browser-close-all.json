@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "browser-close-all",
+  "platform": "lx-debian",
+  "group": "programs",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "browser-close-all.sh",
+  "i18n": {
+    "title": "skapiScriptBrowserCloseAllTitle",
+    "summaryWhat": "skapiScriptBrowserCloseAllSummaryWhat",
+    "summaryHow": "skapiScriptBrowserCloseAllSummaryHowLxDebian",
+    "note": "skapiScriptBrowserCloseAllNoteLxDebian"
+  },
+  "params": []
+}

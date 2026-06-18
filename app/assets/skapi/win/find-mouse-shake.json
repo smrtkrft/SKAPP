@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "find-mouse-shake",
+  "platform": "win",
+  "group": "visual-break",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "find-mouse-shake.ps1",
+  "i18n": {
+    "title": "skapiScriptFindMouseShakeTitle",
+    "summaryWhat": "skapiScriptFindMouseShakeSummaryWhat",
+    "summaryHow": "skapiScriptFindMouseShakeSummaryHow",
+    "note": "skapiScriptFindMouseShakeNote"
+  },
+  "params": [
+    {
+      "name": "radius",
+      "type": "int",
+      "default": 60,
+      "i18nLabel": "skapiScriptFindMouseShakeParamRadiusLabel",
+      "i18nHint": "skapiScriptFindMouseShakeParamRadiusHint",
+      "min": 1,
+      "max": 1000
+    },
+    {
+      "name": "loops",
+      "type": "int",
+      "default": 3,
+      "i18nLabel": "skapiScriptFindMouseShakeParamLoopsLabel",
+      "i18nHint": "skapiScriptFindMouseShakeParamLoopsHint",
+      "min": 1,
+      "max": 50
+    }
+  ],
+  "remoteRunnable": true
+}

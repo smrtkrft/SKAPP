@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "kill-app",
+  "platform": "win",
+  "group": "window-app",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "kill-app.ps1",
+  "i18n": {
+    "title": "skapiScriptKillAppTitle",
+    "summaryWhat": "skapiScriptKillAppSummaryWhat",
+    "summaryHow": "skapiScriptKillAppSummaryHow",
+    "note": "skapiScriptKillAppNote"
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptKillAppParamProcessLabel",
+      "i18nHint": "skapiScriptKillAppParamProcessHint"
+    },
+    {
+      "name": "timeout",
+      "type": "int",
+      "default": 5,
+      "i18nLabel": "skapiScriptKillAppParamTimeoutLabel",
+      "i18nHint": "skapiScriptKillAppParamTimeoutHint",
+      "unit": "seconds"
+    },
+    {
+      "name": "preKillSave",
+      "type": "bool",
+      "default": false,
+      "i18nLabel": "skapiScriptKillAppParamPreKillSaveLabel",
+      "i18nHint": "skapiScriptKillAppParamPreKillSaveHint"
+    }
+  ]
+}

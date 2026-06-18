@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "notify",
+  "platform": "win",
+  "i18nTitle": "skapiGroupNotifyTitle",
+  "i18nDesc": "skapiGroupNotifyDesc",
+  "i18nFoot": "skapiGroupNotifyFoot",
+  "scripts": [
+    "dialog",
+    "toast"
+  ]
+}

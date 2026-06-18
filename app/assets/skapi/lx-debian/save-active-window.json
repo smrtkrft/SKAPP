@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "save-active-window",
+  "platform": "lx-debian",
+  "group": "save-work",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "save-active-window.sh",
+  "i18n": {
+    "title": "skapiScriptSaveActiveWindowTitle",
+    "summaryWhat": "skapiScriptSaveActiveWindowSummaryWhat",
+    "summaryHow": "skapiScriptSaveActiveWindowSummaryHowLxDebian",
+    "note": "skapiScriptSaveActiveWindowNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "timeout",
+      "type": "int",
+      "default": 2,
+      "i18nLabel": "skapiScriptSaveActiveWindowParamTimeoutLabel",
+      "i18nHint": "skapiScriptSaveActiveWindowParamTimeoutHint",
+      "unit": "seconds"
+    },
+    {
+      "name": "verbose",
+      "type": "bool",
+      "default": true,
+      "i18nLabel": "skapiScriptSaveActiveWindowParamVerboseLabel",
+      "i18nHint": null
+    }
+  ]
+}

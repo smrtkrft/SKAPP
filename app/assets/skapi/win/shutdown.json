@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "shutdown",
+  "platform": "win",
+  "group": "power",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "shutdown.ps1",
+  "i18n": {
+    "title": "skapiScriptShutdownTitle",
+    "summaryWhat": "skapiScriptShutdownSummaryWhat",
+    "summaryHow": "skapiScriptShutdownSummaryHow",
+    "note": "skapiScriptShutdownNote"
+  },
+  "params": [
+    {
+      "name": "delay",
+      "type": "int",
+      "default": 30,
+      "i18nLabel": "skapiScriptShutdownParamDelayLabel",
+      "i18nHint": "skapiScriptShutdownParamDelayHint",
+      "unit": "seconds"
+    },
+    {
+      "name": "force",
+      "type": "bool",
+      "default": false,
+      "i18nLabel": "skapiScriptShutdownParamForceLabel",
+      "i18nHint": "skapiScriptShutdownParamForceHint"
+    }
+  ]
+}

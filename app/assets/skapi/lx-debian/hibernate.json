@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "hibernate",
+  "platform": "lx-debian",
+  "group": "power",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "hibernate.sh",
+  "i18n": {
+    "title": "skapiScriptHibernateTitle",
+    "summaryWhat": "skapiScriptHibernateSummaryWhat",
+    "summaryHow": "skapiScriptHibernateSummaryHowLxDebian",
+    "note": "skapiScriptHibernateNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "delay",
+      "type": "int",
+      "default": 0,
+      "i18nLabel": "skapiScriptHibernateParamDelayLabel",
+      "i18nHint": "skapiScriptHibernateParamDelayHint",
+      "unit": "seconds"
+    }
+  ]
+}

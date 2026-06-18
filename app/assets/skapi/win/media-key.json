@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "media-key",
+  "platform": "win",
+  "group": "display-audio",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "media-key.ps1",
+  "i18n": {
+    "title": "skapiScriptMediaKeyTitle",
+    "summaryWhat": "skapiScriptMediaKeySummaryWhat",
+    "summaryHow": "skapiScriptMediaKeySummaryHow",
+    "note": "skapiScriptMediaKeyNote"
+  },
+  "params": [
+    {
+      "name": "key",
+      "type": "string",
+      "default": "play-pause",
+      "i18nLabel": "skapiScriptMediaKeyParamKeyLabel",
+      "i18nHint": "skapiScriptMediaKeyParamKeyHint",
+      "allowedValues": [
+        "play-pause",
+        "playpause",
+        "play",
+        "pause",
+        "next",
+        "prev",
+        "previous",
+        "stop"
+      ]
+    }
+  ],
+  "remoteRunnable": true
+}

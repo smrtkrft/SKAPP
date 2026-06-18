@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "display-audio",
+  "platform": "mac",
+  "i18nTitle": "skapiGroupDisplayAudioTitle",
+  "i18nDesc": "skapiGroupDisplayAudioDesc",
+  "i18nFoot": "skapiGroupDisplayAudioFoot",
+  "scripts": [
+    "brightness",
+    "mute-toggle",
+    "volume-set",
+    "media-key"
+  ]
+}

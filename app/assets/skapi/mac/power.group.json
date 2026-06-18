@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "power",
+  "platform": "mac",
+  "i18nTitle": "skapiGroupPowerTitle",
+  "i18nDesc": "skapiGroupPowerDesc",
+  "i18nFoot": "skapiGroupPowerFoot",
+  "scripts": [
+    "lock",
+    "hibernate",
+    "sleep",
+    "shutdown"
+  ]
+}

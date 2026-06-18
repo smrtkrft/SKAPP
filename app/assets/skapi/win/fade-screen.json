@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "fade-screen",
+  "platform": "win",
+  "group": "visual-break",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "fade-screen.ps1",
+  "i18n": {
+    "title": "skapiScriptFadeScreenTitle",
+    "summaryWhat": "skapiScriptFadeScreenSummaryWhat",
+    "summaryHow": "skapiScriptFadeScreenSummaryHow",
+    "note": "skapiScriptFadeScreenNote"
+  },
+  "params": [
+    {
+      "name": "target",
+      "type": "int",
+      "default": 20,
+      "i18nLabel": "skapiScriptFadeScreenParamTargetLabel",
+      "i18nHint": "skapiScriptFadeScreenParamTargetHint",
+      "min": 0,
+      "max": 100
+    },
+    {
+      "name": "duration",
+      "type": "int",
+      "default": 3,
+      "i18nLabel": "skapiScriptFadeScreenParamDurationLabel",
+      "i18nHint": "skapiScriptFadeScreenParamDurationHint",
+      "unit": "seconds",
+      "min": 0,
+      "max": 60
+    }
+  ],
+  "remoteRunnable": true
+}

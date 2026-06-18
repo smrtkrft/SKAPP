@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "close-window",
+  "platform": "lx-debian",
+  "group": "window-app",
+  "tier": 2,
+  "runtime": "bash",
+  "scriptFile": "close-window.sh",
+  "i18n": {
+    "title": "skapiScriptCloseWindowTitle",
+    "summaryWhat": "skapiScriptCloseWindowSummaryWhat",
+    "summaryHow": "skapiScriptCloseWindowSummaryHowLxDebian",
+    "note": "skapiScriptCloseWindowNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptCloseWindowParamProcessLabel",
+      "i18nHint": "skapiScriptCloseWindowParamProcessHintLxDebian"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "sleep",
+  "platform": "win",
+  "group": "power",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "sleep.ps1",
+  "i18n": {
+    "title": "skapiScriptSleepTitle",
+    "summaryWhat": "skapiScriptSleepSummaryWhat",
+    "summaryHow": "skapiScriptSleepSummaryHow",
+    "note": null
+  },
+  "params": [
+    {
+      "name": "delay",
+      "type": "int",
+      "default": 0,
+      "i18nLabel": "skapiScriptSleepParamDelayLabel",
+      "i18nHint": "skapiScriptSleepParamDelayHint",
+      "unit": "seconds"
+    }
+  ]
+}

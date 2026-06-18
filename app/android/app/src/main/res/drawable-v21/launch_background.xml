@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 5+ native splash. Sabit beyaz arka plan + siyah logo. Dark
+     mode'da bile değişmez — windowBackground bu drawable'ı kullanır. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/white" />
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/skapp_logo" />
+    </item>
+</layer-list>

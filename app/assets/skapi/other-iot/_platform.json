@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "platform": "other-iot",
+  "runtime": "iot-api",
+  "groups": []
+}

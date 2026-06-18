@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "dialog",
+  "platform": "win",
+  "group": "notify",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "dialog.ps1",
+  "i18n": {
+    "title": "skapiScriptDialogTitle",
+    "summaryWhat": "skapiScriptDialogSummaryWhat",
+    "summaryHow": "skapiScriptDialogSummaryHow",
+    "note": "skapiScriptDialogNote"
+  },
+  "params": [
+    {
+      "name": "title",
+      "type": "string",
+      "default": "SKAPP",
+      "i18nLabel": "skapiScriptDialogParamTitleLabel",
+      "i18nHint": "skapiScriptDialogParamTitleHint"
+    },
+    {
+      "name": "body",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptDialogParamBodyLabel",
+      "i18nHint": "skapiScriptDialogParamBodyHint"
+    },
+    {
+      "name": "buttons",
+      "type": "string",
+      "default": "ok_cancel",
+      "i18nLabel": "skapiScriptDialogParamButtonsLabel",
+      "i18nHint": "skapiScriptDialogParamButtonsHint",
+      "allowedValues": ["ok", "ok_cancel", "yes_no", "yes_no_cancel"]
+    },
+    {
+      "name": "timeout",
+      "type": "int",
+      "default": 0,
+      "i18nLabel": "skapiScriptDialogParamTimeoutLabel",
+      "i18nHint": "skapiScriptDialogParamTimeoutHint",
+      "unit": "seconds",
+      "min": 0,
+      "max": 300
+    },
+    {
+      "name": "fullscreen",
+      "type": "bool",
+      "default": false,
+      "i18nLabel": "skapiScriptDialogParamTitleLabel",
+      "i18nHint": "skapiScriptDialogParamTitleHint"
+    }
+  ],
+  "remoteRunnable": true
+}

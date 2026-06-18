@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "minimize-window",
+  "platform": "win",
+  "group": "window-app",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "minimize-window.ps1",
+  "i18n": {
+    "title": "skapiScriptMinimizeWindowTitle",
+    "summaryWhat": "skapiScriptMinimizeWindowSummaryWhat",
+    "summaryHow": "skapiScriptMinimizeWindowSummaryHow",
+    "note": "skapiScriptMinimizeWindowNote"
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptMinimizeWindowParamProcessLabel",
+      "i18nHint": "skapiScriptMinimizeWindowParamProcessHint"
+    }
+  ]
+}

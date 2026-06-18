@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "platform": "lx-debian",
+  "runtime": "bash",
+  "groups": [
+    "power",
+    "display-audio",
+    "window-app",
+    "notify",
+    "visual-break",
+    "programs",
+    "save-work"
+  ]
+}

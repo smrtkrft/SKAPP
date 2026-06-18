@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "save-all-open",
+  "platform": "win",
+  "group": "save-work",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "save-all-open.ps1",
+  "i18n": {
+    "title": "skapiScriptSaveAllOpenTitle",
+    "summaryWhat": "skapiScriptSaveAllOpenSummaryWhat",
+    "summaryHow": "skapiScriptSaveAllOpenSummaryHow",
+    "note": "skapiScriptSaveAllOpenNote"
+  },
+  "params": [
+    {
+      "name": "apps",
+      "type": "stringList",
+      "default": [
+        "winword",
+        "excel",
+        "powerpnt",
+        "code"
+      ],
+      "i18nLabel": "skapiScriptSaveAllOpenParamAppsLabel",
+      "i18nHint": "skapiScriptSaveAllOpenParamAppsHint"
+    },
+    {
+      "name": "timeoutPerApp",
+      "type": "int",
+      "default": 2,
+      "i18nLabel": "skapiScriptSaveAllOpenParamTimeoutLabel",
+      "i18nHint": null,
+      "unit": "seconds"
+    },
+    {
+      "name": "verbose",
+      "type": "bool",
+      "default": true,
+      "i18nLabel": "skapiScriptSaveAllOpenParamVerboseLabel",
+      "i18nHint": null
+    }
+  ]
+}

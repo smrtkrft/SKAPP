@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>SKAPP · Cihaz Kartı v9 · Kompakt · 3 veri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F2EC;
+    --neu:   #EBE6D8;
+    --neu-deep: #DDD7C6;
+    --paper: #FFFEFA;
+    --paper-2: #FAF6EC;
+    --ink:   #0E0D0A;
+    --ink-2: #2C2823;
+    --ink-3: #1A1814;
+    --ink-dim: rgba(14,13,10,0.55);
+    --ink-mute: rgba(14,13,10,0.38);
+    --ink-faint: rgba(14,13,10,0.12);
+    --ink-hair: rgba(14,13,10,0.06);
+    --mustard: #D4A017;
+    --mustard-soft: #E8C25A;
+    --mustard-mist: rgba(212,160,23,0.18);
+    --mustard-tint: rgba(212,160,23,0.07);
+    --mustard-deep: #8B6708;
+    --mustard-warm: #F5C84A;
+    --warn: #D32F2F;
+    --warn-soft: rgba(211,47,47,0.12);
+    --off:   #9A9587;
+    --off-soft: rgba(154,149,135,0.18);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0; padding: 0;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+  }
+
+  header.page {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 56px 32px 6px;
+  }
+  header.page .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; font-weight: 700;
+    color: var(--mustard-deep);
+    background: var(--mustard-mist);
+    padding: 3px 8px; border-radius: 4px;
+    letter-spacing: 0.6px;
+    margin-bottom: 14px;
+  }
+  header.page h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 38px; font-weight: 700;
+    letter-spacing: -1.2px;
+    margin: 0 0 8px;
+    line-height: 1.05;
+  }
+  header.page p {
+    margin: 0 0 8px;
+    color: var(--ink-dim);
+    font-size: 14px;
+    max-width: 760px;
+    line-height: 1.6;
+  }
+  header.page p strong { color: var(--ink); }
+
+  .rule-list {
+    margin: 22px 0 0;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .rule-list .chip {
+    font-size: 11px; font-weight: 600;
+    color: var(--ink); background: var(--paper);
+    border: 1px solid var(--ink-faint);
+    padding: 5px 11px; border-radius: 999px;
+  }
+  .rule-list .chip.on {
+    color: var(--mustard-deep);
+    background: var(--mustard-mist);
+    border-color: rgba(212,160,23,0.35);
+  }
+  .rule-list .chip.cut {
+    color: var(--warn);
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  main.gallery {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 48px 32px 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
+  .concept {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  @media (max-width: 880px) { .concept { grid-template-columns: 1fr; } }
+  .concept .info .num {
+    font-family: 'Fraunces', serif;
+    font-size: 56px; font-weight: 800; line-height: 0.85;
+    color: var(--mustard);
+    letter-spacing: -3px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .concept .info h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 700;
+    letter-spacing: -0.6px;
+    margin: 0 0 4px;
+    line-height: 1.1;
+  }
+  .concept .info .sub {
+    color: var(--mustard-deep); font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin: 0 0 12px;
+  }
+  .concept .info p {
+    color: var(--ink-dim); font-size: 13px;
+    line-height: 1.55; margin: 0 0 6px;
+  }
+  .concept .info p strong { color: var(--ink); }
+  .concept .info .meta {
+    margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--ink-dim);
+    line-height: 1.7;
+  }
+  .concept .info .meta .k { color: var(--mustard-deep); font-weight: 700; }
+
+  .stage {
+    background: radial-gradient(circle at 50% 30%, var(--paper) 0%, var(--cream) 90%);
+    border-radius: 20px;
+    border: 1px solid var(--ink-faint);
+    padding: 36px 28px;
+    display: flex; flex-wrap: wrap;
+    align-items: center; justify-content: center;
+    gap: 18px;
+    min-height: 200px;
+    box-shadow: 0 2px 0 var(--ink-hair);
+  }
+  .variant { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .variant .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 700;
+    color: var(--ink-mute);
+    letter-spacing: 0.6px; text-transform: uppercase;
+  }
+
+  /* Evrensel durum noktası */
+  .dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--mustard);
+    box-shadow: 0 0 0 2.5px var(--mustard-mist);
+    flex-shrink: 0;
+  }
+  .dot.off { background: var(--off); box-shadow: 0 0 0 2.5px var(--off-soft); }
+
+  /* ════════════════════════════════════════════════════════════════
+     1 · ROW  ·  156×44  ·  yatay 2 satır
+     En sade. Üst satır: nokta + ad. Alt satır: ID. Tür kaldırıldı,
+     ID prefix'i (LS-, BF-, WD-) zaten türü söylüyor.
+     ════════════════════════════════════════════════════════════════ */
+  .c-row {
+    width: 156px;
+    background: var(--paper);
+    border: 1px solid var(--ink-faint);
+    border-radius: 10px;
+    padding: 9px 12px 10px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 2px 6px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column;
+    gap: 3px;
+  }
+  .c-row .top {
+    display: flex; align-items: center; gap: 7px;
+    min-width: 0;
+  }
+  .c-row .top .nm {
+    font-family: 'Fraunces', serif;
+    font-size: 14.5px; font-weight: 600;
+    letter-spacing: -0.2px;
+    color: var(--ink);
+    line-height: 1.1;
+    overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+    flex: 1; min-width: 0;
+  }
+  .c-row .id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-mute);
+    letter-spacing: 0.3px;
+    padding-left: 14px;
+  }
+  .c-row.off .top .nm { color: var(--ink-dim); }
+
+  /* ════════════════════════════════════════════════════════════════
+     2 · STRIP  ·  128×54  ·  sol kenar şeridi
+     Şerit durumu söylüyor, nokta gerek kalmıyor. Daha temiz.
+     ════════════════════════════════════════════════════════════════ */
+  .c-strip {
+    width: 132px;
+    background: var(--paper);
+    border: 1px solid var(--ink-faint);
+    border-radius: 8px;
+    padding: 9px 11px 10px 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+  }
+  .c-strip::before {
+    content: '';
+    position: absolute; left: 0; top: 8px; bottom: 8px;
+    width: 3px;
+    background: var(--mustard);
+    border-radius: 0 2px 2px 0;
+  }
+  .c-strip.off::before { background: var(--off); }
+  .c-strip .nm {
+    font-family: 'Fraunces', serif;
+    font-size: 14px; font-weight: 600;
+    letter-spacing: -0.2px;
+    color: var(--ink);
+    line-height: 1.1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    margin-bottom: 4px;
+  }
+  .c-strip.off .nm { color: var(--ink-dim); }
+  .c-strip .id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-mute);
+    letter-spacing: 0.3px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     3 · AVATAR  ·  140×52  ·  ad baş harfi + isim
+     Sol mustard daire içinde adın baş harfi (serif). Type'a gerek yok,
+     baş harf isimden türeyen tek görsel öğe. Status: daire rengi.
+     ════════════════════════════════════════════════════════════════ */
+  .c-avatar {
+    width: 144px;
+    background: var(--paper);
+    border: 1px solid var(--ink-faint);
+    border-radius: 10px;
+    padding: 6px;
+    display: grid;
+    grid-template-columns: 38px 1fr;
+    gap: 9px;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .c-avatar .av {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, var(--mustard-warm) 0%, var(--mustard) 100%);
+    color: var(--ink);
+    display: grid; place-items: center;
+    font-family: 'Fraunces', serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: -0.5px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
+  }
+  .c-avatar.off .av {
+    background: linear-gradient(180deg, #C4BEAA 0%, #9A9587 100%);
+    color: rgba(14,13,10,0.55);
+  }
+  .c-avatar .body { min-width: 0; }
+  .c-avatar .body .nm {
+    font-family: 'Fraunces', serif;
+    font-size: 14px; font-weight: 600;
+    letter-spacing: -0.2px;
+    color: var(--ink);
+    line-height: 1.05;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .c-avatar.off .body .nm { color: var(--ink-dim); }
+  .c-avatar .body .id {
+    margin-top: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--ink-mute);
+    letter-spacing: 0.3px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     4 · PILL  ·  ~170×30  ·  tek satır
+     Liste/dış orbit için. Sadece nokta + ad + ID.
+     ════════════════════════════════════════════════════════════════ */
+  .c-pill {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 30px;
+    background: var(--paper);
+    border: 1px solid var(--ink-faint);
+    border-radius: 999px;
+    padding: 0 13px 0 11px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    max-width: 220px;
+  }
+  .c-pill .nm {
+    font-family: 'Fraunces', serif;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: -0.2px;
+    color: var(--ink);
+    line-height: 1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    min-width: 0;
+  }
+  .c-pill.off .nm { color: var(--ink-dim); }
+  .c-pill .id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--ink-mute);
+    letter-spacing: 0.3px;
+  }
+  .c-pill .sep {
+    width: 2px; height: 2px; border-radius: 50%;
+    background: var(--ink-faint);
+    flex-shrink: 0;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     5 · TILE  ·  96×96  ·  kare, ad-merkezli
+     Tip kaldırıldığı için isim baskın. Sol üst nokta, ortada ad serif
+     (2 satıra kadar), altta ID mono kısaltılmış.
+     ════════════════════════════════════════════════════════════════ */
+  .c-tile {
+    width: 96px; height: 96px;
+    background: var(--paper);
+    border: 1px solid var(--ink-faint);
+    border-radius: 12px;
+    padding: 9px 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  .c-tile .head {
+    display: flex; align-items: flex-start; justify-content: flex-start;
+  }
+  .c-tile .name {
+    font-family: 'Fraunces', serif;
+    font-size: 14px; font-weight: 600;
+    letter-spacing: -0.2px;
+    color: var(--ink);
+    line-height: 1.1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .c-tile.off .name { color: var(--ink-dim); }
+  .c-tile .id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-mute);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     6 · UNDERLINE  ·  148×48  ·  altçizgi durumu
+     Nokta yok. İsmin altındaki mustard çizgi durumu söyler.
+     Offline: çizgi gri, kart soluk. En sessiz/sofistike form.
+     ════════════════════════════════════════════════════════════════ */
+  .c-underline {
+    width: 148px;
+    background: var(--paper);
+    border: 1px solid var(--ink-faint);
+    border-radius: 8px;
+    padding: 8px 12px 9px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .c-underline .nm {
+    font-family: 'Fraunces', serif;
+    font-size: 14.5px; font-weight: 600;
+    letter-spacing: -0.2px;
+    color: var(--ink);
+    line-height: 1.1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    position: relative;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--mustard);
+  }
+  .c-underline.off .nm {
+    color: var(--ink-dim);
+    border-bottom-color: var(--off);
+  }
+  .c-underline .id {
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-mute);
+    letter-spacing: 0.3px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     KONSTELASYON DEMO — gerçek orbit yerleşimi
+     ════════════════════════════════════════════════════════════════ */
+  .preview-section {
+    max-width: 1320px; margin: 0 auto;
+    padding: 56px 32px 24px;
+  }
+  .preview-section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 26px; font-weight: 700; letter-spacing: -0.6px;
+    margin: 0 0 6px;
+  }
+  .preview-section > p {
+    color: var(--ink-dim); font-size: 13px; margin: 0 0 24px;
+    max-width: 720px; line-height: 1.6;
+  }
+  .preview-frame {
+    background: radial-gradient(circle at center, var(--paper) 0%, var(--cream) 70%);
+    border-radius: 28px;
+    border: 1px solid var(--ink-faint);
+    aspect-ratio: 1 / 1;
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+  }
+  .preview-frame .label {
+    position: absolute; top: 18px; left: 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+    color: var(--ink-mute); text-transform: uppercase;
+  }
+  .preview-frame .label-r {
+    position: absolute; top: 18px; right: 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    color: var(--mustard-deep);
+  }
+  .orbit-ring {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px dashed rgba(212,160,23,0.40);
+  }
+  .orbit-ring.r1 { width: 240px; height: 240px; }
+  .orbit-ring.r2 { width: 400px; height: 400px; }
+  .orbit-ring.r3 { width: 560px; height: 560px; }
+  .center-hub {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 132px; height: 132px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 35%, var(--paper) 0%, var(--cream) 90%);
+    border: 1px dashed rgba(212,160,23,0.5);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    box-shadow: 0 0 0 6px rgba(212,160,23,0.05);
+  }
+  .center-hub .name {
+    font-family: 'Fraunces', serif;
+    font-size: 30px; font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .center-hub .role {
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px; font-weight: 700;
+    color: var(--ink-mute);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .orbit-slot {
+    position: absolute;
+    top: 50%; left: 50%;
+  }
+
+  footer {
+    max-width: 1320px; margin: 0 auto; padding: 40px 32px 80px;
+    color: var(--ink-dim); font-size: 13px; line-height: 1.7;
+  }
+  footer h3 {
+    font-family: 'Fraunces', serif;
+    color: var(--ink); font-size: 20px; font-weight: 700;
+    margin: 28px 0 10px; letter-spacing: -0.4px;
+  }
+  footer p { max-width: 760px; }
+  footer ul { max-width: 760px; padding-left: 18px; }
+  footer ul li { margin-bottom: 4px; }
+  footer code {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    background: var(--neu); padding: 1px 5px; border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+
+<header class="page">
+  <span class="tag">v9 · 3 VERİ · TÜR YOK</span>
+  <h1>Ad, ID, bağlantı. Başka şey yok.</h1>
+  <p>Tür yazısı kaldırıldı. ID prefix'i (<code style="background:var(--neu); padding:1px 5px; border-radius:3px; font-family:'JetBrains Mono', monospace; font-size:11.5px;">LS-</code>, <code style="background:var(--neu); padding:1px 5px; border-radius:3px; font-family:'JetBrains Mono', monospace; font-size:11.5px;">BF-</code>, <code style="background:var(--neu); padding:1px 5px; border-radius:3px; font-family:'JetBrains Mono', monospace; font-size:11.5px;">WD-</code>, <code style="background:var(--neu); padding:1px 5px; border-radius:3px; font-family:'JetBrains Mono', monospace; font-size:11.5px;">SY-</code>) zaten türü söylüyor. Ayrı bir tür rozeti gereksiz tekrar, görsel gürültü. Kartta üç şey kalır: <strong>ad, ID, çevrim içi mi</strong>.</p>
+  <div class="rule-list">
+    <span class="chip">Ad</span>
+    <span class="chip">ID</span>
+    <span class="chip on">Online/offline</span>
+    <span class="chip cut">Tür yazısı</span>
+  </div>
+</header>
+
+<main class="gallery">
+
+  <!-- ════════════════ 1 · ROW ════════════════ -->
+  <section class="concept">
+    <div class="info">
+      <span class="num">01</span>
+      <h2>Row</h2>
+      <p class="sub">156×44 · yatay 2 satır</p>
+      <p>En sade form. Nokta + serif ad üstte, ID altta. Hiçbir süs yok.</p>
+      <p><strong>Önerilen.</strong> Mevcut LebensSpur kartının tür yazısı temizlenmiş hâli.</p>
+      <div class="meta">
+        <div><span class="k">W×H</span> 156×44</div>
+        <div><span class="k">durum</span> sol nokta</div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="variant">
+        <div class="c-row">
+          <div class="top">
+            <span class="dot"></span>
+            <span class="nm">LebensSpur</span>
+          </div>
+          <div class="id">LS-AM1MDDQV1</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-row">
+          <div class="top">
+            <span class="dot"></span>
+            <span class="nm">Salon duvarı</span>
+          </div>
+          <div class="id">WD-C73KP9QXM</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-row">
+          <div class="top">
+            <span class="dot"></span>
+            <span class="nm">Yatak odası</span>
+          </div>
+          <div class="id">BF-A06TMFSQT</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-row off">
+          <div class="top">
+            <span class="dot off"></span>
+            <span class="nm">Giriş kapısı</span>
+          </div>
+          <div class="id">SY-B12XK9QPR</div>
+        </div>
+        <div class="label">offline</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ 2 · STRIP ════════════════ -->
+  <section class="concept">
+    <div class="info">
+      <span class="num">02</span>
+      <h2>Strip</h2>
+      <p class="sub">132×54 · sol kenar şeridi</p>
+      <p>Nokta yerine sol kenarda 3px renkli şerit durumu söyler. Daha sessiz, daha "tabela" hissi.</p>
+      <p>Uzaktan bakarken şeritlerin rengi gridde durum dağılımını gösterir.</p>
+      <div class="meta">
+        <div><span class="k">W×H</span> 132×54</div>
+        <div><span class="k">durum</span> sol şerit</div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="variant">
+        <div class="c-strip">
+          <div class="nm">LebensSpur</div>
+          <div class="id">LS-AM1MDDQV1</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-strip">
+          <div class="nm">Salon duvarı</div>
+          <div class="id">WD-C73KP9QXM</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-strip">
+          <div class="nm">Yatak odası</div>
+          <div class="id">BF-A06TMFSQT</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-strip off">
+          <div class="nm">Giriş kapısı</div>
+          <div class="id">SY-B12XK9QPR</div>
+        </div>
+        <div class="label">offline</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ 3 · AVATAR ════════════════ -->
+  <section class="concept">
+    <div class="info">
+      <span class="num">03</span>
+      <h2>Avatar</h2>
+      <p class="sub">144×52 · ad baş harfi yuvarlağı</p>
+      <p>Sol mustard yuvarlak içinde adın <strong>ilk harfi</strong>. Türden değil isimden türeyen tek görsel element. Online: mustard, offline: gri.</p>
+      <p>Çoğu cihaz farklı adlar alır ("Salon", "Yatak", "Mutfak"); baş harfler grid'de çeşit yaratır.</p>
+      <div class="meta">
+        <div><span class="k">W×H</span> 144×52</div>
+        <div><span class="k">durum</span> avatar rengi</div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="variant">
+        <div class="c-avatar">
+          <div class="av">L</div>
+          <div class="body">
+            <div class="nm">LebensSpur</div>
+            <div class="id">LS-AM1MDDQV1</div>
+          </div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-avatar">
+          <div class="av">S</div>
+          <div class="body">
+            <div class="nm">Salon duvarı</div>
+            <div class="id">WD-C73KP9QXM</div>
+          </div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-avatar">
+          <div class="av">Y</div>
+          <div class="body">
+            <div class="nm">Yatak odası</div>
+            <div class="id">BF-A06TMFSQT</div>
+          </div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-avatar off">
+          <div class="av">G</div>
+          <div class="body">
+            <div class="nm">Giriş kapısı</div>
+            <div class="id">SY-B12XK9QPR</div>
+          </div>
+        </div>
+        <div class="label">offline</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ 4 · PILL ════════════════ -->
+  <section class="concept">
+    <div class="info">
+      <span class="num">04</span>
+      <h2>Pill</h2>
+      <p class="sub">~180×30 · tek satır</p>
+      <p>Tek satırda her şey: nokta, ad, ID. Yoğun orbit veya çok cihazlı liste için en kompakt.</p>
+      <p>15+ cihaz tek halkaya sığar, yine de okunaklı kalır.</p>
+      <div class="meta">
+        <div><span class="k">W×H</span> ~180×30</div>
+        <div><span class="k">uygunluk</span> yüksek yoğunluk</div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="variant">
+        <span class="c-pill">
+          <span class="dot"></span>
+          <span class="nm">LebensSpur</span>
+          <span class="sep"></span>
+          <span class="id">LS-AM1MDDQV1</span>
+        </span>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <span class="c-pill">
+          <span class="dot"></span>
+          <span class="nm">Salon duvarı</span>
+          <span class="sep"></span>
+          <span class="id">WD-C73KP9QXM</span>
+        </span>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <span class="c-pill">
+          <span class="dot"></span>
+          <span class="nm">Yatak odası</span>
+          <span class="sep"></span>
+          <span class="id">BF-A06TMFSQT</span>
+        </span>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <span class="c-pill off">
+          <span class="dot off"></span>
+          <span class="nm">Giriş kapısı</span>
+          <span class="sep"></span>
+          <span class="id">SY-B12XK9QPR</span>
+        </span>
+        <div class="label">offline</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ 5 · TILE ════════════════ -->
+  <section class="concept">
+    <div class="info">
+      <span class="num">05</span>
+      <h2>Tile</h2>
+      <p class="sub">96×96 · kare, ad-merkezli</p>
+      <p>Tür kaldırıldığı için ad baskın. Sol üst durum noktası, ortada serif ad (2 satıra kadar sığar), altta ID mono kısaltılmış.</p>
+      <p>Kare form orbit slotuna eşit yerleşir, gridde de çalışır.</p>
+      <div class="meta">
+        <div><span class="k">W×H</span> 96×96</div>
+        <div><span class="k">ad</span> max 2 satır</div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="variant">
+        <div class="c-tile">
+          <div class="head"><span class="dot"></span></div>
+          <div class="name">LebensSpur</div>
+          <div class="id">LS-AM1MDDQV1</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-tile">
+          <div class="head"><span class="dot"></span></div>
+          <div class="name">Salon duvarı</div>
+          <div class="id">WD-C73KP9QXM</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-tile">
+          <div class="head"><span class="dot"></span></div>
+          <div class="name">Yatak odası</div>
+          <div class="id">BF-A06TMFSQT</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-tile off">
+          <div class="head"><span class="dot off"></span></div>
+          <div class="name">Giriş kapısı</div>
+          <div class="id">SY-B12XK9QPR</div>
+        </div>
+        <div class="label">offline</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ 6 · UNDERLINE ════════════════ -->
+  <section class="concept">
+    <div class="info">
+      <span class="num">06</span>
+      <h2>Underline</h2>
+      <p class="sub">148×48 · altçizgi durumu</p>
+      <p>Nokta yok. Adın altındaki <strong>mustard altçizgi</strong> durumu söyler; offline: çizgi gri, ad soluk. En sessiz form.</p>
+      <p>Sofistike, sade kullanıcıyı yormaz. Belirgin renk yığını yok.</p>
+      <div class="meta">
+        <div><span class="k">W×H</span> 148×48</div>
+        <div><span class="k">durum</span> altçizgi rengi</div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="variant">
+        <div class="c-underline">
+          <div class="nm">LebensSpur</div>
+          <div class="id">LS-AM1MDDQV1</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-underline">
+          <div class="nm">Salon duvarı</div>
+          <div class="id">WD-C73KP9QXM</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-underline">
+          <div class="nm">Yatak odası</div>
+          <div class="id">BF-A06TMFSQT</div>
+        </div>
+        <div class="label">online</div>
+      </div>
+      <div class="variant">
+        <div class="c-underline off">
+          <div class="nm">Giriş kapısı</div>
+          <div class="id">SY-B12XK9QPR</div>
+        </div>
+        <div class="label">offline</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ════════════════ KONSTELASYON DEMO · ROW ════════════════ -->
+<section class="preview-section">
+  <h2>Önizleme: konstelasyon (01 · Row)</h2>
+  <p>8 cihazlı bir orbit'te önerilen kart nasıl durur? İç halkada 4 yakın, dış halkada 4 uzak. Çevrimdışı kart sönük nokta + soluk yazı ile görünür ama kaybolmaz.</p>
+
+  <div class="preview-frame">
+    <span class="label">SKAPP host</span>
+    <span class="label-r">8 cihaz · 7 online · 1 offline</span>
+
+    <div class="orbit-ring r3"></div>
+    <div class="orbit-ring r2"></div>
+    <div class="orbit-ring r1"></div>
+
+    <div class="center-hub">
+      <span class="name">Seu</span>
+      <span class="role">SKAPP host</span>
+    </div>
+
+    <!-- İç orbit, 4 cihaz: top, right, bottom, left -->
+    <div class="orbit-slot" style="transform: translate(-50%, -50%) translate(0, -170px);">
+      <div class="c-row">
+        <div class="top">
+          <span class="dot"></span>
+          <span class="nm">LebensSpur</span>
+        </div>
+        <div class="id">LS-AM1MDDQV1</div>
+      </div>
+    </div>
+
+    <div class="orbit-slot" style="transform: translate(-50%, -50%) translate(170px, 0);">
+      <div class="c-row">
+        <div class="top">
+          <span class="dot"></span>
+          <span class="nm">Salon duvarı</span>
+        </div>
+        <div class="id">WD-C73KP9QXM</div>
+      </div>
+    </div>
+
+    <div class="orbit-slot" style="transform: translate(-50%, -50%) translate(0, 170px);">
+      <div class="c-row">
+        <div class="top">
+          <span class="dot"></span>
+          <span class="nm">Yatak odası</span>
+        </div>
+        <div class="id">BF-A06TMFSQT</div>
+      </div>
+    </div>
+
+    <div class="orbit-slot" style="transform: translate(-50%, -50%) translate(-170px, 0);">
+      <div class="c-row">
+        <div class="top">
+          <span class="dot"></span>
+          <span class="nm">Banyo</span>
+        </div>
+        <div class="id">SY-N7MK22QPR</div>
+      </div>
+    </div>
+
+    <!-- Dış orbit, 4 cihaz diyagonal -->
+    <div class="orbit-slot" style="transform: translate(-50%, -50%) translate(150px, -160px);">
+      <div class="c-row">
+        <div class="top">
+          <span class="dot"></span>
+          <span class="nm">Çalışma</span>
+        </div>
+        <div class="id">BF-X11ZK99TR</div>
+      </div>
+    </div>
+
+    <div class="orbit-slot" style="transform: translate(-50%, -50%) translate(160px, 150px);">
+      <div class="c-row">
+        <div class="top">
+          <span class="dot"></span>
+          <span class="nm">Mutfak tezgah</span>
+        </div>
+        <div class="id">WD-P99TR3KL8</div>
+      </div>
+    </div>
+
+    <div class="orbit-slot" style="transform: translate(-50%, -50%) translate(-150px, 160px);">
+      <div class="c-row off">
+        <div class="top">
+          <span class="dot off"></span>
+          <span class="nm">Giriş kapısı</span>
+        </div>
+        <div class="id">SY-B12XK9QPR</div>
+      </div>
+    </div>
+
+    <div class="orbit-slot" style="transform: translate(-50%, -50%) translate(-160px, -150px);">
+      <div class="c-row">
+        <div class="top">
+          <span class="dot"></span>
+          <span class="nm">Yatak başı</span>
+        </div>
+        <div class="id">LS-K42QV8M5N</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <h3>Karar mantığı</h3>
+  <ul>
+    <li><strong>01 Row</strong>. Ana öneri. Mevcut karta en yakın, sadece tür yazısı çıkarılmış. Az değişiklik, doğru sonuç.</li>
+    <li><strong>02 Strip</strong>. Nokta yerine kenar şeridi tercih edenler için. Daha "tabela", daha sakin.</li>
+    <li><strong>03 Avatar</strong>. Marka karakteri en güçlü; baş harf gridde çeşit yaratır, isimler birbirine karışmaz.</li>
+    <li><strong>04 Pill</strong>. Yoğun konum (15+ cihaz). Tek satıra sıkar.</li>
+    <li><strong>05 Tile</strong>. Kare slot için. Ad 2 satıra kadar uzayabilir.</li>
+    <li><strong>06 Underline</strong>. En sessiz; renk kalabalığına karşı sofistike yedek.</li>
+  </ul>
+
+  <h3>Notlar</h3>
+  <p>ID prefix'i türü tek başına gösterir: <code>LS-...</code> LebensSpur, <code>BF-...</code> Blocking Focus, <code>WD-...</code> Wall Dimmer, <code>SY-...</code> Security. Kullanıcı zaten cihazını eklerken türü görür ve adlandırır; karta tekrar yazmak gereksiz.</p>
+  <p>Ad çoğu kullanıcıda 8-12 harf arası kalır. 15+ harf girilirse kart ellipsis ile keser, hover'da tam ad gösterilir.</p>
+</footer>
+
+</body>
+</html>

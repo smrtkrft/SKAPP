@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "mute-toggle",
+  "platform": "lx-debian",
+  "group": "display-audio",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "mute-toggle.sh",
+  "i18n": {
+    "title": "skapiScriptMuteToggleTitle",
+    "summaryWhat": "skapiScriptMuteToggleSummaryWhat",
+    "summaryHow": "skapiScriptMuteToggleSummaryHowLxDebian",
+    "note": null
+  },
+  "params": [
+    {
+      "name": "mode",
+      "type": "string",
+      "default": "toggle",
+      "i18nLabel": "skapiScriptMuteToggleParamModeLabel",
+      "i18nHint": "skapiScriptMuteToggleParamModeHint",
+      "allowedValues": ["toggle", "mute", "unmute"]
+    }
+  ],
+  "remoteRunnable": true
+}

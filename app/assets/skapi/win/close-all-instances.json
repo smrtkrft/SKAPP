@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "close-all-instances",
+  "platform": "win",
+  "group": "programs",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "close-all-instances.ps1",
+  "i18n": {
+    "title": "skapiScriptCloseAllInstancesTitle",
+    "summaryWhat": "skapiScriptCloseAllInstancesSummaryWhat",
+    "summaryHow": "skapiScriptCloseAllInstancesSummaryHow",
+    "note": null
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptCloseAllInstancesParamProcessLabel",
+      "i18nHint": "skapiScriptCloseAllInstancesParamProcessHint"
+    }
+  ]
+}

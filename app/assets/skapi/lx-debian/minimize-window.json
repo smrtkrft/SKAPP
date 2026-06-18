@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "minimize-window",
+  "platform": "lx-debian",
+  "group": "window-app",
+  "tier": 2,
+  "runtime": "bash",
+  "scriptFile": "minimize-window.sh",
+  "i18n": {
+    "title": "skapiScriptMinimizeWindowTitle",
+    "summaryWhat": "skapiScriptMinimizeWindowSummaryWhat",
+    "summaryHow": "skapiScriptMinimizeWindowSummaryHowLxDebian",
+    "note": "skapiScriptMinimizeWindowNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptMinimizeWindowParamProcessLabel",
+      "i18nHint": "skapiScriptMinimizeWindowParamProcessHintLxDebian"
+    }
+  ]
+}

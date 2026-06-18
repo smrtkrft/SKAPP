@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "autosave-trigger",
+  "platform": "win",
+  "group": "save-work",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "autosave-trigger.ps1",
+  "i18n": {
+    "title": "skapiScriptAutosaveTriggerTitle",
+    "summaryWhat": "skapiScriptAutosaveTriggerSummaryWhat",
+    "summaryHow": "skapiScriptAutosaveTriggerSummaryHow",
+    "note": "skapiScriptAutosaveTriggerNote"
+  },
+  "params": [
+    {
+      "name": "delay",
+      "type": "int",
+      "default": 0,
+      "i18nLabel": "skapiScriptAutosaveTriggerParamDelayLabel",
+      "i18nHint": "skapiScriptAutosaveTriggerParamDelayHint",
+      "unit": "seconds"
+    },
+    {
+      "name": "verbose",
+      "type": "bool",
+      "default": true,
+      "i18nLabel": "skapiScriptAutosaveTriggerParamVerboseLabel",
+      "i18nHint": null
+    }
+  ]
+}

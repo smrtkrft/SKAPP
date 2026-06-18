@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "show-desktop",
+  "platform": "win",
+  "group": "visual-break",
+  "tier": 1,
+  "runtime": "powershell-5.1",
+  "scriptFile": "show-desktop.ps1",
+  "i18n": {
+    "title": "skapiScriptShowDesktopTitle",
+    "summaryWhat": "skapiScriptShowDesktopSummaryWhat",
+    "summaryHow": "skapiScriptShowDesktopSummaryHow",
+    "note": null
+  },
+  "params": [],
+  "remoteRunnable": true
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "brightness",
+  "platform": "mac",
+  "group": "display-audio",
+  "tier": 2,
+  "runtime": "applescript-bash",
+  "scriptFile": "brightness.sh",
+  "i18n": {
+    "title": "skapiScriptBrightnessTitle",
+    "summaryWhat": "skapiScriptBrightnessSummaryWhat",
+    "summaryHow": "skapiScriptBrightnessSummaryHow",
+    "note": "skapiScriptBrightnessNote"
+  },
+  "params": [
+    {
+      "name": "level",
+      "type": "int",
+      "default": 70,
+      "i18nLabel": "skapiScriptBrightnessParamLevelLabel",
+      "i18nHint": "skapiScriptBrightnessParamLevelHint",
+      "min": 0,
+      "max": 100
+    },
+    {
+      "name": "timeout",
+      "type": "int",
+      "default": 1,
+      "i18nLabel": "skapiScriptBrightnessParamTimeoutLabel",
+      "i18nHint": "skapiScriptBrightnessParamTimeoutHint",
+      "unit": "seconds",
+      "min": 0,
+      "max": 60
+    }
+  ],
+  "remoteRunnable": true
+}

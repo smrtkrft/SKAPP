@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "mute-toggle",
+  "platform": "mac",
+  "group": "display-audio",
+  "tier": 1,
+  "runtime": "applescript-bash",
+  "scriptFile": "mute-toggle.sh",
+  "i18n": {
+    "title": "skapiScriptMuteToggleTitle",
+    "summaryWhat": "skapiScriptMuteToggleSummaryWhat",
+    "summaryHow": "skapiScriptMuteToggleSummaryHow",
+    "note": null
+  },
+  "params": [],
+  "remoteRunnable": true
+}

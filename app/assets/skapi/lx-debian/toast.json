@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "toast",
+  "platform": "lx-debian",
+  "group": "notify",
+  "tier": 1,
+  "runtime": "bash",
+  "scriptFile": "toast.sh",
+  "i18n": {
+    "title": "skapiScriptToastTitle",
+    "summaryWhat": "skapiScriptToastSummaryWhat",
+    "summaryHow": "skapiScriptToastSummaryHowLxDebian",
+    "note": "skapiScriptToastNoteLxDebian"
+  },
+  "params": [
+    {
+      "name": "title",
+      "type": "string",
+      "default": "SmartKraft",
+      "i18nLabel": "skapiScriptToastParamTitleLabel",
+      "i18nHint": "skapiScriptToastParamTitleHint"
+    },
+    {
+      "name": "body",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptToastParamBodyLabel",
+      "i18nHint": "skapiScriptToastParamBodyHint"
+    },
+    {
+      "name": "icon",
+      "type": "string",
+      "default": "dialog-information",
+      "i18nLabel": "skapiScriptToastParamIconLabelLxDebian",
+      "i18nHint": "skapiScriptToastParamIconHintLxDebian",
+      "pattern": "^[A-Za-z0-9._/-]+$"
+    },
+    {
+      "name": "duration",
+      "type": "int",
+      "default": 5,
+      "i18nLabel": "skapiScriptToastParamDurationLabelLxDebian",
+      "i18nHint": "skapiScriptToastParamDurationHintLxDebian",
+      "unit": "seconds",
+      "min": 0,
+      "max": 300
+    }
+  ],
+  "remoteRunnable": true
+}

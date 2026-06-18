@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "minimize-window",
+  "platform": "mac",
+  "group": "window-app",
+  "tier": 2,
+  "runtime": "applescript-bash",
+  "scriptFile": "minimize-window.sh",
+  "i18n": {
+    "title": "skapiScriptMinimizeWindowTitle",
+    "summaryWhat": "skapiScriptMinimizeWindowSummaryWhat",
+    "summaryHow": "skapiScriptMinimizeWindowSummaryHow",
+    "note": "skapiScriptMinimizeWindowNote"
+  },
+  "params": [
+    {
+      "name": "processName",
+      "type": "string",
+      "default": "",
+      "i18nLabel": "skapiScriptMinimizeWindowParamProcessLabel",
+      "i18nHint": "skapiScriptMinimizeWindowParamProcessHint"
+    }
+  ]
+}
