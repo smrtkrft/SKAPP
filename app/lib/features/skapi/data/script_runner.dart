@@ -10,6 +10,24 @@ import 'run_handle.dart';
 import 'script_manifest.dart';
 import 'script_resolver.dart';
 
+/// Thrown by [ScriptRunner.run] when a `paramOverrides` entry violates the
+/// manifest's declared constraints (unknown key, type mismatch, out-of-range,
+/// disallowed value, bad pattern, or control characters).
+///
+/// Callers that pass overrides must catch this before entering the script
+/// execution path. The [result] field carries the machine-readable [code] and
+/// [paramName] so callers can surface a structured error message.
+class ParamValidationException implements Exception {
+  const ParamValidationException(this.result);
+  final ParamValidationResult result;
+
+  String get message => result.message ?? 'Validation failed (${result.code})';
+
+  @override
+  String toString() =>
+      'ParamValidationException(${result.code}, param=${result.paramName}): ${result.message}';
+}
+
 /// Mirror of the HTTP listener's pre-run delay ceiling (one hour). Clamped
 /// here too so every caller (binding chains, future entry points) is bounded,
 /// not just the remote-run endpoint.
@@ -94,6 +112,12 @@ class ScriptRunner {
     if (delay > 0) {
       await Future<void>.delayed(Duration(seconds: delay));
     }
+
+    final validation = const ParamValidator().validate(
+      manifestParams: manifest.params,
+      overrides: paramOverrides,
+    );
+    if (!validation.ok) throw ParamValidationException(validation);
 
     final resolved = await _resolver.resolveSource(manifest);
     return _spawn(

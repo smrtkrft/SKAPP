@@ -12,6 +12,7 @@ import 'package:shelf_router/shelf_router.dart';
 import '../../features/skapi/data/active_runs_registry.dart';
 import '../../features/skapi/data/param_merge.dart';
 import '../../features/skapi/data/script_manifest.dart';
+import '../../features/skapi/data/skapi_ids.dart';
 import '../../features/skapi/data/skapi_providers.dart';
 import '../cli/bond_store.dart';
 import '../settings/settings_providers.dart';
@@ -38,11 +39,6 @@ const int _kMaxRequestBodyBytes = 256 * 1024;
 /// a multi-year delay. One hour covers every legitimate "add delay" use.
 const int _kMaxPrerunDelaySeconds = 3600;
 
-/// Path-segment guard for `{platform}` / `{scriptId}`. Both are kebab-case
-/// asset folder / file ids (e.g. `win`, `lx-debian`, `toast-notification`).
-/// `rootBundle` can't escape the asset bundle, but a `.`-bearing id has no
-/// legitimate use here, so we reject it as defense-in-depth.
-final RegExp _kAssetIdPattern = RegExp(r'^[a-z0-9][a-z0-9-]*$');
 
 /// Reads the request body as UTF-8, refusing anything over
 /// [_kMaxRequestBodyBytes]. Returns null on overflow (caller maps to 413).
@@ -331,8 +327,8 @@ class SkappHttpServer {
       // Defense-in-depth: `{platform}`/`{scriptId}` are kebab-case asset
       // ids. `rootBundle` can't escape the bundle, but a `.`-bearing id has
       // no legitimate use, so reject it before doing any work.
-      if (!_kAssetIdPattern.hasMatch(platform) ||
-          !_kAssetIdPattern.hasMatch(scriptId)) {
+      if (!kAssetIdPattern.hasMatch(platform) ||
+          !kAssetIdPattern.hasMatch(scriptId)) {
         activity.recordRejected(
           peerUuid: peerUuid,
           peerName: peerName,

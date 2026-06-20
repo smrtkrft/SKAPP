@@ -66,7 +66,9 @@ dependencies:
   # OS brand icons (Apple / Windows / Linux logos) shown on the SKAPI
   # platform cards. Theme-adaptive coloring is handled at the call site
   # via cs.onSurface, not by the package.
-  font_awesome_flutter: ^10.7.0
+  # 11.0.0: Flutter 3.44 (Dart 3.10) `IconData` artık `final class`; 10.x
+  # `extends IconData` yaptığı için derlenmiyordu. 11.x bu uyumsuzluğu giderir.
+  font_awesome_flutter: ^11.0.0
   # Dev Mod = USB CLI Konsolu — Settings → Geliştirici modu ON iken
   # USB-takılı BF cihazına ham CLI komutları gönderme. Sadece desktop
   # (Windows başlangıçta; Mac/Linux Faz 2'de aynı FFI yaklaşımıyla).
@@ -99,6 +101,9 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
+  # Test-only mocking framework (Faz 0 refactor test altyapısı). Saf-mantık
+  # ve servis testlerinde transport / store sahteleri için kullanılır.
+  mocktail: ^1.0.0
 
 flutter:
   uses-material-design: true

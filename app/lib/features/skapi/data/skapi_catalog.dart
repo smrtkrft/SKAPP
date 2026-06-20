@@ -53,23 +53,31 @@ class SkapiCategorySpec {
 /// Theme-aware coloring is the renderer's job; the icon is painted with
 /// `colorScheme.onSurface`, which is near-black on light themes and
 /// near-white on dark themes, so the logo always contrasts the card.
-const List<SkapiPlatformSpec> kSkapiPlatforms = [
+///
+/// font_awesome 11 wraps glyphs in [FaIconData]; we unwrap with `.data` so
+/// these specs stay plain [IconData] (mixed freely with Material icons like
+/// `Icons.hub_rounded`) and render through the standard `Icon` widget — the
+/// same path used since 10.x.
+// `final` (not `const`): unwrapping FaIconData via `.data` is a runtime
+// getter, so the list can't be const-evaluated. Elements are still cheap,
+// immutable specs; all call sites iterate at runtime (no const dependency).
+final List<SkapiPlatformSpec> kSkapiPlatforms = [
   SkapiPlatformSpec(
     id: 'mac',
     label: 'macOS',
-    icon: FontAwesomeIcons.apple,
+    icon: FontAwesomeIcons.apple.data,
   ),
   SkapiPlatformSpec(
     id: 'win',
     label: 'Windows',
-    icon: FontAwesomeIcons.windows,
+    icon: FontAwesomeIcons.windows.data,
   ),
   SkapiPlatformSpec(
     id: 'lx',
     label: 'Linux',
-    icon: FontAwesomeIcons.linux,
+    icon: FontAwesomeIcons.linux.data,
   ),
-  SkapiPlatformSpec(
+  const SkapiPlatformSpec(
     id: 'other',
     label: 'Other',
     icon: Icons.hub_rounded,
@@ -92,16 +100,16 @@ String? hostSkapiPlatformId() {
 /// "Linux" card on the SKAPI tab opens a selector that lists these specs;
 /// each spec's `id` matches its `assets/skapi/<id>/` folder, so the
 /// existing `ScriptRepository` can load it without changes.
-const List<SkapiPlatformSpec> kSkapiLinuxDistros = [
+final List<SkapiPlatformSpec> kSkapiLinuxDistros = [
   SkapiPlatformSpec(
     id: 'lx-debian',
     label: 'Debian-based',
-    icon: FontAwesomeIcons.linux,
+    icon: FontAwesomeIcons.linux.data,
   ),
   SkapiPlatformSpec(
     id: 'lx-arch',
     label: 'Arch-based',
-    icon: FontAwesomeIcons.linux,
+    icon: FontAwesomeIcons.linux.data,
   ),
 ];
 
@@ -116,30 +124,30 @@ const List<SkapiPlatformSpec> kSkapiLinuxDistros = [
 /// onto a paired SmartKraft device, which fires them on its own trigger
 /// (BF: `timer.expired`). See `yapilacaklar.md` Madde 24 for the full
 /// architecture.
-const List<SkapiPlatformSpec> kSkapiOtherCategories = [
+final List<SkapiPlatformSpec> kSkapiOtherCategories = [
   SkapiPlatformSpec(
     id: 'other-syndimm',
     label: 'SynDimm',
-    icon: FontAwesomeIcons.lightbulb,
+    icon: FontAwesomeIcons.lightbulb.data,
   ),
   SkapiPlatformSpec(
     id: 'other-lebensspur',
     label: 'LebensSpur',
-    icon: FontAwesomeIcons.shoePrints,
+    icon: FontAwesomeIcons.shoePrints.data,
   ),
   SkapiPlatformSpec(
     id: 'other-blockingfocus',
     label: 'Blocking Focus',
-    icon: FontAwesomeIcons.bullseye,
+    icon: FontAwesomeIcons.bullseye.data,
   ),
   SkapiPlatformSpec(
     id: 'other-iot',
     label: 'IoT',
-    icon: FontAwesomeIcons.networkWired,
+    icon: FontAwesomeIcons.networkWired.data,
   ),
   SkapiPlatformSpec(
     id: 'other-server',
     label: 'Server',
-    icon: FontAwesomeIcons.server,
+    icon: FontAwesomeIcons.server.data,
   ),
 ];

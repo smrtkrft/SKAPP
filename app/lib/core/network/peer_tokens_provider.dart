@@ -177,7 +177,7 @@ class PeerTokensNotifier extends Notifier<List<PeerTokenEntry>> {
     // independent of peer-token storage).
     final paired = ref.read(pairedDevicesProvider);
     final hasMsEntry =
-        paired.any((d) => d.id == peerUuid && d.prefix == 'MS');
+        paired.any((d) => d.id == peerUuid && d.isMobilePeer);
     if (hasMsEntry) {
       await ref.read(pairedDevicesProvider.notifier).remove(peerUuid);
     }
@@ -207,7 +207,7 @@ class PeerTokensNotifier extends Notifier<List<PeerTokenEntry>> {
     // tek tek temizle, BF/LS dokunmaz.
     final paired = ref.read(pairedDevicesProvider);
     for (final d in paired) {
-      if (d.prefix == 'MS' && ids.contains(d.id)) {
+      if (d.isMobilePeer && ids.contains(d.id)) {
         await ref.read(pairedDevicesProvider.notifier).remove(d.id);
       }
     }

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/devices/device_plugin_registry.dart';
 import '../../core/storage/paired_devices_store.dart';
 import '../../core/theme/responsive.dart';
 import '../../core/ui/sk_neu_card.dart';
 import '../../l10n/app_localizations.dart';
 import '../main_shell/main_shell.dart' show ShellNavBar;
 import 'data/action_binding.dart';
-import 'data/mobile_event_catalog.dart';
 import 'data/script_manifest.dart';
 import 'data/skapi_providers.dart';
 import 'widgets/skapi_basic_param_form.dart';
@@ -227,19 +227,19 @@ class _SkapiBindScreenState extends ConsumerState<SkapiBindScreen> {
   }
 
   Future<void> _onSave() async {
-    // Event filter is chosen by the device's prefix so the trigger
+    // Event filter is chosen by the device's plugin so the trigger
     // service routes correctly regardless of which device class fired
     // the event:
-    //   - `BF` paired devices → `timer.expired` (only firmware event
-    //     that fires the API chain, per Faz B karar).
+    //   - `BF` / `LS` paired devices → `timer.expired` (only firmware
+    //     event that fires the API chain, per Faz B karar).
     //   - `MS` paired mobile peers → `skapp.mobile.tap` (single Faz 3
     //     manual trigger; catalog grows in later phases).
+    // Unknown / unpaired prefixes fall back to `timer.expired`.
     // Legacy BF bindings with stale filters get migrated on every save.
     final devices = ref.read(pairedDevicesProvider);
     final device = devices.where((d) => d.id == _deviceId).firstOrNull;
-    final eventFilter = (device?.prefix == 'MS')
-        ? kDefaultMobileEvent
-        : _kTimerExpiredEvent;
+    final eventFilter =
+        pluginFor(device?.prefix)?.defaultBindEvent ?? _kTimerExpiredEvent;
     final binding = ActionBinding(
       id: widget.existing?.id ?? _newId(),
       scriptId: widget.manifest.id,

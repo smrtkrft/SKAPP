@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'skapi_ids.dart';
+
 /// Per-device, per-script user override of a bundled SKAPI script.
 ///
 /// The repository holds read-only originals; this class persists the
@@ -37,13 +39,23 @@ class OverrideStorage {
   }
 
   Future<File> _scriptFile(String platform, String scriptId) async {
+    _guardId(platform, 'platform');
+    _guardId(scriptId, 'scriptId');
     final root = await _root();
     return File('${root.path}/$platform/$scriptId.ps1');
   }
 
   Future<File> _metaFile(String platform, String scriptId) async {
+    _guardId(platform, 'platform');
+    _guardId(scriptId, 'scriptId');
     final root = await _root();
     return File('${root.path}/$platform/$scriptId.meta.json');
+  }
+
+  static void _guardId(String value, String label) {
+    if (!kAssetIdPattern.hasMatch(value)) {
+      throw ArgumentError.value(value, label, 'Path traversal guard: invalid $label');
+    }
   }
 
   /// Returns true when the user has saved an edited version of this script.

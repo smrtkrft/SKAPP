@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../core/theme/responsive.dart';
 import '../../core/ui/sk_neu_card.dart';
@@ -102,7 +101,7 @@ class _CategoryCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       child: Row(
         children: [
-          FaIcon(
+          Icon(
             category.icon,
             size: 22,
             color: cs.onSurface,

@@ -3,6 +3,22 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'script_manifest.dart';
+import 'skapi_ids.dart';
+
+/// Thrown when a bundled SKAPI manifest file contains malformed JSON or fails
+/// the [ScriptManifest] / [GroupManifest] / [PlatformManifest] decoder.
+///
+/// Callers (e.g. the SKAPI screen loader and [bindings_trigger_service.dart])
+/// should catch this and show a structured error rather than letting the raw
+/// [FormatException] bubble up as an unhandled crash.
+class ManifestParseException implements Exception {
+  const ManifestParseException(this.assetPath, this.cause);
+  final String assetPath;
+  final Object cause;
+
+  @override
+  String toString() => 'ManifestParseException($assetPath): $cause';
+}
 
 /// Loads bundled SKAPI manifests (platform → groups → scripts) and the raw
 /// `.ps1` source of each script. Read-only: the bundled library is shipped
@@ -24,41 +40,55 @@ class ScriptRepository {
   /// Loads and caches the platform manifest. `platformId` matches the
   /// asset folder name (`win`, `mac`, `lx`, `other`).
   Future<PlatformManifest> loadPlatform(String platformId) async {
+    _guardId(platformId, 'platformId');
     final cached = _platformCache[platformId];
     if (cached != null) return cached;
-    final source = await rootBundle.loadString(
-      '$assetRoot/$platformId/_platform.json',
-    );
-    final manifest = PlatformManifest.decode(source);
-    _platformCache[platformId] = manifest;
-    return manifest;
+    final path = '$assetRoot/$platformId/_platform.json';
+    final source = await rootBundle.loadString(path);
+    try {
+      final manifest = PlatformManifest.decode(source);
+      _platformCache[platformId] = manifest;
+      return manifest;
+    } on FormatException catch (e) {
+      throw ManifestParseException(path, e);
+    }
   }
 
   /// Loads a single group definition. Cached by `<platform>/<group>` key
   /// because group ids are unique per platform but not globally.
   Future<GroupManifest> loadGroup(String platformId, String groupId) async {
+    _guardId(platformId, 'platformId');
+    _guardId(groupId, 'groupId');
     final key = '$platformId/$groupId';
     final cached = _groupCache[key];
     if (cached != null) return cached;
-    final source = await rootBundle.loadString(
-      '$assetRoot/$platformId/$groupId.group.json',
-    );
-    final manifest = GroupManifest.decode(source);
-    _groupCache[key] = manifest;
-    return manifest;
+    final path = '$assetRoot/$platformId/$groupId.group.json';
+    final source = await rootBundle.loadString(path);
+    try {
+      final manifest = GroupManifest.decode(source);
+      _groupCache[key] = manifest;
+      return manifest;
+    } on FormatException catch (e) {
+      throw ManifestParseException(path, e);
+    }
   }
 
   /// Loads one script's sidecar manifest.
   Future<ScriptManifest> loadScript(String platformId, String scriptId) async {
+    _guardId(platformId, 'platformId');
+    _guardId(scriptId, 'scriptId');
     final key = '$platformId/$scriptId';
     final cached = _scriptCache[key];
     if (cached != null) return cached;
-    final source = await rootBundle.loadString(
-      '$assetRoot/$platformId/$scriptId.json',
-    );
-    final manifest = ScriptManifest.decode(source);
-    _scriptCache[key] = manifest;
-    return manifest;
+    final path = '$assetRoot/$platformId/$scriptId.json';
+    final source = await rootBundle.loadString(path);
+    try {
+      final manifest = ScriptManifest.decode(source);
+      _scriptCache[key] = manifest;
+      return manifest;
+    } on FormatException catch (e) {
+      throw ManifestParseException(path, e);
+    }
   }
 
   /// Loads one API template manifest (`other-*` platforms). Lives next to
@@ -69,15 +99,26 @@ class ScriptRepository {
     String platformId,
     String templateId,
   ) async {
+    _guardId(platformId, 'platformId');
+    _guardId(templateId, 'templateId');
     final key = '$platformId/$templateId';
     final cached = _apiTemplateCache[key];
     if (cached != null) return cached;
-    final source = await rootBundle.loadString(
-      '$assetRoot/$platformId/$templateId.json',
-    );
-    final manifest = ApiTemplateManifest.decode(source);
-    _apiTemplateCache[key] = manifest;
-    return manifest;
+    final path = '$assetRoot/$platformId/$templateId.json';
+    final source = await rootBundle.loadString(path);
+    try {
+      final manifest = ApiTemplateManifest.decode(source);
+      _apiTemplateCache[key] = manifest;
+      return manifest;
+    } on FormatException catch (e) {
+      throw ManifestParseException(path, e);
+    }
+  }
+
+  static void _guardId(String value, String label) {
+    if (!kAssetIdPattern.hasMatch(value)) {
+      throw ArgumentError.value(value, label, 'Path traversal guard: invalid $label');
+    }
   }
 
   /// Loads every API template declared in a platform's `_platform.json`

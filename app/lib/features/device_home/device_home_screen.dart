@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../core/ble/device_model.dart';
+import '../../core/devices/device_plugin_registry.dart';
 import '../../l10n/app_localizations.dart';
-import '../devices/bf/bf_home_screen.dart';
-import '../devices/lebensspur/ls_home_screen.dart';
-import '../devices/ms/ms_home_screen.dart';
 
 /// Top-level dispatcher for paired SmartKraft devices.
 ///
-/// With the move from packaged device modules to in-app device folders
-/// (each device living under `features/devices/<name>/`), the dispatch
-/// is a plain switch on the identity prefix. To add support for a new
-/// device family: import its `<X>HomeScreen`, add a `case 'XX'` arm.
-/// Removing a device = deleting its folder + the matching arm here.
+/// Each device family lives under `features/devices/<name>/` and registers a
+/// `DevicePlugin` in [devicePluginRegistry]. Dispatch is a single registry
+/// lookup; an unknown prefix falls back to [_UnsupportedDevice]. To add a
+/// device family: write its plugin + add one registry line — no edit here.
 class DeviceHomeScreen extends StatelessWidget {
   const DeviceHomeScreen({super.key, required this.device});
   final DiscoveredDevice device;
@@ -25,17 +22,8 @@ class DeviceHomeScreen extends StatelessWidget {
     // device.name here would land the device home shell on a freshly
     // created session that can't find the bond and dies with
     // "no bond stored for <name>".
-    switch (device.typePrefix) {
-      case 'BF':
-        return BfHomeScreen(deviceId: device.id);
-      case 'LS':
-        return LsHomeScreen(deviceId: device.id);
-      case 'MS':
-        // Mobile SKAPP peer — informational screen, no BF-style
-        // dashboard. Phone is just a trigger source; this view shows
-        // what events it can emit and which bindings are wired to it.
-        return MsHomeScreen(peerUuid: device.id);
-    }
+    final plugin = pluginFor(device.typePrefix);
+    if (plugin != null) return plugin.buildHomeScreen(device.id);
     return _UnsupportedDevice(device: device);
   }
 }

@@ -8,6 +8,7 @@ import '../../../core/ui/sk_centered_dialog.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/run_handle.dart';
 import '../data/script_manifest.dart';
+import '../data/script_runner.dart';
 import '../data/skapi_providers.dart';
 
 /// Bottom sheet that drives a single script run.
@@ -92,6 +93,17 @@ class _SkapiRunSheetState extends ConsumerState<SkapiRunSheet> {
             _state = _RunSheetState.error;
           }
         });
+      });
+    } on ParamValidationException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _result = RunResult(
+          exitCode: -2,
+          durationMs: 0,
+          cancelled: false,
+          errorMessageKey: e.message,
+        );
+        _state = _RunSheetState.error;
       });
     } on UnsupportedError catch (e) {
       if (!mounted) return;
