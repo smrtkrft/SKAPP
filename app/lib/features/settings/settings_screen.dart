@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io' show Platform, exit;
+import 'dart:io' show Platform;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -25,8 +25,10 @@ import '../license/license_screen.dart';
 import '../skapi/data/skapi_catalog.dart';
 import '../skapi/data/skapi_providers.dart';
 import 'network_identity_card.dart';
+import 'widgets/language_picker_dialog.dart';
 import 'widgets/network_identity_dialogs.dart';
 import 'widgets/peer_tokens_card.dart';
+import 'widgets/reset_dialogs.dart';
 import 'widgets/remote_run_activity_card.dart';
 import 'widgets/skapp_listener_card.dart';
 import 'widgets/skapp_peers_card.dart';
@@ -424,8 +426,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final second = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (dlgCtx) =>
-          _TypeToConfirmDialog(localizations: l),
+      builder: (dlgCtx) => TypeToConfirmDialog(localizations: l),
     );
     if (second != true) return;
     if (!context.mounted) return;
@@ -444,7 +445,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     unawaited(showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => _ResetProgressDialog(localizations: l),
+      builder: (_) => ResetProgressDialog(localizations: l),
     ));
 
     ResetSummary summary;
@@ -465,7 +466,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     await showDialog<void>(
       context: context,
-      builder: (_) => _ResetSummaryDialog(
+      builder: (_) => ResetSummaryDialog(
         summary: summary,
         localizations: l,
       ),
@@ -734,24 +735,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final currentChoice = current ?? systemLocale;
 
     // Dil listesi tek noktada: ileride 8 dil tamamlandığında yeni
-    // `_LanguageOption` ekle, dialog otomatik scroll edecek. Her
+    // `LanguageOption` ekle, dialog otomatik scroll edecek. Her
     // entry hem native ad (Türkçe/English/Deutsch...) hem ASCII kod
     // (TR/EN/DE/...) taşır → görsel arama hızlı.
-    final options = <_LanguageOption>[
-      _LanguageOption(
+    final options = <LanguageOption>[
+      LanguageOption(
         locale: systemLocale,
         nativeName: l.settingsThemeSystem,
         secondary: l.settingsLanguageSystemHint,
         code: 'AUTO',
         pinned: true,
       ),
-      const _LanguageOption(
+      const LanguageOption(
         locale: Locale('en'),
         nativeName: 'English',
         secondary: 'English',
         code: 'En',
       ),
-      const _LanguageOption(
+      const LanguageOption(
         locale: Locale('tr'),
         nativeName: 'Türkçe',
         secondary: 'Turkish',
@@ -761,7 +762,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     final chosen = await showDialog<Locale>(
       context: context,
-      builder: (dlgCtx) => _LanguagePickerDialog(
+      builder: (dlgCtx) => LanguagePickerDialog(
         title: l.settingsLanguage,
         options: options,
         current: currentChoice,
@@ -770,345 +771,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (chosen == null) return;
     final asAppLocale = chosen == systemLocale ? null : chosen;
     await ref.read(localeProvider.notifier).set(asAppLocale);
-  }
-}
-
-/// Dil seçeneği tek satır içerik kaynağı. Locale, native name (kullanıcı
-/// kendi dilinde nasıl görür), secondary (English fallback ya da auto
-/// açıklaması), code (2-3 harf kısa kod, sağda rozet), pinned (üstte ayrı
-/// bir bölümde durur, raised tactile + push pin ikonu).
-class _LanguageOption {
-  const _LanguageOption({
-    required this.locale,
-    required this.nativeName,
-    required this.secondary,
-    required this.code,
-    this.pinned = false,
-  });
-  final Locale locale;
-  final String nativeName;
-  final String secondary;
-  final String code;
-  final bool pinned;
-}
-
-/// Dil seçici dialog · V2 tactile (sarı yok, arama yok).
-///
-/// Yapı:
-///   - Header: translate ikonu + başlık + close X
-///   - Pinned zone: Sistem (auto) tile, raised tactile (kabarık), push pin
-///   - Divider
-///   - Section header: "Tüm diller" + A → Z N dil
-///   - Scrollable list: gerçek desteklenen diller (şu an En + Tr; gelecekte
-///     yeni dil eklenince options listesine eklenecek)
-///
-/// Selected state: tile V2 well (içe basılı, SkNeuCard inset shadow ile)
-/// + siyah check ikonu. Mustard kullanılmaz; tactile metafora sadık seçim
-/// = fiziksel basma. Bkz: popup.html dil seçici tasarımı.
-class _LanguagePickerDialog extends StatelessWidget {
-  const _LanguagePickerDialog({
-    required this.title,
-    required this.options,
-    required this.current,
-  });
-  final String title;
-  final List<_LanguageOption> options;
-  final Locale current;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-
-    final pinned = options.where((o) => o.pinned).toList();
-    final regular = options.where((o) => !o.pinned).toList()
-      ..sort((a, b) => a.nativeName.toLowerCase().compareTo(
-            b.nativeName.toLowerCase(),
-          ));
-
-    return Dialog(
-      // Shape ve background theme.dialogTheme'den geliyor (Tactile redesign).
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480, maxHeight: 560),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ===== Header =====
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 18, 12, 14),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.translate_rounded,
-                    size: 22,
-                    color: cs.onSurface.withValues(alpha: 0.75),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: tt.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close_rounded),
-                    onPressed: () => Navigator.of(context).pop(),
-                    tooltip: MaterialLocalizations.of(context)
-                        .closeButtonTooltip,
-                  ),
-                ],
-              ),
-            ),
-            Divider(
-              height: 1,
-              color: cs.outlineVariant.withValues(alpha: 0.35),
-            ),
-
-            // ===== Pinned zone (Sistem) =====
-            if (pinned.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (final opt in pinned)
-                      _LanguageTile(
-                        option: opt,
-                        selected: opt.locale == current,
-                        onTap: () => Navigator.of(context).pop(opt.locale),
-                      ),
-                  ],
-                ),
-              ),
-
-            // ===== Section header: Tüm diller =====
-            Padding(
-              padding: const EdgeInsets.fromLTRB(18, 14, 18, 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Expanded(
-                    child: Text(
-                      l.settingsLanguagePickerAllSection.toUpperCase(),
-                      style: tt.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.8,
-                        color: cs.onSurface.withValues(alpha: 0.45),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    'A → Z · ${regular.length}',
-                    style: tt.labelSmall?.copyWith(
-                      fontFamily: 'monospace',
-                      letterSpacing: 0.4,
-                      color: cs.onSurface.withValues(alpha: 0.40),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // ===== Scrollable regular list =====
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(12, 4, 12, 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (final opt in regular)
-                      _LanguageTile(
-                        option: opt,
-                        selected: opt.locale == current,
-                        onTap: () => Navigator.of(context).pop(opt.locale),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Tek dil satırı · 3 state:
-///   - Pinned + not selected: raised (kabarık) tactile + push_pin ikonu
-///   - Pinned + selected: well (içe basılı, SkNeuCard inset) + push_pin + check
-///   - Regular + not selected: flat (saydam), hover bg
-///   - Regular + selected: well (içe basılı) + siyah check
-///
-/// Mustard hardal sarısı KULLANILMAZ. Check ikonu daima siyah (onSurface).
-class _LanguageTile extends StatelessWidget {
-  const _LanguageTile({
-    required this.option,
-    required this.selected,
-    required this.onTap,
-  });
-  final _LanguageOption option;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-
-    final tileContent = Row(
-      children: [
-        // Badge: native script (En/Tr/Ру/Ελ). Pinned'de "AUTO" (mono).
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: cs.onSurface.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(11),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            option.code,
-            style: option.pinned
-                ? tt.labelSmall?.copyWith(
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                    color: cs.onSurface.withValues(alpha: 0.75),
-                  )
-                : tt.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: cs.onSurface.withValues(alpha: 0.85),
-                  ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                option.nativeName,
-                style: tt.titleSmall?.copyWith(
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                option.secondary,
-                style: tt.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                  letterSpacing: 0.2,
-                  color: cs.onSurface.withValues(alpha: 0.55),
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ],
-          ),
-        ),
-        // Pinned ikonu: hep görünür (pinned tile'larda)
-        if (option.pinned) ...[
-          const SizedBox(width: 8),
-          Icon(
-            Icons.push_pin_rounded,
-            size: 16,
-            color: cs.onSurface.withValues(alpha: 0.45),
-          ),
-        ],
-        // Selected check (siyah)
-        if (selected) ...[
-          const SizedBox(width: 8),
-          Icon(
-            Icons.check_rounded,
-            size: 22,
-            color: cs.onSurface,
-          ),
-        ],
-      ],
-    );
-
-    const radius = 14.0;
-    const tilePadding =
-        EdgeInsets.symmetric(horizontal: 12, vertical: 10);
-
-    // 3 state'i ayrı widget kabuklarıyla render et (her birinin gölgesi
-    // farklı: well, raised, flat).
-    if (selected) {
-      // V2 well (inset) — SkNeuCard ile zaten doğru gölge.
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 3),
-        child: SkNeuCard(
-          onTap: onTap,
-          borderRadius: radius,
-          padding: tilePadding,
-          child: tileContent,
-        ),
-      );
-    }
-
-    if (option.pinned) {
-      // Raised (kabarık) — basit BoxShadow, sk_neu_card.dart pinned-tile
-      // CSS karşılığı.
-      final bg = Theme.of(context).scaffoldBackgroundColor;
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 3),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: BorderRadius.circular(radius),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.white.withValues(alpha: 0.78),
-                offset: const Offset(-2, -2),
-                blurRadius: 4,
-              ),
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.12),
-                offset: const Offset(2, 2),
-                blurRadius: 4,
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(radius),
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(radius),
-              child: Padding(
-                padding: tilePadding,
-                child: tileContent,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    // Regular (flat) — saydam, hover bg.
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(radius),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(radius),
-          child: Padding(
-            padding: tilePadding,
-            child: tileContent,
-          ),
-        ),
-      ),
-    );
   }
 }
 
@@ -1989,234 +1651,3 @@ class _UpdateBody extends StatelessWidget {
 // `_NavCard` (`_Row2` içinde) olarak kullanılıyor. Bu, kullanıcı için
 // daha az tıklama (1 yerine 2 — doğrudan aksiyon) + mockup'ta da
 // böyle istendi.
-
-// ============================================================================
-// Reset / Factory Reset dialogs (Faz 3, plan: ~/.claude/plans/reset.md)
-// ============================================================================
-
-/// Type-to-confirm dialog Factory Reset'in ikinci adımı. Kullanıcı
-/// hint text'i ("SIL"/"ERASE") birebir yazana kadar "Anladım sil" butonu
-/// disabled kalır. Yanlış yazılırsa hata mesajı görünmez, sadece buton
-/// disable durur — UX hatırlatma yumuşak.
-class _TypeToConfirmDialog extends StatefulWidget {
-  const _TypeToConfirmDialog({required this.localizations});
-  final AppLocalizations localizations;
-
-  @override
-  State<_TypeToConfirmDialog> createState() => _TypeToConfirmDialogState();
-}
-
-class _TypeToConfirmDialogState extends State<_TypeToConfirmDialog> {
-  final _ctrl = TextEditingController();
-  late final String _expected =
-      widget.localizations.settingsFactoryResetSecondConfirmHint;
-  String _typed = '';
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l = widget.localizations;
-    final match = _typed.trim().toUpperCase() == _expected.toUpperCase();
-    return AlertDialog(
-      title: Text(l.settingsFactoryResetSecondConfirmTitle),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l.settingsFactoryResetSecondConfirmBody),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _ctrl,
-            autofocus: true,
-            decoration: InputDecoration(
-              hintText: _expected,
-              border: const OutlineInputBorder(),
-            ),
-            onChanged: (v) => setState(() => _typed = v),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: Text(l.commonCancel),
-        ),
-        FilledButton(
-          style: FilledButton.styleFrom(
-            backgroundColor: SkColors.warnRed,
-          ),
-          onPressed:
-              match ? () => Navigator.of(context).pop(true) : null,
-          child: Text(l.settingsFactoryResetSecondConfirmAction),
-        ),
-      ],
-    );
-  }
-}
-
-/// Reset/Factory Reset sırasında gösterilen küçük progress dialog.
-/// Cancel yok (atomik operasyon). 1-3 sn sürer normal koşullarda.
-class _ResetProgressDialog extends StatelessWidget {
-  const _ResetProgressDialog({required this.localizations});
-  final AppLocalizations localizations;
-
-  @override
-  Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: AlertDialog(
-        content: Row(
-          children: [
-            const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2.5),
-            ),
-            const SizedBox(width: 16),
-            Expanded(child: Text(localizations.settingsResetInProgress)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Reset/Factory Reset sonrası özet dialog. Silinen sayılar +
-/// uyarılar (varsa) listelenir. Factory mode'da "Şimdi yeniden başlat"
-/// butonu ek olarak görünür.
-class _ResetSummaryDialog extends StatelessWidget {
-  const _ResetSummaryDialog({
-    required this.summary,
-    required this.localizations,
-  });
-  final ResetSummary summary;
-  final AppLocalizations localizations;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = localizations;
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    final isFactory = summary.kind == ResetKind.factory;
-    final title = summary.hasErrors
-        ? l.settingsResetDoneWithWarnings
-        : l.settingsResetDoneTitle;
-
-    final lines = <String>[
-      if (summary.pairedDevicesRemoved > 0)
-        l.settingsResetSummaryPaired(summary.pairedDevicesRemoved),
-      if (summary.bondsCleared > 0)
-        l.settingsResetSummaryBonds(summary.bondsCleared),
-      if (summary.bindingsRemoved > 0)
-        l.settingsResetSummaryBindings(summary.bindingsRemoved),
-      if (summary.skappPeersRemoved > 0)
-        l.settingsResetSummaryPeers(summary.skappPeersRemoved),
-      if (summary.networkIdentityReset) l.settingsResetSummaryNetworkIdentity,
-      if (summary.tlsCertCleared) l.settingsResetSummaryTlsCert,
-      if (summary.autostartUnregistered) l.settingsResetSummaryAutostart,
-    ];
-
-    return AlertDialog(
-      title: Text(title),
-      content: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final line in lines) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.check_circle_outline_rounded,
-                      size: 16,
-                      color: cs.onSurface.withValues(alpha: 0.6),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(line, style: tt.bodyMedium)),
-                  ],
-                ),
-              ),
-            ],
-            if (summary.errors.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(
-                l.settingsResetSummaryWarningHeader,
-                style: tt.labelMedium?.copyWith(
-                  color: SkColors.warnRed,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 4),
-              for (final err in summary.errors)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Text(
-                    '• $err',
-                    style: tt.bodySmall?.copyWith(
-                      color: cs.error,
-                    ),
-                  ),
-                ),
-            ],
-            if (isFactory) ...[
-              const SizedBox(height: 14),
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: SkColors.attentionMustard,
-                    width: 1.5,
-                  ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(
-                      Icons.info_outline,
-                      size: 18,
-                      color: SkColors.attentionMustard,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        l.settingsResetRestartHint,
-                        style: tt.bodySmall,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(l.settingsResetClose),
-        ),
-        if (isFactory)
-          FilledButton.icon(
-            onPressed: () {
-              // Agresif restart yok; sadece exit çağrılır, kullanıcı
-              // app'i manuel yeniden açar. windowManager.destroy + exit
-              // ile process temiz sonlanır.
-              Navigator.of(context).pop();
-              exit(0);
-            },
-            icon: const Icon(Icons.restart_alt_rounded),
-            label: Text(l.settingsResetRestartNow),
-          ),
-      ],
-    );
-  }
-}
