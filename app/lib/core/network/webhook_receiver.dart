@@ -7,8 +7,9 @@
 //   X-SK-Peer-Id     <32 hex>      (this SKAPP install's peer_id)
 //   X-SK-Timestamp   <unix sec>    (replay window anchor)
 //   X-SK-Nonce       <32 hex>      (16 random bytes, hex)
-//   X-SK-Signature   <32 hex>      (HMAC-SHA256(bond_token, body || \n
-//                                   || ts || \n || nonce_hex)[:16])
+//   X-SK-Signature   <32 hex>      (HMAC-SHA256(bond_token, <body_len> || \n
+//                                   || body || \n || ts || \n
+//                                   || nonce_hex)[:16] — Madde 18 length-prefix)
 //
 // This module verifies the signature using the bond token stored locally
 // for X-SK-Device-Id (via BondStore), enforces a ±60s timestamp window
