@@ -33,6 +33,23 @@ class ParamValidationException implements Exception {
 /// not just the remote-run endpoint.
 const int _kMaxPrerunDelaySeconds = 3600;
 
+/// Interpreter family a script is executed with.
+enum _ShellKind { powershell, bash }
+
+/// Maps a manifest `runtime` string to an interpreter family.
+///   `powershell-5.1`, `powershell-7`, `pwsh` → PowerShell
+///   `applescript-bash` (mac), `bash` (lx), `*shell*` → POSIX shell
+/// Unknown runtimes default to PowerShell (preserves pre-existing behaviour
+/// for Windows-authored content).
+_ShellKind _shellKindFor(String runtime) {
+  final r = runtime.toLowerCase();
+  if (r.startsWith('powershell') || r.contains('pwsh')) return _ShellKind.powershell;
+  if (r.contains('bash') || r.contains('applescript') || r.contains('shell')) {
+    return _ShellKind.bash;
+  }
+  return _ShellKind.powershell;
+}
+
 /// Runs SKAPI PowerShell scripts on the local machine.
 ///
 /// The runner is desktop-only. On web and mobile platforms calling
@@ -119,13 +136,20 @@ class ScriptRunner {
     );
     if (!validation.ok) throw ParamValidationException(validation);
 
+    // Runtime → interpreter + flag style. `win` scripts are PowerShell
+    // (`-name`), `mac` (applescript-bash) / `lx` (bash) are POSIX shell
+    // (`--name`). Picking both from the same manifest field keeps the
+    // bundled library cross-platform without per-script branching.
+    final kind = _shellKindFor(manifest.runtime);
     final resolved = await _resolver.resolveSource(manifest);
     return _spawn(
       id: manifest.id,
       source: resolved.source,
+      kind: kind,
       paramArgs: _paramMerge.resolve(
         manifestParams: manifest.params,
         overrides: paramOverrides,
+        style: kind == _ShellKind.bash ? ParamStyle.posix : ParamStyle.powershell,
       ),
     );
   }
@@ -148,21 +172,38 @@ class ScriptRunner {
     if (delay > 0) {
       await Future<void>.delayed(Duration(seconds: delay));
     }
-    return _spawn(id: id, source: source, paramArgs: const []);
+    // User-authored scripts are PowerShell on every platform
+    // (user_script.dart: win→powershell-5.1, mac/lx→powershell-7). pwsh must
+    // be installed on macOS/Linux for these to run.
+    return _spawn(
+      id: id,
+      source: source,
+      kind: _ShellKind.powershell,
+      paramArgs: const [],
+    );
   }
 
-  /// Shared execution core: writes [source] + a UTF-8 wrapper to temp, spawns
-  /// PowerShell, and streams output. [paramArgs] are already-resolved CLI
-  /// flags (empty for raw-source runs).
+  /// Shared execution core: writes [source] to temp and spawns the matching
+  /// interpreter ([kind]), streaming output. [paramArgs] are already-resolved
+  /// CLI flags in the right style for [kind] (empty for raw-source runs).
+  ///
+  /// PowerShell: writes `<id>.ps1` + a `<id>.wrapper.ps1` that forces UTF-8
+  /// console output and ExecutionPolicy bypass, invoked via `-File`.
+  /// Bash (mac/lx): writes `<id>.sh` and invokes `/bin/bash <file> <args>`
+  /// directly — no wrapper (the OS shell already handles UTF-8 + shebang).
   Future<RunHandle> _spawn({
     required String id,
     required String source,
     required List<String> paramArgs,
+    required _ShellKind kind,
   }) async {
+    final isPs = kind == _ShellKind.powershell;
     final tempDir = await _ensureTempDir();
     final ts = DateTime.now().microsecondsSinceEpoch;
-    final userScript = File('${tempDir.path}/$id-$ts.ps1');
-    final wrapper = File('${tempDir.path}/$id-$ts.wrapper.ps1');
+    final userScript = File('${tempDir.path}/$id-$ts.${isPs ? 'ps1' : 'sh'}');
+    final File? wrapper =
+        isPs ? File('${tempDir.path}/$id-$ts.wrapper.ps1') : null;
+    final toDelete = <File>[userScript, ?wrapper];
 
     final outputController = StreamController<RunOutputLine>.broadcast();
     final buffered = <RunOutputLine>[];
@@ -178,18 +219,19 @@ class ScriptRunner {
 
     try {
       // Faz 4.2: flush:false. await zaten OS write tamamlanmasını bekler;
-      // flush:true sadece fsync(), Process.start için gereksiz (PowerShell
-      // dosyayı normal open ile okur, page cache yeterli).
+      // flush:true sadece fsync(), Process.start için gereksiz.
       await userScript.writeAsString(source, flush: false);
-      // Wrapper forces UTF-8 console output and execution policy bypass
-      // without modifying the user's script. The user file is invoked
-      // by absolute path, args ($args) flow through.
-      final wrapperSource = '''
+      if (wrapper != null) {
+        // Wrapper forces UTF-8 console output and execution policy bypass
+        // without modifying the user's script. The user file is invoked
+        // by absolute path, args ($args) flow through.
+        final wrapperSource = '''
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 \$ErrorActionPreference = 'Continue'
 & "${userScript.path.replaceAll(r'\', r'\\')}" @args
 ''';
-      await wrapper.writeAsString(wrapperSource, flush: false);
+        await wrapper.writeAsString(wrapperSource, flush: false);
+      }
     } catch (e) {
       emit(RunOutputLine(
         kind: RunOutputKind.stderr,
@@ -207,7 +249,7 @@ class ScriptRunner {
         errorMessageArg: e.toString(),
       );
       // Best-effort cleanup of the partially written user script.
-      _safeDelete([userScript, wrapper]);
+      _safeDelete(toDelete);
       return RunHandle(
         scriptId: id,
         output: outputController.stream,
@@ -217,33 +259,47 @@ class ScriptRunner {
       );
     }
 
-    final args = <String>[
-      '-NoProfile',
-      '-NonInteractive',
-      '-ExecutionPolicy',
-      'Bypass',
-      '-File',
-      wrapper.path,
-      ...paramArgs,
-    ];
+    final String executable;
+    final List<String> args;
+    if (isPs) {
+      executable = _powerShellExecutable();
+      args = <String>[
+        '-NoProfile',
+        '-NonInteractive',
+        '-ExecutionPolicy',
+        'Bypass',
+        '-File',
+        wrapper!.path,
+        ...paramArgs,
+      ];
+    } else {
+      // mac (applescript-bash) / lx (bash): run the .sh directly. Invoking
+      // `/bin/bash <file>` ignores the shebang and the execute bit, so the
+      // temp file needs no chmod. AppleScript scripts call `osascript`
+      // inline; on macOS that may prompt for Automation/Accessibility
+      // permission and (under App Sandbox) needs the apple-events entitlement.
+      executable = '/bin/bash';
+      args = <String>[userScript.path, ...paramArgs];
+    }
 
     try {
-      // FAZ0_DIAG: T4 Process.start delta (PowerShell cold start şüphesi).
       final tProcUs = DateTime.now().microsecondsSinceEpoch;
       process = await Process.start(
-        _powerShellExecutable(),
+        executable,
         args,
         runInShell: false,
       );
       debugPrint('[FAZ0_DIAG] T4_process_start_us=$tProcUs '
           'delta_ms=${(DateTime.now().microsecondsSinceEpoch - tProcUs) ~/ 1000} '
-          'pid=${process.pid} exec=${_powerShellExecutable()}');
+          'pid=${process.pid} exec=$executable');
     } catch (e) {
       emit(RunOutputLine(
         kind: RunOutputKind.stderr,
         text: e.toString(),
         ts: DateTime.now(),
       ));
+      final notFound = e.toString().toLowerCase().contains('not found') ||
+          e.toString().toLowerCase().contains('cannot run');
       _completeRunner(
         completer,
         outputController,
@@ -251,13 +307,12 @@ class ScriptRunner {
         start: start,
         exitCode: -2,
         cancelled: false,
-        errorMessageKey: e.toString().toLowerCase().contains('not found') ||
-                e.toString().toLowerCase().contains('cannot run')
+        errorMessageKey: (isPs && notFound)
             ? 'skapiRunErrorPowerShellMissing'
             : 'skapiRunErrorSpawn',
         errorMessageArg: e.toString(),
       );
-      _safeDelete([userScript, wrapper]);
+      _safeDelete(toDelete);
       return RunHandle(
         scriptId: id,
         output: outputController.stream,
@@ -291,7 +346,7 @@ class ScriptRunner {
         exitCode: code,
         cancelled: cancelled,
       );
-      _safeDelete([userScript, wrapper]);
+      _safeDelete(toDelete);
     });
 
     return RunHandle(

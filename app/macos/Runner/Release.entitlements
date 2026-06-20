@@ -4,5 +4,17 @@
 <dict>
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
+	<!-- HTTP listener (shelf) gelen bağlantıları kabul eder. -->
+	<key>com.apple.security.network.server</key>
+	<true/>
+	<!-- Cihazlara giden TCP (CLI/webhook) + mDNS browse/announce. -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<!-- BLE eşleştirme (flutter_blue_plus). -->
+	<key>com.apple.security.device.bluetooth</key>
+	<true/>
+	<!-- SKAPI mac scriptleri osascript ile System Events'e AppleEvent gönderir. -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
 </dict>
 </plist>

@@ -6,7 +6,21 @@
 	<true/>
 	<key>com.apple.security.cs.allow-jit</key>
 	<true/>
+	<!-- HTTP listener (shelf) gelen bağlantıları kabul eder. -->
 	<key>com.apple.security.network.server</key>
+	<true/>
+	<!-- Cihazlara giden TCP (CLI/webhook) + mDNS browse/announce. -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<!-- BLE eşleştirme (flutter_blue_plus). Info.plist'teki
+	     NSBluetoothAlwaysUsageDescription ile birlikte gerekir. -->
+	<key>com.apple.security.device.bluetooth</key>
+	<true/>
+	<!-- SKAPI mac scriptleri osascript ile System Events'e AppleEvent
+	     gönderir (lock, dialog, media-key vb.). Sandbox'ta bu entitlement +
+	     Info.plist NSAppleEventsUsageDescription gerekir; macOS ilk kullanımda
+	     Automation izni sorar. -->
+	<key>com.apple.security.automation.apple-events</key>
 	<true/>
 </dict>
 </plist>

@@ -162,4 +162,51 @@ void main() {
       expect(args, isEmpty);
     });
   });
+
+  // macOS/Linux .sh scriptleri --name value (bool dahil) bekliyor; PowerShell
+  // -name + switch-bool. Runtime-aware ScriptRunner doğru stili seçer.
+  group('ParamMerge.resolve · POSIX stili (mac/lx bash)', () {
+    test('int/string → --name value (çift tire)', () {
+      final args = merge.resolve(
+        manifestParams: [_p('level', 'int'), _p('title', 'string')],
+        overrides: const {'level': 50, 'title': 'hi'},
+        style: ParamStyle.posix,
+      );
+      expect(args, ['--level', '50', '--title', 'hi']);
+    });
+
+    test('bool → --name true/false (switch DEĞİL, değer taşır)', () {
+      final on = merge.resolve(
+        manifestParams: [_p('verbose', 'bool')],
+        overrides: const {'verbose': true},
+        style: ParamStyle.posix,
+      );
+      expect(on, ['--verbose', 'true']);
+      final off = merge.resolve(
+        manifestParams: [_p('verbose', 'bool')],
+        overrides: const {'verbose': false},
+        style: ParamStyle.posix,
+      );
+      expect(off, ['--verbose', 'false']);
+    });
+
+    test('stringList → --name csv (virgülle, PS ile aynı)', () {
+      final args = merge.resolve(
+        manifestParams: [_p('apps', 'stringList')],
+        overrides: const {
+          'apps': ['chrome', 'code']
+        },
+        style: ParamStyle.posix,
+      );
+      expect(args, ['--apps', 'chrome,code']);
+    });
+
+    test('PowerShell stili varsayılan kalır (bool switch)', () {
+      final args = merge.resolve(
+        manifestParams: [_p('verbose', 'bool')],
+        overrides: const {'verbose': true},
+      );
+      expect(args, ['-verbose']); // tek tire, değer yok
+    });
+  });
 }

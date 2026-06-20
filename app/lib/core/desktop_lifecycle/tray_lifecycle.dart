@@ -268,20 +268,36 @@ class DesktopLifecycle with WindowListener, TrayListener {
     exit(0);
   }
 
-  /// Factory Reset için: Windows autostart registry entry'sini siler.
-  /// launch_at_startup paketinde `disable()` API'si YOK (v0.5.1), o yüzden
-  /// win32_registry ile manuel `HKCU\Software\Microsoft\Windows\
-  /// CurrentVersion\Run\<appName>` value'sunu siliyoruz. macOS/Linux için
-  /// Faz 2 desktop'a ertelendi.
+  /// Factory Reset için: autostart kaydını siler.
+  ///
+  /// - **macOS/Linux:** `launch_at_startup.disable()` — macOS'ta native
+  ///   MethodChannel (SMAppService), Linux'ta `~/.config/autostart/*.desktop`
+  ///   silinir. `disable()` `setup()` sonrası çalışır, o yüzden önce setup
+  ///   ediyoruz (idempotent).
+  /// - **Windows:** `launch_at_startup` Windows'ta registry yazıyor ama
+  ///   silme yolunu burada `win32_registry` ile manuel yapıyoruz
+  ///   (`HKCU\...\Run\<appName>`), tarihsel olarak daha güvenilirdi.
   ///
   /// `true` döner: entry vardı ve silindi (ya da zaten yoktu).
   /// `false` döner: silme sırasında hata oluştu.
   Future<bool> unregisterAutostart() async {
     if (!desktopLifecycleSupported) return true;
-    if (!Platform.isWindows) {
-      debugPrint('[desktop-lifecycle] autostart unregister: '
-          'platform ${Platform.operatingSystem} not implemented yet, no-op');
-      return true;
+    if (Platform.isMacOS || Platform.isLinux) {
+      try {
+        final info = await PackageInfo.fromPlatform();
+        launchAtStartup.setup(
+          appName: info.appName,
+          appPath: Platform.resolvedExecutable,
+          args: const <String>[kHiddenStartFlag],
+        );
+        await launchAtStartup.disable();
+        debugPrint('[desktop-lifecycle] autostart disabled '
+            '(${Platform.operatingSystem})');
+        return true;
+      } catch (e) {
+        debugPrint('[desktop-lifecycle] autostart disable failed: $e');
+        return false;
+      }
     }
     try {
       final info = await PackageInfo.fromPlatform();

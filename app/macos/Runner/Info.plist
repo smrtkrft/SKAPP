@@ -28,5 +28,25 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<!-- BLE eşleştirme izni (flutter_blue_plus). Bu metin macOS Bluetooth
+	     izin diyaloğunda gösterilir. Entitlement: device.bluetooth. -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>SKAPP, SmartKraft cihazlarını (Blocking Focus, LebensSpur) eşleştirip yapılandırmak için Bluetooth kullanır.</string>
+	<!-- Yerel ağ (mDNS/Bonjour) izni. macOS 12.3+ bu metni ve aşağıdaki
+	     NSBonjourServices listesini ister; yoksa mDNS sessizce reddedilir. -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>SKAPP, aynı ağdaki SmartKraft cihazlarını ve eşleşmiş telefonları bulmak için yerel ağı kullanır.</string>
+	<!-- mDNS servis tipleri: announcer `_skappdesktop._tcp` yayınlar,
+	     browser cihazların `_skapp._tcp` kaydını arar. -->
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_skappdesktop._tcp</string>
+		<string>_skapp._tcp</string>
+	</array>
+	<!-- SKAPI mac scriptleri osascript ile AppleScript otomasyonu yapar
+	     (System Events'e keystroke, display dialog vb.). Automation izin
+	     diyaloğunda gösterilir; entitlement: automation.apple-events. -->
+	<key>NSAppleEventsUsageDescription</key>
+	<string>SKAPP, SKAPI scriptlerini çalıştırırken sistem eylemleri (kilitleme, bildirim, pencere kontrolü) için AppleScript otomasyonu kullanır.</string>
 </dict>
 </plist>

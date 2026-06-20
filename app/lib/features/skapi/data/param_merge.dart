@@ -248,14 +248,31 @@ class ParamValidator {
 ///     multiple `-name value1 value2 ...` tokens, deferred until a script
 ///     actually needs it.
 ///   - null: parameter omitted.
+/// Argv flag convention, picked per script runtime by [ScriptRunner].
+enum ParamStyle {
+  /// PowerShell (`win` + user scripts): `-name value`; bool `true` becomes a
+  /// bare switch `-name`, `false` is omitted. Matches `param([switch]$x)`.
+  powershell,
+
+  /// POSIX shell (`mac` = applescript-bash, `lx` = bash): `--name value` for
+  /// every type — bool too (`--name true|false`). Matches the bundled `.sh`
+  /// scripts' `case --name) x="$2"; shift 2 ;;` parse convention, where every
+  /// flag (including bools like `--verbose`) reads a following value.
+  posix,
+}
+
 class ParamMerge {
   const ParamMerge();
 
-  /// Returns argv list ready to append after `-File <path>`.
+  /// Returns argv list ready to append after the script path. [style] picks
+  /// the flag convention so the same manifest+overrides drive PowerShell
+  /// (`-name`) and POSIX (`--name`) scripts identically.
   List<String> resolve({
     required List<ScriptParam> manifestParams,
     Map<String, Object?> overrides = const {},
+    ParamStyle style = ParamStyle.powershell,
   }) {
+    final dash = style == ParamStyle.posix ? '--' : '-';
     final args = <String>[];
     for (final p in manifestParams) {
       final value = overrides.containsKey(p.name)
@@ -264,29 +281,35 @@ class ParamMerge {
       if (value == null) continue;
       switch (p.type) {
         case 'bool':
-          if (value is bool && value) {
-            args.add('-${p.name}');
+          if (style == ParamStyle.posix) {
+            // Emit explicit value: the `.sh` scripts always `shift 2` after a
+            // flag, so a bare `--name` would consume the next token as its
+            // value and desync parsing.
+            args
+              ..add('$dash${p.name}')
+              ..add((value == true).toString());
+          } else if (value is bool && value) {
+            args.add('$dash${p.name}'); // PowerShell switch
           }
           break;
         case 'int':
         case 'num':
-          args
-            ..add('-${p.name}')
-            ..add(value.toString());
-          break;
         case 'string':
           args
-            ..add('-${p.name}')
+            ..add('$dash${p.name}')
             ..add(value.toString());
           break;
         case 'stringList':
+          // Comma-joined single token for both styles (PS `[string[]]` splits
+          // on comma; `.sh` scripts read the csv into one var). Per-item comma
+          // injection is blocked by ParamValidator (güvenlik.md Madde 19).
           if (value is List) {
             args
-              ..add('-${p.name}')
+              ..add('$dash${p.name}')
               ..add(value.join(','));
           } else if (value is String) {
             args
-              ..add('-${p.name}')
+              ..add('$dash${p.name}')
               ..add(value);
           }
           break;
@@ -294,7 +317,7 @@ class ParamMerge {
           // Unknown types are passed through as plain strings so a new
           // param type isn't silently dropped during runner upgrades.
           args
-            ..add('-${p.name}')
+            ..add('$dash${p.name}')
             ..add(value.toString());
       }
     }
