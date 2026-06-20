@@ -107,7 +107,7 @@ class SkappHttpServer {
     final id = _ref.read(networkIdentityProvider);
     final router = _buildRouter(id.bearerToken);
     final pipeline = const Pipeline()
-        .addMiddleware(_authMiddleware(id.bearerToken))
+        .addMiddleware(_authMiddleware())
         .addHandler(router.call);
 
     // Bind address: when `lanVisible` is true (default), accept connections
@@ -479,6 +479,32 @@ class SkappHttpServer {
         );
       }
 
+      // Madde 9: per-peer dakika-başı sliding-window. Eşzamanlılık cap'i
+      // anlık yükü sınırlar; bu, her run anında bitse bile burst/brute-force
+      // frekansını sınırlar. Aşılırsa 429 `rate_limited` + retryAfter.
+      if (!registry.withinRateLimit(peerUuid)) {
+        activity.recordRejected(
+          peerUuid: peerUuid,
+          peerName: peerName,
+          platform: platform,
+          scriptId: scriptId,
+          statusCode: 429,
+          reason: 'rate_limited',
+        );
+        return Response(
+          429,
+          body: jsonEncode({
+            'error': 'rate_limited',
+            'limit': kMaxRunsPerMinute,
+            'windowSeconds': 60,
+          }),
+          headers: {
+            'content-type': 'application/json',
+            'retry-after': '60',
+          },
+        );
+      }
+
       final handle = await runner.run(
         manifest: manifest,
         paramOverrides: overrides,
@@ -803,7 +829,7 @@ class SkappHttpServer {
     return router;
   }
 
-  Middleware _authMiddleware(String expectedToken) {
+  Middleware _authMiddleware() {
     return (Handler inner) {
       return (Request req) async {
         // Public, bearer-free routes:
@@ -872,13 +898,21 @@ class SkappHttpServer {
           // consumed bytes attached.
           req = req.change(body: body);
         } else if (auth.startsWith('Bearer ')) {
-          final token = auth.substring('Bearer '.length).trim();
-          if (token != expectedToken) {
-            return Response.unauthorized('Invalid token');
-          }
-          // Legacy bearer caller is the install itself; attribute the
-          // run to the install UUID so per-peer caps still apply.
-          attributedPeerUuid = _ref.read(networkIdentityProvider).uuid;
+          // Madde 13: legacy bearer auth retired. Modern clients sign every
+          // request with SKAPP-HMAC anchored on a per-peer token. A bare
+          // bearer — even a valid but leaked install token (pre-Madde-1
+          // backup, etc.) — no longer authenticates, which closes the
+          // HMAC + replay (Madde 4) + TLS-pinning (Madde 5) bypass. Peers
+          // paired before per-peer tokens existed must re-pair.
+          return Response(
+            401,
+            body: jsonEncode({
+              'error': 'bearer_retired',
+              'message':
+                  'Bearer auth retired; re-pair to obtain a per-peer token',
+            }),
+            headers: {'content-type': 'application/json'},
+          );
         } else {
           return Response.unauthorized('Unsupported authorization scheme');
         }

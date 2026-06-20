@@ -26,6 +26,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nsd/nsd.dart' as nsd;
 
 import '../app_info/version_provider.dart';
+import '../settings/settings_providers.dart';
 import '../system/network_identity_provider.dart';
 import 'skapp_http_server.dart';
 
@@ -56,11 +57,24 @@ class SkappMdnsAnnouncer {
     if (!supported || _registration != null) return;
     final id = _ref.read(networkIdentityProvider);
 
+    // Madde 14: lanVisible kapalıyken HTTP listener loopback-only çalışır
+    // (Madde 6). O durumda LAN'a mDNS yayını yapmak hem anlamsız hem de
+    // uuid/varlık sızıntısı — announce etme.
+    if (!id.lanVisible) {
+      debugPrint('[mdns-announce] skipped: lanVisible=false (loopback-only)');
+      return;
+    }
+
+    // Madde 14: version + platform alanları fingerprinting/version-targeted
+    // CVE yüzeyi açıyor; default gizle, sadece developer mode'da yayınla.
+    // uuid (servis kimliği) ve fp (cert pinning) zorunlu kalır.
+    final devMode = _ref.read(developerModeProvider);
+
     // appVersion is loaded async at first launch; the announcer stays
     // resilient if it isn't ready yet (TXT record just omits version).
     String version;
     try {
-      version = await _ref.read(appVersionProvider.future);
+      version = devMode ? await _ref.read(appVersionProvider.future) : '';
     } catch (_) {
       version = '';
     }
@@ -82,7 +96,8 @@ class SkappMdnsAnnouncer {
           'uuid': Uint8List.fromList(utf8.encode(id.uuid)),
           if (version.isNotEmpty)
             'version': Uint8List.fromList(utf8.encode(version)),
-          'platform': Uint8List.fromList(utf8.encode(_platformTag())),
+          if (devMode)
+            'platform': Uint8List.fromList(utf8.encode(_platformTag())),
           if (cert != null)
             'fp': Uint8List.fromList(utf8.encode(cert.fingerprintHex)),
         },

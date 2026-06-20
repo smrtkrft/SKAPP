@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'remote_run_audit_log.dart';
+
 /// Outcome of a single remote-run attempt against the desktop's HTTP
 /// listener. Surfaces in the Settings → Advanced "Remote runs" card so
 /// the desktop owner can see who triggered what, with what result.
@@ -72,6 +74,50 @@ class RemoteRunActivity {
   /// leaking the user-supplied content.
   final List<String> paramOverrideKeys;
 
+  /// JSON line for the persistent audit log (Madde 10). Values are
+  /// deliberately limited to what the RAM card already exposes — override
+  /// KEYS only, never values, so the forensic log can't leak user content.
+  Map<String, Object?> toJson() => {
+        'when': when.toIso8601String(),
+        'runId': runId,
+        'peerUuid': peerUuid,
+        'peerName': peerName,
+        'platform': platform,
+        'scriptId': scriptId,
+        'outcome': outcome.name,
+        if (statusCode != null) 'statusCode': statusCode,
+        if (exitCode != null) 'exitCode': exitCode,
+        if (durationMs != null) 'durationMs': durationMs,
+        if (reason != null) 'reason': reason,
+        if (paramOverrideKeys.isNotEmpty) 'paramOverrideKeys': paramOverrideKeys,
+      };
+
+  static RemoteRunActivity? fromJson(Map<String, dynamic> j) {
+    final whenStr = j['when'] as String?;
+    final when = whenStr == null ? null : DateTime.tryParse(whenStr);
+    if (when == null) return null;
+    final outcomeName = j['outcome'] as String?;
+    final outcome = RemoteRunOutcome.values.firstWhere(
+      (o) => o.name == outcomeName,
+      orElse: () => RemoteRunOutcome.completed,
+    );
+    return RemoteRunActivity(
+      when: when,
+      runId: (j['runId'] ?? '').toString(),
+      peerUuid: (j['peerUuid'] ?? '').toString(),
+      peerName: (j['peerName'] ?? '').toString(),
+      platform: (j['platform'] ?? '').toString(),
+      scriptId: (j['scriptId'] ?? '').toString(),
+      outcome: outcome,
+      statusCode: (j['statusCode'] as num?)?.toInt(),
+      exitCode: (j['exitCode'] as num?)?.toInt(),
+      durationMs: (j['durationMs'] as num?)?.toInt(),
+      reason: j['reason'] as String?,
+      paramOverrideKeys:
+          (j['paramOverrideKeys'] as List?)?.cast<String>() ?? const [],
+    );
+  }
+
   RemoteRunActivity copyWith({
     RemoteRunOutcome? outcome,
     int? statusCode,
@@ -101,8 +147,32 @@ class RemoteRunActivity {
 const int _kMaxActivity = 50;
 
 class RemoteRunActivityNotifier extends Notifier<List<RemoteRunActivity>> {
+  /// Persistent forensic log (Madde 10). Null until [_initPersistence]
+  /// resolves the on-disk location, or on web where there is no listener.
+  RemoteRunAuditLog? _audit;
+
   @override
-  List<RemoteRunActivity> build() => const <RemoteRunActivity>[];
+  List<RemoteRunActivity> build() {
+    // Best-effort: hydrate from the persistent audit log, then keep writing
+    // to it. Runs async so build() stays synchronous; any platform without
+    // a file system (web) or plugin (test harness) silently stays RAM-only.
+    _initPersistence();
+    return const <RemoteRunActivity>[];
+  }
+
+  Future<void> _initPersistence() async {
+    final log = await RemoteRunAuditLog.defaultLocation();
+    if (log == null) return;
+    _audit = log;
+    final persisted = await log.loadRecent();
+    if (persisted.isEmpty) return;
+    // Entries pushed during the init window stay newest; persisted history
+    // (previous sessions) appends below, capped to the RAM ring size.
+    final merged = <RemoteRunActivity>[...state, ...persisted];
+    state = merged.length > _kMaxActivity
+        ? merged.sublist(0, _kMaxActivity)
+        : merged;
+  }
 
   void _push(RemoteRunActivity entry) {
     final next = <RemoteRunActivity>[entry, ...state];
@@ -110,6 +180,8 @@ class RemoteRunActivityNotifier extends Notifier<List<RemoteRunActivity>> {
       next.removeRange(_kMaxActivity, next.length);
     }
     state = next;
+    // Fire-and-forget persistence (null during the brief init window).
+    _audit?.append(entry);
   }
 
   /// Record the moment the run endpoint accepted the request and
@@ -183,6 +255,7 @@ class RemoteRunActivityNotifier extends Notifier<List<RemoteRunActivity>> {
 
   void clear() {
     state = const <RemoteRunActivity>[];
+    _audit?.clear();
   }
 }
 

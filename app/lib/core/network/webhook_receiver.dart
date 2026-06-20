@@ -123,8 +123,15 @@ class WebhookReceiver {
 
     // Recompute signature over the canonical message and compare in
     // constant time. The canonical form must match sk_api.c
-    // build_sign_msg() exactly: body || "\n" || ts || "\n" || nonce_hex.
-    final msg = utf8.encode('$body\n$tsStr\n$nonceHex');
+    // build_sign_msg() exactly (güvenlik.md Madde 18):
+    //   <body_len> || "\n" || body || "\n" || ts || "\n" || nonce_hex
+    // The leading decimal BYTE length prefix removes the framing ambiguity
+    // the old `body\n...` form had. `body_len` is the UTF-8 byte count so it
+    // matches the firmware's `%zu` of the raw body bytes (not char count).
+    // NOTE: lockstep change — a BF on old firmware signs the old format and
+    // fails verification here until reflashed.
+    final bodyByteLen = utf8.encode(body).length;
+    final msg = utf8.encode('$bodyByteLen\n$body\n$tsStr\n$nonceHex');
     final mac = crypto_pkg.Hmac(crypto_pkg.sha256, token).convert(msg).bytes;
     final expectedHex = _hex(mac.sublist(0, 16));
     if (!_constantTimeEq(expectedHex, sigHex.toLowerCase())) {

@@ -104,6 +104,26 @@ void main() {
           });
       expect(r.code, 'type_mismatch');
     });
+
+    test('Madde 19 · stringList öğesinde virgül → invalid_chars (injection)',
+        () {
+      final r = validator.validate(
+          manifestParams: [_p('apps', 'stringList')],
+          overrides: const {
+            'apps': ['chrome', 'code,notepad']
+          });
+      expect(r.code, 'invalid_chars');
+      expect(r.paramName, 'apps');
+    });
+
+    test('Madde 19 · virgülsüz stringList kabul edilir', () {
+      final r = validator.validate(
+          manifestParams: [_p('apps', 'stringList')],
+          overrides: const {
+            'apps': ['chrome', 'code']
+          });
+      expect(r.ok, isTrue);
+    });
   });
 
   group('ParamMerge.resolve · argv üretimi', () {

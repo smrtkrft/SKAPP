@@ -104,6 +104,20 @@ class ParamValidator {
               if (patFail != null) return patFail;
               final ctrlFail = _checkControlChars(p, item);
               if (ctrlFail != null) return ctrlFail;
+              // Madde 19: ParamMerge stringList'i `,` ile birleştirip tek
+              // argv token gönderiyor (PowerShell `[string[]]` named param
+              // virgülle array alır; ayrı token binding'i kırar). Bir öğe
+              // virgül içerirse script split'inde fazladan eleman olarak
+              // belirir — wire'da bunu reddederek list-injection'ı kapat.
+              if (item.contains(',')) {
+                return ParamValidationResult.fail(
+                  code: 'invalid_chars',
+                  paramName: p.name,
+                  message:
+                      'Param "${p.name}" list element contains a comma; the '
+                      'comma is the list delimiter and would inject extra items',
+                );
+              }
             }
           }
           break;

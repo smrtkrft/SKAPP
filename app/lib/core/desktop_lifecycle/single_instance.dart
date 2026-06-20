@@ -14,6 +14,7 @@
 // (Faz 2'de pthread/fcntl flock benzeri ekleneceğine göre TCP fail-open).
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -72,6 +73,18 @@ class SingleInstance {
 
   /// Fixed loopback port — focus IPC için.
   static const int _kPort = 47861;
+
+  /// Focus IPC handshake magic. The loopback listener fires `onFocus` only
+  /// when the first line equals this exact token; any other local process
+  /// that merely `connect()`s gets dropped without focusing. Güvenlik.md
+  /// Madde 11: önceden gövde okunmadan her bağlantı focus tetikliyordu.
+  static const String _kFocusMagic = 'SKAPP_FOCUS_v1';
+
+  /// True when [line] is a valid focus command. Trailing CR/LF/space are
+  /// tolerated (the client writes `<magic>\n`). The pre-Madde-11 payload
+  /// `FOCUS` is deliberately rejected so a stale/blind connector can't
+  /// raise the window. Exposed for tests.
+  static bool isFocusCommand(String line) => line.trim() == _kFocusMagic;
 
   /// Windows kernel mutex adı. `Local\` namespace user oturumuna özeldir;
   /// farklı kullanıcılar aynı makinede SKAPP'larını paralel çalıştırırlar.
@@ -196,15 +209,29 @@ class SingleInstance {
     if (server == null) return;
     server.listen(
       (client) async {
-        debugPrint('[single-instance] focus request from peer');
+        // Madde 11: gelen ilk satırı oku, magic eşleşmezse focus tetikleme.
+        // Salt `connect()` yapan herhangi bir local process (veya browser
+        // fetch sızıntısı) artık pencereyi öne getiremez. 2 sn timeout
+        // slow-loris tarzı asılı bağlantıyı da keser.
         try {
-          onFocus();
+          final firstLine = await utf8.decoder
+              .bind(client)
+              .transform(const LineSplitter())
+              .first
+              .timeout(const Duration(seconds: 2));
+          if (isFocusCommand(firstLine)) {
+            debugPrint('[single-instance] focus request from peer');
+            try {
+              onFocus();
+            } catch (e) {
+              debugPrint('[single-instance] onFocus threw: $e');
+            }
+          } else {
+            debugPrint('[single-instance] rejected non-magic focus payload');
+          }
         } catch (e) {
-          debugPrint('[single-instance] onFocus threw: $e');
+          debugPrint('[single-instance] focus read failed/timeout: $e');
         }
-        try {
-          await client.drain<void>();
-        } catch (_) {/* */}
         try {
           await client.close();
         } catch (_) {/* */}
@@ -223,7 +250,7 @@ class SingleInstance {
         _kPort,
         timeout: const Duration(milliseconds: 800),
       );
-      socket.write('FOCUS\n');
+      socket.write('$_kFocusMagic\n');
       await socket.flush();
       await socket.close();
       debugPrint('[single-instance] focus signal sent, exiting');

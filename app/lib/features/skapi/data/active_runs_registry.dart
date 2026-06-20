@@ -9,6 +9,15 @@ import 'run_handle.dart';
 /// client cannot exhaust desktop resources.
 const int kMaxRunsPerPeer = 3;
 
+/// Per-peer sliding-window rate cap (güvenlik.md Madde 9). A peer may start
+/// at most this many runs within any rolling 60-second window before the
+/// next request is rejected with HTTP 429 `rate_limited`. Concurrency cap
+/// ([kMaxRunsPerPeer]) bounds simultaneous load; this bounds burst/brute-
+/// force frequency even when each run finishes instantly.
+const int kMaxRunsPerMinute = 5;
+
+const Duration _kRateWindow = Duration(minutes: 1);
+
 /// One actively running script the desktop server is hosting on behalf
 /// of a paired peer. Lives in [ActiveRunsRegistry] from the moment the
 /// run endpoint registers it until the underlying process exits or the
@@ -44,13 +53,38 @@ class ActiveRunsRegistry {
   final Map<String, ActiveRun> _byRunId = {};
   final Map<String, int> _countByPeer = {};
 
+  /// Recent run-start timestamps per peer, for the sliding-window rate
+  /// limit. Pruned to the active window on every [withinRateLimit] check.
+  final Map<String, List<DateTime>> _recentStartsByPeer = {};
+
   int countFor(String peerUuid) => _countByPeer[peerUuid] ?? 0;
 
   bool canStart(String peerUuid) => countFor(peerUuid) < kMaxRunsPerPeer;
 
-  void register(ActiveRun run) {
+  /// True when [peerUuid] has started fewer than [kMaxRunsPerMinute] runs in
+  /// the 60-second window ending at [now] (defaults to wall clock; injectable
+  /// for tests). Prunes expired timestamps as a side effect so the map can't
+  /// grow without bound for an active peer.
+  bool withinRateLimit(String peerUuid, {DateTime? now}) {
+    final t = now ?? DateTime.now();
+    final cutoff = t.subtract(_kRateWindow);
+    final list = _recentStartsByPeer[peerUuid];
+    if (list == null) return true;
+    list.removeWhere((ts) => ts.isBefore(cutoff));
+    if (list.isEmpty) {
+      _recentStartsByPeer.remove(peerUuid);
+      return true;
+    }
+    return list.length < kMaxRunsPerMinute;
+  }
+
+  void register(ActiveRun run, {DateTime? now}) {
     _byRunId[run.runId] = run;
     _countByPeer[run.peerUuid] = (_countByPeer[run.peerUuid] ?? 0) + 1;
+    // Rate-limit ledger: an admitted run counts toward the per-minute cap
+    // even after it finishes (cleanup does NOT remove this timestamp — the
+    // window is time-based, not concurrency-based).
+    (_recentStartsByPeer[run.peerUuid] ??= []).add(now ?? DateTime.now());
   }
 
   ActiveRun? get(String runId) => _byRunId[runId];

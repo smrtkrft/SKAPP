@@ -152,12 +152,29 @@ Future<void> _writeCert(SelfSignedCert cert) async {
       final keyFile = File('${dir.path}${Platform.pathSeparator}key.pem');
       await certFile.writeAsString(cert.certPem);
       await keyFile.writeAsString(cert.privateKeyPem);
-      // Tighten the key file's permissions; ignore failures (FAT/exFAT
-      // mounts don't support chmod) — at worst it stays at the umask
-      // default which on Linux desktops is usually 0644.
+      // Tighten the key file's permissions to owner-only (0600).
       try {
         await Process.run('chmod', ['600', keyFile.path]);
       } catch (_) {}
+      // Madde 16: chmod best-effort'tu — FAT/exFAT mount'unda ya da chmod
+      // fail durumunda key world-readable kalabilir. Yazımdan sonra modu
+      // doğrula; group/other'a herhangi bir erişim biti açıksa diski
+      // bırakmak yerine SİL (çok-kullanıcılı makinede başka kullanıcının
+      // private key'i okuyup MITM yapmasını engelle). Bir sonraki başlangıç
+      // anahtarı yeniden üretir; bu çalışmada TLS RAM-only cert ile devam.
+      try {
+        final mode = keyFile.statSync().mode;
+        if (mode & 0x3F != 0) {
+          debugPrint('[self-signed-cert] key file world/group-readable '
+              '(mode=${(mode & 0x1FF).toRadixString(8)}); deleting insecure '
+              'disk copy — TLS key will live RAM-only this run');
+          try {
+            await keyFile.delete();
+          } catch (_) {}
+        }
+      } catch (e) {
+        debugPrint('[self-signed-cert] key mode verify failed: $e');
+      }
     } catch (e) {
       debugPrint('[self-signed-cert] file fallback write failed: $e');
     }
