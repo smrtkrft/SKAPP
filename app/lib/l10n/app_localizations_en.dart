@@ -495,6 +495,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDeveloperMode => 'Developer mode';
 
   @override
+  String get settingsDeveloperToolsTitle => 'Developer tools';
+
+  @override
+  String get settingsDeveloperToolsSubtitle =>
+      'USB console, network identity, listener, tokens, logs';
+
+  @override
   String get settingsDeveloperModeInfoTitle =>
       'What does Developer mode unlock?';
 
@@ -5897,4 +5904,57 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get lsHomeEarlyWarningPendingNote =>
       'Early warning actions fire on timer.alarm. Firmware subscriber is pending; these configs persist but will not auto-fire yet.';
+
+  @override
+  String get settingsDiagnosticsTitle => 'Diagnostics';
+
+  @override
+  String get settingsDiagnosticsSubtitle => 'Logs to help debug issues';
+
+  @override
+  String get diagnosticsCopyLogs => 'Copy logs';
+
+  @override
+  String get diagnosticsOpenFolder => 'Open folder';
+
+  @override
+  String get diagnosticsOpenFolderFailed => 'Could not open the log folder.';
+
+  @override
+  String get diagnosticsShareLogs => 'Share logs';
+
+  @override
+  String get diagnosticsClearLogs => 'Clear logs';
+
+  @override
+  String get diagnosticsCopied => 'Logs copied to clipboard';
+
+  @override
+  String get diagnosticsCleared => 'Logs cleared';
+
+  @override
+  String get aboutPrivacyLabel => 'Privacy policy';
+
+  @override
+  String get updateChecking => 'Checking for updates…';
+
+  @override
+  String get updateUpToDate => 'You\'re on the latest version';
+
+  @override
+  String get updateCheckFailed => 'Could not check for updates';
+
+  @override
+  String get updateAvailableTitle => 'Update available';
+
+  @override
+  String updateAvailableBody(String version, String current) {
+    return 'A new version ($version) is available. You\'re on $current.';
+  }
+
+  @override
+  String get updateDownloadAction => 'Download';
+
+  @override
+  String get updateLater => 'Later';
 }

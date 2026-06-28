@@ -437,8 +437,8 @@ class _StatusBar extends StatelessWidget {
     final (color, label) = switch (state.connection) {
       UsbConnectionState.connecting =>
         (cs.onSurfaceVariant, l.usbConsoleConnecting),
-      UsbConnectionState.connected =>
-        (const Color(0xFF2E7D32), l.usbConsoleConnected),
+      // tasarim.md: çevrimiçi/bağlı = tam opak foreground (renk değil).
+      UsbConnectionState.connected => (cs.onSurface, l.usbConsoleConnected),
       UsbConnectionState.disconnected =>
         (cs.onSurfaceVariant, l.usbConsoleDisconnected),
       UsbConnectionState.error => (cs.error, l.usbConsoleDisconnected),

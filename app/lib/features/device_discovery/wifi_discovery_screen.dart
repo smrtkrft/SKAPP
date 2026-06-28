@@ -324,15 +324,17 @@ class _DeviceTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                   horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF2E7D32).withValues(alpha: 0.12),
+                // tasarim.md: "eşleşti" pozitif durumu renkle değil
+                // opaklık+nötr ton ile gösterilir.
+                color: cs.onSurface.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
                 AppLocalizations.of(context).wifiDiscoveryPairedBadge,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF2E7D32),
+                  color: cs.onSurface,
                 ),
               ),
             )

@@ -12,6 +12,8 @@ Icon?
 
 # --- Yerel-özel (paylaşılmayan) klasör ---
 no_github/
+# --- Yerel kurulum/OTA artefaktları (paylaşılmaz) ---
+ota/
 
 # ============================================================
 #  Flutter / Dart  (app/)

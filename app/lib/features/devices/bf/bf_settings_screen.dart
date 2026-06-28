@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/storage/paired_devices_store.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/theme/responsive.dart';
+import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
@@ -170,7 +171,7 @@ class _BfSettingsScreenState extends ConsumerState<BfSettingsScreen> {
     required String message,
     required String confirmLabel,
     required String cmd,
-    Color? confirmColor,
+    bool destructive = false,
   }) async {
     final client = BfSession.of(context).client;
     final l = AppLocalizations.of(context);
@@ -178,25 +179,14 @@ class _BfSettingsScreenState extends ConsumerState<BfSettingsScreen> {
       cmd,
       confirmRequest: (req) async {
         if (!context.mounted) return false;
-        final ok = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text(title),
-            content: Text(message),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(l.commonCancel),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                style: TextButton.styleFrom(foregroundColor: confirmColor),
-                child: Text(confirmLabel),
-              ),
-            ],
-          ),
+        return showSkConfirm(
+          context,
+          title: title,
+          message: message,
+          confirmLabel: confirmLabel,
+          cancelLabel: l.commonCancel,
+          destructive: destructive,
         );
-        return ok == true;
       },
     );
     if (!context.mounted) return;
@@ -317,7 +307,6 @@ class _BfSettingsScreenState extends ConsumerState<BfSettingsScreen> {
                 message: l.bfSettingsUnpairSubtitle,
                 confirmLabel: l.commonRemove,
                 cmd: 'ble.unpair',
-                confirmColor: SkColors.attentionMustard,
               ),
             ),
             _Row(
@@ -332,7 +321,7 @@ class _BfSettingsScreenState extends ConsumerState<BfSettingsScreen> {
                 message: l.bfSettingsFactoryResetConfirmBody,
                 confirmLabel: l.commonDelete,
                 cmd: 'device.factory-reset',
-                confirmColor: Theme.of(context).colorScheme.error,
+                destructive: true,
               ),
             ),
           ]),

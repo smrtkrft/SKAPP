@@ -21,6 +21,7 @@ class AboutScreen extends ConsumerWidget {
   static const _youtubeUrl = 'https://www.youtube.com/@SmartKraftLabs';
   static const _xUrl = 'https://x.com/SmartKraftLabs';
   static const _email = 'code@smartkraft.ch';
+  static const _privacyUrl = 'https://smartkraft.ch/privacy';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -126,6 +127,12 @@ class AboutScreen extends ConsumerWidget {
                   label: _email,
                   icon: Icons.mail_outline_rounded,
                   onTap: () => _open('mailto:$_email'),
+                ),
+                const SizedBox(height: 10),
+                _LinkCard(
+                  label: l.aboutPrivacyLabel,
+                  icon: Icons.privacy_tip_outlined,
+                  onTap: () => _open(_privacyUrl),
                 ),
 
                 const SizedBox(height: 28),

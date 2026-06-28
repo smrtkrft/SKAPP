@@ -5,7 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
+import 'app_localizations_el.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
 import 'app_localizations_tr.dart';
 
 // ignore_for_file: type=lint
@@ -94,7 +101,14 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
+    Locale('el'),
     Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('it'),
+    Locale('pt'),
+    Locale('ru'),
     Locale('tr'),
   ];
 
@@ -949,6 +963,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Developer mode'**
   String get settingsDeveloperMode;
+
+  /// No description provided for @settingsDeveloperToolsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer tools'**
+  String get settingsDeveloperToolsTitle;
+
+  /// No description provided for @settingsDeveloperToolsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'USB console, network identity, listener, tokens, logs'**
+  String get settingsDeveloperToolsSubtitle;
 
   /// No description provided for @settingsDeveloperModeInfoTitle.
   ///
@@ -9979,6 +10005,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Early warning actions fire on timer.alarm. Firmware subscriber is pending; these configs persist but will not auto-fire yet.'**
   String get lsHomeEarlyWarningPendingNote;
+
+  /// No description provided for @settingsDiagnosticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics'**
+  String get settingsDiagnosticsTitle;
+
+  /// No description provided for @settingsDiagnosticsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs to help debug issues'**
+  String get settingsDiagnosticsSubtitle;
+
+  /// No description provided for @diagnosticsCopyLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy logs'**
+  String get diagnosticsCopyLogs;
+
+  /// No description provided for @diagnosticsOpenFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open folder'**
+  String get diagnosticsOpenFolder;
+
+  /// No description provided for @diagnosticsOpenFolderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the log folder.'**
+  String get diagnosticsOpenFolderFailed;
+
+  /// No description provided for @diagnosticsShareLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Share logs'**
+  String get diagnosticsShareLogs;
+
+  /// No description provided for @diagnosticsClearLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear logs'**
+  String get diagnosticsClearLogs;
+
+  /// No description provided for @diagnosticsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs copied to clipboard'**
+  String get diagnosticsCopied;
+
+  /// No description provided for @diagnosticsCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs cleared'**
+  String get diagnosticsCleared;
+
+  /// No description provided for @aboutPrivacyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get aboutPrivacyLabel;
+
+  /// No description provided for @updateChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking for updates…'**
+  String get updateChecking;
+
+  /// No description provided for @updateUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on the latest version'**
+  String get updateUpToDate;
+
+  /// No description provided for @updateCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not check for updates'**
+  String get updateCheckFailed;
+
+  /// No description provided for @updateAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update available'**
+  String get updateAvailableTitle;
+
+  /// No description provided for @updateAvailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A new version ({version}) is available. You\'re on {current}.'**
+  String updateAvailableBody(String version, String current);
+
+  /// No description provided for @updateDownloadAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get updateDownloadAction;
+
+  /// No description provided for @updateLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get updateLater;
 }
 
 class _AppLocalizationsDelegate
@@ -9991,8 +10119,17 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'tr'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'el',
+    'en',
+    'es',
+    'fr',
+    'it',
+    'pt',
+    'ru',
+    'tr',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -10001,8 +10138,22 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
+    case 'el':
+      return AppLocalizationsEl();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'it':
+      return AppLocalizationsIt();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
     case 'tr':
       return AppLocalizationsTr();
   }

@@ -23,6 +23,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../cli/bond_store.dart';
 import '../desktop_lifecycle/tray_lifecycle.dart';
+import '../logging/app_logger.dart';
 import '../network/peer_tokens_provider.dart';
 import '../network/skapp_http_server.dart';
 import '../network/skapp_listener_service.dart';
@@ -178,6 +179,11 @@ class ResetService {
       if (await overrides.exists()) {
         await overrides.delete(recursive: true);
       }
+    });
+
+    // 6b. Tanılama loglarını sil (beta diagnostics log dosyası).
+    await _runStep(errors, 'appSupport.logs.clear', () async {
+      await AppLogger.instance.clear();
     });
 
     // 7. SharedPreferences komple wipe (theme, locale, channel, notes,

@@ -18,6 +18,7 @@ import '../../core/cli/ecdh_pairing.dart';
 import '../../core/storage/paired_devices_store.dart';
 import '../../core/system/network_identity_provider.dart';
 import '../../core/theme/responsive.dart';
+import '../../core/ui/sk_confirm_dialog.dart';
 import '../../l10n/app_localizations.dart';
 import '../main_shell/main_shell.dart' show ShellNavBar;
 import '../device_setup/wifi_scan_screen.dart';
@@ -261,23 +262,13 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
   Future<bool?> _confirmPairingMode() async {
     if (!mounted) return false;
     final l = AppLocalizations.of(context);
-    return showDialog<bool>(
-      context: context,
+    return showSkConfirm(
+      context,
+      title: l.pairingRecoveryTitle,
+      message: l.pairingRecoveryBody,
+      cancelLabel: l.commonCancel,
+      confirmLabel: l.pairingRecoveryContinue,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.pairingRecoveryTitle),
-        content: Text(l.pairingRecoveryBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l.pairingRecoveryContinue),
-          ),
-        ],
-      ),
     );
   }
 

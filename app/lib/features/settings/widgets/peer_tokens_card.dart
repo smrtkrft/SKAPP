@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/peer_tokens_provider.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../l10n/app_localizations.dart';
 
 /// Body of the Peer Tokens accordion in Settings → Advanced.
@@ -111,25 +112,15 @@ class _PeerRow extends ConsumerWidget {
   Future<void> _confirmRevoke(BuildContext context, WidgetRef ref) async {
     final l = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.settingsPeerTokensRevokeConfirmTitle),
-        content: Text(l.settingsPeerTokensRevokeConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.settingsPeerTokensRevokeConfirmCancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: SkColors.warnRed),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l.settingsPeerTokensRevokeConfirmAction),
-          ),
-        ],
-      ),
+    final confirmed = await showSkConfirm(
+      context,
+      title: l.settingsPeerTokensRevokeConfirmTitle,
+      message: l.settingsPeerTokensRevokeConfirmBody,
+      cancelLabel: l.settingsPeerTokensRevokeConfirmCancel,
+      confirmLabel: l.settingsPeerTokensRevokeConfirmAction,
+      destructive: true,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     await ref.read(peerTokensProvider.notifier).revoke(entry.peerUuid);
     if (messenger == null) return;
     messenger

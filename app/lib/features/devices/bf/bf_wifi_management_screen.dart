@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/responsive.dart';
+import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
@@ -139,28 +140,15 @@ class _BfWifiManagementScreenState
 
   Future<void> _forgetSlot(String slotName) async {
     final l = AppLocalizations.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.bfWifiForgetTitle),
-        content: Text(l.bfWifiForgetBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(ctx).colorScheme.error,
-              foregroundColor: Theme.of(ctx).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l.bfWifiForget),
-          ),
-        ],
-      ),
+    final ok = await showSkConfirm(
+      context,
+      title: l.bfWifiForgetTitle,
+      message: l.bfWifiForgetBody,
+      cancelLabel: l.commonCancel,
+      confirmLabel: l.bfWifiForget,
+      destructive: true,
     );
-    if (ok != true || !mounted) return;
+    if (!ok || !mounted) return;
     final client = BfSession.of(context).client;
     try {
       // wifi.forget is CRITICAL on the firmware (sk_wifi.c) — it needs a

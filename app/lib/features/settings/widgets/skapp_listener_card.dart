@@ -10,6 +10,7 @@ import '../../../core/network/self_signed_cert.dart';
 import '../../../core/network/skapp_http_server.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/ui/sk_centered_dialog.dart';
+import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../core/network/skapp_listener_service.dart';
 import '../../../core/network/skapp_peer_target.dart';
@@ -201,25 +202,15 @@ class _SkappListenerCardState extends ConsumerState<SkappListenerCard> {
   Future<void> _confirmRotateCert(NetworkIdentity identity) async {
     final l = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.skappListenerCardRotateCertConfirmTitle),
-        content: Text(l.skappListenerCardRotateCertConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.skappListenerCardRotateCertConfirmCancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: SkColors.warnRed),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l.skappListenerCardRotateCertConfirmAction),
-          ),
-        ],
-      ),
+    final confirmed = await showSkConfirm(
+      context,
+      title: l.skappListenerCardRotateCertConfirmTitle,
+      message: l.skappListenerCardRotateCertConfirmBody,
+      cancelLabel: l.skappListenerCardRotateCertConfirmCancel,
+      confirmLabel: l.skappListenerCardRotateCertConfirmAction,
+      destructive: true,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     setState(() => _busy = true);
     try {
       // Issue + persist a fresh cert, publish it to the live provider,

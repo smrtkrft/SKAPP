@@ -81,7 +81,11 @@ class _Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Semantics(
+      // Değer + etiketi tek okunabilir parça olarak birleştir ("5 paired").
+      label: '$value $label',
+      child: ExcludeSemantics(
+        child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -106,6 +110,8 @@ class _Stat extends StatelessWidget {
             ),
           ),
         ],
+      ),
+        ),
       ),
     );
   }

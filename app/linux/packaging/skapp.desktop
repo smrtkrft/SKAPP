@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=SKAPP
+GenericName=Device configuration
+Comment=SmartKraft device configuration app
+Exec=skapp
+Icon=skapp
+Terminal=false
+Categories=Utility;
+StartupWMClass=skapp

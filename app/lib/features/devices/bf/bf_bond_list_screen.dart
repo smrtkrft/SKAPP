@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/cli/bond_store.dart';
 import '../../../core/cli/cli_client.dart';
 import '../../../core/theme/responsive.dart';
+import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
@@ -96,27 +97,15 @@ class _BfBondListScreenState extends ConsumerState<BfBondListScreen> {
         : l.bfBondListRemoveOtherBody(
             row.label.isEmpty ? l.bondPeerUnnamed : row.label,
             row.slot);
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (dctx) => AlertDialog(
-        title: Text(l.bfBondListRemoveTitle),
-        content: Text(body),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dctx).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(dctx).colorScheme.error,
-            ),
-            onPressed: () => Navigator.of(dctx).pop(true),
-            child: Text(l.commonRemove),
-          ),
-        ],
-      ),
+    final confirm = await showSkConfirm(
+      context,
+      title: l.bfBondListRemoveTitle,
+      message: body,
+      cancelLabel: l.commonCancel,
+      confirmLabel: l.commonRemove,
+      destructive: true,
     );
-    if (confirm != true) return;
+    if (!confirm) return;
     final r = await _client.sendCritical(
       'bond.remove',
       args: {'slot': row.slot},

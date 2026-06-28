@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/ui/sk_centered_dialog.dart';
+import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/run_handle.dart';
 import '../data/script_manifest.dart';
@@ -130,27 +131,18 @@ class _SkapiRunSheetState extends ConsumerState<SkapiRunSheet> {
   Future<bool> _confirmDismiss() async {
     if (_state != _RunSheetState.running) return true;
     final l = AppLocalizations.of(context);
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.skapiRunSheetDismissConfirmTitle),
-        content: Text(l.skapiRunSheetDismissConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.skapiRunSheetDismissConfirmStay),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l.skapiRunSheetDismissConfirmStop),
-          ),
-        ],
-      ),
+    // Çalışan scripti durdurmak yıkıcı (yan etki ortasında olabilir) →
+    // destructive. Ortak SkConfirmDialog ile diğer modallarla tutarlı.
+    final ok = await showSkConfirm(
+      context,
+      title: l.skapiRunSheetDismissConfirmTitle,
+      message: l.skapiRunSheetDismissConfirmBody,
+      cancelLabel: l.skapiRunSheetDismissConfirmStay,
+      confirmLabel: l.skapiRunSheetDismissConfirmStop,
+      destructive: true,
     );
-    if (result == true) {
-      _handle?.cancel();
-    }
-    return result ?? false;
+    if (ok) _handle?.cancel();
+    return ok;
   }
 
   Future<void> _copyOutput() async {
@@ -252,8 +244,12 @@ class _StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
     const mustard = Color(0xFFD4A017);
     const red = Color(0xFFD32F2F);
+    // Palet: renk yalnız dikkat (mustard=çalışıyor) ve hata (red) için.
+    // "Tamam" güçlü nötr (foreground dolu), "iptal" sönük nötr — başarı
+    // ayrı bir renkle değil opaklık+dolgu ile ayrışır (tasarim.md §1.3).
     final (label, fg, bg) = switch (state) {
       _RunSheetState.booting || _RunSheetState.running => (
           l.skapiRunSheetStatusRunning,
@@ -262,8 +258,8 @@ class _StatusChip extends StatelessWidget {
         ),
       _RunSheetState.ok => (
           l.skapiRunSheetStatusOk,
-          Colors.white,
-          const Color(0xFF2E7D32),
+          cs.surface,
+          cs.onSurface,
         ),
       _RunSheetState.error => (
           l.skapiRunSheetStatusError,
@@ -272,8 +268,8 @@ class _StatusChip extends StatelessWidget {
         ),
       _RunSheetState.cancelled => (
           l.skapiRunSheetCancel,
-          Colors.white,
-          const Color(0xFF616161),
+          cs.surface,
+          cs.onSurface.withValues(alpha: 0.45),
         ),
     };
     return Container(
@@ -335,7 +331,7 @@ class _OutputView extends StatelessWidget {
                     fontFamily: 'monospace',
                     fontSize: 11.5,
                     color: line.kind == RunOutputKind.stderr
-                        ? const Color(0xFFFF8A80)
+                        ? const Color(0xFFD32F2F)
                         : line.kind == RunOutputKind.info
                             ? const Color(0xFFD4A017)
                             : cream,

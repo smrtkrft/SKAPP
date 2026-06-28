@@ -22,6 +22,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/responsive.dart';
+import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart' show ShellNavBar;
@@ -142,7 +143,7 @@ class _BfOtaScreenState extends State<BfOtaScreen> {
     required String title,
     required String body,
     required String confirmLabel,
-    Color? confirmColor,
+    bool destructive = false,
   }) async {
     final client = BfSession.of(context).client;
     final l = AppLocalizations.of(context);
@@ -150,25 +151,14 @@ class _BfOtaScreenState extends State<BfOtaScreen> {
       cmd,
       confirmRequest: (req) async {
         if (!mounted) return false;
-        final ok = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text(title),
-            content: Text(body),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(l.commonCancel),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                style: TextButton.styleFrom(foregroundColor: confirmColor),
-                child: Text(confirmLabel),
-              ),
-            ],
-          ),
+        return showSkConfirm(
+          context,
+          title: title,
+          message: body,
+          confirmLabel: confirmLabel,
+          cancelLabel: l.commonCancel,
+          destructive: destructive,
         );
-        return ok == true;
       },
     );
     if (!mounted) return;
@@ -201,7 +191,6 @@ class _BfOtaScreenState extends State<BfOtaScreen> {
       title: l.bfOtaRollbackConfirmTitle,
       body: l.bfOtaRollbackConfirmBody,
       confirmLabel: l.bfOtaRollbackCta,
-      confirmColor: const Color(0xFFD4A017),
     );
   }
 

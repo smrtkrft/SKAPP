@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/colors.dart';
 import '../../../core/theme/responsive.dart';
+import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
@@ -226,28 +227,15 @@ class _BfNotebookScreenState extends ConsumerState<BfNotebookScreen> {
 
   Future<void> _confirmClear() async {
     final l = AppLocalizations.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.notebookClearConfirmTitle),
-        content: Text(l.notebookClearConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(ctx).colorScheme.error,
-              foregroundColor: Theme.of(ctx).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l.notebookClearAction),
-          ),
-        ],
-      ),
+    final ok = await showSkConfirm(
+      context,
+      title: l.notebookClearConfirmTitle,
+      message: l.notebookClearConfirmBody,
+      cancelLabel: l.commonCancel,
+      confirmLabel: l.notebookClearAction,
+      destructive: true,
     );
-    if (ok != true || !mounted) return;
+    if (!ok || !mounted) return;
     final client = BfSession.of(context).client;
     try {
       final r = await client.sendCritical(

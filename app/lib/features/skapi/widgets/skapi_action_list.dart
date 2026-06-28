@@ -620,6 +620,7 @@ class _SyncBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
     final l = AppLocalizations.of(context);
     Color bg;
     Color fg;
@@ -635,8 +636,10 @@ class _SyncBadge extends StatelessWidget {
         text = l.skapiSyncBadgeWriting;
         break;
       case SyncStatus.ok:
-        bg = const Color(0xFF2E7D32).withValues(alpha: 0.16);
-        fg = const Color(0xFF2E7D32);
+        // tasarim.md: başarı/tamam rengiyle değil opaklık+dolu ikonla gösterilir.
+        // Renk yalnız dikkat (mustard) ve hata (red) için; "yazıldı" sakin nötr.
+        bg = cs.onSurface.withValues(alpha: 0.10);
+        fg = cs.onSurface;
         icon = Icons.cloud_done_rounded;
         text = l.skapiSyncBadgeWritten;
         break;

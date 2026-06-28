@@ -14,6 +14,7 @@ import '../../core/system/network_identity_provider.dart';
 import '../../core/theme/colors.dart';
 import '../../core/theme/responsive.dart';
 import '../../core/ui/sk_centered_dialog.dart';
+import '../../core/ui/sk_confirm_dialog.dart';
 import '../../l10n/app_localizations.dart';
 import '../device_discovery/setup_choice_screen.dart';
 import '../device_home/device_home_screen.dart';
@@ -257,26 +258,14 @@ class DevicesScreen extends ConsumerWidget {
     SkappPeerTarget peer,
   ) async {
     final l = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dlgCtx) {
-        return AlertDialog(
-          title: Text(l.devicesDesktopTriggerDialogTitle),
-          content: Text(l.devicesDesktopTriggerDialogBody(peer.name)),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dlgCtx).pop(false),
-              child: Text(l.devicesDesktopTriggerDialogCancel),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(dlgCtx).pop(true),
-              child: Text(l.devicesDesktopTriggerDialogConfirm),
-            ),
-          ],
-        );
-      },
+    final confirmed = await showSkConfirm(
+      context,
+      title: l.devicesDesktopTriggerDialogTitle,
+      message: l.devicesDesktopTriggerDialogBody(peer.name),
+      cancelLabel: l.devicesDesktopTriggerDialogCancel,
+      confirmLabel: l.devicesDesktopTriggerDialogConfirm,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     if (!context.mounted) return;
     try {
       final client = ref.read(skappHttpClientProvider);
@@ -320,29 +309,15 @@ class DevicesScreen extends ConsumerWidget {
     SkappPeerTarget peer,
   ) async {
     final l = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dlgCtx) {
-        return AlertDialog(
-          title: Text(l.devicesDesktopForgetDialogTitle),
-          content: Text(l.devicesDesktopForgetDialogBody(peer.name)),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dlgCtx).pop(false),
-              child: Text(l.devicesForgetDialogCancel),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: SkColors.warnRed,
-              ),
-              onPressed: () => Navigator.of(dlgCtx).pop(true),
-              child: Text(l.devicesForgetDialogConfirm),
-            ),
-          ],
-        );
-      },
+    final confirmed = await showSkConfirm(
+      context,
+      title: l.devicesDesktopForgetDialogTitle,
+      message: l.devicesDesktopForgetDialogBody(peer.name),
+      cancelLabel: l.devicesForgetDialogCancel,
+      confirmLabel: l.devicesForgetDialogConfirm,
+      destructive: true,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     await ref.read(skappPeersProvider.notifier).remove(peer.uuid);
     if (!context.mounted) return;
     ScaffoldMessenger.of(context)
@@ -448,33 +423,17 @@ class DevicesScreen extends ConsumerWidget {
         .read(bindingsProvider)
         .where((b) => variants.contains(b.deviceId))
         .length;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dlgCtx) {
-        return AlertDialog(
-          title: Text(l.devicesForgetDialogTitle(paired.displayName)),
-          content: Text(
-            boundActionCount > 0
-                ? l.devicesForgetDialogBodyWithActions(boundActionCount)
-                : l.devicesForgetDialogBody,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dlgCtx).pop(false),
-              child: Text(l.devicesForgetDialogCancel),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: SkColors.warnRed,
-              ),
-              onPressed: () => Navigator.of(dlgCtx).pop(true),
-              child: Text(l.devicesForgetDialogConfirm),
-            ),
-          ],
-        );
-      },
+    final confirmed = await showSkConfirm(
+      context,
+      title: l.devicesForgetDialogTitle(paired.displayName),
+      message: boundActionCount > 0
+          ? l.devicesForgetDialogBodyWithActions(boundActionCount)
+          : l.devicesForgetDialogBody,
+      cancelLabel: l.devicesForgetDialogCancel,
+      confirmLabel: l.devicesForgetDialogConfirm,
+      destructive: true,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     await ref.read(pairedDevicesProvider.notifier).remove(paired.id);
     // Cascade: bu cihaza bagli tum SKAPI binding'lerini de sil. UI
     // soylestiren mevcut: orphan binding'ler kalmasin (kullanici karari

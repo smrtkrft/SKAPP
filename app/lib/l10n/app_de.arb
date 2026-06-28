@@ -1,0 +1,3370 @@
+{
+  "@@locale": "de",
+  "appTitle": "SKAPP",
+  "brandTagline": "SmartKraft",
+  "tabHome": "Start",
+  "tabDevices": "Geräte",
+  "tabSkapi": "SKAPI",
+  "tabSettings": "Einstellungen",
+  "tabSmartKraft": "SmartKraft",
+  "comingSoonBadge": "demnächst",
+  "featureComingSoonSnack": "Diese Funktion kommt bald",
+  "homeWelcome": "Willkommen bei SmartKraft",
+  "homeSubtitle": "Verwalte deine SmartKraft-Geräte",
+  "homeAddDevice": "Neues Gerät hinzufügen",
+  "homeNoDevicesTitle": "Noch keine Geräte",
+  "homeNoDevicesHint": "Füge dein erstes SmartKraft-Gerät hinzu, um loszulegen.",
+  "homeSummaryTitle": "Übersicht",
+  "homeDevicesOnline": "{count} verbunden",
+  "@homeDevicesOnline": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeDevicesOffline": "{count} offline",
+  "@homeDevicesOffline": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeUpdatesTitle": "Updates verfügbar",
+  "homeUpdatesBody": "{count} Gerät hat eine neuere Firmware.",
+  "@homeUpdatesBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeWarningsTitle": "Warnungen",
+  "homeWarningsBody": "{count} Gerät hat ein Problem gemeldet.",
+  "@homeWarningsBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeAllGood": "Alles läuft reibungslos.",
+  "devicesTitle": "Geräte",
+  "devicesEmpty": "Noch keine Geräte hinzugefügt.\nTippe auf das +, um eines hinzuzufügen.",
+  "devicesAdd": "Gerät hinzufügen",
+  "devicesAllSection": "Alle Geräte",
+  "devicesGroupsTitle": "Deine Gruppen",
+  "devicesGroupsHint": "Erstelle Gruppen, um deine Geräte ganz nach Wunsch zu ordnen.",
+  "devicesGroupsCreate": "Neue Gruppe",
+  "devicesGroupsEmpty": "Noch keine Gruppen.",
+  "skapiTitle": "SKAPI",
+  "skapiLibraryHeading": "SKAPI-Bibliothek",
+  "skapiLibrarySubtitle": "Wähle die Plattform, die deine Geräte auslösen sollen.",
+  "skapiThisComputer": "Dieser Computer",
+  "skapiCategoryCount": "{count} Kategorien",
+  "@skapiCategoryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiPlatformMac": "macOS",
+  "skapiPlatformWin": "Windows",
+  "skapiPlatformLinux": "Linux",
+  "skapiPlatformOther": "Andere",
+  "skapiStarredHeading": "Favorisierte APIs",
+  "skapiStarredEmpty": "Markiere Vorlagen aus der Bibliothek mit einem Stern, dann erscheinen sie hier.",
+  "skapiContributeTitle": "Sende deine Bibliothek an die SmartKraft-Community",
+  "skapiContributeBody": "Diese Karte wird später gestaltet.",
+  "skapiSearchPlaceholder": "Aktionen suchen…",
+  "skapiSearchDisabledHint": "Wird aktiv, sobald der SKAPI-Parser angebunden ist.",
+  "skapiHelpButtonTooltip": "Über SKAPI",
+  "skapiHelpSheetTitle": "Über SKAPI",
+  "skapiHelpIntro": "SKAPI ist eine Bibliothek von Aktionen, die deine SmartKraft-Geräte auf deinem Computer auslösen können.",
+  "skapiHelpStep1Title": "Vorlage durchsuchen",
+  "skapiHelpStep1Body": "Wähle einen Ausgangspunkt aus der SKAPI-Bibliothek.",
+  "skapiHelpStep2Title": "Konfigurieren",
+  "skapiHelpStep2Body": "Lege Parameter fest und wähle, welches Gerät sie auslöst.",
+  "skapiHelpStep3Title": "An Gerät senden",
+  "skapiHelpStep3Body": "Das Gerät speichert den API-Auslöser; SKAPP führt das Skript aus.",
+  "skapiHelpGlossaryTitle": "Glossar",
+  "skapiHelpGlossaryTemplate": "Vorlage: ein schreibgeschützter Bibliothekseintrag",
+  "skapiHelpGlossaryAction": "Aktion: ein konfiguriertes Paar aus API-Auslöser + Skript",
+  "skapiHelpGlossaryApiTrigger": "API-Auslöser: was das Gerät aufruft",
+  "skapiHelpGlossaryScript": "Skript: was dein Computer ausführt",
+  "skapiHelpPhase1Notice": "SKAPI ist noch im Aufbau. Der Großteil dieses Tabs ist ein Gerüst; Bereiche mit „noch nicht aktiv“ schalten sich frei, sobald Parser, Listener und Formularbaukasten fertig sind.",
+  "skapiMobileBannerBody": "Dieses Handy kann kein Ziel sein. Um Aktionen auszuführen, muss SKAPP auf deinem Computer geöffnet sein.",
+  "skapiActionsHeading": "Meine Aktionen",
+  "skapiActionsNoDevicesTitle": "Noch keine Geräte",
+  "skapiActionsNoDevicesBody": "Koppele zuerst ein SmartKraft-Gerät; wechsle zum Tab „Geräte“.",
+  "skapiActionsCreationDisabled": "Das Erstellen von Aktionen ist noch nicht aktiv.",
+  "skapiActionsOfflineDetectionDisabled": "Online-Erkennung noch nicht aktiv",
+  "skapiActionsMaxLimitNote": "Bis zu 5 Aktionen pro Gerät.",
+  "skapiActionsAddCta": "Aktion hinzufügen",
+  "skapiHeaderSub": "{platforms} Plattformen · {actions} Aktionen",
+  "@skapiHeaderSub": {
+    "placeholders": {
+      "platforms": {
+        "type": "int"
+      },
+      "actions": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiNewActionPill": "Neue Aktion",
+  "skapiActionsSubLine": "Gerät × Skript-Bindungen · {count} aktiv",
+  "@skapiActionsSubLine": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiActionsEmptyHint": "Noch keine Aktionen. Lege fest, was beim Drücken einer Gerätetaste passiert.",
+  "skapiActionsCreateCta": "Erstellen",
+  "skapiActionsGroupTitle": "{name}-Aktionen",
+  "@skapiActionsGroupTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiActionsGroupCount": "{count}",
+  "@skapiActionsGroupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiListenerEndpointTitle": "An BF-Geräte gesendete Webhook-URL",
+  "skapiListenerEndpointBody": "Wenn ein BF im selben Wi-Fi diese URL nach dem Countdown nicht erreicht, ist womöglich die falsche NIC deines Laptops gewählt (z. B. WSL/VirtualBox/Docker-Netzwerk). Tippe auf Aktualisieren, um sie erneut zu senden.",
+  "skapiListenerEndpointResolving": "Lokale IP wird ermittelt…",
+  "skapiListenerEndpointUnavailable": "Keine nutzbare LAN-Schnittstelle gefunden.",
+  "skapiListenerEndpointRefresh": "Aktualisieren",
+  "skapiListenerEndpointRefreshing": "Wird gesendet…",
+  "skapiListenerEndpointPushedAt": "Zuletzt aktualisiert {when}",
+  "@skapiListenerEndpointPushedAt": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiListenerSelfTest": "Selbsttest",
+  "skapiListenerSelfTestRunning": "Test läuft…",
+  "skapiListenerSelfTestPassed": "Selbsttest OK: Listener von diesem Host erreichbar.",
+  "skapiListenerSelfTestFailed": "Selbsttest FEHLGESCHLAGEN: Listener nicht erreichbar. Prüfe die Windows-Firewall.",
+  "skapiWebhookActivityTitle": "Letzte Webhooks",
+  "skapiWebhookActivityNone": "Noch keine Webhooks empfangen. Nach Ablauf des Gerätetimers sollte hier innerhalb von Sekunden ein Eintrag erscheinen.",
+  "skapiWebhookActivityAccepted": "Angenommen",
+  "skapiWebhookActivityRejected": "Abgelehnt ({code})",
+  "@skapiWebhookActivityRejected": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiWebhookActivityMalformed": "Fehlerhaft",
+  "skapiWebhookActivitySelfTest": "Selbsttest",
+  "skapiWebhookActivityNoMatch": "Keine Bindung passte",
+  "skapiWebhookActivityScriptError": "Skriptfehler",
+  "skapiWebhookActivityMatched": "{count} Skript(e) ausgeführt",
+  "@skapiWebhookActivityMatched": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiBfEndpointsButton": "BF-Endpunkte prüfen",
+  "skapiBfEndpointsTitle": "Auf BF-Geräten gespeicherte Endpunkte",
+  "skapiBfEndpointsHint": "Schreibgeschützter Schnappschuss von api.endpoint.list jedes gekoppelten Geräts. Vergleiche jede SYSTEM-Slot-URL mit der Listener-URL oben. Sie müssen exakt übereinstimmen. USER-Slots gehören womöglich zu manuellen Webhooks und könnten bei Fehlkonfiguration deinen Countdown abfangen.",
+  "skapiBfEndpointsLoading": "BF-Geräte werden abgefragt…",
+  "skapiBfEndpointsErrorPrefix": "Abfrage fehlgeschlagen:",
+  "skapiBfEndpointsKindSystem": "SYSTEM",
+  "skapiBfEndpointsKindUser": "USER",
+  "skapiBfEndpointsEmpty": "Keine Endpunkte auf diesem Gerät gespeichert.",
+  "skapiBfEndpointsClose": "Schließen",
+  "skapiBfEndpointsRefresh": "Erneut abfragen",
+  "skapiStarredCount": "{count} favorisiert",
+  "@skapiStarredCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiStarredSlimEmpty": "Markiere Bibliothekseinträge mit einem Stern, um deine meistgenutzten hier zu sammeln.",
+  "skapiCommunityShareTitle": "Teile deine Bibliothek mit der SmartKraft-Community",
+  "skapiCommunityShareBody": "Skripte, die du schreibst, stehen allen in der SKAPI-Bibliothek zur Verfügung.",
+  "settingsNetworkIdentityTitle": "Netzwerkidentität",
+  "settingsNetworkIdentityName": "Computername",
+  "settingsNetworkIdentityNameHint": "Wird als mDNS-Instanzname verwendet",
+  "settingsNetworkIdentityNameEdit": "Umbenennen",
+  "settingsNetworkIdentityNameDialogTitle": "Diesen Computer umbenennen",
+  "settingsNetworkIdentityNameDialogHelp": "Kleinbuchstaben, Zahlen und Bindestriche. Bis zu 32 Zeichen.",
+  "settingsNetworkIdentityUuid": "Geräte-ID",
+  "settingsNetworkIdentityPort": "Listener-Port",
+  "settingsNetworkIdentityPortDialogTitle": "Listener-Port",
+  "settingsNetworkIdentityToken": "Bearer-Token",
+  "settingsNetworkIdentityRegenerateToken": "Token neu erzeugen",
+  "settingsNetworkIdentityRegenerateConfirmTitle": "Bearer-Token neu erzeugen?",
+  "settingsNetworkIdentityRegenerateConfirmBody": "Bestehende Geräte müssen mit dem neuen Token erneut gekoppelt werden.",
+  "settingsNetworkIdentityServerNotRunning": "Server läuft noch nicht, wird in Phase 2 aktiviert.",
+  "settingsNetworkIdentityCopy": "Kopieren",
+  "settingsNetworkIdentityCopied": "Kopiert",
+  "settingsNetworkIdentityStaticIpHint": "Tipp: Eine DHCP-Reservierung (statische IP) auf deinem Router macht Verbindungen zuverlässiger.",
+  "settingsTitle": "Einstellungen",
+  "settingsSectionAppearance": "Darstellung",
+  "settingsLanguage": "Sprache",
+  "settingsLanguageSystemHint": "Der Systemsprache folgen",
+  "settingsLanguagePickerAllSection": "Alle Sprachen",
+  "settingsTheme": "Design",
+  "settingsThemeLight": "Hell",
+  "settingsThemeDark": "Dunkel",
+  "settingsThemeSystem": "System",
+  "settingsSectionAbout": "Über",
+  "settingsVersion": "Version",
+  "settingsDeveloper": "Entwickler",
+  "settingsDeveloperName": "SmartKraft",
+  "settingsOpenAbout": "Über SKAPP",
+  "settingsSectionAdvanced": "Erweitert",
+  "settingsDeveloperMode": "Entwicklermodus",
+  "settingsDeveloperToolsTitle": "Entwicklerwerkzeuge",
+  "settingsDeveloperToolsSubtitle": "USB-Konsole, Netzwerkidentität, Listener, Tokens, Logs",
+  "settingsDeveloperModeInfoTitle": "Was schaltet der Entwicklermodus frei?",
+  "settingsDeveloperModeInfoIntro": "Dieser Modus zeigt Profi-Funktionen, die in der Standard-Oberfläche verborgen sind. Drei Haupteinsatzfälle:",
+  "settingsDeveloperModeUseCaseCliTitle": "CLI-Konsole",
+  "settingsDeveloperModeUseCaseCliBody": "Konfiguriere deine Geräte über ein USB-Kabel, ohne zuerst eine BLE- oder WiFi-Verbindung herzustellen.",
+  "settingsDeveloperModeUseCaseSkapiTitle": "SKAPI-Code-Editor",
+  "settingsDeveloperModeUseCaseSkapiBody": "Öffne und ändere integrierte Skripte oder schreibe eigene von Grund auf.",
+  "settingsDeveloperModeUseCaseMobileTitle": "Mobiles Fernauslösen",
+  "settingsDeveloperModeUseCaseMobileBody": "Führe die SKAPI-Bindungen dieses Desktops von einem gekoppelten mobilen SKAPP aus.",
+  "settingsDeveloperModeInfoSurfacesHeader": "Zusätzliche Einstellungskarten, die dann erscheinen:",
+  "settingsDeveloperModeInfoItem1": "Karte „Netzwerkidentität“: UUID, Port und Bearer-Token bearbeiten; SKAPP-Installations-Secret kopieren / neu erzeugen.",
+  "settingsDeveloperModeInfoItem2": "Steuerung des lokalen HTTP-Listeners: Start/Stopp, QR-Kopplung, TLS-Zertifikatswechsel, LAN-Sichtbarkeit.",
+  "settingsDeveloperModeInfoItem3": "Token-Liste pro Peer: jedes gekoppelte mobile SKAPP sehen und einzeln widerrufen.",
+  "settingsDeveloperModeInfoItem4": "USB-CLI-Konsole (nur Desktop): rohe NDJSON-Befehlszeile in ein per USB verbundenes SmartKraft-Gerät.",
+  "settingsDeveloperModeInfoNotPaid": "Kein kostenpflichtiges Upgrade. SKAPP ist einstufig und kostenlos; dieser Schalter blendet nur standardmäßig Profi-Funktionen aus, um es einfach zu halten. SmartKraft-Geräte funktionieren unabhängig von dieser Einstellung.",
+  "settingsSectionConnectivity": "Konnektivität",
+  "settingsBluetoothStatus": "Bluetooth",
+  "settingsBluetoothStatusOn": "Bereit",
+  "settingsBluetoothStatusOff": "Ausgeschaltet",
+  "settingsBluetoothStatusTurningOn": "Wird eingeschaltet…",
+  "settingsBluetoothStatusTurningOff": "Wird ausgeschaltet…",
+  "settingsBluetoothStatusUnauthorized": "Keine Berechtigung",
+  "settingsBluetoothStatusUnsupported": "Nicht unterstützt",
+  "settingsBluetoothStatusUnknown": "Wird geprüft…",
+  "settingsNetworkStatus": "Netzwerk",
+  "settingsWifiStatusConnected": "Wi-Fi",
+  "settingsWifiStatusEthernet": "Ethernet",
+  "settingsWifiStatusMobile": "Mobile Daten",
+  "settingsWifiStatusDisconnected": "Getrennt",
+  "settingsWifiStatusUnknown": "Wird geprüft…",
+  "settingsWifiHint": "Wird nach der ersten Kopplung verwendet.",
+  "settingsBluetoothPermissions": "Berechtigungen",
+  "settingsBluetoothPermissionsHint": "Bluetooth- und Standortzugriff",
+  "settingsBluetoothGrantPermission": "Zugriff erteilen",
+  "settingsOpenSystemSettings": "Systemeinstellungen öffnen",
+  "settingsSectionUpdates": "Updates",
+  "settingsCheckUpdates": "Nach Updates suchen",
+  "settingsAutoCheckUpdates": "Beim Start prüfen",
+  "settingsAutoCheckUpdatesHint": "Prüft bei jedem Start von SKAPP, ob du die neueste Version hast.",
+  "settingsUpdateChannel": "Update-Kanal",
+  "settingsUpdateChannelStable": "Stabil",
+  "settingsUpdateChannelBeta": "Beta",
+  "settingsUpdateChannelBetaHint": "Erhalte neue Funktionen früher. Kann weniger stabil sein.",
+  "settingsUpToDate": "Du hast die neueste Version.",
+  "settingsUpdateCheckPlaceholder": "Die Update-Prüfung wird in Phase 3 angebunden.",
+  "settingsSectionLegal": "Rechtliches",
+  "settingsLicense": "Lizenz & Dank",
+  "settingsSectionInfo": "Informationen",
+  "settingsThemeCycleHint": "Zum Wechseln tippen",
+  "settingsChannelCycleHint": "Zum Wechseln tippen",
+  "settingsSectionThisNode": "Dieser Knoten",
+  "settingsNodeNameTitle": "SKAPP-Knotenname",
+  "settingsNodeNameSub": "{name} · andere SKAPPs sehen diesen Namen · mDNS-Broadcast",
+  "@settingsNodeNameSub": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSectionDanger": "Gefahrenzone",
+  "settingsResetPairings": "Kopplungen zurücksetzen",
+  "settingsResetPairingsSub": "Alle gekoppelten Geräte entfernen; Einstellungen/Sprache/Knotenname bleiben erhalten",
+  "settingsFactoryReset": "Werkseinstellungen",
+  "settingsFactoryResetSub": "Alles gelöscht, unwiderruflich",
+  "settingsSectionAdvancedNetwork": "Erweitertes Netzwerk",
+  "settingsResetPairingsConfirmTitle": "Alle Kopplungen zurücksetzen?",
+  "settingsResetPairingsConfirmBody": "{paired} gekoppelte(s) Gerät(e), {bindings} SKAPI-Aktion(en) und {peers} SKAPP-Peer(s) werden entfernt. Deine Einstellungen, dein Design, deine Sprache und deine Notizen bleiben erhalten. Die Geräte behalten ihre Bindung auf ihrer Seite; um vollständig zu entkoppeln, setze das Gerät manuell zurück. Dies kann nicht rückgängig gemacht werden.",
+  "@settingsResetPairingsConfirmBody": {
+    "placeholders": {
+      "paired": {
+        "type": "int"
+      },
+      "bindings": {
+        "type": "int"
+      },
+      "peers": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsResetPairingsConfirmAction": "Zurücksetzen",
+  "settingsFactoryResetConfirmTitle": "Werkseinstellungen?",
+  "settingsFactoryResetConfirmBody": "Alles wird gelöscht: alle Kopplungen, Einstellungen, das Design, die Sprache, Notizen, die Netzwerkidentität, das TLS-Zertifikat und der Autostart-Eintrag. SKAPP kehrt in den Zustand beim ersten Start zurück. Dies kann nicht rückgängig gemacht werden.",
+  "settingsFactoryResetConfirmAction": "Alles löschen",
+  "settingsFactoryResetSecondConfirmTitle": "Bist du dir absolut sicher?",
+  "settingsFactoryResetSecondConfirmBody": "Gib ERASE ein, um zu bestätigen.",
+  "settingsFactoryResetSecondConfirmHint": "ERASE",
+  "settingsFactoryResetSecondConfirmAction": "Verstanden. Löschen.",
+  "settingsResetInProgress": "Wird zurückgesetzt…",
+  "settingsResetDoneTitle": "Zurücksetzen abgeschlossen",
+  "settingsResetDoneWithWarnings": "Zurücksetzen abgeschlossen (mit Warnungen)",
+  "settingsResetSummaryPaired": "{count} gekoppelte(s) Gerät(e) entfernt",
+  "@settingsResetSummaryPaired": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsResetSummaryBindings": "{count} SKAPI-Aktion(en) entfernt",
+  "@settingsResetSummaryBindings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsResetSummaryPeers": "{count} SKAPP-Peer(s) entfernt",
+  "@settingsResetSummaryPeers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsResetSummaryBonds": "{count} Gerätebindung(en) gelöscht",
+  "@settingsResetSummaryBonds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsResetSummaryNetworkIdentity": "Netzwerkidentität auf Standard zurückgesetzt",
+  "settingsResetSummaryTlsCert": "TLS-Zertifikat gelöscht",
+  "settingsResetSummaryAutostart": "Autostart-Eintrag entfernt",
+  "settingsResetSummaryWarningHeader": "Warnungen:",
+  "settingsResetRestartHint": "Starte SKAPP neu, um die Änderungen vollständig zu übernehmen.",
+  "settingsResetRestartNow": "Jetzt neu starten",
+  "settingsResetClose": "Schließen",
+  "settingsFooterCombined": "SKAPP {version} · {node}",
+  "@settingsFooterCombined": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "langEnglish": "English",
+  "langTurkish": "Türkçe",
+  "aboutTitle": "Über SmartKraft und SKAPP",
+  "aboutDevicesHeading": "Unsere Geräte",
+  "aboutDevicesBody": "SmartKraft-Geräte sind darauf ausgelegt, innovativ und unverwechselbar zu sein und Details mitzubringen, an die andere nicht gedacht haben. Unser Ziel ist nicht, nachzubauen, was es schon gibt; es ist, das zu machen, was noch nicht gemacht, was unerledigt geblieben ist. Auf ein ungelöstes Alltagsproblem zu zeigen und ihm eine einfache, verständliche Antwort zu geben; oder etwas zu nehmen, das gelöst, aber teuer geblieben ist, und an seine Stelle eine DIY-Version zu setzen, die jeder bauen kann.\n\nJedes SmartKraft-Gerät ist darauf ausgelegt und gebaut, eine kleine, schlichte Antwort auf ein noch ungelöstes Problem zu geben. Beim Entwerfen eines Geräts stellen wir uns eine einzige Frage: „Warum wurde dieses Problem bisher nicht gelöst, oder warum ist es so teuer geblieben?“",
+  "aboutSkappRoleHeading": "Wo SKAPP hineinpasst",
+  "aboutSkappRoleBody": "SKAPP ist die gemeinsame App für SmartKraft-Geräte. Es ist eine einfache Benutzeroberfläche, um ein Gerät zu koppeln, es zu konfigurieren, sein Verhalten zu ändern und mehrere Geräte in einem einzigen Szenario zusammenzuführen.\n\nSKAPP ist für deine Geräte nicht erforderlich; es ist eine Erleichterung. Jedes SmartKraft-Gerät lässt sich genauso über die USB-CLI ohne SKAPP konfigurieren, und dieser Weg bleibt für alle offen, die die Befehlszeile bevorzugen. Für alle anderen, die das Tempo einer visuellen Oberfläche und den Komfort wollen, mehrere Geräte gleichzeitig zu verwalten, ist SKAPP da.\n\nKein Cloud-Konto. Keine Werbung. Keine Datensammlung. Es ist eine stille Brücke zwischen deinem Handy und deinem Gerät, nicht mehr.",
+  "aboutShowcaseHeading": "Maker-Showcase",
+  "aboutShowcaseEmpty": "Das Showcase ist vorerst leer. Das erste SmartKraft-Gerät ist unterwegs; Designdateien, Firmware-Quellen, Stücklisten und Aufbauanleitungen werden hier aufgeführt, sobald sie fertig sind. Bis dahin verspricht dieser Bereich nicht viel, er hält nur Platz für das, was kommt.",
+  "aboutConnectHeading": "Verbinden",
+  "aboutConnectIntro": "Schreib eine Nachricht, sieh dir den Quellcode an, verfolge die Arbeit, während sie wächst.",
+  "aboutConnectGitHub": "GitHub",
+  "aboutConnectWebsite": "Website",
+  "aboutConnectYouTube": "YouTube",
+  "aboutConnectX": "X",
+  "aboutConnectEmail": "E-Mail",
+  "aboutVersionHeading": "Version",
+  "licenseTitle": "Lizenz & Dank",
+  "licenseSmartKraftHeading": "Über SmartKraft",
+  "licenseSmartKraftBody": "SmartKraft ist eine kleine Werkstatt, die ungewöhnliche, aber praktische elektronische Werkzeuge für den Alltag entwirft. Hinter jedem Gerät, das in deine Hand gelangt, liegen unzählige Schritte: eine erste Skizze in einem Notizbuch, ein erster gelöteter Prototyp, spät in der Nacht geschriebene Codezeilen, kleine Details, die immer wieder neu versucht wurden. Ein Gerät zu bauen heißt, Zeilen zu schreiben, Schaltungen zu zeichnen, Lötstellen zu setzen, Fehler zu finden, von vorn zu beginnen. Allen, die ihre Mühe in diesen Prozess gesteckt haben, ohne ihren Namen daraufzuschreiben: danke, im Namen von SmartKraft.\n\nWir glauben an die Maker-Kultur, an Open Source und an reparierbare, recycelbare Elektronik. Deshalb veröffentlichen wir die Hardware-Designs unserer Geräte als Open Hardware und ihre Firmware unter der AGPL 3.0. Unser Ziel ist es, eine DIY-Version von so vielen Teilen wie möglich erreichbar zu machen.\n\nEin Hinweis, bei dem wir ehrlich sein wollen: Die Kopplungsschlüssel und Kommunikations-Secrets, die die Sicherheit eines Geräts schützen, bleiben im Quellcode privat. Würden sie veröffentlicht, bräche das Vertrauen zwischen deinem Gerät und der App zusammen. Diese Geschlossenheit ist kein Zugeständnis gegen Offenheit; sie ist eine Entscheidung für deine Sicherheit.\n\nFür SKAPP und jedes Gerät, das mit ihm spricht, ist unser Grundsatz Transparenz: Wir möchten, dass du nachlesen kannst, wie die Dinge funktionieren, sie prüfen und deine eigene Version bauen kannst. Dennoch hat jedes Gerät seinen eigenen Lizenzabschnitt, und die Bedingungen können variieren. Um Quellcode, Schaltpläne oder Nutzungsbedingungen eines Geräts zu sehen, sieh bitte im Lizenzbereich des jeweiligen Geräts nach.\n\nDanke, dass du uns durch die Nutzung dieser App unterstützt. Wir freuen uns, dass du hier bist.",
+  "licenseOpenSourceHeading": "Auf ihren Schultern stehend",
+  "licenseOpenSourceBody": "SKAPP baut auf tausenden zuvor geschriebenen Open-Source-Projekten auf. Herzlichen Dank an das Flutter-Team und seine Mitwirkenden, die die sichtbare Oberfläche möglich gemacht haben, und an alle Open-Source-Entwickler, die Jahre in Netzwerktechnik, Speicherung, Kryptografie, Bluetooth und unzählige Teilsysteme gesteckt haben.\n\nWeil wir von Open Source profitieren, versuchen wir, auch die Hardware und Firmware unserer eigenen Geräte offen zu halten, damit jene, die nach uns kommen, auf dieselbe Weise von diesem Werk profitieren können.\n\nNochmals Dank an alle, die Teil dieser Arbeit waren.",
+  "licenseThirdPartyLink": "In dieser App verwendete Drittanbieter-Lizenzen",
+  "discoveryTitle": "Geräte finden",
+  "discoverySearching": "Suche nach SmartKraft-Geräten in der Nähe…",
+  "discoveryNoResults": "Keine SmartKraft-Geräte in der Nähe gefunden.",
+  "discoveryTapToConnect": "Tippe auf ein Gerät, um zu verbinden",
+  "discoveryRescan": "Erneut suchen",
+  "pairingTitle": "Gerät koppeln",
+  "pairingEnterPasskey": "Gib den Passkey ein, der auf dem Geräteetikett aufgedruckt ist.",
+  "pairingPasskeyHint": "z. B. K7M9P2AB",
+  "pairingConnect": "Verbinden",
+  "pairingMockNotice": "Geräte-Firmware noch nicht bereit. Die Kopplung ist in diesem Build ein Platzhalter.",
+  "errorBluetoothPermission": "Zum Suchen von Geräten ist die Bluetooth-Berechtigung erforderlich.",
+  "errorBluetoothOff": "Bluetooth ist ausgeschaltet.",
+  "errorLocationPermission": "Zum Suchen von BLE-Geräten unter Android ist die Standortberechtigung erforderlich.",
+  "actionOpenSettings": "Einstellungen öffnen",
+  "actionGrantPermission": "Berechtigung erteilen",
+  "commonCancel": "Abbrechen",
+  "commonConfirm": "Bestätigen",
+  "commonRetry": "Wiederholen",
+  "commonBack": "Zurück",
+  "commonRemove": "Entfernen",
+  "commonRefresh": "Aktualisieren",
+  "commonOk": "OK",
+  "commonClose": "Schließen",
+  "commonSave": "Speichern",
+  "commonDelete": "Löschen",
+  "commonConnect": "Verbinden",
+  "commonAdd": "Hinzufügen",
+  "commonForget": "Entfernen",
+  "commonMore": "Mehr",
+  "commonError": "Fehler",
+  "commonOnline": "online",
+  "commonOffline": "offline",
+  "productBlockingFocus": "Blocking Focus",
+  "productLebensSpur": "LebensSpur",
+  "productGeneric": "SmartKraft-Gerät",
+  "timeJustNow": "gerade eben",
+  "timeMinAgo": "vor {count} Min.",
+  "@timeMinAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeHourAgo": "vor {count} Std.",
+  "@timeHourAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeDayAgo": "vor {count} T.",
+  "@timeDayAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesRemoveTitle": "Gerät entfernen",
+  "devicesRemoveBody": "{name} wird entfernt. Das Gerät bleibt angeschlossen; um es erneut hinzuzufügen, musst du es neu koppeln.",
+  "@devicesRemoveBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesUnpair": "Entkoppeln",
+  "devicesEmptyHint": "Bring dein SmartKraft-Gerät nah heran und tippe auf die Schaltfläche unten.",
+  "devicesEmptyTitleNoPaired": "Noch keine gekoppelten Geräte",
+  "devicesLastSeen": "Zuletzt gesehen: {time}",
+  "@devicesLastSeen": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesPairedAt": "Gekoppelt: {time}",
+  "@devicesPairedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesHubSubtitle": "SKAPP-Host · {count} gekoppelt",
+  "@devicesHubSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesHubEmptySubtitle": "wartet auf Gerät",
+  "devicesHeaderSub": "{paired} gekoppelt · {online} online · Konstellationsansicht",
+  "@devicesHeaderSub": {
+    "placeholders": {
+      "paired": {
+        "type": "int"
+      },
+      "online": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesAddPillLabel": "Gerät hinzufügen",
+  "devicesLegendOnline": "online ({count})",
+  "@devicesLegendOnline": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesLegendOffline": "offline ({count})",
+  "@devicesLegendOffline": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesLegendLowBattery": "schwacher Akku ({count})",
+  "@devicesLegendLowBattery": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesStatPaired": "gekoppelt",
+  "devicesStatBf": "BF",
+  "devicesStatLs": "LS",
+  "devicesStatMs": "Handy",
+  "devicesEmptyHubLabel": "Unbekannt",
+  "devicesEmptyAddCta": "Erstes Gerät hinzufügen",
+  "devicesEmptyHintChip": "Gerät nah heranbringen, seine Taste drücken",
+  "devicesNotifOfflineHours": "offline vor {hours} Std.",
+  "@devicesNotifOfflineHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesNotifOfflineMinutes": "offline vor {minutes} Min.",
+  "@devicesNotifOfflineMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesNotifLowBattery": "schwacher Akku",
+  "skappPeersCardTitle": "Gekoppelte Desktop-SKAPPs",
+  "skappPeersCardSubtitle": "Handys und Tablets koppeln sich hier, damit eine BF-Aktion ein Skript auf einem Desktop-SKAPP ausführen kann. Öffne Desktop-SKAPP > Einstellungen > SKAPP-HTTP-Listener, um einen QR zu erhalten.",
+  "skappPeersCardEmpty": "Noch kein gekoppelter Peer.",
+  "skappPeersCardPairButton": "Neu koppeln",
+  "skappPeersCardOnline": "online",
+  "skappPeersCardOffline": "offline",
+  "skappPeersCardNeverSeen": "nie gesehen",
+  "skappPeersCardRemoveTitle": "{name} entfernen?",
+  "@skappPeersCardRemoveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "skappPeersCardRemoveBody": "SKAPP sendet keine Skripte mehr an diesen Peer. Du kannst ihn später mit demselben QR / Token erneut koppeln.",
+  "skappPeersCardRemoveConfirm": "Entfernen",
+  "skappPeersCardRemoveCancel": "Abbrechen",
+  "skappPeersCardRemovedToast": "{name} entkoppelt",
+  "@skappPeersCardRemovedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesCardLongPressHint": "Lange drücken zum Verwalten",
+  "devicesActionsSheetTitle": "{name}",
+  "@devicesActionsSheetTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesActionForget": "Gerät entfernen",
+  "devicesActionForgetSubtitle": "Dieses Gerät aus SKAPP entfernen. Das Gerät selbst ist nicht betroffen; du kannst es später erneut koppeln.",
+  "devicesActionCancel": "Abbrechen",
+  "devicesForgetDialogTitle": "{name} entfernen?",
+  "@devicesForgetDialogTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesForgetDialogBody": "SKAPP verfolgt dieses Gerät nicht mehr. Die Kopplung auf der Geräteseite bleibt bestehen, bis du sie am Gerät zurücksetzt.",
+  "devicesForgetDialogBodyWithActions": "SKAPP verfolgt dieses Gerät nicht mehr und löscht {count} damit verbundene SKAPI-Aktion(en). Die Kopplung auf der Geräteseite bleibt bestehen, bis du sie am Gerät zurücksetzt.",
+  "@devicesForgetDialogBodyWithActions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "devicesForgetDialogConfirm": "Entfernen",
+  "devicesForgetDialogCancel": "Abbrechen",
+  "devicesForgotToast": "{name} aus SKAPP entfernt",
+  "@devicesForgotToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesMobileNoDetailHint": "Keine Detailseite für Handys · lange drücken zum Entkoppeln",
+  "devicesDesktopStatLabel": "Desktop",
+  "devicesDesktopGroupLabel": "Gekoppelte Desktops",
+  "devicesDesktopTriggerDialogTitle": "Einen SKAPI-Befehl senden?",
+  "devicesDesktopTriggerDialogBody": "Alle Mobile-Touch-Bindungen auf {name} werden ausgeführt.",
+  "@devicesDesktopTriggerDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesDesktopTriggerDialogConfirm": "Befehl senden",
+  "devicesDesktopTriggerDialogCancel": "Abbrechen",
+  "devicesDesktopForgetDialogTitle": "Entkoppeln",
+  "devicesDesktopForgetDialogBody": "{name} wird entkoppelt. Du musst erneut koppeln, um wieder Befehle an diesen Desktop zu senden.",
+  "@devicesDesktopForgetDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "devicesDesktopForgotToast": "{name} entkoppelt",
+  "@devicesDesktopForgotToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeStatDevices": "Geräte",
+  "homeStatOnline": "Online",
+  "homeStatWarning": "Warnung",
+  "homeWarningMeta": "Gekoppelt, aber nie gesehen · {time}",
+  "@homeWarningMeta": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "homeBrandTotal": "Gesamt",
+  "homeBrandActive": "Aktiv",
+  "homeBrandActions": "Aktionen",
+  "homeBrandVersion": "Version",
+  "smartkraftSectionProducts": "Produkte",
+  "smartkraftSectionCommunity": "Community",
+  "smartkraftStatusLive": "LIVE",
+  "smartkraftStatusDev": "IN ENTWICKLUNG",
+  "smartkraftStatusConcept": "KONZEPT",
+  "smartkraftBlockingFocusTagline": "Die Pause, die du nicht überspringen kannst.",
+  "smartkraftLebensSpurTagline": "Ein stiller Zeuge deiner Gewohnheiten.",
+  "smartkraftSynDimmTagline": "Das richtige Licht zur richtigen Stunde.",
+  "homeStickyDevicesMeta": "{count} Geräte · {warning} Hinweise",
+  "@homeStickyDevicesMeta": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "warning": {
+        "type": "int"
+      }
+    }
+  },
+  "homeStickySkapiMeta": "{actions} Aktionen",
+  "@homeStickySkapiMeta": {
+    "placeholders": {
+      "actions": {
+        "type": "int"
+      }
+    }
+  },
+  "homeStickySettingsMeta": "{node} · v{version}",
+  "@homeStickySettingsMeta": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "homeStickyComingSoonMeta": "Inhalt in Arbeit",
+  "homeStickyNotesLabel": "Notizen",
+  "setupChoiceTitle": "Gerät hinzufügen",
+  "setupChoiceQuestion": "Wo stehen wir?",
+  "setupChoiceSubtitle": "Ist das Gerät frisch aus der Box, oder wurde es schon einmal per CLI konfiguriert?",
+  "setupChoiceFreshTitle": "Neueinrichtung",
+  "setupChoiceFreshBody": "Ich füge zum ersten Mal ein brandneues SmartKraft-Gerät hinzu. Die Kopplung läuft über BLE, und der WiFi-Einrichtungsassistent öffnet sich.",
+  "setupChoiceExistingTitle": "Bereits konfiguriertes Gerät hinzufügen",
+  "setupChoiceExistingBody": "Ich habe das WiFi meines Geräts per USB/CLI konfiguriert und bin im selben Netzwerk. Direkt über WiFi koppeln und den Assistenten überspringen.",
+  "setupChoiceFooter": "Im Zweifel wähle „Neueinrichtung“; das ist der richtige Weg sowohl für die Erstkopplung als auch für auf Werkseinstellungen zurückgesetzte Geräte.",
+  "wifiDiscoveryTitle": "Geräte in diesem Netzwerk",
+  "wifiDiscoveryScanError": "Suchfehler: {error}",
+  "@wifiDiscoveryScanError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiDiscoveryHint": "Das Gerät muss im WiFi sein und das Handy im selben Netzwerk. Während der Kopplung wirst du gebeten, die Gerätetaste zu drücken.",
+  "wifiDiscoveryScanning": "Suche läuft…",
+  "wifiDiscoveryNotFound": "Keine Geräte gefunden",
+  "wifiDiscoveryFoundCount": "{count} Gerät(e) gefunden",
+  "@wifiDiscoveryFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wifiDiscoveryEmptyTitle": "Suche nach SmartKraft-Geräten in diesem Netzwerk…",
+  "wifiDiscoveryEmptyTitleIdle": "Keine Geräte gefunden.",
+  "wifiDiscoveryEmptyHint": "Stelle sicher, dass das Gerät eingeschaltet, mit dem WiFi verbunden und im selben Netzwerk wie dein Handy ist. Nutze die Aktualisieren-Schaltfläche für einen erneuten Versuch.",
+  "wifiDiscoveryPairedBadge": "gekoppelt",
+  "wifiPairingTitle": "Kopplung",
+  "wifiPairingConnectFailed": "Verbindung nicht möglich: {error}",
+  "@wifiPairingConnectFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiPairingInvalidJson": "Ungültiges JSON: {error}",
+  "@wifiPairingInvalidJson": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiPairingClosedEarly": "Verbindung geschlossen (keine Antwort)",
+  "wifiPairingSendFailed": "Befehl konnte nicht gesendet werden: {error}",
+  "@wifiPairingSendFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiPairingTimeout": "Gerät hat nicht geantwortet (Timeout).",
+  "wifiPairingNotOpen": "Kopplungsfenster am Gerät nicht offen. Drücke die Taste kurz und versuche es erneut.",
+  "skapiBindFixedTriggerLabel": "Auslöser: wenn der Timer abläuft",
+  "wifiPairingDeviceAlreadyBonded": "Dieses Gerät ist bereits mit einem anderen SKAPP gekoppelt. Das Hinzufügen eines neuen Peers über WiFi wird von der aktuellen Firmware nicht unterstützt (TCP akzeptiert nur die erste Kopplung). Nutze die BLE-Kopplung oder entkoppele den bestehenden Peer vom Gerät.",
+  "wifiPairingRejected": "Gerät hat abgelehnt: {error}",
+  "@wifiPairingRejected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiPairingMissingPub": "our_pub vom Gerät fehlt/ist beschädigt.",
+  "wifiPairingHexError": "our_pub Hex-Dekodierung fehlgeschlagen: {error}",
+  "@wifiPairingHexError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiPairingStageAwaiting": "Drücke die Taste am Gerät",
+  "wifiPairingStageConnecting": "Verbinde mit Gerät…",
+  "wifiPairingStageExchanging": "Schlüssel werden ausgetauscht…",
+  "wifiPairingStageDone": "Kopplung abgeschlossen",
+  "wifiPairingStageFailed": "Kopplung fehlgeschlagen",
+  "wifiPairingStageAwaitingHelp": "Drücke kurz die Steuertaste des Geräts (weniger als 3 Sekunden). Das Kopplungsfenster bleibt 60 Sekunden offen.",
+  "wifiPairingStageConnectingHelp": "TCP-Socket wird geöffnet.",
+  "wifiPairingStageExchangingHelp": "pairing.ecdh.exchange gesendet, warte auf die Antwort des Geräts.",
+  "wifiPairingStageDoneHelp": "Weiter zum Geräte-Dashboard.",
+  "wifiPairingStartCta": "Koppeln",
+  "bfDashboardTitleFallback": "Gerät",
+  "bfDashboardWifiNone": "Kein WiFi",
+  "bfDashboardLinkBle": "BLE",
+  "bfDashboardLinkWifi": "WiFi",
+  "bfDashboardLinkUsb": "USB",
+  "bfDashboardToggleVibration": "Vibration",
+  "bfDashboardToggleTilt": "Kippwarnung",
+  "bfDashboardToggleLowBatt": "Warnung bei schwachem Akku",
+  "bfDashboardApiChainTitle": "API-Kette",
+  "bfDashboardApiChainNone": "noch keine Endpunkte · Master {state}",
+  "@bfDashboardApiChainNone": {
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bfDashboardApiChainSummary": "{count} Endpunkt(e) · Master {state}",
+  "@bfDashboardApiChainSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "bfDashboardMasterOn": "an",
+  "bfDashboardMasterOff": "aus",
+  "bfDashboardNotebookTitle": "Benutzer-Notizbuch",
+  "bfDashboardNotebookSubtitle": "Verschlüsselter Bereich · 100 KB · freier Inhalt",
+  "bfDashboardMoreDeviceInfo": "Geräteinfo",
+  "bfDashboardMoreSettings": "Einstellungen",
+  "bfDashboardWriteFailed": "Schreiben nicht möglich: {error}",
+  "@bfDashboardWriteFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfDeviceInfoTitle": "Geräteinfo",
+  "bfDeviceInfoSectionGeneral": "ALLGEMEIN",
+  "bfDeviceInfoSectionConnection": "VERBINDUNG",
+  "bfDeviceInfoSectionBattery": "AKKU",
+  "bfDeviceInfoSectionTime": "ZEIT",
+  "bfDeviceInfoSectionLastError": "LETZTER FEHLER",
+  "bfDeviceInfoSectionDiagnostics": "DIAGNOSE",
+  "bfDeviceInfoSectionDocs": "DOKUMENTE",
+  "bfDeviceInfoProduct": "Produkt",
+  "bfDeviceInfoTypeCode": "Typcode",
+  "bfDeviceInfoIdentity": "Identität",
+  "bfDeviceInfoHardware": "Hardware",
+  "bfDeviceInfoFirmware": "Firmware",
+  "bfDeviceInfoProtocol": "Protokoll",
+  "bfDeviceInfoBuild": "Build",
+  "bfDeviceInfoUptime": "Laufzeit",
+  "bfDeviceInfoWifiState": "WiFi-Status",
+  "bfDeviceInfoIp": "IP",
+  "bfDeviceInfoSignal": "Signal",
+  "bfDeviceInfoBleAdvertising": "BLE-Advertising",
+  "bfDeviceInfoBlePaired": "BLE-Kopplungen",
+  "bfDeviceInfoPairedClients": "{count} Client(s)",
+  "@bfDeviceInfoPairedClients": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bfDeviceInfoBattery": "Akku",
+  "bfDeviceInfoBatteryPresent": "vorhanden",
+  "bfDeviceInfoBatteryAbsent": "nicht vorhanden",
+  "bfDeviceInfoDeviceClock": "Geräteuhr",
+  "bfDeviceInfoLogs": "Geräte-Logs",
+  "bfDeviceInfoLogsSubtitle": "logs.get, Boot, Fehler, Timer, API-Ereignisse",
+  "bfDeviceInfoEvents": "Ereignisverlauf",
+  "bfDeviceInfoEventsSubtitle": "Lokal · Timer, Flächenwechsel, API-Auslöser",
+  "bfDeviceInfoUserGuide": "Benutzerhandbuch",
+  "bfDeviceInfoUserGuideSubtitle": "Flächenzuweisung, Timer, API-Auslöser",
+  "bfDeviceInfoDevNotes": "SK-Entwicklernotizen",
+  "bfDeviceInfoDevNotesSubtitle": "CLI-Befehle, Architektur, Ereignis-Taxonomie",
+  "bfDeviceInfoLicense": "Lizenz & offene Quellen",
+  "bfDeviceInfoLicenseSubtitle": "Verwendete Bibliotheken und Urheberrechtsangaben",
+  "bfDeviceInfoComingSoon": "Demnächst",
+  "bfDeviceInfoUptimeSecs": "{n} s",
+  "@bfDeviceInfoUptimeSecs": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bfDeviceInfoUptimeMins": "{n} Min.",
+  "@bfDeviceInfoUptimeMins": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "bfDeviceInfoUptimeHours": "{h} Std. {m} Min.",
+  "@bfDeviceInfoUptimeHours": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "bfDeviceInfoUptimeDays": "{d} T. {h} Std.",
+  "@bfDeviceInfoUptimeDays": {
+    "placeholders": {
+      "d": {
+        "type": "int"
+      },
+      "h": {
+        "type": "int"
+      }
+    }
+  },
+  "bfDeviceInfoYes": "ja",
+  "bfDeviceInfoNo": "nein",
+  "bfSettingsTitle": "Einstellungen",
+  "bfSettingsSectionNetwork": "NETZWERK",
+  "bfSettingsSectionUpdates": "UPDATES",
+  "bfSettingsSectionDanger": "GEFAHRENZONE",
+  "bfSettingsWifiPrimary": "Primäres WiFi",
+  "bfSettingsWifiSecondary": "Backup-WiFi",
+  "bfSettingsWifiUnconfigured": "Nicht konfiguriert",
+  "bfSettingsFirmware": "Firmware",
+  "bfSettingsCheckUpdates": "Nach Updates suchen",
+  "bfSettingsCheckUpdatesSubtitle": "Aktiv, sobald eine Manifest-URL gesetzt ist",
+  "bfOtaTitle": "Firmware-Update",
+  "bfOtaCurrentLabel": "Installierte Version",
+  "bfOtaRunningPartitionLabel": "Aktive Partition",
+  "bfOtaCheckCta": "Nach Updates suchen",
+  "bfOtaIdleHint": "Es wurde noch keine Update-Prüfung ausgeführt.",
+  "bfOtaChecking": "Update-Server wird geprüft…",
+  "bfOtaUpToDate": "Das Gerät ist auf dem neuesten Stand.",
+  "bfOtaAvailable": "Neue Version verfügbar: {version}",
+  "@bfOtaAvailable": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bfOtaUpdateCta": "Jetzt aktualisieren",
+  "bfOtaDownloading": "Wird heruntergeladen… %{pct}",
+  "@bfOtaDownloading": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "bfOtaDone": "Aktualisiert. Das Gerät startet neu…",
+  "bfOtaErrorMsg": "Fehler: {message}",
+  "@bfOtaErrorMsg": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "bfOtaRollbackCta": "Zur vorherigen Version zurückkehren",
+  "bfOtaUpdateConfirmTitle": "Firmware-Update installieren?",
+  "bfOtaUpdateConfirmBody": "Version {version} wird heruntergeladen und installiert, anschließend startet das Gerät neu. Schalte es während des Updates nicht aus.",
+  "@bfOtaUpdateConfirmBody": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "bfOtaRollbackConfirmTitle": "Firmware zurücksetzen?",
+  "bfOtaRollbackConfirmBody": "Das Gerät bootet die vorherige Firmware und startet neu.",
+  "bfSettingsReboot": "Gerät neu starten",
+  "bfSettingsRebootSubtitle": "Startet das Gerät neu · bricht jeden aktiven Timer ab",
+  "bfSettingsRebootConfirmTitle": "Gerät neu starten?",
+  "bfSettingsRebootConfirmBody": "Das Gerät schaltet sich in wenigen Sekunden aus und wieder ein.",
+  "bfSettingsUnpairThisPhone": "Dieses Handy entkoppeln",
+  "bfSettingsUnpairSubtitle": "Entfernt die Bindung · das Gerät muss erneut gekoppelt werden",
+  "bfSettingsUnpairConfirmTitle": "Dieses Handy entkoppeln?",
+  "bfSettingsFactoryReset": "Werkseinstellungen",
+  "bfSettingsFactoryResetSubtitle": "Löscht WiFi, API-Endpunkte und Kopplungen",
+  "bfSettingsFactoryResetConfirmTitle": "Werkseinstellungen?",
+  "bfSettingsFactoryResetConfirmBody": "Alle Einstellungen werden gelöscht. Das Gerät startet neu.",
+  "bfWifiManagementTitle": "WiFi-Verwaltung",
+  "bfWifiConnecting": "Verbinde…",
+  "bfWifiConnectionRejected": "Verbindung abgelehnt: {error}",
+  "@bfWifiConnectionRejected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfWifiConfigure": "{label} konfigurieren",
+  "@bfWifiConfigure": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "bfWifiPasswordLabel": "Passwort",
+  "bfNotebookTitle": "Benutzer-Notizbuch",
+  "bfNotebookSaveCancel": "Abbrechen",
+  "bfApiChainCancel": "Abbrechen",
+  "bfApiChainRunChain": "Kette ausführen",
+  "bfApiChainToggleAll": "Alle aktivieren/deaktivieren",
+  "bfApiChainFieldName": "Name",
+  "bfApiChainFieldType": "Typ",
+  "bfApiChainFieldHeaderName": "Header-Name",
+  "bfApiChainFieldNewToken": "Neues Token (leer lassen, um es zu behalten)",
+  "bfHomeLoadingConnecting": "Verbinde mit Gerät…",
+  "bfHomeLoadingSecure": "Sicherer Kanal wird geöffnet…",
+  "deviceConnUnreachableTitle": "Gerät nicht erreichbar",
+  "deviceConnUnreachableBody": "Das Gerät ist möglicherweise aus, außer Reichweite oder im Ruhezustand. Stelle sicher, dass es eingeschaltet und in der Nähe ist, und versuche es erneut.",
+  "deviceConnRepairTitle": "Kopplung muss erneuert werden",
+  "deviceConnRepairBody": "Das Gerät scheint zurückgesetzt worden zu sein und erkennt dieses Handy nicht mehr. Koppele es erneut, um die Verbindung wiederherzustellen.",
+  "deviceConnRepairButton": "Erneut koppeln",
+  "deviceConnTechnicalDetails": "Technische Details",
+  "bfLogsTitle": "Geräte-Logs",
+  "bfEventsTitle": "Ereignisverlauf",
+  "pairingStepConnecting": "Verbinden",
+  "pairingStepConnectingSubtitle": "BLE-Verbindung + GATT-Erkennung",
+  "pairingStepMutualAuth": "Gegenseitige Authentifizierung",
+  "pairingStepDeviceInfo": "device.info-Verifizierung",
+  "pairingStepDeviceInfoSubtitle": "Verschlüsselter Kanal steht, Funktionstest",
+  "pairingStepConnected": "Verbindung hergestellt",
+  "pairingStepConnectedSubtitle": "CLI bereit, weiter zur Einrichtung",
+  "pairingStepKeyExchange": "Schlüsselaustausch",
+  "pairingStepKeyExchangeSubtitle": "X25519, öffentlicher Schlüssel gesendet",
+  "pairingStepVerifying": "Wird verifiziert",
+  "pairingStepVerifyingSubtitle": "Warte auf Gerät, leite Token ab",
+  "pairingStepDone": "Kopplung abgeschlossen",
+  "pairingStepDoneSubtitle": "Bindung auf Gerät und Handy gespeichert",
+  "pairingLogTitle": "Kopplungslog",
+  "pairingLogCopied": "Log in die Zwischenablage kopiert",
+  "discoveryPreparing": "Wird vorbereitet…",
+  "discoveryBluetoothOff": "Bluetooth ist aus",
+  "wifiPasswordTitle": "Gerät mit WiFi verbinden",
+  "wifiPasswordSsidLabel": "Netzwerkname (SSID)",
+  "wifiPasswordNetworkLabel": "Netzwerk",
+  "wifiPasswordPasswordLabel": "Passwort",
+  "wifiPasswordConnect": "Verbinden",
+  "wifiPasswordLogTitle": "Verbindungslog",
+  "wifiPasswordLogCopied": "Log in die Zwischenablage kopiert",
+  "wifiScanTitle": "Ein WiFi-Netzwerk für das Gerät wählen",
+  "wifiScanRescanTooltip": "Gerät erneut suchen lassen",
+  "wifiScanRunning": "Der WiFi-Scanner des Geräts läuft…",
+  "wifiScanNoNetworks": "Das Gerät konnte kein WiFi in der Nähe finden.",
+  "wifiScanRescan": "Gerät erneut suchen lassen",
+  "wifiScanHiddenAdd": "Verstecktes Netzwerk hinzufügen",
+  "wifiScanHiddenSubtitle": "SSID von Hand eingeben",
+  "wifiScanLogTitle": "WiFi-Suchlog",
+  "wifiSuccessReady": "Fertig",
+  "bfEventsClearTooltip": "Leeren",
+  "bfEventsEmpty": "Noch keine Ereignisse. Sie erscheinen hier, sobald das Gerät zu senden beginnt.",
+  "logsEmptyTooltip": "Log ist leer.",
+  "logsErrorPrefix": "Fehler: {error}",
+  "@logsErrorPrefix": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "notebookSaved": "Gespeichert",
+  "notebookSaveError": "Fehler: {error}",
+  "@notebookSaveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "notebookCapacityExceeded": "Kapazität überschritten: {used} / {capacity} Bytes",
+  "@notebookCapacityExceeded": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "notebookClearTooltip": "Notizbuch leeren",
+  "notebookClearConfirmTitle": "Gesamtes Notizbuch leeren?",
+  "notebookClearConfirmBody": "Alle Benutzerdaten auf dem Gerät werden gelöscht. Kann nicht rückgängig gemacht werden.",
+  "notebookClearAction": "Leeren",
+  "notebookClearedSnack": "Notizbuch geleert",
+  "notebookClearError": "Leeren nicht möglich: {error}",
+  "@notebookClearError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "notebookEncryptedHint": "Verschlüsselter Bereich · nur das gekoppelte SKAPP kann ihn lesen",
+  "notebookEmptyTitle": "Notizbuch ist leer",
+  "notebookEmptyBody": "Tippe unten Notizen, JSON, Szenendefinitionen oder beliebigen anderen Text ein. Mit „Speichern“ wird es verschlüsselt auf dem Gerät abgelegt.",
+  "notebookHint": "Tippe hier ein, was du willst (Notizen, JSON, dein eigenes Schema). Bis zu 100 KB werden auf dem Gerät gespeichert.",
+  "notebookDirty": "Nicht gespeicherte Änderungen",
+  "notebookSaved2": "Gespeichert",
+  "notebookSyncedDifferent": "Synchron",
+  "notebookSaveCta": "Speichern",
+  "wifiPairingHexErrorRaw": "our_pub Hex-Dekodierung fehlgeschlagen: {error}",
+  "@wifiPairingHexErrorRaw": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfWifiForgetTitle": "Slot entfernen?",
+  "bfWifiForgetBody": "Der Slot wird gelöscht. Wenn das Gerät hier aktuell verbunden ist, fällt es auf den anderen Slot zurück (falls vorhanden). Zum Wiederherstellen ist eine erneute Konfiguration nötig.",
+  "bfWifiForget": "Entfernen",
+  "bfWifiHint": "Das Gerät versucht die beiden Netzwerke der Reihe nach: zuerst Primär, bei Misserfolg Backup. Der aktive Slot ist mit einem grünen Punkt markiert.",
+  "bfWifiActive": "AKTIV",
+  "bfWifiNotConfigured": "Nicht konfiguriert",
+  "bfWifiChange": "Ändern",
+  "bfWifiSetUp": "Einrichten",
+  "discoveryStatusChecking": "Bluetooth-Statusprüfung.",
+  "discoveryPermissionsTitle": "Bluetooth-Berechtigung erforderlich",
+  "discoveryPermissionsBody": "Um SmartKraft-Geräte in der Nähe zu finden, aktiviere bitte die Bluetooth-Berechtigung.",
+  "discoveryPermissionsRetry": "Berechtigungen erneut anfordern",
+  "discoveryPermissionsOpenSettings": "Einstellungen öffnen",
+  "discoveryAdapterOffBody": "Schalte Bluetooth ein, um nach Geräten zu suchen.",
+  "discoveryAdapterOffEnable": "Bluetooth einschalten",
+  "discoveryUnsupportedTitle": "BLE nicht unterstützt",
+  "discoveryUnsupportedBody": "Dieses Gerät unterstützt kein Bluetooth Low Energy; SKAPP benötigt BLE, um zu funktionieren.",
+  "wifiPasswordHelp": "Das Gerät tritt diesem Netzwerk bei. Gib das Passwort ein, tippe es sorgfältig.",
+  "wifiPasswordRequired": "Passwort ist erforderlich",
+  "wifiPasswordMinLength": "Mindestens 8 Zeichen",
+  "wifiPasswordSendError": "Senden nicht möglich: {error}",
+  "@wifiPasswordSendError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiScanTimeoutHint": "Wenn die Suche zu lange dauert, hat das Gerät womöglich die WiFi-Reichweite verloren. Tippe auf Wiederholen.",
+  "wifiScanFailedTitle": "Suche fehlgeschlagen",
+  "wifiScanRetry": "Wiederholen",
+  "wifiSuccessTitle": "Verbunden",
+  "wifiSuccessBody": "Das Gerät ist jetzt im WiFi. Zurück zum Dashboard…",
+  "deviceNameSectionHeading": "GERÄTENAME (NUR DIESE APP)",
+  "deviceNameLabel": "Eigener Name",
+  "deviceNameHint": "z. B. Büro-BF",
+  "deviceNameSubtitle": "Wird auf Karten in dieser SKAPP-Installation angezeigt. Nicht an das Gerät übertragen.",
+  "deviceNameClear": "Löschen",
+  "deviceNameSave": "Speichern",
+  "deviceNameSaved": "Gespeichert",
+  "deviceNameEmptyPlaceholder": "(kein eigener Name)",
+  "settingsUsbConsoleTitle": "USB-CLI-Konsole",
+  "settingsUsbConsoleSubtitle": "Rohe Befehle an ein per USB verbundenes Gerät senden",
+  "usbConsoleAppBarTitle": "USB-Konsole",
+  "usbConsolePickPortTitle": "Einen Port wählen",
+  "usbConsolePickPortHint": "Schließe ein SmartKraft-Gerät per USB an und tippe auf Aktualisieren",
+  "usbConsolePortRefreshTooltip": "Ports aktualisieren",
+  "usbConsoleBfBadge": "SmartKraft",
+  "usbConsoleConnecting": "Verbinde…",
+  "usbConsoleConnected": "Verbunden",
+  "usbConsoleDisconnected": "Getrennt",
+  "usbConsoleErrorBanner": "Fehler: {error}",
+  "@usbConsoleErrorBanner": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "usbConsoleReconnect": "Erneut verbinden",
+  "usbConsoleDisconnect": "Trennen",
+  "usbConsoleClear": "Konsole leeren",
+  "usbConsoleInputHint": "Gib einen Befehl ein, z. B. device.info",
+  "usbConsoleSend": "Senden",
+  "usbConsoleEmptyHint": "Gib einen Befehl ein und drücke Enter, probiere device.info",
+  "usbConsoleEntryEvent": "evt",
+  "usbConsoleEntryError": "Fehler",
+  "usbConsoleNotSupportedIos": "Die USB-Konsole wird unter iOS nicht unterstützt",
+  "passphraseFieldLabel": "Passphrase",
+  "passphraseVerifyButton": "Prüfen",
+  "passphraseAttemptsLeft": "Verbleibende Versuche: {count}",
+  "@passphraseAttemptsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "passphraseLockoutTriggered": "Zu viele falsche Passphrase-Versuche; das Gerät hat sich auf Werkseinstellungen zurückgesetzt.",
+  "bondPeerUnnamed": "(unbenannt)",
+  "pairingPassphraseDialogTitle": "Geräte-Passphrase",
+  "pairingPassphraseDialogBody": "Dieses Gerät benötigt für den Inhaltszugriff eine Passphrase. Gib sie ein, um die Kopplung abzuschließen.",
+  "pairingPassphraseCancelled": "Passphrase nicht eingegeben, Kopplung abgebrochen.",
+  "pairingPassphraseSendError": "Passphrase konnte nicht gesendet werden: {error}",
+  "@pairingPassphraseSendError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingPassphraseTimeout": "Gerät hat nicht geantwortet (Passphrase-Prüfung, 8 s).",
+  "pairingWindowClosedRetry": "Kopplungsfenster geschlossen, drücke die Taste kurz und versuche es erneut.",
+  "pairingPassphraseFailed": "Passphrase konnte nicht geprüft werden: {error}",
+  "@pairingPassphraseFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bondStoreFullHeader": "Alle 8 Bindungs-Slots sind belegt. Entferne einen bestehenden Peer, um ein neues SKAPP zu koppeln:",
+  "bondStoreFullPeerLine": "  • Slot {slot}, {name} [#{shortPid}]",
+  "@bondStoreFullPeerLine": {
+    "placeholders": {
+      "slot": {
+        "type": "Object"
+      },
+      "name": {
+        "type": "String"
+      },
+      "shortPid": {
+        "type": "String"
+      }
+    }
+  },
+  "bondStoreFullFooter": "Führe von einem anderen gekoppelten SKAPP oder per USB\n`bond.remove --slot N` aus und tippe dann hier auf Wiederholen.",
+  "passphraseGateDialogBody": "Dieses Gerät fragt bei jeder Verbindung nach der Passphrase. Gib sie ein, um auf Inhalte zuzugreifen.",
+  "passphraseGateCancelled": "Passphrase nicht eingegeben; zum Zugriff auf diesen Bildschirm ist eine Prüfung erforderlich.",
+  "passphraseGateVerifyError": "Prüffehler: {error}",
+  "@passphraseGateVerifyError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "passphraseGateCommError": "Kommunikationsfehler: {error}",
+  "@passphraseGateCommError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "passphraseGateUnknownError": "Unbekannter Sperrfehler.",
+  "bfPassphraseTitle": "Geräte-Passphrase",
+  "bfPassphraseSetTitle": "Passphrase festlegen",
+  "bfPassphraseChangeTitle": "Passphrase ändern",
+  "bfPassphraseClearTitle": "Passphrase entfernen",
+  "bfPassphraseChangeSubtitle": "Alte Passphrase eingeben, neue festlegen",
+  "bfPassphraseClearSubtitle": "Inhaltssperre des Geräts zurücksetzen",
+  "bfPassphraseModePairing": "Bei Kopplung fragen",
+  "bfPassphraseModePairingSubtitle": "Fragt, wenn ein neues SKAPP koppelt. Bestehende Peers werden nicht abgefragt.",
+  "bfPassphraseModeAlways": "Bei jeder Verbindung fragen",
+  "bfPassphraseModeAlwaysSubtitle": "Fragt bei jedem Sitzungsstart. Inhalte bleiben gesperrt, selbst wenn ein SKAPP gestohlen wird.",
+  "bfPassphraseStatusNone": "Keine Passphrase, das Gerät hat keine Inhaltssperre",
+  "bfPassphraseStatusActiveOff": "Passphrase gesetzt · Durchsetzung aus (beide Schalter aus)",
+  "bfPassphraseStatusActivePairing": "Wird bei Kopplung abgefragt",
+  "bfPassphraseStatusActiveAlways": "Wird bei jeder Verbindung abgefragt",
+  "bfPassphraseBadgeActive": "Passphrase aktiv",
+  "bfPassphraseBadgeNone": "Keine Passphrase",
+  "bfPassphraseAttemptsRatio": "Verbleibende Versuche: {left} / {total}",
+  "@bfPassphraseAttemptsRatio": {
+    "placeholders": {
+      "left": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "bfPassphraseLengthSubtitle": "Länge {min}-{max} Zeichen",
+  "@bfPassphraseLengthSubtitle": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "bfPassphraseLengthHint": "Länge: {min}-{max}",
+  "@bfPassphraseLengthHint": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "bfPassphraseTooShort": "Mindestens {min} Zeichen",
+  "@bfPassphraseTooShort": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "bfPassphraseTooLong": "Höchstens {max} Zeichen",
+  "@bfPassphraseTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "bfPassphraseEmpty": "Darf nicht leer sein",
+  "bfPassphraseNewLabel": "Neue Passphrase",
+  "bfPassphraseCurrentLabel": "Aktuelle Passphrase",
+  "bfPassphraseSetDone": "Passphrase festgelegt",
+  "bfPassphraseChangeDone": "Passphrase geändert",
+  "bfPassphraseClearDone": "Passphrase entfernt",
+  "bfPassphraseStatusReadError": "Status konnte nicht gelesen werden: {error}",
+  "@bfPassphraseStatusReadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfPassphraseNotesTitle": "Hinweise",
+  "bfPassphraseNotesBody": "• Die Passphrase wird auf dem Gerät mit PBKDF2-SHA256 gehasht; sie wird nie im Klartext gespeichert.\n• 10 falsche Versuche setzen das Gerät auf Werkseinstellungen zurück; alle Bindungen und Daten werden gelöscht.\n• Bei einem per USB verbundenen Gerät entfällt die Passphrase-Abfrage, da physischer Zugriff bereits über die Taste einen Werksreset ermöglicht.",
+  "bfBondListTitle": "Gekoppelte SKAPPs  ({used}/{capacity})",
+  "@bfBondListTitle": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "bfBondListEmpty": "Noch keine gekoppelten Peers.",
+  "bfBondListBadgeThisPhone": "Dieses Handy",
+  "bfBondListBadgeActiveSession": "Aktive Sitzung",
+  "bfBondListRowSubtitle": "#{shortPid} · gekoppelt: {date}",
+  "@bfBondListRowSubtitle": {
+    "placeholders": {
+      "shortPid": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "bfBondListRemoveTooltip": "Diesen Peer entfernen",
+  "bfBondListRemoveTitle": "Peer entfernen?",
+  "bfBondListRemoveSelfBody": "Du entfernst die Bindung dieses Handys. Wenn du bestätigst, bricht die Sitzung ab; um das Gerät wieder zu erreichen, musst du die Taste kurz drücken und neu koppeln.",
+  "bfBondListRemoveOtherBody": "„{label}“ (Slot {slot}) wird vom Gerät gelöscht. Dieses SKAPP muss die Taste kurz drücken und neu koppeln, um sich wieder zu verbinden.",
+  "@bfBondListRemoveOtherBody": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "slot": {
+        "type": "int"
+      }
+    }
+  },
+  "bfBondListSlotRemoved": "Slot {slot} entfernt",
+  "@bfBondListSlotRemoved": {
+    "placeholders": {
+      "slot": {
+        "type": "int"
+      }
+    }
+  },
+  "bfBondListFetchError": "bond.list fehlgeschlagen: {error}",
+  "@bfBondListFetchError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfSettingsSectionSecurity": "SICHERHEIT",
+  "bfSettingsPassphraseTitle": "Geräte-Passphrase",
+  "bfSettingsBondListTitle": "Gekoppelte SKAPPs",
+  "bfSettingsPassphraseSubtitleAlways": "Aktiv, bei jeder Verbindung",
+  "bfSettingsPassphraseSubtitlePairing": "Aktiv, bei Kopplung",
+  "bfSettingsPassphraseSubtitleOff": "Aktiv, Durchsetzung aus",
+  "bfSettingsBondsSubtitle": "Gekoppelte Peers: {count} / {capacity}",
+  "@bfSettingsBondsSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiHowItWorksTitle": "So funktioniert es",
+  "skapiHowItWorksBody": "Wenn dein SmartKraft-Gerät (zum Beispiel {deviceName}) ein Ereignis erlebt, etwa das Ablaufen eines Timers, einen Tastendruck oder einen Sensorauslöser, sendet es einen kleinen Befehl an deinen Computer. Dein Computer empfängt diesen Befehl und führt das von dir gewählte Skript aus.",
+  "@skapiHowItWorksBody": {
+    "placeholders": {
+      "deviceName": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiHowItWorksFlowDeviceLabel": "SmartKraft-Gerät",
+  "skapiHowItWorksFlowDeviceSub": "z. B. Blocking Focus, löst ein Ereignis aus",
+  "skapiHowItWorksFlowComputerLabel": "Computer",
+  "skapiHowItWorksFlowComputerSub": "SKAPP empfängt den Befehl, das Skript läuft",
+  "skapiHowItWorksFoot": "SKAPP muss auf deinem Computer laufen. Der gesamte Datenverkehr bleibt im WiFi-Netzwerk, es ist keine Internetverbindung nötig, und keine Daten verlassen dein Zuhause.",
+  "skapiPlatformGroupsHeader": "Aktionskategorien",
+  "skapiPlatformGroupsLoadError": "Gruppen konnten nicht geladen werden: {error}",
+  "@skapiPlatformGroupsLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiPlatformEmptyTitle": "Noch keine Skripte hier",
+  "skapiPlatformEmptyBody": "Skripte für diese Plattform sind noch unterwegs. Schau nach dem nächsten SKAPP-Update wieder vorbei.",
+  "skapiGroupScriptsLoadError": "Skripte konnten nicht geladen werden: {error}",
+  "@skapiGroupScriptsLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiScriptDetailLoadError": "Dieses Skript konnte nicht geladen werden: {error}",
+  "@skapiScriptDetailLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiBindScreenTitle": "An Aktion binden",
+  "skapiBindScreenSubtitle": "Führe dieses Skript automatisch aus, wenn ein Geräteereignis eintritt.",
+  "skapiBindFieldDeviceLabel": "Gerät",
+  "skapiBindFieldDeviceHint": "Wähle, welches gekoppelte Gerät dieses Skript auslösen soll.",
+  "skapiBindFieldDeviceEmpty": "Noch keine gekoppelten Geräte. Koppele zuerst eines im Tab „Geräte“.",
+  "skapiBindFieldEventLabel": "Ereignis",
+  "skapiBindFieldEventHint": "Das Gerät sendet dieses Ereignis; das Skript läuft, wenn es eintritt.",
+  "skapiBindEventTimerStarted": "Timer gestartet",
+  "skapiBindEventTimerExpired": "Timer abgelaufen",
+  "skapiBindEventFaceChanged": "Würfelfläche gewechselt",
+  "skapiBindEventButtonPressed": "Taste gedrückt",
+  "skapiBindEventButtonHeld": "Taste gehalten",
+  "skapiBindEventBatteryLow": "Akku schwach",
+  "skapiBindEventBatteryLockout": "Akku-Sperre",
+  "skapiBindEventPowerStateChanged": "Energiestatus geändert",
+  "skapiBindEventPairingSuccess": "Kopplung erfolgreich",
+  "skapiBindEventApiSent": "API-Aufruf gesendet",
+  "skapiBindParamsHeader": "Parameter-Überschreibungen",
+  "skapiBindParamsHint": "Leer lassen, um die Skript-Standardwerte zu behalten. Diese Werte werden bei jeder Auslösung der Bindung gesendet.",
+  "skapiBindButtonSave": "Bindung speichern",
+  "skapiBindButtonDelete": "Bindung löschen",
+  "skapiBindButtonCancel": "Abbrechen",
+  "skapiBindButtonEnable": "Aktivieren",
+  "skapiBindButtonDisable": "Deaktivieren",
+  "skapiBindStatusEnabled": "Aktiv",
+  "skapiBindStatusDisabled": "Pausiert",
+  "skapiBindSavedToast": "Bindung gespeichert",
+  "skapiBindDeletedToast": "Bindung entfernt",
+  "skapiBindBadgeCount": "{count, plural, =1{1 Bindung} other{{count} Bindungen}}",
+  "@skapiBindBadgeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiBindNoPairedDeviceWarning": "Koppele zuerst ein Gerät, um Bindungen zu erstellen.",
+  "skapiBindTriggeredDesktopToast": "Ausgelöst: {script}",
+  "@skapiBindTriggeredDesktopToast": {
+    "placeholders": {
+      "script": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiBindTriggeredMobileToast": "Bindung ausgelöst ({event}); die Ausführung kommt in Phase K.",
+  "@skapiBindTriggeredMobileToast": {
+    "placeholders": {
+      "event": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiBindLoadError": "Bindungen konnten nicht geladen werden: {error}",
+  "@skapiBindLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiBindListSectionTitle": "Bindungen für dieses Skript",
+  "skapiBindListEmpty": "Noch keine Bindungen. Tippe auf „An Aktion binden“, um eine zu erstellen.",
+  "skapiBindNewButton": "Neue Bindung",
+  "skapiBasicSettingsTitle": "Einstellungen",
+  "skapiBasicEmptyParams": "Dieses Skript braucht keine Einstellungen. Tippe auf „Jetzt ausführen“.",
+  "skapiBasicUnitSeconds": "Sekunden",
+  "skapiBasicConvHalfMinute": "eine halbe Minute",
+  "skapiBasicConvLessThanMinute": "weniger als eine Minute",
+  "skapiBasicConvMinutes": "{count, plural, =1{1 Minute} other{{count} Minuten}}",
+  "@skapiBasicConvMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiBasicConvHoursMinutes": "{hours} Std. {minutes} Min.",
+  "@skapiBasicConvHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiBasicConvHours": "{count, plural, =1{1 Stunde} other{{count} Stunden}}",
+  "@skapiBasicConvHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiBasicConvImmediate": "startet sofort",
+  "skapiBasicConvAfter": "nach {time}",
+  "@skapiBasicConvAfter": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiBasicPrerunSectionTitle": "Verzögerung vor dem Start",
+  "skapiBasicPrerunAddCta": "Verzögerung vor dem Lauf hinzufügen",
+  "skapiBasicPrerunLabel": "So viele Sekunden warten, bevor das Skript startet",
+  "skapiBasicPrerunHelp": "Nützlich, um zuerst eine Benachrichtigung anzuzeigen oder Aktionen zu verketten. Standard 0 bedeutet sofortiger Start.",
+  "skapiBasicPrerunRemove": "Verzögerung entfernen",
+  "skapiBasicListAddPlaceholder": "+ hinzufügen",
+  "skapiRunSheetTitle": "Skript ausführen",
+  "skapiRunSheetStatusRunning": "Läuft",
+  "skapiRunSheetStatusOk": "Fertig",
+  "skapiRunSheetStatusError": "Fehlgeschlagen",
+  "skapiRunSheetExitCode": "Exit-Code: {code}",
+  "@skapiRunSheetExitCode": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiRunSheetCancel": "Abbrechen",
+  "skapiRunSheetClose": "Schließen",
+  "skapiRunSheetCopyOutput": "Ausgabe kopieren",
+  "skapiRunSheetCopiedDone": "Kopiert",
+  "skapiRunSheetEmptyOutput": "Warte auf Ausgabe...",
+  "skapiRunSheetDismissConfirmTitle": "Laufendes Skript stoppen?",
+  "skapiRunSheetDismissConfirmBody": "Das Skript läuft noch. Wenn du dieses Sheet schließt, wird es abgebrochen.",
+  "skapiRunSheetDismissConfirmStay": "Weiterlaufen lassen",
+  "skapiRunSheetDismissConfirmStop": "Abbrechen",
+  "skapiRunErrorPowerShellMissing": "PowerShell wurde auf diesem System nicht gefunden.",
+  "skapiRunErrorTempWrite": "Das Skript konnte nicht in den temporären Ordner geschrieben werden: {error}",
+  "@skapiRunErrorTempWrite": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiRunErrorSpawn": "PowerShell konnte nicht gestartet werden: {error}",
+  "@skapiRunErrorSpawn": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiRunDurationMs": "Dauerte {ms} ms",
+  "@skapiRunDurationMs": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiCopiedToClipboard": "Kopiert",
+  "skapiFavouriteAddTooltip": "Zu Favoriten hinzufügen",
+  "skapiFavouriteRemoveTooltip": "Aus Favoriten entfernen",
+  "skapiGroupAppBarSubtitle": "{count, plural, =1{1 Skript} other{{count} Skripte}}",
+  "@skapiGroupAppBarSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiPlatformScreenCategoriesTitle": "Aktionskategorien",
+  "skapiPlatformScreenCategoriesSub": "{groups} Gruppen · insgesamt {scripts} Skripte",
+  "@skapiPlatformScreenCategoriesSub": {
+    "placeholders": {
+      "groups": {
+        "type": "int"
+      },
+      "scripts": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiGroupScriptsHeader": "Skripte",
+  "skapiGroupScriptsCount": "{count} Skripte",
+  "@skapiGroupScriptsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiGroupItemCount": "{count} Skripte",
+  "@skapiGroupItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiGroupPowerTitle": "Energieverwaltung",
+  "skapiGroupPowerDesc": "Skripte in dieser Gruppe sperren den Computer, versetzen ihn in den Ruhezustand, in den Tiefschlaf oder fahren ihn herunter. Sie sind nützlich, wenn ein SmartKraft-Gerät das Ende einer Fokus-Sitzung signalisiert oder längere Inaktivität erkennt und der Rechner nachziehen soll.",
+  "skapiGroupPowerFoot": "Typischer Einsatz: sperren, wenn du aufstehst, Tiefschlaf am Ende des Tages, geplantes Herunterfahren nach langer Inaktivität.",
+  "skapiScriptLockTitle": "Arbeitsplatz sperren",
+  "skapiScriptLockSummaryWhat": "Sperrt Windows sofort und kehrt zum Anmeldebildschirm zurück. Geöffnete Apps laufen weiter.",
+  "skapiScriptLockSummaryHow": "Ruft die Win32-Funktion LockWorkStation aus user32 auf. Entspricht dem Drücken von Win+L.",
+  "skapiScriptHibernateTitle": "Tiefschlaf",
+  "skapiScriptHibernateSummaryWhat": "Speichert die aktuelle Sitzung auf der Festplatte und fährt den Rechner herunter. Beim Fortsetzen kehrst du dorthin zurück, wo du aufgehört hast, selbst ohne Akku.",
+  "skapiScriptHibernateSummaryHow": "Führt das integrierte shutdown.exe mit dem Flag /h aus. Der Tiefschlaf muss in den Windows-Energieeinstellungen aktiviert sein; ist er es nicht, weicht Windows auf den Ruhezustand aus.",
+  "skapiScriptHibernateNote": "Führe einmal powercfg /hibernate on in einer Admin-Shell aus, falls der Tiefschlaf auf deinem System fehlt.",
+  "skapiScriptHibernateParamDelayLabel": "delay",
+  "skapiScriptHibernateParamDelayHint": "Sekunden, die vor dem Tiefschlaf gewartet wird, falls die Benachrichtigung des Geräts zuerst erscheinen soll.",
+  "skapiScriptSleepTitle": "Ruhezustand",
+  "skapiScriptSleepSummaryWhat": "Versetzt den Rechner in den RAM-Ruhezustand (S3). Das Fortsetzen ist schnell, zieht aber im Ruhezustand etwas Akku.",
+  "skapiScriptSleepSummaryHow": "Ruft System.Windows.Forms.Application.SetSuspendState mit PowerState.Suspend auf. Das Betriebssystem kann verzögern, wenn ein Vordergrundprozess Leerlaufübergänge blockiert.",
+  "skapiScriptSleepParamDelayLabel": "delay",
+  "skapiScriptSleepParamDelayHint": "Sekunden, die vor dem Ruhezustand gewartet wird.",
+  "skapiScriptShutdownTitle": "Herunterfahren",
+  "skapiScriptShutdownSummaryWhat": "Leitet ein geordnetes Herunterfahren von Windows ein. Geöffnete Apps werden zum Speichern und Schließen aufgefordert.",
+  "skapiScriptShutdownSummaryHow": "Führt das integrierte shutdown.exe /s aus. Mit aktiviertem Erzwingen wird /f hinzugefügt, damit nicht reagierende Apps beendet werden.",
+  "skapiScriptShutdownNote": "Eine Verzögerung ungleich null gibt dem Benutzer Zeit, über shutdown /a aus einem Terminal abzubrechen.",
+  "skapiScriptShutdownParamDelayLabel": "delay",
+  "skapiScriptShutdownParamDelayHint": "Sekunden, die Windows vor dem Herunterfahren wartet. 30 ist der Standard; wähle 0 für sofortiges Herunterfahren.",
+  "skapiScriptShutdownParamForceLabel": "force",
+  "skapiScriptShutdownParamForceHint": "Schließt Apps, die nicht auf das Herunterfahr-Signal reagieren. Ungespeicherte Arbeit in diesen Apps kann verloren gehen.",
+  "skapiGroupDisplayAudioTitle": "Bildschirm, Bild & Ton",
+  "skapiGroupDisplayAudioDesc": "Skripte in dieser Gruppe passen Bildschirm und Tonausgabe an: Helligkeit, Lautstärke, Stummschaltung und Medienwiedergabe. Sie sind nützlich, wenn ein SmartKraft-Gerät möchte, dass der Computer während einer Fokuspause dimmt oder die Musik pausiert, wenn du aufstehst.",
+  "skapiGroupDisplayAudioFoot": "Typischer Einsatz: Bildschirm während einer Pause dimmen, beim Sperren stummschalten, Spotify pausieren, wenn ein Gerät keine Aktivität erkennt.",
+  "skapiScriptBrightnessTitle": "Helligkeit einstellen",
+  "skapiScriptBrightnessSummaryWhat": "Stellt die Helligkeit des internen Displays auf einen Prozentwert zwischen 0 und 100 ein.",
+  "skapiScriptBrightnessSummaryHow": "Ruft die WMI-Methode WmiMonitorBrightnessMethods.WmiSetBrightness mit dem gewünschten Wert auf. Nur Laptops, Tablets und integrierte Panels reagieren; externe DDC/CI-Monitore werden auf diesem Weg nicht unterstützt.",
+  "skapiScriptBrightnessNote": "Externe Monitore ändern sich nicht. Bei Mehrmonitor-Setups reagiert nur das Panel, das seine Helligkeit über WMI meldet.",
+  "skapiScriptBrightnessParamLevelLabel": "level",
+  "skapiScriptBrightnessParamLevelHint": "Helligkeit in Prozent (0-100). Niedrigere Werte sind dunkler. 70 ist bei normaler Beleuchtung ein angenehmer Standard.",
+  "skapiScriptBrightnessParamTimeoutLabel": "timeout",
+  "skapiScriptBrightnessParamTimeoutHint": "Sekunden, die die Helligkeitsänderung dauern darf. Das Betriebssystem regelt innerhalb dieses Zeitfensters gleichmäßig hoch.",
+  "skapiScriptMuteToggleTitle": "Stummschaltung umschalten",
+  "skapiScriptMuteToggleSummaryWhat": "Schaltet die System-Hauptstummschaltung um. Aktive Medien laufen weiter, du hörst sie aber nicht.",
+  "skapiScriptMuteToggleSummaryHow": "Sendet die virtuelle Taste VK_VOLUME_MUTE, denselben Weg, den Windows nutzt, wenn der Benutzer die Stummtaste auf der Tastatur drückt. Keine Admin- oder COM-Abhängigkeit.",
+  "skapiScriptMuteToggleParamModeLabel": "mode",
+  "skapiScriptMuteToggleParamModeHint": "toggle / on / off. Nur toggle wird über den einfachen Tastendruck durchgesetzt; on und off werden für künftige Kompatibilität akzeptiert.",
+  "skapiScriptVolumeSetTitle": "Lautstärke einstellen",
+  "skapiScriptVolumeSetSummaryWhat": "Stellt die System-Hauptlautstärke auf einen genauen Wert zwischen 0 und 100 ein.",
+  "skapiScriptVolumeSetSummaryHow": "Ruft Core Audio IAudioEndpointVolume.SetMasterVolumeLevelScalar über Inline-C#-COM-Interop auf. Zielt auf den Standard-Render-Endpunkt.",
+  "skapiScriptVolumeSetNote": "Tier 2: funktioniert auf Standard-Desktops mit Windows 10/11. Abgespeckte Installationen stellen die COM-Schnittstelle womöglich nicht bereit; App-spezifische Endpunkte werden auf diesem Weg nicht angesprochen.",
+  "skapiScriptVolumeSetParamLevelLabel": "level",
+  "skapiScriptVolumeSetParamLevelHint": "Lautstärke in Prozent (0-100). 0 schaltet stumm, ohne die Stummschaltung zu setzen; 50 ist ein angenehmer Standard.",
+  "skapiScriptMediaKeyTitle": "Medientaste",
+  "skapiScriptMediaKeySummaryWhat": "Simuliert einen Medientastendruck: Wiedergabe/Pause, Weiter, Zurück oder Stopp. Geht an die App, die gerade die Mediensitzung besitzt.",
+  "skapiScriptMediaKeySummaryHow": "Sendet VK_MEDIA_PLAY_PAUSE / VK_MEDIA_NEXT_TRACK / VK_MEDIA_PREV_TRACK / VK_MEDIA_STOP über keybd_event. Windows leitet den Druck über die System Media Transport Controls weiter.",
+  "skapiScriptMediaKeyNote": "Tier 2: benötigt eine aktive Mediensitzung. Wenn keine App spielt oder die Vordergrund-App sich nicht bei SMTC registriert, wird der Druck stillschweigend verworfen.",
+  "skapiScriptMediaKeyParamKeyLabel": "key",
+  "skapiScriptMediaKeyParamKeyHint": "play-pause / next / previous / stop. Standard ist play-pause.",
+  "skapiGroupWindowAppTitle": "Fenster & Anwendung",
+  "skapiGroupWindowAppDesc": "Skripte in dieser Gruppe steuern Fenster und Anwendungen: minimieren, fokussieren, geordnet schließen oder Prozesse direkt beenden. Sie halten deinen Arbeitsbereich aufgeräumt, wenn ein SmartKraft-Gerät möchte, dass der Computer den Kontext wechselt.",
+  "skapiGroupWindowAppFoot": "Typischer Einsatz: alles minimieren, wenn eine Fokus-Sitzung beginnt, den Browser schließen, wenn die Arbeit vorbei ist, eine hängende App auf Befehl beenden.",
+  "skapiScriptMinimizeWindowTitle": "Fenster minimieren",
+  "skapiScriptMinimizeWindowSummaryWhat": "Minimiert ein bestimmtes Fenster anhand des Prozessnamens. Ein leerer Prozessname zielt auf das aktuell fokussierte Fenster.",
+  "skapiScriptMinimizeWindowSummaryHow": "Ermittelt das erste passende Hauptfenster über Get-Process und ruft user32 ShowWindow mit SW_MINIMIZE auf.",
+  "skapiScriptMinimizeWindowNote": "Wenn mehrere Instanzen laufen, wird nur das erste passende Fenster minimiert. Verwende den Prozessnamen ohne die Endung .exe.",
+  "skapiScriptMinimizeWindowParamProcessLabel": "processName",
+  "skapiScriptMinimizeWindowParamProcessHint": "Prozessname ohne .exe (chrome, code, winword). Leer zielt auf das Vordergrundfenster.",
+  "skapiScriptCloseWindowTitle": "Fenster schließen",
+  "skapiScriptCloseWindowSummaryWhat": "Sendet einem Fenster ein geordnetes Schließen, damit die App ihren eigenen Dialog „Änderungen speichern?“ anzeigen kann.",
+  "skapiScriptCloseWindowSummaryHow": "Sendet WM_CLOSE über user32 SendMessage. Gleicher Effekt wie ein Klick des Benutzers auf das X. Ein leerer Prozessname zielt auf das Vordergrundfenster.",
+  "skapiScriptCloseWindowNote": "Apps mit ungespeicherter Arbeit zeigen ihren eigenen Dialog. Das Skript wartet nicht auf hängende Apps und beendet sie nicht.",
+  "skapiScriptCloseWindowParamProcessLabel": "processName",
+  "skapiScriptCloseWindowParamProcessHint": "Prozessname ohne .exe. Leer zielt auf das Vordergrundfenster.",
+  "skapiScriptKillAppTitle": "App beenden erzwingen",
+  "skapiScriptKillAppSummaryWhat": "Beendet jede Instanz eines Prozesses. Versucht zuerst WM_CLOSE, dann TerminateProcess, falls die App nach dem Timeout noch läuft.",
+  "skapiScriptKillAppSummaryHow": "Sendet WM_CLOSE an jedes Hauptfenster, wartet das konfigurierte Timeout ab und führt dann Stop-Process mit -Force für alles noch Laufende aus.",
+  "skapiScriptKillAppNote": "Ungespeicherte Arbeit in nicht reagierenden Apps geht beim erzwungenen Beenden verloren. Verwende preKillSave für Editor-artige Apps, die auf Strg+S reagieren.",
+  "skapiScriptKillAppParamProcessLabel": "processName",
+  "skapiScriptKillAppParamProcessHint": "Prozessname ohne .exe. Alle laufenden Instanzen werden beendet.",
+  "skapiScriptKillAppParamTimeoutLabel": "timeout",
+  "skapiScriptKillAppParamTimeoutHint": "Sekunden, die zwischen WM_CLOSE und dem erzwungenen Beenden gewartet wird. Höhere Werte geben der App mehr Zeit zum Speichern.",
+  "skapiScriptKillAppParamPreKillSaveLabel": "preKillSave",
+  "skapiScriptKillAppParamPreKillSaveHint": "Sendet vor dem Schließen Strg+S an das Vordergrundfenster. Nützlich für Editoren, aber wirkungslos bei Apps, die Strg+S ignorieren.",
+  "skapiScriptLaunchAppTitle": "App starten",
+  "skapiScriptLaunchAppSummaryWhat": "Startet eine ausführbare Datei, öffnet eine URL oder startet ein Dokument mit dem Standardprogramm.",
+  "skapiScriptLaunchAppSummaryHow": "Ruft PowerShell Start-Process mit dem Pfad und einer optionalen Argumentliste auf. Der Pfad kann eine .exe, ein vollständiger Dateipfad oder eine URL sein.",
+  "skapiScriptLaunchAppNote": "Pfade mit Leerzeichen werden akzeptiert. Verwende eine URL wie https://example.com, um den Standardbrowser zu öffnen.",
+  "skapiScriptLaunchAppParamPathLabel": "path",
+  "skapiScriptLaunchAppParamPathHint": "Ausführbare Datei, vollständiger Dateipfad oder URL. notepad / C:\\\\tools\\\\my.exe / https://example.com.",
+  "skapiScriptLaunchAppParamArgsLabel": "args",
+  "skapiScriptLaunchAppParamArgsHint": "An die ausführbare Datei übergebene Argumente. Leer für keine.",
+  "skappListenerCardTitle": "SKAPP-HTTP-Listener",
+  "skappListenerCardSubtitleRunning": "Läuft auf Port {port}",
+  "@skappListenerCardSubtitleRunning": {
+    "placeholders": {
+      "port": {
+        "type": "int"
+      }
+    }
+  },
+  "skappListenerCardSubtitleStopped": "Gestoppt",
+  "skappListenerCardSubtitleUnsupported": "Diese Plattform kann den Listener nicht hosten.",
+  "skappListenerCardEnableSwitch": "Listener aktivieren",
+  "skappListenerCardSecurityNote": "Der Listener akzeptiert Verbindungen nur in deinem lokalen Netzwerk und benötigt den Bearer-Token. Reines HTTP, setze ihn nicht dem öffentlichen Internet aus.",
+  "settingsLanVisibleTitle": "Im LAN sichtbar",
+  "settingsLanVisibleSubtitle": "Wenn aus, bindet sich der Listener nur an localhost. Gekoppelte BF-Geräte können diesen Desktop nicht erreichen.",
+  "settingsLanVisibleWarnBfBreaks": "Dies auszuschalten unterbricht die BF-Webhook-Kette. Nur in einer vertrauenswürdigen oder Testumgebung verwenden.",
+  "settingsLanVisibleAutoReopenedSnack": "Die LAN-Sichtbarkeit wurde wieder eingeschaltet, damit BF-Geräte diesen Desktop erreichen können.",
+  "skapiRunRemoteDeveloperModeDisabled": "Auf dem Ziel-Desktop ist der Entwicklermodus deaktiviert, daher ist dort die Skript-Fernausführung aus.",
+  "skappPeerPairingManualUuidConfirmLabel": "Bestätigungscode (letzte 4 der UUID)",
+  "skappPeerPairingManualUuidConfirmHint": "Lies den 4-stelligen Code, der auf dem Kopplungsbildschirm des Desktops angezeigt wird.",
+  "skappPeerPairingManualUuidConfirmError": "Der Code stimmt nicht mit den letzten 4 der UUID überein. Prüfe den Desktop-Bildschirm.",
+  "skappListenerCardUuidLast4Label": "Kopplungs-Bestätigungscode",
+  "skappListenerCardUuidLast4Hint": "Gib diese 4 Zeichen auf dem manuellen Kopplungsbildschirm des Handys ein.",
+  "settingsPeerTokensTitle": "Ausgegebene Peer-Tokens",
+  "settingsPeerTokensSubtitle": "Mobile Peers, die mit diesem Desktop gekoppelt sind. Widerrufe einen Eintrag, um ihn abzumelden, ohne die anderen zu beeinflussen.",
+  "settingsPeerTokensEmpty": "Noch keine Peers gekoppelt.",
+  "settingsPeerTokensIssuedAt": "Gekoppelt {when}",
+  "@settingsPeerTokensIssuedAt": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPeerTokensLastUsed": "Zuletzt verwendet {when}",
+  "@settingsPeerTokensLastUsed": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPeerTokensRevokeButton": "Widerrufen",
+  "settingsPeerTokensRevokeConfirmTitle": "Diesen Peer widerrufen?",
+  "settingsPeerTokensRevokeConfirmBody": "Der Peer wird sofort abgemeldet und muss erneut koppeln, um diesen Desktop zu erreichen.",
+  "settingsPeerTokensRevokeConfirmCancel": "Abbrechen",
+  "settingsPeerTokensRevokeConfirmAction": "Widerrufen",
+  "settingsPeerTokensRevokedToast": "Peer {name} widerrufen",
+  "@settingsPeerTokensRevokedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "skappListenerCardRotateCertButton": "TLS-Zertifikat wechseln",
+  "skappListenerCardRotateCertConfirmTitle": "Zertifikat wechseln?",
+  "skappListenerCardRotateCertConfirmBody": "Ein neues selbstsigniertes TLS-Zertifikat wird erzeugt. Jeder zuvor gekoppelte Peer schlägt beim Handshake fehl, bis er erneut koppelt.",
+  "skappListenerCardRotateCertConfirmCancel": "Abbrechen",
+  "skappListenerCardRotateCertConfirmAction": "Wechseln",
+  "skappListenerCardRotateCertDoneSnack": "TLS-Zertifikat gewechselt. Koppele jedes Gerät erneut.",
+  "skappListenerCardCertFingerprintLabel": "TLS-Fingerabdruck",
+  "skappListenerCardErrorPortInUse": "Port {port} wird bereits verwendet. Wähle in der Netzwerkidentität einen anderen Port.",
+  "@skappListenerCardErrorPortInUse": {
+    "placeholders": {
+      "port": {
+        "type": "int"
+      }
+    }
+  },
+  "skappListenerCardErrorGeneric": "Der Listener konnte nicht gestartet werden: {error}",
+  "@skappListenerCardErrorGeneric": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "skappPeerPairingTitle": "Desktop-SKAPP koppeln",
+  "skappPeerPairingSubtitle": "Scanne den QR aus den Einstellungen des Desktop-SKAPP oder füge den Kopplungscode manuell ein.",
+  "skappPeerPairingTabScan": "QR scannen",
+  "skappPeerPairingTabManual": "Manuell",
+  "skappPeerPairingScanHint": "Richte deine Kamera auf den QR unter Desktop-SKAPP > Einstellungen > SKAPP-HTTP-Listener.",
+  "skappPeerPairingScanCameraDeniedTitle": "Kameraberechtigung erforderlich",
+  "skappPeerPairingScanCameraDeniedBody": "Erlaube in deinen Handy-Einstellungen den Kamerazugriff, um den Kopplungs-QR zu scannen. Du kannst den Code auch manuell eingeben.",
+  "skappPeerPairingManualHostLabel": "Desktop-IP oder Hostname",
+  "skappPeerPairingManualPortLabel": "Port",
+  "skappPeerPairingManualTokenLabel": "Bearer-Token",
+  "skappPeerPairingManualUuidLabel": "Desktop-UUID",
+  "skappPeerPairingManualNameLabel": "Anzeigename",
+  "skappPeerPairingManualSubmit": "Koppeln",
+  "skappPeerPairingSavedToast": "Mit {name} gekoppelt",
+  "@skappPeerPairingSavedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "skappPeerPairingFailedToast": "Kopplung fehlgeschlagen: {reason}",
+  "@skappPeerPairingFailedToast": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "skappPeerPairingShowQrTitle": "Ein Handy mit diesem Desktop koppeln",
+  "skappPeerPairingShowQrBody": "Öffne SKAPP auf deinem Handy, gehe zu SKAPI > Einstellungen > Desktop koppeln und scanne diesen QR. Der QR enthält den Bearer-Token, behandle ihn wie ein Passwort.",
+  "skappPeerPairingShowQrCloseButton": "Fertig",
+  "skappPeerListEmpty": "Noch kein gekoppelter Desktop. Koppele einen, um Skripte von diesem Handy auszuführen.",
+  "skappPeerListSectionTitle": "Gekoppelte Desktop-SKAPPs",
+  "skappPeerStatusOnline": "Online",
+  "skappPeerStatusOffline": "Offline",
+  "skappPeerStatusLastSeen": "Zuletzt gesehen {when}",
+  "@skappPeerStatusLastSeen": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "skappPeerRemoveTooltip": "Gekoppelten Desktop entfernen",
+  "skappPeerRemoveConfirmTitle": "Kopplung entfernen?",
+  "skappPeerRemoveConfirmBody": "Von diesem Handy ausgelöste Skripte laufen nicht mehr auf {name}, bis du erneut koppelst.",
+  "@skappPeerRemoveConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "skappPeerScanRefreshTooltip": "Peer-Liste aktualisieren",
+  "skapiRunRemoteSheetTitle": "Remote auf {peerName} ausführen",
+  "@skapiRunRemoteSheetTitle": {
+    "placeholders": {
+      "peerName": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiRunRemoteConnecting": "Verbinde mit Desktop...",
+  "skapiRunRemoteOfflineError": "Der gekoppelte Desktop ist offline. Aktualisiere die Peers oder prüfe den Listener des Desktops.",
+  "skapiRunRemoteUnauthorizedError": "Bearer-Token abgelehnt. Der Token des Desktops wurde möglicherweise gewechselt. Koppele in den Einstellungen erneut.",
+  "skapiRunRemoteHttpError": "Remote-Ausführung fehlgeschlagen: {reason}",
+  "@skapiRunRemoteHttpError": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiRunMobileNoPeerTitle": "Kein gekoppelter Desktop",
+  "skapiRunMobileNoPeerBody": "Koppele in den Einstellungen ein Desktop-SKAPP, um Skripte von diesem Handy auszuführen.",
+  "skapiRunMobileNoPeerCta": "Einstellungen öffnen",
+  "skapiRunRemoteNotWhitelisted": "Dieses Skript ist nicht als remote ausführbar markiert. Führe es direkt auf dem Desktop aus.",
+  "skapiRunRemoteNoPeerHint": "Koppele in den Einstellungen ein Desktop-SKAPP, um Skripte von diesem Handy auszuführen.",
+  "skapiRunRemoteNoPeerAction": "Einstellungen öffnen",
+  "skappPeerPickerTitle": "An welchen Computer senden?",
+  "skappPeerPickerSubtitle": "Wähle das gekoppelte Desktop-SKAPP, das dieses Skript ausführen soll.",
+  "skappPeerPickerOfflineReason": "Offline",
+  "skappPeerPickerDevModeOffReason": "Entwicklermodus ist aus",
+  "skappPeerPickerEmpty": "Keine gekoppelten Desktops zur Auswahl.",
+  "skapiRunRemoteCancelButton": "Abbrechen",
+  "skapiRunRemoteCancelledNote": "Ausführung abgebrochen",
+  "skapiRunRemoteTooManyRuns": "Auf diesem Desktop laufen bereits {running} Skripte ({limit} max.). Warte, bis eines fertig ist.",
+  "@skapiRunRemoteTooManyRuns": {
+    "placeholders": {
+      "running": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "skappPeerHealthDevModeBadge": "Entwicklermodus",
+  "remoteRunActivityCardTitle": "Remote-Ausführungen",
+  "remoteRunActivityCardSubtitle": "Letzte Skript-Ausführungen, die gekoppelte mobile Peers auf diesem Desktop angefordert haben.",
+  "remoteRunActivityCardEmpty": "Noch keine Remote-Ausführungen.",
+  "remoteRunActivityCardClear": "Verlauf leeren",
+  "remoteRunActivityRowOk": "Exit {exitCode} · {durationMs} ms",
+  "@remoteRunActivityRowOk": {
+    "placeholders": {
+      "exitCode": {
+        "type": "int"
+      },
+      "durationMs": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteRunActivityRowCancelled": "abgebrochen",
+  "remoteRunActivityRowRejected": "abgelehnt · {reason}",
+  "@remoteRunActivityRowRejected": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "mobileTriggerCardTitle": "Auslösen",
+  "mobileTriggerCardSubtitle": "Sende ein Tipp-Ereignis an ein gekoppeltes Desktop-SKAPP. Jede Bindung, die auf dieses Ereignis hört, löst ihr Skript auf diesem Desktop aus.",
+  "mobileTriggerCardSendButton": "Tipp senden",
+  "mobileTriggerCardSending": "Wird gesendet...",
+  "mobileTriggerSentToast": "Tipp an {name} gesendet",
+  "@mobileTriggerSentToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiBindEventMobileTap": "Mobiler Tipp",
+  "pairedDeviceMobileType": "SKAPP Mobile",
+  "skappPeersCardHeaderSinglePeer": "{title} · {name}",
+  "@skappPeersCardHeaderSinglePeer": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "skappPeersCardHeaderMultiPeer": "{title} · {count}",
+  "@skappPeersCardHeaderMultiPeer": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "msHomeScreenTitle": "Mobiler Peer",
+  "msHomeScreenNotFound": "Dieser mobile Peer ist nicht mehr gekoppelt.",
+  "msHomeScreenEventsHeader": "Verfügbare Ereignisse",
+  "msHomeScreenBindingsHeader": "Bindungen ({count})",
+  "@msHomeScreenBindingsHeader": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "msHomeScreenBindingsEmpty": "Noch keine Bindungen. Verwende SKAPI → Skript → An Aktion binden, um ein Tipp-Ereignis mit einem Skript zu verknüpfen.",
+  "msHomeScreenHint": "Handys führen keine Skripte aus. Sie senden Auslöser-Ereignisse, die dieser Desktop an Skripte bindet.",
+  "msHomeScreenPairedAt": "Gekoppelt {date}",
+  "@msHomeScreenPairedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiGroupNotifyTitle": "Benachrichtigung & Dialog",
+  "skapiGroupNotifyDesc": "Skripte in dieser Gruppe sprechen direkt mit dem Benutzer: eine Toast-Meldung einblenden, einen modalen Dialog anzeigen oder auf eine Ja/Nein-Antwort warten. Nutze sie, wenn das Ereignis eines SmartKraft-Geräts den Menschen vor dem Bildschirm zum Bestätigen oder Entscheiden braucht.",
+  "skapiGroupNotifyFoot": "Typischer Einsatz: Dialog vor einer destruktiven Aktion, Toast bei einer sanften Erinnerung, Dialog mit Timeout, der automatisch durchfällt.",
+  "skapiScriptDialogTitle": "Dialog anzeigen",
+  "skapiScriptDialogSummaryWhat": "Zeigt eine modale Windows-MessageBox und gibt die Wahl des Benutzers zurück (ok / cancel / yes / no / timeout).",
+  "skapiScriptDialogSummaryHow": "Ruft System.Windows.Forms.MessageBox in einem untergeordneten Runspace auf, damit das Skript den Dialog gegen ein optionales Timeout laufen lassen kann. Der gewählte Wert wird für die Verzweigung des Aufrufers nach stdout geschrieben.",
+  "skapiScriptDialogNote": "stdout ist die Antwort des Benutzers in Kleinbuchstaben. timeout=0 wartet unbegrenzt.",
+  "skapiScriptDialogParamTitleLabel": "title",
+  "skapiScriptDialogParamTitleHint": "In der MessageBox angezeigter Fenstertitel.",
+  "skapiScriptDialogParamBodyLabel": "body",
+  "skapiScriptDialogParamBodyHint": "Die dem Benutzer angezeigte Frage oder Nachricht.",
+  "skapiScriptDialogParamButtonsLabel": "buttons",
+  "skapiScriptDialogParamButtonsHint": "ok / ok_cancel / yes_no / yes_no_cancel. Standard ok_cancel.",
+  "skapiScriptDialogParamTimeoutLabel": "timeout",
+  "skapiScriptDialogParamTimeoutHint": "Sekunden, bis mit „timeout“ durchgefallen wird. 0 bedeutet unbegrenzt warten.",
+  "skapiScriptToastTitle": "Toast anzeigen",
+  "skapiScriptToastSummaryWhat": "Zeigt eine Windows-Toast-Benachrichtigung mit Titel und Text. Schiebt von rechts unten herein und landet im Info-Center.",
+  "skapiScriptToastSummaryHow": "Baut eine ToastNotification-XML-Nutzlast und übergibt sie dem WinRT ToastNotificationManager unter der konfigurierten AppUserModelID.",
+  "skapiScriptToastNote": "Tier 2: benötigt Windows 10+ und eine registrierte AppUserModelID für die beste Darstellung. Die Standard-AUMID legt den Toast unter PowerShell im Info-Center ab.",
+  "skapiScriptToastParamTitleLabel": "title",
+  "skapiScriptToastParamTitleHint": "Fette erste Zeile des Toasts.",
+  "skapiScriptToastParamBodyLabel": "body",
+  "skapiScriptToastParamBodyHint": "Kleinere zweite Zeile. Optional.",
+  "skapiScriptToastParamAumidLabel": "aumid",
+  "skapiScriptToastParamAumidHint": "App User Model ID, unter der der Toast erscheint. Standard fällt auf PowerShell zurück.",
+  "skapiGroupVisualBreakTitle": "Visuelle Pause",
+  "skapiGroupVisualBreakDesc": "Sanfte visuelle Reize, die den Benutzer von intensiver Arbeit weglocken: Bildschirm dimmen, auf Graustufen umschalten, den Cursor finden oder den Desktop anzeigen. Effekte in dieser Gruppe sind umkehrbar und blockieren niemals fest die Eingabe.",
+  "skapiGroupVisualBreakFoot": "Typischer Einsatz: Bildschirm zu Beginn einer Fokuspause dimmen, Graustufenmodus für nächtliche Lektüre, Maus finden bei Mehrmonitor-Setups.",
+  "skapiScriptShowDesktopTitle": "Desktop anzeigen",
+  "skapiScriptShowDesktopSummaryWhat": "Schaltet „Desktop anzeigen“ um. Wie zweimaliges Drücken von Win+D hintereinander.",
+  "skapiScriptShowDesktopSummaryHow": "Ruft Shell.Application.ToggleDesktop über COM auf. Erneutes Ausführen stellt die vorherige Fensteranordnung wieder her.",
+  "skapiScriptFadeScreenTitle": "Bildschirm überblenden",
+  "skapiScriptFadeScreenSummaryWhat": "Blendet die Helligkeit des internen Displays über einige Sekunden vom aktuellen auf einen Zielwert über.",
+  "skapiScriptFadeScreenSummaryHow": "Liest die aktuelle Helligkeit über WMI WmiMonitorBrightness, steuert dann WmiSetBrightness in linearen Schritten zum Ziel, damit der Wechsel gleichmäßig wirkt.",
+  "skapiScriptFadeScreenNote": "Tier 2: Die WMI-Helligkeit funktioniert nur bei internen Panels. Externe Monitore reagieren auf diesem Weg nicht.",
+  "skapiScriptFadeScreenParamTargetLabel": "target",
+  "skapiScriptFadeScreenParamTargetHint": "Endhelligkeit in Prozent (0-100).",
+  "skapiScriptFadeScreenParamDurationLabel": "duration",
+  "skapiScriptFadeScreenParamDurationHint": "Sekunden, die das Überblenden dauern soll. Das Skript verwendet zehn Helligkeitsschritte pro Sekunde.",
+  "skapiScriptGrayscaleTitle": "Graustufenfilter",
+  "skapiScriptGrayscaleSummaryWhat": "Schaltet den Graustufenmodus der Windows-Farbfilter ein oder aus.",
+  "skapiScriptGrayscaleSummaryHow": "Schreibt die ColorFiltering-Registry-Schlüssel und sendet dann Win+Strg+C, damit Windows die Änderung live ohne Abmeldung übernimmt.",
+  "skapiScriptGrayscaleNote": "Tier 2: Für das Live-Umschalten muss Einstellungen > Erleichterte Bedienung > Farbfilter > „Tastenkombination zulassen“ aktiviert sein.",
+  "skapiScriptGrayscaleParamOnLabel": "on",
+  "skapiScriptGrayscaleParamOnHint": "true, um Graustufen zu aktivieren, false, um sie auszuschalten.",
+  "skapiScriptGrayscaleParamDurationLabel": "duration",
+  "skapiScriptGrayscaleParamDurationHint": "0 bedeutet nur umschalten. >0 kehrt nach den angegebenen Sekunden automatisch zu Farbe zurück. Ideal für visuelle Pausen.",
+  "skapiScriptFindMouseShakeTitle": "Maus finden",
+  "skapiScriptFindMouseShakeSummaryWhat": "Wackelt mit dem Cursor in einem kleinen Kreis, um den Blick auf seine Position zu lenken. Der Cursor kehrt zum Ausgangspunkt zurück, wenn die Animation endet.",
+  "skapiScriptFindMouseShakeSummaryHow": "Liest die aktuelle Cursorposition mit GetCursorPos und durchläuft dann SetCursorPos in einem Kreis mit dem konfigurierten Radius. Nützlich bei Mehrmonitor- und 4K-Setups.",
+  "skapiScriptFindMouseShakeNote": "Tier 2: SetCursorPos kann von Bedienungshilfen blockiert werden, und das Verhalten variiert in Remotedesktop-Sitzungen.",
+  "skapiScriptFindMouseShakeParamRadiusLabel": "radius",
+  "skapiScriptFindMouseShakeParamRadiusHint": "Pixel, die der Cursor während der Schleife von seinem Ursprung zurücklegt. Größer fällt mehr auf.",
+  "skapiScriptFindMouseShakeParamLoopsLabel": "loops",
+  "skapiScriptFindMouseShakeParamLoopsHint": "Wie viele volle Kreise gezeichnet werden, bevor er zur Ruhe kommt.",
+  "skapiGroupProgramsTitle": "Steuerung bestimmter Programme",
+  "skapiGroupProgramsDesc": "Gezielte Skripte für bestimmte Apps und Browser: geordnetes Speichern+Schließen, Beenden mehrerer Instanzen, browserweite Aufräumaktion. Praktisch, wenn ein SmartKraft-Gerät einen bestimmten Arbeitsablauf herunterfahren möchte, ohne den ganzen Desktop zu sprengen.",
+  "skapiGroupProgramsFoot": "Typischer Einsatz: vor dem Ruhezustand alle Editoren speichern und schließen, am Tagesende jeden Browser schließen, gezieltes Aufräumen einer Prozessfamilie.",
+  "skapiScriptCloseWithSaveTitle": "App speichern & schließen",
+  "skapiScriptCloseWithSaveSummaryWhat": "Sendet Strg+S an eine Ziel-App, um deren eigenes Speichern auszulösen, wartet und schließt dann das Fenster geordnet.",
+  "skapiScriptCloseWithSaveSummaryHow": "Fokussiert jede laufende Instanz, sendet Strg+S über SendKeys, wartet die konfigurierte Pause und sendet dann WM_CLOSE, damit die App bestätigen oder das Speichern abschließen kann.",
+  "skapiScriptCloseWithSaveNote": "Tier 2: setzt voraus, dass die App Strg+S als „speichern“ interpretiert. Manche Chat-/Web-Apps behandeln es anders. Teste es mit den Apps, die du tatsächlich anvisierst.",
+  "skapiScriptCloseWithSaveParamProcessLabel": "processName",
+  "skapiScriptCloseWithSaveParamProcessHint": "Prozessname ohne .exe (winword, excel, code, photoshop). Alle laufenden Instanzen werden gespeichert und geschlossen.",
+  "skapiScriptCloseWithSaveParamWaitLabel": "wait",
+  "skapiScriptCloseWithSaveParamWaitHint": "Sekunden, die zwischen Strg+S und dem Schließen-Signal gewartet wird, damit die App das Speichern abschließt.",
+  "skapiScriptCloseAllInstancesTitle": "Alle Instanzen schließen",
+  "skapiScriptCloseAllInstancesSummaryWhat": "Sendet jedem sichtbaren Fenster eines Prozesses ein geordnetes Schließen. Jede Instanz kann ihren eigenen Speicherdialog anzeigen.",
+  "skapiScriptCloseAllInstancesSummaryHow": "Durchläuft die passenden Prozesse über Get-Process und sendet WM_CLOSE an das Hauptfenster jedes Prozesses. Kein erzwungenes Beenden als Rückfall.",
+  "skapiScriptCloseAllInstancesParamProcessLabel": "processName",
+  "skapiScriptCloseAllInstancesParamProcessHint": "Prozessname ohne .exe. Passt auf alle Instanzen.",
+  "skapiScriptBrowserCloseAllTitle": "Alle Browser schließen",
+  "skapiScriptBrowserCloseAllSummaryWhat": "Schließt jeden laufenden gängigen Browser (Chrome, Edge, Firefox, Brave, Vivaldi, Opera) geordnet.",
+  "skapiScriptBrowserCloseAllSummaryHow": "Durchläuft die bekannten Browser-Prozessnamen und sendet WM_CLOSE an jedes Hauptfenster. Moderne Browser bewahren die Sitzung, wenn „Tabs beim nächsten Start wiederherstellen“ aktiviert ist.",
+  "skapiScriptBrowserCloseAllNote": "Erzwungenes Beenden wird nicht verwendet. Um auch die Sitzung zu löschen, verwende stattdessen kill-app pro Browser.",
+  "skapiTierBadgeExperimental": "Experimentell",
+  "skapiTierBadgeExperimentalTooltip": "Dieses Skript hängt von einer Windows-API ab, die über Rechner hinweg nicht zuverlässig sein kann. Teste es, bevor du dich darauf verlässt.",
+  "skapiTierBadgeBlocked": "Demnächst",
+  "skapiTierBadgeBlockedTooltip": "Dieses Skript gehört zur geplanten Bibliothek, ist aber noch nicht implementiert.",
+  "skapiGroupSaveWorkTitle": "Arbeit speichern",
+  "skapiGroupSaveWorkDesc": "Skripte in dieser Gruppe speichern deine offene Arbeit vor einer Pause oder einem unerwarteten Herunterfahren auf der Festplatte. Wenn dein SmartKraft-Gerät eine Pause auslöst, speichert das gewählte Skript automatisch deine Datei in Word, Excel, VS Code oder einem anderen Editor, damit deine Arbeit auch dann sicher bleibt, wenn dein Computer in den Ruhezustand geht, herunterfährt oder einen anderen Befehl ausführt.",
+  "skapiGroupSaveWorkFoot": "Typischer Einsatz: automatisches Speichern zu Beginn einer Fokuspause, Dokumentsicherung bei Warnung wegen schwachem Akku oder ein „alles speichern“-Auslöser per Knopfdruck.",
+  "skapiScriptSaveActiveWindowTitle": "Aktives Fenster speichern",
+  "skapiScriptSaveActiveWindowSummaryWhat": "Sendet ein virtuelles Strg+S an das Windows-Fenster, das gerade den Fokus hat, und löst so das eigene „Speichern“-Verhalten dieser Anwendung aus.",
+  "skapiScriptSaveActiveWindowSummaryHow": "Zuerst greift es das Handle des aktiven Fensters ab und protokolliert dessen Titel. Dann sendet es Strg+S über SendKeys. Word speichert in seinen aktuellen Pfad, VS Code schreibt die Datei. Erscheint ein „Speichern unter“-Dialog, wartet es, bis der Benutzer manuell bestätigt.",
+  "skapiScriptSaveActiveWindowParamTimeoutLabel": "timeout",
+  "skapiScriptSaveActiveWindowParamTimeoutHint": "Sekunden, die nach dem Tastendruck gewartet wird, damit die App Zeit hat, die Datei zu schreiben.",
+  "skapiScriptSaveActiveWindowParamVerboseLabel": "verbose",
+  "skapiScriptSaveAllOpenTitle": "Alle offenen Dokumente speichern",
+  "skapiScriptSaveAllOpenSummaryWhat": "Durchläuft eine Whitelist laufender Editoren und weist jeden an, seine offenen Dokumente zu speichern.",
+  "skapiScriptSaveAllOpenSummaryHow": "Für jeden gefundenen Whitelist-Prozess fokussiert es das Hauptfenster, sendet Strg+S und wartet dann das konfigurierte Timeout pro App ab, bevor es weitergeht. Nicht laufende Apps werden stillschweigend übersprungen, sofern der Verbose-Modus nicht aktiv ist.",
+  "skapiScriptSaveAllOpenNote": "Die Whitelist umfasst standardmäßig Word, Excel, PowerPoint und VS Code. Bearbeite den Parameter apps, um eigene hinzuzufügen.",
+  "skapiScriptSaveAllOpenParamAppsLabel": "apps",
+  "skapiScriptSaveAllOpenParamAppsHint": "Prozessnamen (ohne .exe), an die das Speichern gesendet wird. Die Reihenfolge zählt: frühere Einträge werden zuerst verarbeitet.",
+  "skapiScriptSaveAllOpenParamTimeoutLabel": "timeoutPerApp",
+  "skapiScriptSaveAllOpenParamVerboseLabel": "verbose",
+  "skapiScriptAutosaveTriggerTitle": "Auto-Speichern auslösen",
+  "skapiScriptAutosaveTriggerSummaryWhat": "Sendet in einem Durchgang einen Windows-Speicherbefehl an jedes sichtbare Top-Level-Fenster.",
+  "skapiScriptAutosaveTriggerSummaryHow": "Zählt sichtbare Fenster auf und sendet jedem ein WM_COMMAND mit der Standard-Speicher-ID. Apps, die auf diese Nachricht hören, reagieren, als hättest du im Menü Datei auf Speichern geklickt. Schneller als ein Strg+S pro Fenster, aber einige Apps ignorieren den Broadcast.",
+  "skapiScriptAutosaveTriggerNote": "Verwende dies, wenn du jeden Editor auf einmal leeren möchtest und es dir nichts ausmacht, dass eine kleine Zahl von Apps nicht reagiert. Kombiniere es für strengere Abdeckung mit save-all-open.",
+  "skapiScriptAutosaveTriggerParamDelayLabel": "delay",
+  "skapiScriptAutosaveTriggerParamDelayHint": "Sekunden, die vor dem Broadcast gewartet wird, nützlich, wenn die Pausenbenachrichtigung des Geräts zuerst erscheinen soll.",
+  "skapiScriptAutosaveTriggerParamVerboseLabel": "verbose",
+  "skapiScriptDetailSummaryWhatLabel": "Was es tut:",
+  "skapiScriptDetailSummaryHowLabel": "So funktioniert es:",
+  "skapiScriptDetailOriginalSectionTitle": "Originalskript",
+  "skapiScriptDetailOriginalSectionSub": "schreibgeschützt · Englisch",
+  "skapiScriptDetailEditingSectionTitle": "Bearbeitungen",
+  "skapiScriptDetailEditingNotYet": "Noch keine Bearbeitungen",
+  "skapiScriptDetailEditingNotYetSub": "Erstelle eine Kopie auf diesem Gerät, ohne das Original zu ändern.",
+  "skapiScriptDetailEditingModified": "Bearbeitet",
+  "skapiScriptDetailEditingModifiedSub": "Zuletzt geändert {date}.",
+  "@skapiScriptDetailEditingModifiedSub": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiScriptDetailEditingOutdated": "Bibliothek aktualisiert",
+  "skapiScriptDetailEditingOutdatedSub": "Das Original wurde durch ein App-Update geändert. Vergleichen oder zurücksetzen.",
+  "skapiScriptDetailParamWarnTitle": "Parameter vor dem Ausführen prüfen",
+  "skapiScriptDetailParamWarnHint": "Um diese Werte zu ändern, verwende „Bearbeiten“. Parameter sind im param()-Block des Skripts definiert.",
+  "skapiScriptDetailNotesTitle": "Hinweise",
+  "skapiScriptDetailButtonRun": "Jetzt ausführen",
+  "skapiScriptDetailButtonBindAction": "An Aktion binden",
+  "skapiScriptDetailButtonEdit": "Bearbeiten",
+  "skapiScriptDetailButtonView": "Ansehen",
+  "skapiScriptDetailButtonReset": "Zurücksetzen",
+  "skapiScriptDetailButtonCompare": "Vergleichen",
+  "skapiScriptCopyButton": "Kopieren",
+  "skapiScriptCopyButtonDone": "Kopiert",
+  "skapiScriptSelectButton": "Auswählen",
+  "skapiEditorTitle": "Bearbeiten",
+  "skapiEditorHint": "{scriptId} · Du bearbeitest eine Kopie auf diesem Gerät. Die ursprüngliche Bibliotheksversion bleibt unverändert. „Zurücksetzen“ stellt immer das Original wieder her.",
+  "@skapiEditorHint": {
+    "placeholders": {
+      "scriptId": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiEditorStatusBarTitle": "POWERSHELL · UTF-8",
+  "skapiEditorStatusModified": "● Geändert",
+  "skapiEditorStatusUnmodified": "Unverändert",
+  "skapiEditorFootCursor": "Zeile {line} · Spalte {column}",
+  "@skapiEditorFootCursor": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "column": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiEditorFootSaveLabel": "Speichern",
+  "skapiEditorDiffLineCount": "{count} Zeile geändert",
+  "@skapiEditorDiffLineCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiEditorDiffLinesCount": "{count} Zeilen geändert",
+  "@skapiEditorDiffLinesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiEditorDiffCompareLink": "Mit Original vergleichen",
+  "skapiEditorButtonReset": "Zurücksetzen",
+  "skapiEditorButtonSave": "Speichern",
+  "skapiEditorAfterSaveNote": "Nach dem Speichern führt „Jetzt ausführen“ die bearbeitete Version aus.",
+  "skapiLinuxDistroHeading": "Wähle deine Distributionsfamilie",
+  "skapiLinuxDistroSubtitle": "Linux-Skripte unterscheiden sich zwischen Debian-basierten (apt, .deb) und Arch-basierten (pacman) Familien. Wähle die, die zu deinem Rechner passt.",
+  "skapiLinuxDistroDebianLabel": "Debian-basiert",
+  "skapiLinuxDistroDebianSub": "Debian, Ubuntu, Mint, Pop!_OS, Elementary, Kali, MX, Zorin",
+  "skapiLinuxDistroArchLabel": "Arch-basiert",
+  "skapiLinuxDistroArchSub": "Arch, Manjaro, EndeavourOS, Garuda (kommt später)",
+  "skapiNewActionNoDevicesTitle": "Koppele zuerst ein Gerät",
+  "skapiNewActionNoDevicesBody": "Das Erstellen einer geräteinternen Aktion benötigt mindestens ein gekoppeltes SmartKraft-Gerät (vorerst BF).",
+  "skapiNewActionNoDevicesCta": "Geräte öffnen",
+  "skapiNewActionPickDeviceTitle": "Ein Gerät wählen",
+  "skapiNewActionPickDeviceSubtitle": "Auf welchem Gerät soll diese Aktion liegen?",
+  "skapiUserNewTitle": "Neues Skript",
+  "skapiUserEditTitle": "Skript bearbeiten",
+  "skapiUserTitleLabel": "Titel",
+  "skapiUserTitleHint": "z. B. Morgenroutine",
+  "skapiUserDescLabel": "Beschreibung",
+  "skapiUserDescHint": "Was macht dieses Skript?",
+  "skapiUserPlatformLabel": "Plattform",
+  "skapiUserCodeLabel": "Code",
+  "skapiUserCodeHint": "# Dein PowerShell-Code hier",
+  "skapiUserSaveCta": "Speichern",
+  "skapiUserValidationEmpty": "Titel und Code dürfen nicht leer sein.",
+  "skapiUserSavedSnack": "Skript gespeichert",
+  "skapiUserSectionHeading": "Meine Skripte",
+  "skapiUserSectionSub": "{count} Skripte",
+  "@skapiUserSectionSub": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiUserEmptyHint": "Noch keine eigenen Skripte. Erstelle eins mit der Schaltfläche „Neue Aktion“ oben rechts.",
+  "skapiUserDetailCodeHeading": "Code",
+  "skapiUserEditCta": "Bearbeiten",
+  "skapiUserDeleteConfirmTitle": "Skript löschen?",
+  "skapiUserDeleteConfirmBody": "{name} wird endgültig gelöscht.",
+  "@skapiUserDeleteConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiUserDeletedSnack": "Skript gelöscht",
+  "skapiUserRunCta": "Ausführen",
+  "skapiUserRunUnsupported": "Skripte ausführen geht nur auf dem Desktop.",
+  "skapiUserRunOutputTitle": "Ausführungsausgabe",
+  "skapiUserRunDone": "Fertig (Exit {code})",
+  "@skapiUserRunDone": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiLocalScriptsSubheading": "Lokale Skripte",
+  "skapiOnDeviceApiSubheading": "Geräteinterne API",
+  "skapiOnDeviceApiLoadError": "Endpunkte konnten nicht gelesen werden",
+  "skapiOnDeviceApiRowHint": "Tippe auf eine Zeile, um den Editor zu öffnen",
+  "commonLoading": "Wird geladen...",
+  "skapiApiTemplateSectionHeader": "Vorlagen",
+  "skapiApiTemplateSectionCount": "{count, plural, =1{1 Vorlage} other{{count} Vorlagen}}",
+  "@skapiApiTemplateSectionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skapiApiTemplateUploadCta": "Auf Gerät hochladen",
+  "skapiApiTemplateUploadHint": "Beim Hochladen wird diese Vorlage in einen der 5 USER-API-Slots des Geräts geschrieben. Das Gerät löst sie über seinen eigenen Auslöser aus (BF: Countdown-Ende).",
+  "skapiApiTemplatePreviewTitle": "Endpunkt-Vorschau",
+  "skapiApiTemplatePreviewType": "Typ",
+  "skapiApiTemplatePreviewMethod": "Methode",
+  "skapiApiTemplatePreviewUrl": "URL",
+  "skapiApiTemplatePreviewAuth": "Auth",
+  "skapiApiTemplatePreviewHeader": "Header",
+  "skapiApiTemplatePreviewContentType": "Content-Type",
+  "skapiApiTemplatePreviewPayload": "Payload",
+  "skapiApiTemplatePreviewDelay": "Verzögerung",
+  "skapiOtherCategoryHeading": "Eine Gerätekategorie wählen",
+  "skapiOtherCategorySubtitle": "Vorlagen werden auf das gekoppelte Gerät hochgeladen und über dessen eigenen Auslöser ausgelöst (kein Laptop beteiligt).",
+  "skapiOtherSyndimmSub": "SmartKraft-Smart-Dimmer",
+  "skapiOtherLebensspurSub": "SmartKraft-Aktivitätstracker",
+  "skapiOtherBlockingfocusSub": "SmartKraft-Fokustimer",
+  "skapiOtherIotSub": "IoT-Webhooks von Drittanbietern (IFTTT, Home Assistant, generisches REST)",
+  "skapiOtherServerSub": "Selbst gehostete HTTP-Empfänger (n8n, Node-RED, eigene)",
+  "skapiCategoryComingSoon": "Vorlagen kommen bald",
+  "skapiScriptLockSummaryHowLxDebian": "Ruft loginctl lock-session für die aktuelle XDG_SESSION_ID auf; fällt auf xdg-screensaver lock zurück, wenn loginctl nicht verfügbar ist.",
+  "skapiScriptHibernateSummaryHowLxDebian": "Ruft systemctl hibernate auf. Eine optionale Verzögerung schläft die angeforderten Sekunden, bevor in den Ruhezustand gewechselt wird.",
+  "skapiScriptHibernateNoteLxDebian": "Der Tiefschlaf muss konfiguriert sein (Swap >= RAM und der Kernel-Parameter resume=). Auf Systemen, wo das nicht der Fall ist, weicht systemd-logind auf den Ruhezustand aus.",
+  "skapiScriptSleepSummaryHowLxDebian": "Ruft systemctl suspend auf. Der Kernel kann verzögern, wenn ein Vordergrund-Inhibitor Leerlaufübergänge blockiert.",
+  "skapiScriptShutdownSummaryHowLxDebian": "Plant ein geordnetes Ausschalten über /sbin/shutdown -h +N (Minuten). Fällt nach der angeforderten Verzögerung auf systemctl poweroff zurück, wenn shutdown fehlt.",
+  "skapiScriptShutdownNoteLxDebian": "/sbin/shutdown nimmt nur Minuten; Werte unter 60 werden auf 1 Minute aufgerundet. Andere angemeldete Benutzer sehen während des Countdowns eine wall-Nachricht.",
+  "skapiScriptShutdownParamForceHintLxDebian": "Beendet die Benutzersitzung vor dem Ausschalten, sodass die 90-Sekunden-SIGTERM-Schonfrist übersprungen wird.",
+  "skapiScriptBrightnessSummaryHowLxDebian": "Stellt die Hintergrundbeleuchtung des internen Displays über brightnessctl set N% (bevorzugt) oder light -S N als Rückfall ein. Beide schreiben nach /sys/class/backlight.",
+  "skapiScriptBrightnessNoteLxDebian": "brightnessctl kommt ohne sudo aus, wenn der Benutzer in der Gruppe video ist, was nach der Installation auf den meisten Debian-Setups der Standard ist. Externe Monitore über DDC benötigen ddcutil und werden hier nicht behandelt.",
+  "skapiScriptMuteToggleSummaryHowLxDebian": "Schaltet die Stummschaltung des Master-Sinks über wpctl (PipeWire auf Debian 12+) um oder setzt sie, mit einem pactl-Rückfall für PulseAudio-Setups.",
+  "skapiScriptVolumeSetSummaryHowLxDebian": "Stellt die Master-Sink-Lautstärke auf einen Wert von 0-100 über wpctl set-volume (PipeWire) oder pactl set-sink-volume (PulseAudio) ein.",
+  "skapiScriptVolumeSetNoteLxDebian": "PipeWire und PulseAudio stellen beide App-spezifische Lautstärke nativ bereit, daher ist dieses Skript unter Linux Tier 1. Ausgabe über 100 % wird zur Gleichheit mit anderen Plattformen begrenzt.",
+  "skapiScriptMediaKeySummaryHowLxDebian": "Sendet eine Medientasten-Aktion über playerctl, das per MPRIS mit der App spricht, die gerade die Sitzung besitzt (Spotify, Firefox, VLC, mpv, Rhythmbox).",
+  "skapiScriptMediaKeyNoteLxDebian": "Wenn keine MPRIS-fähige Medien-App läuft, ist der Befehl wirkungslos. Installiere die MPRIS-Unterstützung der App, falls ein bekannter Player nicht reagiert.",
+  "skapiScriptMinimizeWindowSummaryHowLxDebian": "Ein leerer processName minimiert das fokussierte Fenster über xdotool. Andernfalls wird das erste Fenster gewählt, dessen WM_CLASS passt, und minimiert.",
+  "skapiScriptMinimizeWindowNoteLxDebian": "Nur X11. Der WM_CLASS-Abgleich beachtet Groß-/Kleinschreibung und hängt davon ab, wie die App sich deklariert hat; prüfe xprop WM_CLASS im Zweifel.",
+  "skapiScriptMinimizeWindowParamProcessHintLxDebian": "WM_CLASS-Instanzname (zum Beispiel: firefox, code, gnome-terminal-server). Leer zielt auf das aktive Fenster.",
+  "skapiScriptCloseWindowSummaryHowLxDebian": "Sendet WM_DELETE_WINDOW über wmctrl -x -c (passt auf WM_CLASS) mit einem Titel-Rückfall. Entspricht einem Klick auf das X; die App kann ihren eigenen Speicherdialog anzeigen.",
+  "skapiScriptCloseWindowNoteLxDebian": "Nur X11. Für Wayland bevorzuge kill-app, das Signale statt des Fensterprotokolls verwendet.",
+  "skapiScriptCloseWindowParamProcessHintLxDebian": "WM_CLASS-Instanzname; leer schließt das fokussierte Fenster. Als Rückfall wird ein Titel-Teilstring-Abgleich verwendet.",
+  "skapiScriptKillAppSummaryHowLxDebian": "pkill -TERM -x nach exaktem comm-Namen, wartet das angeforderte Timeout ab, dann pkill -KILL für alles noch Lebende. Optionales preKillSave fokussiert das Fenster und sendet zuerst Strg+S (nur X11).",
+  "skapiScriptKillAppNoteLxDebian": "Linux-comm-Namen sind vom Kernel auf 15 Zeichen begrenzt. Verwende exakte Kurznamen: firefox (nicht firefox-esr-bin), code, soffice.bin.",
+  "skapiScriptKillAppParamProcessHintLxDebian": "Exakter comm-Name (15-Zeichen-Kernel-Limit). Verwende pgrep -l, um den sichtbaren Namen zu prüfen.",
+  "skapiScriptKillAppParamPreKillSaveHintLxDebian": "Sendet vor SIGTERM Strg+S an das Fenster der App. Benötigt xdotool und X11; unter Wayland ignoriert.",
+  "skapiScriptLaunchAppSummaryHowLxDebian": "Intelligente Verteilung: .desktop -> gtk-launch, echter Dateipfad -> exec, alles andere -> xdg-open, schließlich PATH-Suche. Der Kindprozess wird über setsid abgekoppelt, damit SKAPP nicht blockiert wird.",
+  "skapiScriptLaunchAppNoteLxDebian": "args wird an Leerzeichen getrennt. Argumente mit Anführungszeichen werden nicht unterstützt; verwende für komplexe Befehlszeilen ein Wrapper-Skript.",
+  "skapiScriptLaunchAppParamPathHintLxDebian": "Binärname im PATH, absoluter Pfad, .desktop-Datei, URL oder Dateipfad. xdg-open behandelt MIME-Typen.",
+  "skapiScriptDialogSummaryHowLxDebian": "Öffnet einen modalen Dialog über zenity (GTK) mit einem kdialog-Rückfall (KDE). Schreibt eines von ok / cancel / yes / no / timeout nach stdout.",
+  "skapiScriptDialogNoteLxDebian": "Installation mit: sudo apt install zenity. KDE-Plasma-Nutzer haben möglicherweise stattdessen kdialog. Ohne eines von beiden beendet sich das Skript mit Code 2.",
+  "skapiScriptToastSummaryHowLxDebian": "Sendet eine Desktop-Benachrichtigung über notify-send (libnotify). Tier 1, weil libnotify-bin auf jedem modernen Debian-Desktop vorinstalliert ist.",
+  "skapiScriptToastNoteLxDebian": "icon akzeptiert Namen aus dem Freedesktop-Icon-Theme (dialog-information, dialog-warning, dialog-error). duration in Sekunden; 0 hält den Toast bis zum Schließen.",
+  "skapiScriptToastParamIconLabelLxDebian": "Icon",
+  "skapiScriptToastParamIconHintLxDebian": "Freedesktop-Icon-Name, zum Beispiel: dialog-information, dialog-warning, dialog-error.",
+  "skapiScriptToastParamDurationLabelLxDebian": "Dauer",
+  "skapiScriptToastParamDurationHintLxDebian": "Automatisch nach so vielen Sekunden ausblenden. 0 bedeutet, der Toast bleibt, bis der Benutzer ihn schließt.",
+  "skapiScriptShowDesktopSummaryHowLxDebian": "Liest den EWMH-Show-Desktop-Status über wmctrl -m und schaltet ihn dann mit wmctrl -k um. Spiegelt die Win+D-Semantik unter X11.",
+  "skapiScriptShowDesktopNoteLxDebian": "Nur X11. Wayland-Entsprechungen sind compositor-spezifisch (Sway, Hyprland, GNOME-Shell-Erweiterungen).",
+  "skapiScriptFadeScreenSummaryHowLxDebian": "Blendet die Hintergrundbeleuchtung des internen Displays über die angeforderte Dauer linear vom aktuellen zum Zielwert über, via brightnessctl in 10-Schritte-pro-Sekunde-Schritten.",
+  "skapiScriptFadeScreenNoteLxDebian": "Nur interne Panels. Externe Monitore über DDC benötigen ddcutil und werden hier nicht behandelt. Tier 2, weil das Lesen der aktuellen Hintergrundbeleuchtung von der Sichtbarkeit von /sys/class/backlight abhängt.",
+  "skapiScriptGrayscaleSummaryHowLxDebian": "Schaltet den Farbsättigungsschlüssel der GNOME-Bildschirmlupe (0.0 Graustufen, 1.0 Farbe) über gsettings um, keine Erweiterung nötig.",
+  "skapiScriptGrayscaleNoteLxDebian": "Nur GNOME / Unity. KDE Plasma und XFCE haben keinen entsprechenden Systemweg; auf diesen Desktops beendet sich das Skript mit Code 3 statt eines stillen No-op.",
+  "skapiScriptFindMouseShakeSummaryHowLxDebian": "Liest die Cursorposition über xdotool getmouselocation und zeichnet dann für die angeforderte Schleifenzahl einen Kreis darum, mit per awk berechneten cos/sin-Koordinaten.",
+  "skapiScriptFindMouseShakeNoteLxDebian": "Nur X11. Wayland blockiert synthetische Zeigerbewegung auf Protokollebene (Sicherheitsgrenze), daher beendet sich das Skript mit Code 3.",
+  "skapiScriptCloseWithSaveSummaryHowLxDebian": "Für jedes sichtbare Fenster, das auf WM_CLASS passt: aktivieren, Strg+S, warten, dann WM_DELETE_WINDOW über wmctrl senden. Nur X11.",
+  "skapiScriptCloseWithSaveNoteLxDebian": "Tier 2: Die Strg+S-Tasteninjektion hängt von Locale und Fokus ab; nur echte Speichersemantik verhält sich vorhersehbar. Chat- oder Web-Apps belegen Strg+S möglicherweise anders.",
+  "skapiScriptCloseWithSaveParamProcessHintLxDebian": "WM_CLASS-Instanzname (siehe xprop WM_CLASS). Erforderlich.",
+  "skapiScriptCloseAllInstancesSummaryHowLxDebian": "Sendet SIGTERM an jeden laufenden Prozess, der auf den exakten comm-Namen passt. Jede App handhabt ihre eigene Beendigungssequenz (und kann ihren eigenen Speicherdialog anzeigen).",
+  "skapiScriptCloseAllInstancesParamProcessHintLxDebian": "Exakter comm-Name, wie von pgrep -l angezeigt. Erforderlich.",
+  "skapiScriptBrowserCloseAllSummaryHowLxDebian": "Durchläuft eine Liste von Debian-Browser-Binärdateien (firefox, firefox-esr, chromium, google-chrome, brave, vivaldi-bin, opera) und sendet jeder laufenden Instanz SIGTERM.",
+  "skapiScriptBrowserCloseAllNoteLxDebian": "Browser bewahren die Sitzung, wenn „Tabs beim nächsten Start wiederherstellen“ aktiviert ist, daher ist dies eher ein sanftes „Bildschirm ausschalten“ als ein Datenverlust.",
+  "skapiScriptSaveActiveWindowSummaryHowLxDebian": "Sendet Strg+S über xdotool key --clearmodifiers an das fokussierte Fenster. Nur X11.",
+  "skapiScriptSaveActiveWindowNoteLxDebian": "Wayland blockiert synthetische Tasteninjektion auf Protokollebene. Verwende den autosave-trigger-Rückfall oder verlasse dich auf das eigene Auto-Speichern der App.",
+  "skapiScriptSaveAllOpenSummaryHowLxDebian": "Durchläuft die apps-Liste, findet die sichtbaren Fenster jeder App, aktiviert sie der Reihe nach und sendet zwischen den Wartezeiten Strg+S.",
+  "skapiScriptSaveAllOpenNoteLxDebian": "Die Standard-App-Liste deckt LibreOffice (soffice.bin), VS Code (code), gedit und kate ab. Übergib --apps \"name1,name2\" zum Überschreiben. Nur X11.",
+  "skapiScriptSaveAllOpenParamAppsHintLxDebian": "Kommagetrennte comm-Namen, zum Beispiel: soffice.bin,code,gedit.",
+  "skapiScriptAutosaveTriggerSummaryHowLxDebian": "Durchläuft jedes sichtbare Top-Level-Fenster über wmctrl -l, aktiviert es der Reihe nach und injiziert Strg+S. X11 fehlt der WIN-WM_COMMAND-Broadcast-Weg, daher ist der Fokus pro Fenster der Rückfall.",
+  "skapiScriptAutosaveTriggerNoteLxDebian": "Tier 2: hängt davon ab, dass die fokussierte App Strg+S als „speichern“ akzeptiert. Die meisten Editoren tun das; Chat-Apps können es falsch deuten. Nur X11.",
+  "commonReadFailed": "konnte nicht gelesen werden",
+  "commonUnknown": "unbekannt",
+  "commonComingSoon": "demnächst",
+  "commonDismiss": "Verwerfen",
+  "bootstrapBannerError": "Vom Gerät konnte nicht gelesen werden: {error}",
+  "@bootstrapBannerError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bootstrapBannerRetry": "Wiederholen",
+  "bfApiChainAuthNone": "Keine",
+  "bfApiChainAuthBearer": "Bearer-Token",
+  "bfApiChainAuthBasic": "Basic-Auth",
+  "bfApiChainAuthHeader": "Eigener Header",
+  "bfApiChainMasterError": "Master: {error}",
+  "@bfApiChainMasterError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainChainStarted": "Kette gestartet",
+  "bfApiChainChainError": "Fehler: {error}",
+  "@bfApiChainChainError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainSaveDialogTitle": "Endpunkt speichern?",
+  "bfApiChainSaveDialogBody": "„{name}“ wird auf dem Gerät gespeichert. Dies aktualisiert den Benutzerdatenbereich.",
+  "@bfApiChainSaveDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainSaveDialogConfirm": "Speichern",
+  "bfApiChainSavedToast": "„{name}“ gespeichert",
+  "@bfApiChainSavedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainSaveFailed": "Speichern nicht möglich: {error}",
+  "@bfApiChainSaveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainDeleteDialogTitle": "Löschen?",
+  "bfApiChainDeleteDialogBody": "Der Endpunkt „{name}“ wird vom Gerät entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+  "@bfApiChainDeleteDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainDeleteDialogConfirm": "Löschen",
+  "bfApiChainDeletedToast": "„{name}“ gelöscht",
+  "@bfApiChainDeletedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainDeleteFailed": "Löschen nicht möglich: {error}",
+  "@bfApiChainDeleteFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainTestNoReply": "„{name}“ keine Antwort (15 s Timeout)",
+  "@bfApiChainTestNoReply": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainTestSuccess": "„{name}“ erfolgreich{httpSuffix}",
+  "@bfApiChainTestSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "httpSuffix": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainTestFailure": "„{name}“ Fehler: {error}{httpSuffix}",
+  "@bfApiChainTestFailure": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      },
+      "httpSuffix": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainTestTriggerFailed": "Auslösen nicht möglich: {error}",
+  "@bfApiChainTestTriggerFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainNewEndpointName": "Neuer Endpunkt",
+  "bfApiChainEmptyTitle": "Noch keine Endpunkte registriert",
+  "bfApiChainEmptyBody": "Verwende die Karte „Endpunkt hinzufügen“ unten, um einen neuen HTTP-Aufruf zu definieren (z. B. IFTTT-Webhook, deinen eigenen Server, Spotify pausieren).",
+  "bfApiChainSystemSectionTitle": "Automatisch (gekoppelte SKAPPs)",
+  "bfApiChainSystemSectionSubtitle": "Wenn du ein Skript über SKAPI bindest, öffnet sich automatisch ein Slot für jeden Computer. Wenn der Countdown endet, geht ein signierter Webhook an das SKAPP auf diesem Computer.",
+  "bfApiChainUserSectionTitle": "Manuell (IoT-Geräte)",
+  "bfApiChainUserSectionSubtitle": "Füge URLs von Drittanbietern (Shelly, Home Assistant, IFTTT) von Hand hinzu. Wenn der Countdown endet, feuert diese Liste zuerst, der Reihe nach.",
+  "bfApiChainMasterToggleLabel": "Auslöser aktiv",
+  "bfApiChainMasterOnSubtitle": "Master an: Kette feuert bei Geräteauslösern",
+  "bfApiChainMasterOffSubtitle": "Master aus: kein Endpunkt wird aufgerufen",
+  "bfApiChainFieldNameLabel": "Name",
+  "bfApiChainTypeLabel": "Typ",
+  "bfApiChainEventOrApplet": "Ereignis / Applet",
+  "bfApiChainMethodLabel": "Methode",
+  "bfApiChainDelayLabel": "Warten danach (0-300 s)",
+  "bfApiChainDelayUnit": "s",
+  "bfApiChainAdvancedHide": "Erweiterte Optionen ausblenden",
+  "bfApiChainAdvancedShow": "Erweiterte Optionen",
+  "bfApiChainAuthLabel": "Authentifizierung",
+  "bfApiChainCurrentTokenHint": "Aktuelles Token: {masked} (unten einen neuen Wert schreiben zum Aktualisieren)",
+  "@bfApiChainCurrentTokenHint": {
+    "placeholders": {
+      "masked": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainNewTokenLabel": "Neues Token (leer lassen, um es zu behalten)",
+  "bfApiChainContentTypeLabel": "Content-Type",
+  "bfApiChainSaveCta": "Speichern",
+  "bfApiChainDeleteCta": "Löschen",
+  "bfApiChainTestCta": "Testen",
+  "bfApiChainAddCardLabel": "Neuen Endpunkt hinzufügen",
+  "bfApiChainSavedDelaySeconds": "{count} s Wartezeit",
+  "@bfApiChainSavedDelaySeconds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bfApiChainNotSaved": "nicht gespeichert",
+  "bfApiChainSystemRowSignedTooltip": "Peer {peer}…  ·  Verzögerung {delay} s  ·  signiert (HMAC)",
+  "@bfApiChainSystemRowSignedTooltip": {
+    "placeholders": {
+      "peer": {
+        "type": "String"
+      },
+      "delay": {
+        "type": "int"
+      }
+    }
+  },
+  "bfApiChainTestEndpointTooltip": "Diesen Endpunkt testen",
+  "bfLogsBufferEmpty": "Der Log-Puffer des Geräts ist leer.",
+  "bfLogsUnsupported": "Das Gerät unterstützt in dieser Firmware keine Logs.",
+  "deviceLogsNoClockBanner": "Geräteuhr nicht gesetzt; Zeitstempel werden als Sekunden seit dem Start angezeigt.",
+  "deviceLogsTruncatedHint": "(Ausgabe gekürzt, versuche ein niedrigeres Limit oder einen höheren Schweregrad)",
+  "bfEventsTimerRunning": "Countdown gestartet",
+  "bfEventsTimerPaused": "Countdown pausiert",
+  "bfEventsTimerIdle": "Countdown zurückgesetzt",
+  "bfEventsTimerCooldown": "Abkühlphase",
+  "bfEventsTimerExpired": "Countdown beendet",
+  "bfEventsFaceChanged": "Fläche gewechselt: {from} → {to}",
+  "@bfEventsFaceChanged": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "bfEventsApiTriggered": "{type} ausgelöst",
+  "@bfEventsApiTriggered": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "bfEventsApiTriggeredFallback": "API ausgelöst",
+  "bfEventsBatteryLevel": "Akkustand: %{percent}",
+  "@bfEventsBatteryLevel": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "bfEventsDeviceRestarted": "Gerät neu gestartet",
+  "skapiManifestLoadingRetry": "Manifest {platform}/{scriptId} wird geladen, versuche es gleich erneut",
+  "@skapiManifestLoadingRetry": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      },
+      "scriptId": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiListenerOffMobileTitle": "Dieses Gerät kann keine Desktop-Skripte ausführen",
+  "skapiListenerOffDesktopTitle": "SKAPP-HTTP-Listener ist aus",
+  "skapiListenerOffMobileBody": "Wenn der Countdown endet, laufen Skripte auf Windows / macOS / Linux. SKAPP muss geöffnet und der Listener aktiv sein. Dieses Handy ist nur die Konfigurationsseite; die Ausführung geschieht auf dem Desktop.",
+  "skapiListenerOffDesktopBody": "BF feuert den Webhook, aber niemand fängt ihn auf, weil der Listener aus ist. Öffne Einstellungen → SKAPP-HTTP-Listener.{lastErrorSuffix}",
+  "@skapiListenerOffDesktopBody": {
+    "placeholders": {
+      "lastErrorSuffix": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiSyncBadgeWriting": "Wird auf BF geschrieben…",
+  "skapiSyncBadgeWritten": "Auf BF gespeichert",
+  "skapiSyncBadgeFailed": "Schreiben auf BF nicht möglich",
+  "skapiSyncBadgeFirmwareCodeTooltip": "Firmware-Code: {code}",
+  "@skapiSyncBadgeFirmwareCodeTooltip": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "syncErrUnknownCommand": "Alte Firmware auf dem Gerät. Flashe die neue Firmware",
+  "syncErrNotAuthenticated": "Gerätesitzung nicht autorisiert (erneute Kopplung kann nötig sein)",
+  "syncErrNotFound": "Kein Kopplungsdatensatz auf dem Gerät",
+  "syncErrInternal": "8 SYSTEM-Slots sind womöglich belegt",
+  "syncErrUnknown": "unbekannter Fehler",
+  "syncErrTimeout": "Gerät hat nicht geantwortet (offline?)",
+  "syncErrNoBond": "Keine Kopplung mit diesem Gerät",
+  "syncErrConnect": "Verbindung zum Gerät nicht möglich",
+  "discoveryFilterShowAll": "Alle Geräte anzeigen",
+  "discoveryFilterOnlySmartKraft": "Nur SmartKraft",
+  "discoveryScanningWithCount": "Suche läuft… {count} Gerät(e) gefunden{tail}",
+  "@discoveryScanningWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "tail": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveryFoundCountWithTail": "{count} Gerät(e) gefunden{tail}",
+  "@discoveryFoundCountWithTail": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "tail": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveryFilterOff": "Filter aus · {visible} Gerät(e) angezeigt ({sk} SmartKraft{tail})",
+  "@discoveryFilterOff": {
+    "placeholders": {
+      "visible": {
+        "type": "int"
+      },
+      "sk": {
+        "type": "int"
+      },
+      "tail": {
+        "type": "String"
+      }
+    }
+  },
+  "discoveryMdnsTail": " + {count} im Netzwerk",
+  "@discoveryMdnsTail": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discoveryWifiOnlySnack": "Dieses Gerät ist derzeit nur über WiFi sichtbar. Die WiFi-Kopplung ist noch nicht aktiv, drücke kurz die Gerätetaste, um das Kopplungsfenster zu öffnen. Sobald es auch über BLE gesehen wird, wird diese Zeile koppelbar.",
+  "discoveryBadgePairable": "Koppelbar",
+  "discoveryBadgeBonded": "Mit einem anderen SKAPP gekoppelt",
+  "pairingTitleConnecting": "Verbinden",
+  "pairingTitleReconnecting": "Erneut verbinden",
+  "pairingMutualAuthHmacSubtitle": "HMAC-Challenge-Response",
+  "pairingBleConnectFailed": "BLE-Verbindung fehlgeschlagen.\n\nLösung: Drücke kurz die Gerätetaste, um das 60-Sekunden-Kopplungsfenster zu öffnen, und tippe dann auf „Wiederholen“.\n\nDetails: {error}",
+  "@pairingBleConnectFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingGattServiceMissing": "SKAPP-Dienst nicht gefunden",
+  "pairingGattCmdRxMissing": "Charakteristik cmd_rx fehlt",
+  "pairingGattEventTxMissing": "Charakteristik event_tx fehlt",
+  "pairingGattDiscoveryFailed": "GATT-Erkennung fehlgeschlagen: {error}",
+  "@pairingGattDiscoveryFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingKeySendFailed": "Schlüssel konnte nicht gesendet werden: {error}",
+  "@pairingKeySendFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingDeviceNoReply": "Gerät hat nicht geantwortet ({seconds} s).",
+  "@pairingDeviceNoReply": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "pairingDeviceRejected": "Gerät hat abgelehnt: {error}",
+  "@pairingDeviceRejected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingInvalidReplyMissingPub": "Ungültige Geräteantwort (our_pub fehlt).",
+  "pairingHexDecodeFailed": "our_pub Hex-Dekodierung fehlgeschlagen: {error}",
+  "@pairingHexDecodeFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingRetryButton": "Wiederholen",
+  "pairingReconnectTransient": "Das Gerät konnte nicht erreicht werden; die bestehende Kopplung bleibt erhalten.\n\nStelle sicher, dass das Gerät eingeschaltet und in Reichweite ist, und tippe dann auf „Wiederholen“.\n\nDetails: {error}",
+  "@pairingReconnectTransient": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingRecoveryTitle": "Kopplung erneuern",
+  "pairingRecoveryBody": "Das Gerät erkennt die aktuelle Kopplung nicht. Um eine neue zu starten, drücke die Kopplungstaste des Geräts, um das 60-Sekunden-Fenster zu öffnen, und tippe dann auf Weiter.",
+  "pairingRecoveryContinue": "Weiter",
+  "pairingRecoveryCancelled": "Erneuerung der Kopplung abgebrochen. Die alte Kopplung ist weiterhin gespeichert; tippe auf „Wiederholen“, um später einen erneuten Verbindungsversuch zu starten.",
+  "pairingRenewBondButton": "Kopplung erneuern",
+  "wifiPasswordConnectionRejected": "Verbindung abgelehnt: {error}",
+  "@wifiPasswordConnectionRejected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiPasswordTimeout": "Gerät hat nicht geantwortet (Timeout).",
+  "wifiScanRejected": "Gerät hat wifi.scan abgelehnt: {error}\n\nDas WiFi-Modul des Geräts ist womöglich nicht gestartet; versuche einen Neustart.",
+  "@wifiScanRejected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiScanUnexpectedReply": "Unerwartete wifi.scan-Antwort: {data}",
+  "@wifiScanUnexpectedReply": {
+    "placeholders": {
+      "data": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiScanTimeout": "Gerät hat nicht geantwortet (Timeout: {error}).\n\nGeh näher an das Gerät, drücke kurz seine Taste (um das Advertising auszulösen) und versuche es erneut.",
+  "@wifiScanTimeout": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiScanConnectionError": "Verbindungsfehler: {error}",
+  "@wifiScanConnectionError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiScanHeaderHelp": "Unten sind die WiFi-Netzwerke, die **das Gerät** sehen kann (nicht die Netzwerke des Handys). Wähle das Netzwerk, dem das Gerät beitreten soll; das Passwort wird im nächsten Schritt abgefragt.",
+  "wifiScanAuthOpen": "Offen",
+  "wifiScanAuthEncrypted": "Verschlüsselt",
+  "wifiSuccessSyncing": "Zeit wird synchronisiert…",
+  "wifiSuccessFetchingInfo": "Geräteinfo wird abgerufen…",
+  "wifiSuccessPreparingUi": "Geräte-UI wird vorbereitet…",
+  "wifiSuccessManifestRejected": "device.manifest abgelehnt ({error}). Es könnte alte Firmware sein; für BF muss sk_baseline.c geladen sein.",
+  "@wifiSuccessManifestRejected": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "wifiSuccessTapToContinue": "Tippen, um fortzufahren…",
+  "deviceHomeUnsupportedTitle": "Nicht unterstütztes Gerät",
+  "deviceHomeUnsupportedBody": "{name} hat in dieser SKAPP-Version keinen Gerätebildschirm. Wenn eine neue Gerätefamilie hinzugefügt wird, erscheint dieser Bildschirm automatisch.",
+  "@deviceHomeUnsupportedBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lsPairingUnpairTitle": "Diese APP entkoppeln",
+  "lsPairingUnpairBody": "Das Gerät vergisst die Bindung dieser APP. Du musst erneut koppeln (3 s Taste + Auswahl unter Geräte).",
+  "skYakindaBadgeDefault": "demnächst",
+  "skapiScriptPulseBrightnessTitle": "Helligkeit pulsieren",
+  "skapiScriptPulseBrightnessSummaryWhat": "Moduliert die Helligkeit des internen Displays auf einer sanften Kosinuswelle zwischen 100 % und einer Untergrenze, mehrmals wiederholt. Die ursprüngliche Helligkeit des Benutzers wird am Ende wiederhergestellt.",
+  "skapiScriptPulseBrightnessSummaryHow": "Liest die aktuelle Helligkeit über WMI und schreibt dann 20-mal pro Sekunde einen Helligkeitswert entlang einer Kosinuskurve. Stellt beim Beenden immer den erfassten Originalwert wieder her.",
+  "skapiScriptPulseBrightnessNote": "Nur interne Panels (Laptops, Tablets). Externe DDC/CI-Monitore reagieren auf diesen WMI-Weg nicht.",
+  "skapiScriptPulseBrightnessParamPeriodLabel": "period",
+  "skapiScriptPulseBrightnessParamPeriodHint": "Sekunden für einen vollen Zyklus hell -> dunkel -> hell. Etwa 2 wirkt wie ein klarer Puls, ohne zu stören.",
+  "skapiScriptPulseBrightnessParamLowPercentLabel": "low %",
+  "skapiScriptPulseBrightnessParamLowPercentHint": "Dunkles Ende des Pulses, als Prozentsatz der vollen Helligkeit. Niedrigere Zahlen machen den Puls dramatischer.",
+  "skapiScriptPulseBrightnessParamCyclesLabel": "cycles",
+  "skapiScriptPulseBrightnessParamCyclesHint": "Wie viele volle Pulszyklen vor dem Beenden ausgeführt werden.",
+  "skapiScriptBlurTimedTitle": "Verschwommene Pause",
+  "skapiScriptBlurTimedSummaryWhat": "Legt für die konfigurierte Anzahl von Sekunden einen bildschirmfüllenden, stets im Vordergrund liegenden, halbtransparenten Schleier über den Bildschirm. In der Mitte wird ein Countdown angezeigt.",
+  "skapiScriptBlurTimedSummaryHow": "Öffnet ein randloses WPF-Fenster mit AllowsTransparency und einem einfarbigen Pinsel in der gewählten Deckkraft. Ein Dispatcher-Timer treibt den Countdown an; das Fenster schließt sich selbst, wenn der Timer null erreicht.",
+  "skapiScriptBlurTimedNote": "Pragmatischer Zwischenschritt: Ein Echtzeit-Weichzeichner (Gauß) über dem Desktop benötigt einen C++/Win2D-Helfer, der später kommt. Der einfarbige Schleier erzeugt in der Zwischenzeit eine ähnliche „Ich kann mich nicht auf den Bildschirm konzentrieren, mach eine Pause“-Wirkung.",
+  "skapiScriptBlurTimedParamDurationLabel": "duration",
+  "skapiScriptBlurTimedParamDurationHint": "Sekunden, die der Schleier oben bleibt, bevor er sich automatisch schließt.",
+  "skapiScriptBlurTimedParamOpacityLabel": "opacity",
+  "skapiScriptBlurTimedParamOpacityHint": "Schleier-Deckkraft 0.0 (unsichtbar) bis 1.0 (deckend). Um 0.55 lässt den Desktop noch genug durchscheinen, um verschleiert statt schwarz zu wirken.",
+  "skapiScriptBlurTimedParamColorLabel": "color",
+  "skapiScriptBlurTimedParamColorHint": "Schleierfarbe als #RRGGBB-Hex. Palettenschwarz #0A0A0A ist der Standard; hellere Cremetöne wirken ruhiger.",
+  "skapiScriptBlockingFocusTitle": "Blocking Focus",
+  "skapiScriptBlockingFocusSummaryWhat": "Zusammengesetzter Fokus-Erzwinger: speichert alle offenen Office- und VS-Code-Dokumente, öffnet dann ein bildschirmfüllendes, stets im Vordergrund liegendes Countdown-Fenster ohne Schließen-Knopf, während der Mauszeiger ununterbrochen kreist. Wenn der Timer null erreicht, wird alles automatisch rückgängig gemacht.",
+  "skapiScriptBlockingFocusSummaryHow": "Drei Phasen laufen direkt hintereinander: (1) die Speicherphase ruft Office COM und die VS-Code-CLI auf; (2) ein paralleler Runspace führt den Cursor im Kreis, bis ein synchronisiertes Stopp-Flag umschlägt; (3) ein STA-WPF-Fenster zeigt Titel und Countdown. Ein finally-Block stellt den Cursor-Ursprung wieder her und baut beide Runspaces ab.",
+  "skapiScriptBlockingFocusNote": "Sanfter Modus: Esc und Alt+F4 werden NICHT blockiert. Der Benutzer kann immer über den Task-Manager entkommen. Ein strenger Modus mit globalen Tastatur-Hooks wird ein separates Skript.",
+  "skapiScriptBlockingFocusParamDurationLabel": "duration",
+  "skapiScriptBlockingFocusParamDurationHint": "Sekunden, die die Sperre dauert. Der Countdown läuft bis 00:00 herunter, dann wird alles aufgeräumt.",
+  "skapiScriptBlockingFocusParamTitleLabel": "title",
+  "skapiScriptBlockingFocusParamTitleHint": "Text, der in der Mitte des Vollbildfensters angezeigt wird. Halte ihn kurz – „Blocking Focus“ ist der Standard.",
+  "skapiScriptBlockingFocusParamShakeRadiusLabel": "shake radius",
+  "skapiScriptBlockingFocusParamShakeRadiusHint": "Pixel, die der Cursor während der Schleife von seinem Ursprung zurücklegt. Größere Kreise fordern mehr Aufmerksamkeit.",
+  "skapiScriptBlockingFocusParamEnableSaveLabel": "save on start",
+  "skapiScriptBlockingFocusParamEnableSaveHint": "Führt vor der Sperre die Office- + VS-Code-Speicherphase aus. Aus, wenn es keinen Dokumentstatus zu schützen gibt.",
+  "trayFirstHideToast": "SKAPP läuft im Hintergrund weiter. Du findest es in der Taskleiste; Rechtsklick zum Beenden.",
+  "devicesOfflineTapHint": "{name} ist offline.",
+  "@devicesOfflineTapHint": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "skapiNewActionDeviceOffline": "{name} ist offline. Bring es online, um eine neue Aktion zu erstellen.",
+  "@skapiNewActionDeviceOffline": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bfApiChainRefreshDirtyTitle": "Nicht gespeicherte Änderungen",
+  "bfApiChainRefreshDirtyBody": "Beim Aktualisieren wird die neueste Endpunktliste vom Gerät geholt und der noch nicht gespeicherte Entwurf verworfen.",
+  "bfApiChainRefreshDirtyConfirm": "Trotzdem aktualisieren",
+  "skapiApiEditorTitle": "Geräteinterne API",
+  "lsCommonReadFailed": "Lesen fehlgeschlagen",
+  "lsCommonFailedWith": "Fehlgeschlagen: {err}",
+  "@lsCommonFailedWith": {
+    "placeholders": {
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsVacationStatusOff": "Aus",
+  "lsVacationStatusUntil": "Bis {date}",
+  "@lsVacationStatusUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lsVacationDaysValidationError": "Die Tage müssen zwischen 1 und 60 liegen",
+  "lsVacationStartedSnack": "{days, plural, =1{Urlaub gestartet · 1 Tag} other{Urlaub gestartet · {days} Tage}}",
+  "@lsVacationStartedSnack": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "lsVacationCancelledSnack": "Urlaub abgebrochen",
+  "lsVacationActiveUntilFmt": "Aktiv bis {date}",
+  "@lsVacationActiveUntilFmt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lsVacationResumeHint": "Der Countdown wird fortgesetzt, wenn der Urlaub endet.",
+  "lsVacationCancellingButton": "Wird abgebrochen…",
+  "lsVacationCancelButton": "Urlaub abbrechen",
+  "lsVacationDaysLabel": "Tage",
+  "lsVacationDaysHint": "Pausiert den Countdown für diese Anzahl Tage (1 bis 60).",
+  "lsVacationStartingButton": "Wird gestartet…",
+  "lsVacationStartButton": "Urlaub starten",
+  "lsCommonSavingButton": "Wird gespeichert…",
+  "lsCommonSaveButton": "Speichern",
+  "lsCommonSaveFailedWith": "Speichern fehlgeschlagen: {err}",
+  "@lsCommonSaveFailedWith": {
+    "placeholders": {
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsDurationValueValidationError": "Der Wert muss zwischen 1 und 60 liegen",
+  "lsDurationAlarmsValidationError": "Die Alarmanzahl muss zwischen 0 und 10 liegen",
+  "lsDurationConfiguredSnack": "Timer konfiguriert",
+  "lsDurationUnitMinute": "{value, plural, =1{1 Minute} other{{value} Minuten}}",
+  "@lsDurationUnitMinute": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "lsDurationUnitHour": "{value, plural, =1{1 Stunde} other{{value} Stunden}}",
+  "@lsDurationUnitHour": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "lsDurationUnitDay": "{value, plural, =1{1 Tag} other{{value} Tage}}",
+  "@lsDurationUnitDay": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "lsDurationAlarmCount": "{count, plural, =1{1 Alarm} other{{count} Alarme}}",
+  "@lsDurationAlarmCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lsDurationUnitLabel": "Einheit",
+  "lsDurationUnitMinutesPlural": "Minuten",
+  "lsDurationUnitHoursPlural": "Stunden",
+  "lsDurationUnitDaysPlural": "Tage",
+  "lsDurationValueLabel": "Wert",
+  "lsDurationValueHint": "1 bis 60",
+  "lsDurationAlarmCountLabel": "Alarmanzahl",
+  "lsDurationAlarmCountHint": "Alarme feuern rückwärts vom Ende, jeweils eine Einheit auseinander.",
+  "lsSmtpStatusNotConfigured": "Nicht konfiguriert",
+  "lsSmtpHostRequired": "Host ist erforderlich",
+  "lsSmtpPortValidationError": "Der Port muss zwischen 1 und 65535 liegen",
+  "lsSmtpSenderRequired": "Absenderadresse ist erforderlich",
+  "lsSmtpFieldHost": "Host",
+  "lsSmtpFieldPort": "Port",
+  "lsSmtpFieldSender": "Absender",
+  "lsSmtpFieldKey": "Schlüssel",
+  "lsSmtpSaveHaltedOn": "Speichern gestoppt bei {err}",
+  "@lsSmtpSaveHaltedOn": {
+    "placeholders": {
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsSmtpSavedSnack": "SMTP gespeichert",
+  "lsSmtpTestSentSnack": "Test-Mail gesendet",
+  "lsSmtpTestFailedWith": "Test fehlgeschlagen: {err}",
+  "@lsSmtpTestFailedWith": {
+    "placeholders": {
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsSmtpUrlCopiedSnack": "URL in die Zwischenablage kopiert",
+  "lsSmtpApiKeyPlaceholder": "Gmail-App-Passwort / API-Schlüssel",
+  "lsSmtpServerLabel": "Server",
+  "lsSmtpApiKeyLabel": "API-Schlüssel",
+  "lsSmtpApiKeyHint": "Leer lassen, um den aktuellen Schlüssel zu behalten.",
+  "lsSmtpAppPasswordHelpLink": "So erhältst du ein Gmail-App-Passwort",
+  "lsSmtpSendingButton": "Wird gesendet…",
+  "lsSmtpSendTestButton": "Test senden",
+  "lsReminderMailRecipientValidation": "Der Empfänger muss wie eine E-Mail-Adresse aussehen",
+  "lsReminderMailSavedSnack": "Erinnerung lokal gespeichert",
+  "lsReminderMailRecipientFirstSnack": "Lege zuerst einen Empfänger fest",
+  "lsReminderMailTestOkSnack": "SMTP-Test OK, die Zugangsdaten erreichen den Server",
+  "lsReminderMailTestFailedWith": "SMTP-Test fehlgeschlagen: {err}",
+  "@lsReminderMailTestFailedWith": {
+    "placeholders": {
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsReminderMailRecipientLabel": "Empfänger-E-Mail",
+  "lsReminderMailSubjectLabel": "Betreff",
+  "lsReminderMailBodyLabel": "Text",
+  "lsReminderMailBodyHint": "Dein Countdown wird bald ausgelöst...",
+  "lsReminderMailActiveLabel": "Aktiv",
+  "lsReminderMailFootnote": "Lokal auf diesem Gerät gespeichert. Der Sendetest prüft nur, ob der SMTP-Server erreichbar ist; das automatische Auslösen bei timer.alarm wartet auf Firmware-Unterstützung.",
+  "lsResetApiStatusDisabled": "Deaktiviert",
+  "lsResetApiStatusEnabledPort": "Aktiviert · Port {port}",
+  "@lsResetApiStatusEnabledPort": {
+    "placeholders": {
+      "port": {
+        "type": "int"
+      }
+    }
+  },
+  "lsResetApiRegenDialogTitle": "API-Schlüssel neu erzeugen?",
+  "lsResetApiRegenDialogBody": "Dies macht den aktuellen Schlüssel ungültig. Jeder Aufrufer, der den vorherigen Schlüssel verwendet, wird abgelehnt, bis du ihn aktualisierst. Fortfahren?",
+  "lsResetApiRegenConfirm": "Neu erzeugen",
+  "lsResetApiKeyRegeneratedSnack": "Schlüssel neu erzeugt",
+  "lsResetApiEnabledLabel": "Aktiviert",
+  "lsResetApiEnabledHint": "Wenn an, setzt ein HTTP-GET an die Endpunkt-URL mit dem passenden Schlüssel den Countdown zurück.",
+  "lsResetApiEndpointUrlLabel": "Endpunkt-URL",
+  "lsResetApiUrlNotAvailable": "(nicht verfügbar)",
+  "lsResetApiCopyUrlTooltip": "URL kopieren",
+  "lsResetApiKeyLabel": "API-Schlüssel",
+  "lsResetApiKeyNotSet": "(nicht gesetzt)",
+  "lsResetApiExampleLabel": "Beispiel",
+  "lsResetApiRegenerateButton": "Schlüssel neu erzeugen",
+  "lsAlarmApiUrlValidation": "Die URL muss mit http:// oder https:// beginnen",
+  "lsAlarmApiHeadersValidation": "Das Feld Headers muss gültiges JSON sein",
+  "lsAlarmApiSaveDialogTitle": "Webhook-Endpunkt speichern?",
+  "lsAlarmApiSaveDialogBody": "Speichert `{name}` auf dem Gerät, gerichtet auf:\n{url}",
+  "@lsAlarmApiSaveDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "lsAlarmApiSavedSnack": "Webhook gespeichert",
+  "lsAlarmApiDisabledSnack": "Webhook deaktiviert",
+  "lsAlarmApiTestQueuedSnack": "Test eingereiht, beobachte den Upstream-Dienst",
+  "lsAlarmApiTestFailedWith": "Test fehlgeschlagen: {err}",
+  "@lsAlarmApiTestFailedWith": {
+    "placeholders": {
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsAlarmApiRemoveDialogTitle": "Webhook entfernen?",
+  "lsAlarmApiRemoveDialogBody": "Löscht `{name}` vom Gerät. Die lokale Konfiguration bleibt erhalten.",
+  "@lsAlarmApiRemoveDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lsAlarmApiRemoveButton": "Entfernen",
+  "lsAlarmApiRemoveFailedWith": "Entfernen fehlgeschlagen: {err}",
+  "@lsAlarmApiRemoveFailedWith": {
+    "placeholders": {
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsAlarmApiConfiguredStatus": "Konfiguriert",
+  "lsAlarmApiConfiguredHost": "Konfiguriert · {host}",
+  "@lsAlarmApiConfiguredHost": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "lsAlarmApiUrlLabel": "URL",
+  "lsAlarmApiMethodLabel": "HTTP-Methode",
+  "lsAlarmApiHeadersLabel": "Headers (JSON, optional)",
+  "lsAlarmApiHeadersHint": "JSON-Objekt mit optionalen Headern. Lokal gespeichert; die Firmware wendet sie beim Auslösen an.",
+  "lsAlarmApiBodyTemplateLabel": "Body-Vorlage (JSON)",
+  "lsAlarmApiBodyTemplateHint": "Die Platzhalter device und remaining_sec werden beim Auslösen ersetzt.",
+  "lsAlarmApiBearerLabel": "Bearer-Token (optional)",
+  "lsAlarmApiFootnote": "Der Firmware-Abonnent für das Ereignis timer.alarm steht noch aus. Diese Konfiguration speichert den Endpunkt; sie löst erst beim nächsten Firmware-Update automatisch aus.",
+  "lsRelaySummarySeconds": "{seconds} s",
+  "@lsRelaySummarySeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lsRelaySummaryMinutes": "{minutes} Min.",
+  "@lsRelaySummaryMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "lsRelayModePulse": "Puls",
+  "lsRelayModeSteady": "dauerhaft",
+  "lsRelaySummaryFmt": "GPIO {gpio} · {duration} {mode}",
+  "@lsRelaySummaryFmt": {
+    "placeholders": {
+      "gpio": {
+        "type": "int"
+      },
+      "duration": {
+        "type": "String"
+      },
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "lsRelayGpioValidation": "GPIO muss zwischen 0 und 30 liegen",
+  "lsRelayDurationValidation": "Die Dauer muss zwischen 1 und 3600 Sekunden liegen",
+  "lsRelayPulseValidation": "Der Puls-Halbzyklus muss zwischen 1 und 60 liegen",
+  "lsRelayCmdFailedWith": "{cmd} fehlgeschlagen: {err}",
+  "@lsRelayCmdFailedWith": {
+    "placeholders": {
+      "cmd": {
+        "type": "String"
+      },
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsRelayConfiguredSnack": "Relais konfiguriert",
+  "lsRelayFireAbortedSnack": "Auslösen abgebrochen",
+  "lsRelayForcedIdleSnack": "Relais zwangsweise auf Ruhe gesetzt",
+  "lsRelayGpioLabel": "GPIO-Pin",
+  "lsRelayGpioHint": "Gültiger ESP32-C6-Pin; Standard 19 = D8",
+  "lsRelayInvertLabel": "Polarität umkehren",
+  "lsRelayStartDelayLabel": "Startverzögerung",
+  "lsRelayStartDelayHint": "{sec} s, bevor das Relais aktiviert wird",
+  "@lsRelayStartDelayHint": {
+    "placeholders": {
+      "sec": {
+        "type": "int"
+      }
+    }
+  },
+  "lsRelayActiveDurationLabel": "Aktive Dauer",
+  "lsRelayUnitSeconds": "Sekunden",
+  "lsRelayUnitMinutes": "Minuten",
+  "lsRelayPulseModeLabel": "Pulsmodus",
+  "lsRelayPulseModeHint": "An = 1 s Halbzyklus. Benutzerdefiniert lässt dich den Halbzyklus festlegen.",
+  "lsRelayHalfCycleLabel": "Halbzyklus in Sekunden",
+  "lsRelayFiringButton": "Wird ausgelöst…",
+  "lsRelayTestRelayButton": "Relais testen",
+  "lsRelayAbortButton": "Abbrechen",
+  "lsRelayForceOffButton": "Zwangsweise aus",
+  "lsRelayPulseOff": "Aus",
+  "lsRelayPulseOn": "An",
+  "lsRelayPulseCustom": "Benutzerdefiniert",
+  "lsRelayPhaseActiveBadge": "aktiv",
+  "lsRelayPhaseLine": "Phase: {phase}{elapsed}",
+  "@lsRelayPhaseLine": {
+    "placeholders": {
+      "phase": {
+        "type": "String"
+      },
+      "elapsed": {
+        "type": "String"
+      }
+    }
+  },
+  "lsTelegramTokenRequired": "Bot-Token ist erforderlich",
+  "lsTelegramChatRequired": "Chat-ID ist erforderlich",
+  "lsTelegramSaveDialogTitle": "Telegram-Endpunkt speichern?",
+  "lsTelegramSaveDialogBody": "Speichert `{name}` auf dem Gerät. Das Token wird in der URL gesendet.",
+  "@lsTelegramSaveDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lsTelegramSavedSnack": "Telegram-Endpunkt gespeichert",
+  "lsTelegramDisabledSnack": "Telegram-Endpunkt deaktiviert",
+  "lsTelegramTestQueuedSnack": "Test eingereiht, beobachte den Telegram-Chat",
+  "lsTelegramRemoveDialogTitle": "Telegram-Endpunkt entfernen?",
+  "lsTelegramBotConfiguredStatus": "Bot konfiguriert",
+  "lsTelegramBotTokenLabel": "Bot-Token",
+  "lsTelegramBotTokenHint": "Erhältst du von @BotFather (sieht aus wie 1234567:AAH...).",
+  "lsTelegramChatIdLabel": "Chat-ID",
+  "lsTelegramChatIdHint": "Eine numerische ID (-100...) oder ein @kanal-Benutzername.",
+  "lsTelegramMessageTemplateLabel": "Nachrichtenvorlage",
+  "lsTelegramMessageHint": "LebensSpur: Alarm ausgelöst.",
+  "lsLsApiUrlRequired": "URL erforderlich",
+  "lsLsApiUpdatedSnack": "Webhook aktualisiert",
+  "lsLsApiSavedSnack": "Webhook gespeichert",
+  "lsLsApiSaveFirstSnack": "Speichere zuerst den Webhook",
+  "lsLsApiTestQueuedSnack": "Test eingereiht, prüfe den Empfänger",
+  "lsLsApiRemoveDialogBody": "Der LS-Webhook wird vom Gerät gelöscht. Der Countdown löst ihn nicht mehr aus.",
+  "lsLsApiRemovedSnack": "Webhook entfernt",
+  "lsLsApiConfirmCriticalTitle": "Kritische Änderung bestätigen",
+  "lsLsApiConfirmCriticalBody": "Das Gerät bittet um Bestätigung:\n  {cmd}\n\nDieses Token läuft in {ttlSec} s ab.",
+  "@lsLsApiConfirmCriticalBody": {
+    "placeholders": {
+      "cmd": {
+        "type": "String"
+      },
+      "ttlSec": {
+        "type": "int"
+      }
+    }
+  },
+  "lsLsApiConfirmButton": "Bestätigen",
+  "lsLsApiActiveSlot": "Aktiv · Slot „{name}“",
+  "@lsLsApiActiveSlot": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lsLsApiActiveWithToken": "Aktiv · Slot „{name}“ · Token {token}",
+  "@lsLsApiActiveWithToken": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "token": {
+        "type": "String"
+      }
+    }
+  },
+  "lsLsApiUrlHint": "Wird ausgelöst, wenn timer.triggered feuert. https:// empfohlen.",
+  "lsLsApiHeadersLabel": "Headers (JSON)",
+  "lsLsApiHeadersHint": "Erweitert: noch nicht über die CLI angebunden. Reserviert für ein künftiges Release.",
+  "lsLsApiBodyTemplateHint": "Wird als Test-Payload gesendet. Der Platzhalter device wird serverseitig ersetzt.",
+  "lsLsApiBearerHintExisting": "Aktuell gesetzt: {token}. Leer lassen, um es zu behalten, oder einen neuen Wert einfügen, um es zu überschreiben.",
+  "@lsLsApiBearerHintExisting": {
+    "placeholders": {
+      "token": {
+        "type": "String"
+      }
+    }
+  },
+  "lsLsApiBearerHintEmpty": "Wird als `Authorization: Bearer <token>` gesendet.",
+  "lsLsApiUpdateButton": "Aktualisieren",
+  "lsMailGroupsStatusFmt": "{count} von {max} · insgesamt {recipients} Empfänger",
+  "@lsMailGroupsStatusFmt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      },
+      "recipients": {
+        "type": "int"
+      }
+    }
+  },
+  "lsMailGroupsReadFailedWith": "Lesen fehlgeschlagen: {err}",
+  "@lsMailGroupsReadFailedWith": {
+    "placeholders": {
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsMailGroupsNameValidation": "Der Name muss zwischen 1 und 47 Zeichen lang sein",
+  "lsMailGroupsNameSaved": "Name gespeichert",
+  "lsMailGroupsSubjectValidation": "Der Betreff darf höchstens 127 Zeichen lang sein",
+  "lsMailGroupsSubjectSaved": "Betreff gespeichert",
+  "lsMailGroupsBodyValidation": "Der Text darf höchstens 511 Zeichen lang sein",
+  "lsMailGroupsBodySaved": "Text gespeichert",
+  "lsMailGroupsEmailValidation": "Gib eine gültige E-Mail ein",
+  "lsMailGroupsMaxReached": "Das Maximum sind {max} Gruppen",
+  "@lsMailGroupsMaxReached": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "lsMailGroupsNameEmpty": "Der Name darf nicht leer sein",
+  "lsMailGroupsCreatedSnack": "Gruppe erstellt",
+  "lsMailGroupsCreateFailedWith": "Erstellen fehlgeschlagen: {err}",
+  "@lsMailGroupsCreateFailedWith": {
+    "placeholders": {
+      "err": {
+        "type": "String"
+      }
+    }
+  },
+  "lsMailGroupsDeleteDialogTitle": "Gruppe löschen?",
+  "lsMailGroupsDeleteDialogBody": "Dies entfernt die Gruppe und alle ihre Empfänger auf dem Gerät.",
+  "lsMailGroupsDeleteConfirm": "Löschen",
+  "lsMailGroupsDeletedSnack": "Gruppe gelöscht",
+  "lsMailGroupsDefaultName": "Gruppe {n}",
+  "@lsMailGroupsDefaultName": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "lsMailGroupsNewGroupTitle": "Neue Mail-Gruppe",
+  "lsMailGroupsGroupNameLabel": "Gruppenname",
+  "lsMailGroupsCreateConfirm": "Erstellen",
+  "lsMailGroupsEmptyHint": "Noch keine Gruppen. Erstelle eine, um Mails zu senden, wenn der Timer auslöst.",
+  "lsMailGroupsWorkingButton": "Wird bearbeitet…",
+  "lsMailGroupsCreateNewButton": "+ Neue Gruppe erstellen",
+  "lsMailGroupsHeaderCount": "{count} von {max} Gruppen konfiguriert",
+  "@lsMailGroupsHeaderCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "lsMailGroupsHeaderTotalRecipients": "· {count, plural, =1{insgesamt 1 Empfänger} other{insgesamt {count} Empfänger}}",
+  "@lsMailGroupsHeaderTotalRecipients": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lsMailGroupsUnnamed": "(unbenannt)",
+  "lsMailGroupsRowSummary": "{count, plural, =1{1 Empfänger} other{{count} Empfänger}} · {state}",
+  "@lsMailGroupsRowSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "lsMailGroupsEnabled": "aktiviert",
+  "lsMailGroupsDisabled": "deaktiviert",
+  "lsMailGroupsNameLabel": "Name",
+  "lsMailGroupsSubjectLabel": "Betreff",
+  "lsMailGroupsSaveBodyButton": "Text speichern",
+  "lsMailGroupsDeleteGroupButton": "Gruppe löschen",
+  "lsMailGroupsRecipientsHeader": "Empfänger ({count})",
+  "@lsMailGroupsRecipientsHeader": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lsMailGroupsNoRecipients": "Noch keine Empfänger.",
+  "lsMailGroupsAddRecipientButton": "Hinzufügen",
+  "lsHomeStatusLoading": "Wird geladen…",
+  "lsHomeLogsTooltip": "Logs",
+  "lsHomeClusterConfiguration": "KONFIGURATION",
+  "lsHomeClusterTriggerActions": "AUSLÖSE-AKTIONEN",
+  "lsHomeClusterEarlyWarning": "FRÜHWARNUNG",
+  "lsHomeSectionDurationTitle": "Dauer & Alarme",
+  "lsHomeSectionVacationTitle": "Urlaubsmodus",
+  "lsHomeSectionSmtpTitle": "Mail-Einrichtung (SMTP)",
+  "lsHomeSectionResetApiTitle": "Reset-API-Endpunkt",
+  "lsHomeSectionMailGroupsTitle": "Mail-Gruppen",
+  "lsHomeSectionRelayTitle": "Relais",
+  "lsHomeSectionLsApiTitle": "LS-API-Webhook",
+  "lsHomeSectionTelegramTitle": "Telegram",
+  "lsHomeSectionReminderMailTitle": "Erinnerungs-Mail",
+  "lsHomeSectionAlarmApiTitle": "Alarm-API-Webhook",
+  "lsHomeStateInactive": "INAKTIV",
+  "lsHomeStateRemaining": "VERBLEIBEND",
+  "lsHomeStateVacation": "URLAUB",
+  "lsHomeStateTriggered": "AUSGELÖST",
+  "lsHomeChipBle": "BLE",
+  "lsHomeChipMail": "Mail",
+  "lsHomeEarlyWarningPendingNote": "Frühwarn-Aktionen feuern bei timer.alarm. Der Firmware-Abonnent steht noch aus; diese Konfigurationen bleiben erhalten, lösen aber noch nicht automatisch aus.",
+  "settingsDiagnosticsTitle": "Diagnose",
+  "settingsDiagnosticsSubtitle": "Logs zur Fehlerbehebung",
+  "diagnosticsCopyLogs": "Logs kopieren",
+  "diagnosticsOpenFolder": "Ordner öffnen",
+  "diagnosticsOpenFolderFailed": "Der Log-Ordner konnte nicht geöffnet werden.",
+  "diagnosticsShareLogs": "Logs teilen",
+  "diagnosticsClearLogs": "Logs leeren",
+  "diagnosticsCopied": "Logs in die Zwischenablage kopiert",
+  "diagnosticsCleared": "Logs geleert",
+  "aboutPrivacyLabel": "Datenschutzerklärung",
+  "updateChecking": "Suche nach Updates…",
+  "updateUpToDate": "Du hast die neueste Version",
+  "updateCheckFailed": "Nach Updates konnte nicht gesucht werden",
+  "updateAvailableTitle": "Update verfügbar",
+  "updateAvailableBody": "Eine neue Version ({version}) ist verfügbar. Du hast {current}.",
+  "@updateAvailableBody": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "current": {
+        "type": "String"
+      }
+    }
+  },
+  "updateDownloadAction": "Herunterladen",
+  "updateLater": "Später"
+}

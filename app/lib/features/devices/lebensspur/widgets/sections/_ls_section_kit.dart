@@ -106,7 +106,7 @@ class LsField extends StatelessWidget {
     );
     final hintStyle = TextStyle(
       fontSize: 11,
-      color: fg.withValues(alpha: 0.35),
+      color: fg.withValues(alpha: 0.50),
     );
 
     if (row) {
@@ -258,7 +258,7 @@ class LsNeuTextField extends StatelessWidget {
           hintText: hint,
           hintStyle: TextStyle(
             fontSize: 14,
-            color: fg.withValues(alpha: 0.35),
+            color: fg.withValues(alpha: 0.50),
           ),
           suffixIcon: suffix,
         ),

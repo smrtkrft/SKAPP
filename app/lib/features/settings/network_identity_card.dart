@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/system/network_identity_provider.dart';
 import '../../core/theme/colors.dart';
+import '../../core/ui/sk_confirm_dialog.dart';
 import '../../l10n/app_localizations.dart';
 import 'widgets/network_identity_dialogs.dart';
 
@@ -150,24 +151,15 @@ class NetworkIdentityCard extends ConsumerWidget {
     WidgetRef ref,
     AppLocalizations l,
   ) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.settingsNetworkIdentityRegenerateConfirmTitle),
-        content: Text(l.settingsNetworkIdentityRegenerateConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l.settingsNetworkIdentityRegenerateToken),
-          ),
-        ],
-      ),
+    final ok = await showSkConfirm(
+      context,
+      title: l.settingsNetworkIdentityRegenerateConfirmTitle,
+      message: l.settingsNetworkIdentityRegenerateConfirmBody,
+      cancelLabel: l.commonCancel,
+      confirmLabel: l.settingsNetworkIdentityRegenerateToken,
+      destructive: true,
     );
-    if (ok != true) return;
+    if (!ok) return;
     await ref.read(networkIdentityProvider.notifier).regenerateToken();
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/responsive.dart';
+import '../../core/ui/sk_confirm_dialog.dart';
 import '../../core/ui/sk_neu_card.dart';
 import '../../l10n/app_localizations.dart';
 import '../main_shell/main_shell.dart' show ShellNavBar;
@@ -146,27 +147,15 @@ class UserScriptDetailScreen extends ConsumerWidget {
     AppLocalizations l,
     UserScript script,
   ) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.skapiUserDeleteConfirmTitle),
-        content: Text(l.skapiUserDeleteConfirmBody(script.title)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(ctx).colorScheme.error,
-            ),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l.commonDelete),
-          ),
-        ],
-      ),
+    final ok = await showSkConfirm(
+      context,
+      title: l.skapiUserDeleteConfirmTitle,
+      message: l.skapiUserDeleteConfirmBody(script.title),
+      cancelLabel: l.commonCancel,
+      confirmLabel: l.commonDelete,
+      destructive: true,
     );
-    if (ok != true || !context.mounted) return;
+    if (!ok || !context.mounted) return;
     await ref.read(userScriptsProvider.notifier).remove(script.id);
     if (!context.mounted) return;
     ScaffoldMessenger.of(context)

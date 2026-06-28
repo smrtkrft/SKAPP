@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/skapp_peer_store.dart';
 import '../../../core/network/skapp_peer_target.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../skapi/skapp_peer_pairing_screen.dart';
 
@@ -149,25 +150,15 @@ class _PeerRow extends ConsumerWidget {
 
   Future<void> _confirmRemove(BuildContext context, WidgetRef ref) async {
     final l = AppLocalizations.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (dlgCtx) => AlertDialog(
-        title: Text(l.skappPeersCardRemoveTitle(peer.name)),
-        content: Text(l.skappPeersCardRemoveBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dlgCtx).pop(false),
-            child: Text(l.skappPeersCardRemoveCancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: SkColors.warnRed),
-            onPressed: () => Navigator.of(dlgCtx).pop(true),
-            child: Text(l.skappPeersCardRemoveConfirm),
-          ),
-        ],
-      ),
+    final ok = await showSkConfirm(
+      context,
+      title: l.skappPeersCardRemoveTitle(peer.name),
+      message: l.skappPeersCardRemoveBody,
+      cancelLabel: l.skappPeersCardRemoveCancel,
+      confirmLabel: l.skappPeersCardRemoveConfirm,
+      destructive: true,
     );
-    if (ok != true) return;
+    if (!ok) return;
     await ref.read(skappPeersProvider.notifier).remove(peer.uuid);
     if (!context.mounted) return;
     ScaffoldMessenger.of(context)

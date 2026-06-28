@@ -52,7 +52,17 @@ class LocaleNotifier extends Notifier<Locale?> {
 final localeProvider =
     NotifierProvider<LocaleNotifier, Locale?>(LocaleNotifier.new);
 
-const supportedLocales = [Locale('en'), Locale('tr')];
+const supportedLocales = [
+  Locale('en'),
+  Locale('tr'),
+  Locale('de'),
+  Locale('fr'),
+  Locale('it'),
+  Locale('ru'),
+  Locale('el'),
+  Locale('es'),
+  Locale('pt'),
+];
 
 /// App update channel. The manifest server (future) will serve different
 /// latest-version info per channel, so the choice propagates to whatever

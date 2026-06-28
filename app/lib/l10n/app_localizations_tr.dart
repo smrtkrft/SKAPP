@@ -497,6 +497,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsDeveloperMode => 'Geliştirici modu';
 
   @override
+  String get settingsDeveloperToolsTitle => 'Geliştirici araçları';
+
+  @override
+  String get settingsDeveloperToolsSubtitle =>
+      'USB konsolu, ağ kimliği, dinleyici, token\'lar, loglar';
+
+  @override
   String get settingsDeveloperModeInfoTitle => 'Geliştirici modu neyi açar?';
 
   @override
@@ -5905,4 +5912,58 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get lsHomeEarlyWarningPendingNote =>
       'Erken uyarı aksiyonları timer.alarm üzerinde tetiklenir. Firmware subscriber bekliyor; yapılandırmalar saklanır ama henüz otomatik tetiklenmez.';
+
+  @override
+  String get settingsDiagnosticsTitle => 'Tanılama';
+
+  @override
+  String get settingsDiagnosticsSubtitle =>
+      'Sorunları ayıklamaya yardımcı loglar';
+
+  @override
+  String get diagnosticsCopyLogs => 'Logları kopyala';
+
+  @override
+  String get diagnosticsOpenFolder => 'Klasörü aç';
+
+  @override
+  String get diagnosticsOpenFolderFailed => 'Log klasörü açılamadı.';
+
+  @override
+  String get diagnosticsShareLogs => 'Logları paylaş';
+
+  @override
+  String get diagnosticsClearLogs => 'Logları temizle';
+
+  @override
+  String get diagnosticsCopied => 'Loglar panoya kopyalandı';
+
+  @override
+  String get diagnosticsCleared => 'Loglar temizlendi';
+
+  @override
+  String get aboutPrivacyLabel => 'Gizlilik politikası';
+
+  @override
+  String get updateChecking => 'Güncellemeler denetleniyor…';
+
+  @override
+  String get updateUpToDate => 'En güncel sürümdesin';
+
+  @override
+  String get updateCheckFailed => 'Güncellemeler denetlenemedi';
+
+  @override
+  String get updateAvailableTitle => 'Güncelleme mevcut';
+
+  @override
+  String updateAvailableBody(String version, String current) {
+    return 'Yeni bir sürüm ($version) mevcut. Sen $current kullanıyorsun.';
+  }
+
+  @override
+  String get updateDownloadAction => 'İndir';
+
+  @override
+  String get updateLater => 'Sonra';
 }

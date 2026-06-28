@@ -483,8 +483,9 @@ class _StageView extends StatelessWidget {
                   backgroundColor: cs.primary.withValues(alpha: 0.18),
                 ),
               ),
-            _Stage.done => const Icon(Icons.check_circle,
-                size: 72, color: Color(0xFF2E7D32)),
+            // tasarim.md: başarı yeşille değil dolu ikon + nötr foreground ile.
+            _Stage.done => Icon(Icons.check_circle,
+                size: 72, color: cs.onSurface),
             _Stage.failed => Icon(Icons.error_outline,
                 size: 72, color: cs.error),
           },

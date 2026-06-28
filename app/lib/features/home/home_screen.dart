@@ -584,7 +584,9 @@ class _ProductCard extends StatelessWidget {
       _ProductStatus.concept => fg.withValues(alpha: 0.08),
     };
     final statusFg = switch (product.status) {
-      _ProductStatus.live => const Color(0xFF7A5A06),
+      // Mustard dolgu üzerinde okunur + palet-saf: gold metin yerine
+      // foreground. "Live" sinyalini mustard zemin taşır (tasarim.md).
+      _ProductStatus.live => fg,
       _ProductStatus.dev => fg.withValues(alpha: 0.72),
       _ProductStatus.concept => fg.withValues(alpha: 0.60),
     };

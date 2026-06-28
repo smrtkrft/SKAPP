@@ -105,9 +105,12 @@ class _DeviceLogsScreenState extends State<DeviceLogsScreen> {
       case LogLevel.info:
         return cs.onSurface;
       case LogLevel.warn:
-        return const Color(0xFFB37A00); // hardal sarısı, design rules
+        // Log metni okunabilirliği için koyulaştırılmış hardal (palet ailesi;
+        // parlak #D4A017 cream zeminde düşük kontrast verdiğinden bilinçli
+        // istisna — tasarim.md mustard'ın text-on-light türevi).
+        return const Color(0xFFB37A00);
       case LogLevel.error:
-        return const Color(0xFFB8331F); // kırmızı uyarı, design rules
+        return cs.error; // = SkColors.warnRed (tema token)
     }
   }
 

@@ -21,6 +21,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/cli/cli_client.dart';
 import '../../core/theme/responsive.dart';
+import '../../core/ui/sk_confirm_dialog.dart';
 import '../../core/ui/sk_neu_card.dart';
 import '../../l10n/app_localizations.dart';
 import '../devices/bf/bf_session.dart';
@@ -345,7 +346,7 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
         title: l.bfApiChainDeleteDialogTitle,
         body: l.bfApiChainDeleteDialogBody(endpoint.name),
         confirmLabel: l.bfApiChainDeleteDialogConfirm,
-        confirmColor: Theme.of(context).colorScheme.error,
+        destructive: true,
       ),
     );
     if (!mounted) return;
@@ -425,30 +426,19 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
     required String title,
     required String body,
     required String confirmLabel,
-    Color? confirmColor,
+    bool destructive = false,
   }) {
     final l = AppLocalizations.of(context);
     return (req) async {
       if (!context.mounted) return false;
-      final ok = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(title),
-          content: Text(body),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(l.commonCancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              style: TextButton.styleFrom(foregroundColor: confirmColor),
-              child: Text(confirmLabel),
-            ),
-          ],
-        ),
+      return showSkConfirm(
+        context,
+        title: title,
+        message: body,
+        confirmLabel: confirmLabel,
+        cancelLabel: l.commonCancel,
+        destructive: destructive,
       );
-      return ok == true;
     };
   }
 

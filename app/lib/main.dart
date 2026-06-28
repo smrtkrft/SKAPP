@@ -13,14 +13,49 @@ import 'package:window_manager/window_manager.dart';
 import 'app.dart';
 import 'core/desktop_lifecycle/single_instance.dart';
 import 'core/desktop_lifecycle/tray_lifecycle.dart';
+import 'core/logging/app_logger.dart';
 import 'core/network/peer_tokens_provider.dart';
 import 'core/storage/preferences_provider.dart';
 import 'core/system/network_identity_provider.dart';
 import 'core/window/window_mode_provider.dart';
 
 Future<void> main(List<String> args) async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // Beta tanılama: tüm uygulamayı tek bir hata zone'una sarıyoruz ki
+  // yakalanmamış async hatalar da loglansın. Önce AppLogger init edilir,
+  // sonra debugPrint + FlutterError + platformDispatcher.onError yakalama
+  // kurulur. Bulutsuz: loglar yalnız kullanıcı dışa aktarırsa cihazdan çıkar.
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await AppLogger.instance.init();
+    _installErrorCapture();
+    await _bootstrap(args);
+  }, (Object error, StackTrace stack) {
+    AppLogger.instance.record(error, stack, source: 'zone');
+  });
+}
 
+/// debugPrint çıktısını + yakalanmamış framework/platform hatalarını
+/// [AppLogger]'a yönlendirir. `main` zone'u + binding kurulduktan SONRA
+/// çağrılmalı (platformDispatcher erişimi binding'e bağlı).
+void _installErrorCapture() {
+  final original = debugPrint;
+  debugPrint = (String? message, {int? wrapWidth}) {
+    if (message != null) AppLogger.instance.log(message);
+    original(message, wrapWidth: wrapWidth);
+  };
+  FlutterError.onError = (FlutterErrorDetails details) {
+    AppLogger.instance
+        .record(details.exception, details.stack, source: 'flutter');
+    FlutterError.presentError(details);
+  };
+  WidgetsBinding.instance.platformDispatcher.onError =
+      (Object error, StackTrace stack) {
+    AppLogger.instance.record(error, stack, source: 'platform');
+    return true;
+  };
+}
+
+Future<void> _bootstrap(List<String> args) async {
   // Item 22 single-instance koruma: SKAPP zaten arka planda (tray'de)
   // calisirken kullanici masaüstü kisayoluna tekrar tiklarsa YENI bir
   // pencere/process acmayalim — onceki SKAPP'in penceresini one getirip

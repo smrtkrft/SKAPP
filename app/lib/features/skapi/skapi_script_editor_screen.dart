@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/responsive.dart';
+import '../../core/ui/sk_confirm_dialog.dart';
 import '../../core/ui/sk_neu_card.dart';
 import '../../l10n/app_localizations.dart';
 import '../main_shell/main_shell.dart' show ShellNavBar;
@@ -165,26 +166,15 @@ class _SkapiScriptEditorScreenState
     BuildContext context, {
     required String title,
     required String body,
-  }) async {
-    final l = MaterialLocalizations.of(context);
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l.cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l.okButtonLabel),
-          ),
-        ],
-      ),
+  }) {
+    final ml = MaterialLocalizations.of(context);
+    return showSkConfirm(
+      context,
+      title: title,
+      message: body,
+      confirmLabel: ml.okButtonLabel,
+      cancelLabel: ml.cancelButtonLabel,
     );
-    return result ?? false;
   }
 }
 

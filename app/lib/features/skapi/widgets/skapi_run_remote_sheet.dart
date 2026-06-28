@@ -309,7 +309,7 @@ class _OutputView extends StatelessWidget {
                     fontFamily: 'monospace',
                     fontSize: 11.5,
                     color: line.kind == RunOutputKind.stderr
-                        ? const Color(0xFFFF8A80)
+                        ? const Color(0xFFD32F2F)
                         : line.kind == RunOutputKind.info
                             ? const Color(0xFFD4A017)
                             : cream,

@@ -1272,7 +1272,7 @@ class _EventBlock extends StatelessWidget {
       children: [
         Row(
           children: [
-            _Pill(label: l.usbConsoleEntryEvent, color: const Color(0xFF2E7D32)),
+            _Pill(label: l.usbConsoleEntryEvent, color: cs.onSurface),
             const SizedBox(width: 8),
             SelectableText(
               entry.evt,
@@ -1356,7 +1356,7 @@ Color _primitiveColor(BuildContext context, dynamic v, _ValueTone tone) {
   final cs = Theme.of(context).colorScheme;
   if (tone == _ValueTone.error) return SkColors.warnRed;
   if (v == null) return cs.onSurface.withValues(alpha: 0.4);
-  if (v is bool) return v ? const Color(0xFF2E7D32) : cs.onSurface.withValues(alpha: 0.7);
+  if (v is bool) return cs.onSurface.withValues(alpha: v ? 1.0 : 0.7);
   if (v is num) return cs.primary;
   return cs.onSurface;
 }

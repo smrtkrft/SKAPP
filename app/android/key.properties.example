@@ -1,0 +1,13 @@
+# android/key.properties — RELEASE imzalama secrets (ŞABLON).
+#
+# Bu .example dosyası commit edilir; GERÇEK `key.properties` .gitignore'dadır,
+# ASLA commit etme. Kurulum:
+#   1) docs/ANDROID_SIGNING.md'deki keytool komutuyla keystore üret.
+#   2) cp android/key.properties.example android/key.properties
+#   3) Aşağıdaki değerleri doldur.
+#
+# storeFile, android/ klasörüne göre çözülür (rootProject.file).
+storePassword=CHANGE_ME
+keyPassword=CHANGE_ME
+keyAlias=skapp
+storeFile=skapp-release.jks

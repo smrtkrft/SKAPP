@@ -8,8 +8,11 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/app_info/version_provider.dart';
+import '../../core/logging/app_logger.dart';
+import '../../core/logging/log_export.dart';
 import '../../core/network/skapp_peer_store.dart';
 import '../../core/reset/reset_service.dart';
 import '../../core/settings/settings_providers.dart';
@@ -17,7 +20,10 @@ import '../../core/storage/paired_devices_store.dart';
 import '../../core/system/network_identity_provider.dart';
 import '../../core/system/system_status_providers.dart';
 import '../../core/theme/colors.dart';
+import '../../core/ui/sk_confirm_dialog.dart';
 import '../../core/ui/sk_neu_card.dart';
+import '../../core/update/update_provider.dart';
+import '../../core/update/update_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../about/about_screen.dart';
 import '../dev/usb_console_screen.dart';
@@ -184,60 +190,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     infoOnTap: () => _showDeveloperModeInfo(context, l),
                   ),
                   if (developerMode) ...[
-                    // USB Konsolu: desktop-only push route.
-                    if (!kIsWeb &&
-                        (Platform.isWindows ||
-                            Platform.isMacOS ||
-                            Platform.isLinux)) ...[
-                      const SizedBox(height: 10),
-                      _LiveCard(
-                        icon: Icons.terminal_rounded,
-                        title: l.settingsUsbConsoleTitle,
-                        subtitle: l.settingsUsbConsoleSubtitle,
-                        body: _NavBody(
-                          label: l.settingsUsbConsoleTitle,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const UsbConsoleScreen(),
-                            ),
-                          ),
+                    // Geliştirici araçları (USB konsol + networking kartları)
+                    // ayrı ekrana taşındı; Ayarlar listesi developer modunda
+                    // uzamasın diye tek giriş noktası (tasarım cilası E).
+                    const SizedBox(height: 10),
+                    _NavCard(
+                      icon: Icons.build_rounded,
+                      title: l.settingsDeveloperToolsTitle,
+                      subtitle: l.settingsDeveloperToolsSubtitle,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const DeveloperToolsScreen(),
                         ),
                       ),
-                    ],
-                    // Host SKAPI platformlarında 4 networking kartı:
-                    // Network Identity, Listener, Peer Tokens, Remote Run.
-                    if (hostSkapiPlatformId() != null) ...[
-                      const SizedBox(height: 10),
-                      _LiveCard(
-                        icon: Icons.fingerprint_rounded,
-                        title: l.settingsNetworkIdentityTitle,
-                        body: const NetworkIdentityCard(),
-                      ),
-                      const SizedBox(height: 10),
-                      _LiveCard(
-                        icon: Icons.dns_rounded,
-                        title: l.skappListenerCardTitle,
-                        body: const SkappListenerCard(),
-                      ),
-                      const SizedBox(height: 10),
-                      _LiveCard(
-                        icon: Icons.key_rounded,
-                        title: l.settingsPeerTokensTitle,
-                        body: const PeerTokensCard(),
-                      ),
-                      const SizedBox(height: 10),
-                      _LiveCard(
-                        icon: Icons.history_rounded,
-                        title: l.remoteRunActivityCardTitle,
-                        body: const RemoteRunActivityCard(),
-                      ),
-                    ],
-                    // SKAPP Peers (outgoing) tüm platformlarda anlamlı.
-                    const SizedBox(height: 10),
-                    _LiveCard(
-                      icon: Icons.devices_other_rounded,
-                      title: _skappPeersTitle(ref, l),
-                      body: const SkappPeersCard(),
                     ),
                   ],
 
@@ -261,6 +226,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           .read(autoCheckUpdatesProvider.notifier)
                           .set(v),
                       onCheckNow: () => _checkForUpdates(context, l),
+                    ),
+                  ),
+
+                  // Tanılama: beta testçileri için HER ZAMAN görünür
+                  // (developer moda gizli DEĞİL). Logları kopyala / klasörü aç /
+                  // paylaş / temizle — bulutsuz; kullanıcı isterse GitHub
+                  // Issues'a ekler.
+                  const SizedBox(height: 10),
+                  _LiveCard(
+                    icon: Icons.bug_report_outlined,
+                    title: l.settingsDiagnosticsTitle,
+                    subtitle: l.settingsDiagnosticsSubtitle,
+                    body: _DiagnosticsBody(
+                      copyLabel: l.diagnosticsCopyLogs,
+                      openFolderLabel: l.diagnosticsOpenFolder,
+                      shareLabel: l.diagnosticsShareLogs,
+                      clearLabel: l.diagnosticsClearLogs,
+                      onCopy: () => _copyLogs(context, l),
+                      onOpenFolder: () => _openLogFolder(context, l),
+                      onShare: _shareLogs,
+                      onClear: () => _clearLogs(context, l),
                     ),
                   ),
 
@@ -342,20 +328,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await ref.read(networkIdentityProvider.notifier).setName(next);
   }
 
-  /// Compose the SKAPP Peers section title with peer context inline.
-  /// Single paired peer → "Title · Name" so the user sees who's paired
-  /// without expanding. Two-plus peers → "Title · N". Empty list → the
-  /// plain title. Reads the provider at build time via `ref.watch` so
-  /// the chip updates on every pairing change.
-  String _skappPeersTitle(WidgetRef ref, AppLocalizations l) {
-    final peers = ref.watch(skappPeersProvider);
-    final base = l.skappPeersCardTitle;
-    if (peers.isEmpty) return base;
-    if (peers.length == 1) {
-      return l.skappPeersCardHeaderSinglePeer(base, peers.first.name);
-    }
-    return l.skappPeersCardHeaderMultiPeer(base, peers.length);
-  }
 
   /// Reset Pairings akışı. Confirm dialog (sayılı), progress dialog,
   /// summary dialog. Plan ref: ~/.claude/plans/reset.md Faz C.
@@ -367,28 +339,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final bindings = ref.read(bindingsProvider).length;
     final peers = ref.read(skappPeersProvider).length;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dlgCtx) => AlertDialog(
-        title: Text(l.settingsResetPairingsConfirmTitle),
-        content: Text(l.settingsResetPairingsConfirmBody(
-            paired, bindings, peers)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dlgCtx).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: SkColors.warnRed,
-            ),
-            onPressed: () => Navigator.of(dlgCtx).pop(true),
-            child: Text(l.settingsResetPairingsConfirmAction),
-          ),
-        ],
-      ),
+    final confirmed = await showSkConfirm(
+      context,
+      title: l.settingsResetPairingsConfirmTitle,
+      message: l.settingsResetPairingsConfirmBody(paired, bindings, peers),
+      cancelLabel: l.commonCancel,
+      confirmLabel: l.settingsResetPairingsConfirmAction,
+      destructive: true,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     if (!context.mounted) return;
     await _runReset(context, l, factory: false);
   }
@@ -400,27 +359,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     BuildContext context,
     AppLocalizations l,
   ) async {
-    final first = await showDialog<bool>(
-      context: context,
-      builder: (dlgCtx) => AlertDialog(
-        title: Text(l.settingsFactoryResetConfirmTitle),
-        content: Text(l.settingsFactoryResetConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dlgCtx).pop(false),
-            child: Text(l.commonCancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: SkColors.warnRed,
-            ),
-            onPressed: () => Navigator.of(dlgCtx).pop(true),
-            child: Text(l.settingsFactoryResetConfirmAction),
-          ),
-        ],
-      ),
+    final first = await showSkConfirm(
+      context,
+      title: l.settingsFactoryResetConfirmTitle,
+      message: l.settingsFactoryResetConfirmBody,
+      cancelLabel: l.commonCancel,
+      confirmLabel: l.settingsFactoryResetConfirmAction,
+      destructive: true,
     );
-    if (first != true) return;
+    if (!first) return;
     if (!context.mounted) return;
 
     final second = await showDialog<bool>(
@@ -632,10 +579,86 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   /// Manual update probe. The OTA manifest service isn't wired yet (BF
   /// firmware ships sk_ota with a NULL manifest URL), so until that lands
   /// this surfaces a transparent notice rather than fake "up to date".
-  void _checkForUpdates(BuildContext context, AppLocalizations l) {
+  Future<void> _checkForUpdates(BuildContext context, AppLocalizations l) async {
+    _snack(context, l.updateChecking);
+    try {
+      final info = await ref.read(packageInfoProvider.future);
+      final channel = ref.read(updateChannelProvider);
+      final result = await ref.read(updateServiceProvider).check(
+            currentVersion: info.version,
+            channel: channel,
+          );
+      if (!context.mounted) return;
+      if (!result.updateAvailable) {
+        _snack(context, l.updateUpToDate);
+        return;
+      }
+      await _showUpdateDialog(context, l, info.version, result);
+    } catch (_) {
+      if (!context.mounted) return;
+      _snack(context, l.updateCheckFailed);
+    }
+  }
+
+  Future<void> _showUpdateDialog(
+    BuildContext context,
+    AppLocalizations l,
+    String current,
+    UpdateCheckResult result,
+  ) async {
+    final latest = result.latestVersion ?? '';
+    final go = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l.updateAvailableTitle),
+        content: Text(l.updateAvailableBody(latest, current)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l.updateLater),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l.updateDownloadAction),
+          ),
+        ],
+      ),
+    );
+    if (go != true) return;
+    final url = result.latest?.downloadUrlForCurrentPlatform();
+    if (url != null && url.isNotEmpty) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    }
+  }
+
+  // ----- Tanılama (Diagnostics) eylemleri: bulutsuz log dışa aktarma -----
+
+  Future<void> _copyLogs(BuildContext context, AppLocalizations l) async {
+    await copyLogsToClipboard();
+    if (!context.mounted) return;
+    _snack(context, l.diagnosticsCopied);
+  }
+
+  Future<void> _openLogFolder(BuildContext context, AppLocalizations l) async {
+    final ok = await openLogFolder();
+    if (!context.mounted || ok) return;
+    _snack(context, l.diagnosticsOpenFolderFailed);
+  }
+
+  Future<void> _shareLogs() => shareLogs();
+
+  Future<void> _clearLogs(BuildContext context, AppLocalizations l) async {
+    await AppLogger.instance.clear();
+    if (!context.mounted) return;
+    _snack(context, l.diagnosticsCleared);
+  }
+
+  void _snack(BuildContext context, String msg) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(l.settingsUpdateCheckPlaceholder, textAlign: TextAlign.center)));
+      ..showSnackBar(
+        SnackBar(content: Text(msg, textAlign: TextAlign.center)),
+      );
   }
 
   String _versionText(AsyncValue<String> v) => switch (v) {
@@ -656,10 +679,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ThemeMode.system => Icons.phone_android_rounded,
       };
 
+  // Endonim kuralı: dil adı her zaman kendi dilinde gösterilir (uygulama
+  // hangi dilde olursa olsun). null = Sistem/otomatik.
   String _languageLabel(AppLocalizations l, Locale? locale) => switch (
           locale?.languageCode) {
-        'tr' => l.langTurkish,
-        'en' => l.langEnglish,
+        'tr' => 'Türkçe',
+        'en' => 'English',
+        'de' => 'Deutsch',
+        'fr' => 'Français',
+        'it' => 'Italiano',
+        'ru' => 'Русский',
+        'el' => 'Ελληνικά',
+        'es' => 'Español',
+        'pt' => 'Português',
         _ => l.settingsThemeSystem,
       };
 
@@ -738,6 +770,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // `LanguageOption` ekle, dialog otomatik scroll edecek. Her
     // entry hem native ad (Türkçe/English/Deutsch...) hem ASCII kod
     // (TR/EN/DE/...) taşır → görsel arama hızlı.
+    // Endonim kuralı: her dil kendi adıyla gösterilir; exonym (örn. "Turkish")
+    // YOK → secondary boş. Sistem/auto açıklamalı kaldığı için secondary dolu.
     final options = <LanguageOption>[
       LanguageOption(
         locale: systemLocale,
@@ -747,17 +781,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         pinned: true,
       ),
       const LanguageOption(
-        locale: Locale('en'),
-        nativeName: 'English',
-        secondary: 'English',
-        code: 'En',
-      ),
+          locale: Locale('en'), nativeName: 'English', secondary: '', code: 'En'),
       const LanguageOption(
-        locale: Locale('tr'),
-        nativeName: 'Türkçe',
-        secondary: 'Turkish',
-        code: 'Tr',
-      ),
+          locale: Locale('tr'), nativeName: 'Türkçe', secondary: '', code: 'Tr'),
+      const LanguageOption(
+          locale: Locale('de'), nativeName: 'Deutsch', secondary: '', code: 'De'),
+      const LanguageOption(
+          locale: Locale('fr'), nativeName: 'Français', secondary: '', code: 'Fr'),
+      const LanguageOption(
+          locale: Locale('it'), nativeName: 'Italiano', secondary: '', code: 'It'),
+      const LanguageOption(
+          locale: Locale('ru'), nativeName: 'Русский', secondary: '', code: 'Ру'),
+      const LanguageOption(
+          locale: Locale('el'), nativeName: 'Ελληνικά', secondary: '', code: 'Ελ'),
+      const LanguageOption(
+          locale: Locale('es'), nativeName: 'Español', secondary: '', code: 'Es'),
+      const LanguageOption(
+          locale: Locale('pt'), nativeName: 'Português', secondary: '', code: 'Pt'),
     ];
 
     final chosen = await showDialog<Locale>(
@@ -1646,8 +1686,181 @@ class _UpdateBody extends StatelessWidget {
   }
 }
 
+/// Tanılama kartı gövdesi: log dosya yolu + bulutsuz dışa aktarma eylemleri.
+/// Klasörü-aç yalnız masaüstünde, Paylaş yalnız mobilde görünür; Kopyala ve
+/// Temizle her platformda.
+class _DiagnosticsBody extends StatelessWidget {
+  const _DiagnosticsBody({
+    required this.copyLabel,
+    required this.openFolderLabel,
+    required this.shareLabel,
+    required this.clearLabel,
+    required this.onCopy,
+    required this.onOpenFolder,
+    required this.onShare,
+    required this.onClear,
+  });
+  final String copyLabel;
+  final String openFolderLabel;
+  final String shareLabel;
+  final String clearLabel;
+  final VoidCallback onCopy;
+  final VoidCallback onOpenFolder;
+  final VoidCallback onShare;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final path = AppLogger.instance.file?.path;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (path != null) ...[
+          SelectableText(
+            path,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: cs.onSurface.withValues(alpha: 0.55),
+                ),
+          ),
+          const SizedBox(height: 10),
+        ],
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            OutlinedButton.icon(
+              onPressed: onCopy,
+              icon: const Icon(Icons.copy_rounded, size: 16),
+              label: Text(copyLabel),
+            ),
+            if (logFolderRevealSupported)
+              OutlinedButton.icon(
+                onPressed: onOpenFolder,
+                icon: const Icon(Icons.folder_open_rounded, size: 16),
+                label: Text(openFolderLabel),
+              ),
+            if (logShareSupported)
+              OutlinedButton.icon(
+                onPressed: onShare,
+                icon: const Icon(Icons.ios_share_rounded, size: 16),
+                label: Text(shareLabel),
+              ),
+            OutlinedButton.icon(
+              onPressed: onClear,
+              icon: const Icon(Icons.delete_outline_rounded, size: 16),
+              label: Text(clearLabel),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: SkColors.warnRed,
+                side: BorderSide(
+                  color: SkColors.warnRed.withValues(alpha: 0.4),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 // _AboutBody ve _DangerBody 2026-05-15'te kaldırıldı:
 // Bilgi ve Tehlikeli bölge artık akordiyon değil; doğrudan 2 yan yana
 // `_NavCard` (`_Row2` içinde) olarak kullanılıyor. Bu, kullanıcı için
 // daha az tıklama (1 yerine 2 — doğrudan aksiyon) + mockup'ta da
 // böyle istendi.
+
+/// Geliştirici Araçları ekranı (tasarım cilası E). Settings → Gelişmiş →
+/// "Geliştirici Araçları" kartından push edilir. Developer modunda Ayarlar
+/// listesini şişiren USB konsol + networking kartları (Ağ Kimliği, Dinleyici,
+/// Peer Token'ları, Uzak Çalıştırma Logu, SKAPP Peer'ları) burada toplanır.
+/// Kart widget'ları aynen kullanılır — yalnız konum Ayarlar'dan bu alt-ekrana
+/// taşındı; davranış değişmedi.
+class DeveloperToolsScreen extends ConsumerWidget {
+  const DeveloperToolsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final peers = ref.watch(skappPeersProvider);
+    final peersTitle = peers.isEmpty
+        ? l.skappPeersCardTitle
+        : peers.length == 1
+            ? l.skappPeersCardHeaderSinglePeer(
+                l.skappPeersCardTitle, peers.first.name)
+            : l.skappPeersCardHeaderMultiPeer(
+                l.skappPeersCardTitle, peers.length);
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l.settingsDeveloperToolsTitle)),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 820),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // USB Konsolu: desktop-only push route.
+                  if (!kIsWeb &&
+                      (Platform.isWindows ||
+                          Platform.isMacOS ||
+                          Platform.isLinux)) ...[
+                    _LiveCard(
+                      icon: Icons.terminal_rounded,
+                      title: l.settingsUsbConsoleTitle,
+                      subtitle: l.settingsUsbConsoleSubtitle,
+                      body: _NavBody(
+                        label: l.settingsUsbConsoleTitle,
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const UsbConsoleScreen(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                  // Host SKAPI platformlarında 4 networking kartı.
+                  if (hostSkapiPlatformId() != null) ...[
+                    _LiveCard(
+                      icon: Icons.fingerprint_rounded,
+                      title: l.settingsNetworkIdentityTitle,
+                      body: const NetworkIdentityCard(),
+                    ),
+                    const SizedBox(height: 10),
+                    _LiveCard(
+                      icon: Icons.dns_rounded,
+                      title: l.skappListenerCardTitle,
+                      body: const SkappListenerCard(),
+                    ),
+                    const SizedBox(height: 10),
+                    _LiveCard(
+                      icon: Icons.key_rounded,
+                      title: l.settingsPeerTokensTitle,
+                      body: const PeerTokensCard(),
+                    ),
+                    const SizedBox(height: 10),
+                    _LiveCard(
+                      icon: Icons.history_rounded,
+                      title: l.remoteRunActivityCardTitle,
+                      body: const RemoteRunActivityCard(),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                  // SKAPP Peers (outgoing) tüm platformlarda anlamlı.
+                  _LiveCard(
+                    icon: Icons.devices_other_rounded,
+                    title: peersTitle,
+                    body: const SkappPeersCard(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/settings/settings_providers.dart';
 import 'core/theme/app_theme.dart';
+import 'core/update/update_banner.dart';
 import 'features/splash/splash_screen.dart';
 import 'l10n/app_localizations.dart';
 
@@ -23,7 +24,7 @@ class SkApp extends ConsumerWidget {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const SplashScreen(),
+      home: const UpdateScope(child: SplashScreen()),
     );
   }
 }

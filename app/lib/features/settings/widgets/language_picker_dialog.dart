@@ -230,17 +230,22 @@ class LanguageTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
-              const SizedBox(height: 2),
-              Text(
-                option.secondary,
-                style: tt.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                  letterSpacing: 0.2,
-                  color: cs.onSurface.withValues(alpha: 0.55),
+              // Endonim kuralı: gerçek diller için secondary boş bırakılır
+              // (exonym gösterilmez); yalnız Sistem/auto gibi açıklamalı
+              // girişlerde dolu olur.
+              if (option.secondary.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  option.secondary,
+                  style: tt.bodySmall?.copyWith(
+                    fontFamily: 'monospace',
+                    letterSpacing: 0.2,
+                    color: cs.onSurface.withValues(alpha: 0.55),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
+              ],
             ],
           ),
         ),
