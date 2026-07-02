@@ -647,6 +647,11 @@
   "sdDashboardRecovery": "Recovery mode: slots are not loaded. The device re-enables them after a stable boot.",
   "sdDashboardWriteFailed": "Couldn't write: {error}",
   "@sdDashboardWriteFailed": {"placeholders": {"error": {"type": "String"}}},
+  "sdSafeStatusIdle": "Safe mode · Armed",
+  "sdSafeStatusFired": "Triggered",
+  "sdSafeStatusLocked": "Locked · {seconds}s",
+  "@sdSafeStatusLocked": {"placeholders": {"seconds": {"type": "int"}}},
+  "sdSafeNote": "The sequence is entered only on the device knob — this screen mirrors status.",
 
   "deviceConnUnreachableTitle": "Can't reach the device",
   "deviceConnUnreachableBody": "The device may be off, out of range, or asleep. Make sure it is powered on and nearby, then try again.",

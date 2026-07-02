@@ -647,6 +647,11 @@
   "sdDashboardRecovery": "Kurtarma modu: slotlar yüklenmedi. Cihaz istikrarlı açılıştan sonra yeniden etkinleştirir.",
   "sdDashboardWriteFailed": "Yazılamadı: {error}",
   "@sdDashboardWriteFailed": {"placeholders": {"error": {"type": "String"}}},
+  "sdSafeStatusIdle": "Güvenli Mod · Nöbette",
+  "sdSafeStatusFired": "Tetiklendi",
+  "sdSafeStatusLocked": "Kilitli · {seconds} sn",
+  "@sdSafeStatusLocked": {"placeholders": {"seconds": {"type": "int"}}},
+  "sdSafeNote": "Dizi girişi yalnızca cihazdaki düğmeyle yapılır — bu ekran durumu gösterir.",
 
   "deviceConnUnreachableTitle": "Cihaza ulaşılamıyor",
   "deviceConnUnreachableBody": "Cihaz kapalı, menzil dışında veya uyku modunda olabilir. Açık ve yakın olduğundan emin olup tekrar deneyin.",

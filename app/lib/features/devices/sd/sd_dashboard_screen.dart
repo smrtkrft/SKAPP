@@ -15,6 +15,8 @@ import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
 import 'sd_session.dart';
+import 'widgets/sd_orbital_dial.dart';
+import 'widgets/sd_safe_center.dart';
 
 /// One row of `mode.list`'s `slots[]` array, as the firmware reports it.
 class SdSlot {
@@ -73,6 +75,18 @@ class _SdDashboardScreenState extends State<SdDashboardScreen> {
 
   // Slot bazında hedef erişilebilirliği (target.offline/online).
   final Set<int> _offlineSlots = {};
+
+  // Safe durum merkezi (V5): cihaz olayları sürer, kısa süre sonra
+  // "nöbette" tabanına döner. Uygulamadan dizi girişi YOKTUR.
+  SdSafeStatus _safeStatus = SdSafeStatus.idle;
+  int? _safeLockSeconds;
+  Timer? _safeResetTimer;
+
+  // mode.value trailing throttle (≈120 ms): sürükleme sırasında yerel
+  // değer anında güncellenir, cihaza en son değer gönderilir (firmware
+  // zaten 100 ms coalescing yapar; burada BLE'yi boğmamak için).
+  int? _pendingValue;
+  Timer? _valueTimer;
 
   // Status pill verileri (BF deseniyle aynı: 3 sn polling + device.info
   // one-shot).
@@ -185,9 +199,77 @@ class _SdDashboardScreenState extends State<SdDashboardScreen> {
           final slot = (data['slot'] as num?)?.toInt();
           if (slot != null) setState(() => _offlineSlots.remove(slot));
         }
+      case 'safe.triggered':
+        // {n, ok} — ok=false (yanlış dizi) tabanı bozmaz; yalnız
+        // başarılı tetikleme açılış dönüşünü oynatır.
+        if (data is Map && data['ok'] != false) {
+          _setSafeStatus(SdSafeStatus.fired);
+        }
+      case 'safe.lockout':
+        if (data is Map) {
+          _safeLockSeconds = (data['seconds'] as num?)?.toInt();
+          _setSafeStatus(SdSafeStatus.locked);
+        }
       case 'device.recovery':
         setState(() => _recovery = true);
     }
+  }
+
+  /// Safe merkez durumunu olaydan sürer, kısa süre sonra "nöbette"
+  /// tabanına döndürür (V5 karakteri — design2.html ile aynı süreler).
+  void _setSafeStatus(SdSafeStatus status) {
+    _safeResetTimer?.cancel();
+    setState(() => _safeStatus = status);
+    if (status == SdSafeStatus.idle) return;
+    _safeResetTimer = Timer(
+      status == SdSafeStatus.fired
+          ? const Duration(milliseconds: 3200)
+          : const Duration(milliseconds: 4200),
+      () {
+        if (mounted) setState(() => _safeStatus = SdSafeStatus.idle);
+      },
+    );
+  }
+
+  /// Kadran sürüklemesi: yerel değer anında (iyimser), cihaza trailing
+  /// throttle ile `mode.value <slot> <v>`. Cihaz reddederse snapshot
+  /// tazelenir (gerçek değere geri döner).
+  void _dialValue(int value) {
+    final s = _slotOrNull(_active);
+    if (s == null) return;
+    setState(() {
+      s.value = value;
+      s.state = value > 0;
+    });
+    _pendingValue = value;
+    _valueTimer ??= Timer(const Duration(milliseconds: 120), () {
+      _valueTimer = null;
+      final v = _pendingValue;
+      _pendingValue = null;
+      if (v != null) _writeValue('$v');
+    });
+  }
+
+  /// Disk dokunuşu: dimmer aç/kapa, shutter STOP — firmware'de ikisi de
+  /// `mode.value <slot> toggle` yoludur.
+  void _dialTap() => _writeValue('toggle');
+
+  Future<void> _writeValue(String arg) async {
+    final session = SdSession.of(context);
+    String? errText;
+    try {
+      final r =
+          await session.client.send('mode.value', argv: ['$_active', arg]);
+      if (!r.ok) errText = r.err ?? '?';
+    } catch (e) {
+      errText = e.toString();
+    }
+    if (!mounted || errText == null) return;
+    final l = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l.sdDashboardWriteFailed(errText))),
+    );
+    await _refreshModes();
   }
 
   SdSlot? _slotOrNull(int? n) {
@@ -202,6 +284,8 @@ class _SdDashboardScreenState extends State<SdDashboardScreen> {
   void dispose() {
     _statusTimer?.cancel();
     _eventSub?.cancel();
+    _safeResetTimer?.cancel();
+    _valueTimer?.cancel();
     super.dispose();
   }
 
@@ -256,10 +340,42 @@ class _SdDashboardScreenState extends State<SdDashboardScreen> {
               _RecoveryBanner(text: l.sdDashboardRecovery),
               const SizedBox(height: 16),
             ],
-            _DialArea(
-              slot: active,
-              offline: active != null && _offlineSlots.contains(active.slot),
-            ),
+            if (active?.behavior == 'safe')
+              SdSafeCenter(
+                status: _safeStatus,
+                statusText: switch (_safeStatus) {
+                  SdSafeStatus.idle => l.sdSafeStatusIdle,
+                  SdSafeStatus.fired => l.sdSafeStatusFired,
+                  SdSafeStatus.locked =>
+                    l.sdSafeStatusLocked(_safeLockSeconds ?? 30),
+                },
+                note: l.sdSafeNote,
+              )
+            else
+              SdOrbitalDial(
+                value: active?.value ?? 0,
+                state: active?.state ?? false,
+                label: (active?.assigned ?? false)
+                    ? (active!.name.isNotEmpty ? active.name : active.behavior)
+                    : l.sdDashboardSlotEmpty,
+                interactive: (active?.assigned ?? false) &&
+                    active?.error != true &&
+                    !_recovery,
+                onValue: _dialValue,
+                onTap: _dialTap,
+              ),
+            if (active != null && _offlineSlots.contains(active.slot)) ...[
+              const SizedBox(height: 10),
+              Center(
+                child: Text(
+                  l.sdDashboardOffline,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 24),
             _SlotTray(
               slots: _slots,
@@ -391,56 +507,6 @@ class _RecoveryBanner extends StatelessWidget {
               style: TextStyle(fontSize: 12.5, color: cs.error),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Kadran alanı — Faz B'de SdOrbitalDial (CustomPainter) buraya oturacak.
-// Şimdilik: değer + slot adı, neumorfik çukurda.
-// ---------------------------------------------------------------------------
-
-class _DialArea extends StatelessWidget {
-  const _DialArea({required this.slot, required this.offline});
-  final SdSlot? slot;
-  final bool offline;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final cs = Theme.of(context).colorScheme;
-    final assigned = slot != null && slot!.assigned;
-    return SkNeuCard(
-      padding: const EdgeInsets.symmetric(vertical: 40),
-      child: Column(
-        children: [
-          Text(
-            assigned ? '${slot!.value}' : '—',
-            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  fontWeight: FontWeight.w200,
-                  color: assigned && slot!.state
-                      ? cs.onSurface
-                      : cs.onSurfaceVariant,
-                ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            assigned ? slot!.name : l.sdDashboardSlotEmpty,
-            style: TextStyle(
-              fontSize: 13,
-              letterSpacing: 2,
-              color: cs.onSurfaceVariant,
-            ),
-          ),
-          if (offline) ...[
-            const SizedBox(height: 10),
-            Text(
-              l.sdDashboardOffline,
-              style: TextStyle(fontSize: 11.5, color: cs.error),
-            ),
-          ],
         ],
       ),
     );

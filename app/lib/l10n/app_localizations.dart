@@ -3316,6 +3316,30 @@ abstract class AppLocalizations {
   /// **'Couldn\'t write: {error}'**
   String sdDashboardWriteFailed(String error);
 
+  /// No description provided for @sdSafeStatusIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe mode · Armed'**
+  String get sdSafeStatusIdle;
+
+  /// No description provided for @sdSafeStatusFired.
+  ///
+  /// In en, this message translates to:
+  /// **'Triggered'**
+  String get sdSafeStatusFired;
+
+  /// No description provided for @sdSafeStatusLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked · {seconds}s'**
+  String sdSafeStatusLocked(int seconds);
+
+  /// No description provided for @sdSafeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The sequence is entered only on the device knob — this screen mirrors status.'**
+  String get sdSafeNote;
+
   /// No description provided for @deviceConnUnreachableTitle.
   ///
   /// In en, this message translates to:

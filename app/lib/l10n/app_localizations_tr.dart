@@ -1853,6 +1853,21 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get sdSafeStatusIdle => 'Güvenli Mod · Nöbette';
+
+  @override
+  String get sdSafeStatusFired => 'Tetiklendi';
+
+  @override
+  String sdSafeStatusLocked(int seconds) {
+    return 'Kilitli · $seconds sn';
+  }
+
+  @override
+  String get sdSafeNote =>
+      'Dizi girişi yalnızca cihazdaki düğmeyle yapılır — bu ekran durumu gösterir.';
+
+  @override
   String get deviceConnUnreachableTitle => 'Cihaza ulaşılamıyor';
 
   @override

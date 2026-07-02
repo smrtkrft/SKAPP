@@ -1858,6 +1858,21 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get sdSafeStatusIdle => 'Safe mode · Armed';
+
+  @override
+  String get sdSafeStatusFired => 'Triggered';
+
+  @override
+  String sdSafeStatusLocked(int seconds) {
+    return 'Locked · ${seconds}s';
+  }
+
+  @override
+  String get sdSafeNote =>
+      'The sequence is entered only on the device knob — this screen mirrors status.';
+
+  @override
   String get deviceConnUnreachableTitle => 'Gerät nicht erreichbar';
 
   @override
