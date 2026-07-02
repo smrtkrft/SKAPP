@@ -116,6 +116,7 @@ class _BfDeviceInfoScreenState extends State<BfDeviceInfoScreen> {
     return switch (prefix) {
       'BF' => l.productBlockingFocus,
       'LS' => l.productLebensSpur,
+      'SD' => l.productSynDimm,
       _ => '-',
     };
   }

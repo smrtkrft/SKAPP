@@ -147,10 +147,11 @@ class CliClient {
   Future<CliResponse> sendCritical(
     String cmd, {
     Map<String, dynamic>? args,
+    List<String>? argv,
     Duration timeout = const Duration(seconds: 10),
     required Future<bool> Function(CliConfirmRequest req) confirmRequest,
   }) async {
-    final first = await send(cmd, args: args, timeout: timeout);
+    final first = await send(cmd, args: args, argv: argv, timeout: timeout);
     if (first.ok) return first;
     if (first.err != 'ERR_CONFIRM_TOKEN_REQUIRED') return first;
 
@@ -164,7 +165,8 @@ class CliClient {
     ));
     if (!confirmed) return first;
 
-    return send(cmd, args: args, confirmToken: token, timeout: timeout);
+    return send(cmd,
+        args: args, argv: argv, confirmToken: token, timeout: timeout);
   }
 
   Future<void> stop() async {

@@ -436,6 +436,7 @@
   "commonOffline": "offline",
   "productBlockingFocus": "Blocking Focus",
   "productLebensSpur": "LebensSpur",
+  "productSynDimm": "SynDimm",
   "productGeneric": "SmartKraft-Gerät",
   "timeJustNow": "gerade eben",
   "timeMinAgo": "vor {count} Min.",

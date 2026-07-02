@@ -14,6 +14,9 @@ import '../../../core/theme/responsive.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
+import '../../skapi/on_device_api_editor_screen.dart';
+import '../bf/bf_session.dart';
+import 'sd_settings_screen.dart';
 import 'sd_session.dart';
 import 'widgets/sd_orbital_dial.dart';
 import 'widgets/sd_safe_center.dart';
@@ -383,6 +386,45 @@ class _SdDashboardScreenState extends State<SdDashboardScreen> {
               offlineSlots: _offlineSlots,
               enabled: !_recovery,
               onSelect: _selectSlot,
+            ),
+            const SizedBox(height: 24),
+            SkNeuCard(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.link,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    title: Text(l.sdDashboardWebhooks),
+                    trailing: const Icon(Icons.chevron_right),
+                    // Paylaşılan API editörü BfSession okur; SD cihazında
+                    // pushForDevice ile aynı jenerik oturumu kurar.
+                    onTap: () => BfSession.pushForDevice(
+                      context: context,
+                      deviceId: widget.deviceId,
+                      child: OnDeviceApiEditorScreen(deviceId: widget.deviceId),
+                    ),
+                  ),
+                  Divider(
+                    height: 1,
+                    thickness: 0.5,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.settings_outlined,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    title: Text(l.bfDashboardMoreSettings),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () async {
+                      await SdSession.push(
+                        context,
+                        SdSettingsScreen(deviceId: widget.deviceId),
+                      );
+                      if (mounted) await _refreshModes();
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),

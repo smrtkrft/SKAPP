@@ -1816,6 +1816,12 @@ abstract class AppLocalizations {
   /// **'LebensSpur'**
   String get productLebensSpur;
 
+  /// No description provided for @productSynDimm.
+  ///
+  /// In en, this message translates to:
+  /// **'SynDimm'**
+  String get productSynDimm;
+
   /// No description provided for @productGeneric.
   ///
   /// In en, this message translates to:
@@ -3339,6 +3345,630 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The sequence is entered only on the device knob — this screen mirrors status.'**
   String get sdSafeNote;
+
+  /// No description provided for @sdSettingsSectionControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Control'**
+  String get sdSettingsSectionControl;
+
+  /// No description provided for @sdModesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Modes'**
+  String get sdModesTitle;
+
+  /// No description provided for @sdSettingsModesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'3 slots · behavior and target assignment'**
+  String get sdSettingsModesSubtitle;
+
+  /// No description provided for @sdProfilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profiles'**
+  String get sdProfilesTitle;
+
+  /// No description provided for @sdSettingsProfilesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Target device command templates'**
+  String get sdSettingsProfilesSubtitle;
+
+  /// No description provided for @sdSafeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe'**
+  String get sdSafeTitle;
+
+  /// No description provided for @sdSettingsSafeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sequences and webhooks'**
+  String get sdSettingsSafeSubtitle;
+
+  /// No description provided for @sdPrefsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get sdPrefsTitle;
+
+  /// No description provided for @sdSettingsPrefsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gestures, buzzer, quiet hours'**
+  String get sdSettingsPrefsSubtitle;
+
+  /// No description provided for @sdEventsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get sdEventsTitle;
+
+  /// No description provided for @sdSettingsEventsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live event stream'**
+  String get sdSettingsEventsSubtitle;
+
+  /// No description provided for @sdSettingsLogsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Device logs'**
+  String get sdSettingsLogsSubtitle;
+
+  /// No description provided for @sdDashboardWebhooks.
+  ///
+  /// In en, this message translates to:
+  /// **'Webhooks & API'**
+  String get sdDashboardWebhooks;
+
+  /// No description provided for @sdEventsModeChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Active mode: slot {slot} · {name}'**
+  String sdEventsModeChanged(String slot, String name);
+
+  /// No description provided for @sdEventsModeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver error on slot {slot}'**
+  String sdEventsModeError(String slot);
+
+  /// No description provided for @sdEventsTargetOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot {slot} target unreachable'**
+  String sdEventsTargetOffline(String slot);
+
+  /// No description provided for @sdEventsTargetOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot {slot} target back online'**
+  String sdEventsTargetOnline(String slot);
+
+  /// No description provided for @sdEventsSafeTriggered.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe sequence matched — webhook fired'**
+  String get sdEventsSafeTriggered;
+
+  /// No description provided for @sdEventsSafeWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong safe sequence'**
+  String get sdEventsSafeWrong;
+
+  /// No description provided for @sdEventsSafeLockout.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe locked for {seconds}s'**
+  String sdEventsSafeLockout(int seconds);
+
+  /// No description provided for @sdEventsGesture.
+  ///
+  /// In en, this message translates to:
+  /// **'Gesture: {type}'**
+  String sdEventsGesture(String type);
+
+  /// No description provided for @sdEventsPrefChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Preference changed: {key}'**
+  String sdEventsPrefChanged(String key);
+
+  /// No description provided for @sdModesDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'disabled'**
+  String get sdModesDisabled;
+
+  /// No description provided for @sdModesSlotN.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot {n}'**
+  String sdModesSlotN(int n);
+
+  /// No description provided for @sdModesMakeActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate'**
+  String get sdModesMakeActive;
+
+  /// No description provided for @sdModesEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot {n} · Mode'**
+  String sdModesEditTitle(int n);
+
+  /// No description provided for @sdModesFieldBehavior.
+  ///
+  /// In en, this message translates to:
+  /// **'Behavior'**
+  String get sdModesFieldBehavior;
+
+  /// No description provided for @sdModesFieldName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get sdModesFieldName;
+
+  /// No description provided for @sdModesFieldEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get sdModesFieldEnabled;
+
+  /// No description provided for @sdModesSafeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sequences and webhooks are configured under Settings → Safe. Sequence entry is physical-only.'**
+  String get sdModesSafeHint;
+
+  /// No description provided for @sdModesFieldProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get sdModesFieldProfile;
+
+  /// No description provided for @sdModesFieldHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Target IP / host'**
+  String get sdModesFieldHost;
+
+  /// No description provided for @sdModesFieldPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Port'**
+  String get sdModesFieldPort;
+
+  /// No description provided for @sdModesFieldStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Step'**
+  String get sdModesFieldStep;
+
+  /// No description provided for @sdModesFieldDeviceId.
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID (optional)'**
+  String get sdModesFieldDeviceId;
+
+  /// No description provided for @sdModesFieldAuthKey.
+  ///
+  /// In en, this message translates to:
+  /// **'API key (optional)'**
+  String get sdModesFieldAuthKey;
+
+  /// No description provided for @sdModesFieldAccel.
+  ///
+  /// In en, this message translates to:
+  /// **'Acceleration'**
+  String get sdModesFieldAccel;
+
+  /// No description provided for @sdModesFieldGestures.
+  ///
+  /// In en, this message translates to:
+  /// **'Gesture presets'**
+  String get sdModesFieldGestures;
+
+  /// No description provided for @sdModesFieldGesturesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Double click and long press jump to preset values'**
+  String get sdModesFieldGesturesHint;
+
+  /// No description provided for @sdModesFieldPresetDouble.
+  ///
+  /// In en, this message translates to:
+  /// **'Double click %'**
+  String get sdModesFieldPresetDouble;
+
+  /// No description provided for @sdModesFieldPresetLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Long press %'**
+  String get sdModesFieldPresetLong;
+
+  /// No description provided for @sdModesFieldBroker.
+  ///
+  /// In en, this message translates to:
+  /// **'MQTT broker'**
+  String get sdModesFieldBroker;
+
+  /// No description provided for @sdModesFieldBrokerPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Broker port'**
+  String get sdModesFieldBrokerPort;
+
+  /// No description provided for @sdModesFieldTopic.
+  ///
+  /// In en, this message translates to:
+  /// **'Topic'**
+  String get sdModesFieldTopic;
+
+  /// No description provided for @sdModesFieldPayloadValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Value payload'**
+  String get sdModesFieldPayloadValue;
+
+  /// No description provided for @sdModesFieldPayloadGesture.
+  ///
+  /// In en, this message translates to:
+  /// **'Gesture payload'**
+  String get sdModesFieldPayloadGesture;
+
+  /// No description provided for @sdModesTemplateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Template tokens: value, toggle, device_id, auth_key'**
+  String get sdModesTemplateHint;
+
+  /// No description provided for @sdModesErrNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get sdModesErrNameRequired;
+
+  /// No description provided for @sdModesErrNameJsonSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Name can\'t contain quotes or backslashes'**
+  String get sdModesErrNameJsonSafe;
+
+  /// No description provided for @sdModesErrProfileRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a profile'**
+  String get sdModesErrProfileRequired;
+
+  /// No description provided for @sdModesErrProfileId.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile id: letters/digits/_-, max 15'**
+  String get sdModesErrProfileId;
+
+  /// No description provided for @sdModesErrHostRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Target IP/host is required'**
+  String get sdModesErrHostRequired;
+
+  /// No description provided for @sdModesErrTopicRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Topic is required'**
+  String get sdModesErrTopicRequired;
+
+  /// No description provided for @sdModesErrBrokerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Broker is required'**
+  String get sdModesErrBrokerRequired;
+
+  /// No description provided for @sdModesSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Mode saved'**
+  String get sdModesSaved;
+
+  /// No description provided for @sdModesTestOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Test OK · HTTP {status}'**
+  String sdModesTestOk(int status);
+
+  /// No description provided for @sdModesTestFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Test failed: {error}'**
+  String sdModesTestFail(String error);
+
+  /// No description provided for @sdModesClearConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear slot?'**
+  String get sdModesClearConfirmTitle;
+
+  /// No description provided for @sdModesClearConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The binding is removed from the device; the slot goes empty.'**
+  String get sdModesClearConfirmBody;
+
+  /// No description provided for @sdModesTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test'**
+  String get sdModesTest;
+
+  /// No description provided for @sdModesClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get sdModesClear;
+
+  /// No description provided for @sdProfilesRemoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove profile?'**
+  String get sdProfilesRemoveTitle;
+
+  /// No description provided for @sdProfilesRemoveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{id} is removed from the device.'**
+  String sdProfilesRemoveBody(String id);
+
+  /// No description provided for @sdProfilesErrInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile is used by a mode slot — clear the slot first'**
+  String get sdProfilesErrInUse;
+
+  /// No description provided for @sdProfilesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No profiles on the device yet. Add one with +.'**
+  String get sdProfilesEmpty;
+
+  /// No description provided for @sdProfilesShowJson.
+  ///
+  /// In en, this message translates to:
+  /// **'Show JSON'**
+  String get sdProfilesShowJson;
+
+  /// No description provided for @sdProfilesErrJsonEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the profile JSON'**
+  String get sdProfilesErrJsonEmpty;
+
+  /// No description provided for @sdProfilesErrTooBig.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile exceeds 2048 bytes'**
+  String get sdProfilesErrTooBig;
+
+  /// No description provided for @sdProfilesErrJsonInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid JSON: {error}'**
+  String sdProfilesErrJsonInvalid(String error);
+
+  /// No description provided for @sdProfilesErrJsonNotObject.
+  ///
+  /// In en, this message translates to:
+  /// **'Top level must be a JSON object'**
+  String get sdProfilesErrJsonNotObject;
+
+  /// No description provided for @sdProfilesErrIdRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'\"id\" field is required'**
+  String get sdProfilesErrIdRequired;
+
+  /// No description provided for @sdProfilesErrIdFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'id: letters/digits/_-, max 15 chars'**
+  String get sdProfilesErrIdFormat;
+
+  /// No description provided for @sdProfilesErrVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'\"v\": 2 is required'**
+  String get sdProfilesErrVersion;
+
+  /// No description provided for @sdProfilesAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile saved'**
+  String get sdProfilesAdded;
+
+  /// No description provided for @sdProfilesAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add profile'**
+  String get sdProfilesAddTitle;
+
+  /// No description provided for @sdProfilesAddHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a catalog profile (v2 JSON). The device validates it again on save.'**
+  String get sdProfilesAddHint;
+
+  /// No description provided for @sdSafeClearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear entry?'**
+  String get sdSafeClearTitle;
+
+  /// No description provided for @sdSafeClearBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe entry {n} is removed from the device.'**
+  String sdSafeClearBody(int n);
+
+  /// No description provided for @sdSafeIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Each entry maps a secret knob sequence to a webhook. Sequences are entered ONLY on the device; this screen never shows their content.'**
+  String get sdSafeIntro;
+
+  /// No description provided for @sdSafeEntryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty'**
+  String get sdSafeEntryEmpty;
+
+  /// No description provided for @sdSafeEntryN.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry {n}'**
+  String sdSafeEntryN(int n);
+
+  /// No description provided for @sdSafeEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe entry {n}'**
+  String sdSafeEditTitle(int n);
+
+  /// No description provided for @sdSafeFieldSequence.
+  ///
+  /// In en, this message translates to:
+  /// **'New sequence'**
+  String get sdSafeFieldSequence;
+
+  /// No description provided for @sdSafeFieldSequenceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Format: L3-R5-L2-B · L/R + turns (1-99), optional trailing B (button)'**
+  String get sdSafeFieldSequenceHint;
+
+  /// No description provided for @sdSafeFieldEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Webhook (API endpoint)'**
+  String get sdSafeFieldEndpoint;
+
+  /// No description provided for @sdSafeFieldEndpointEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No endpoints on device — add one under Webhooks & API first'**
+  String get sdSafeFieldEndpointEmpty;
+
+  /// No description provided for @sdSafeErrSequenceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a sequence'**
+  String get sdSafeErrSequenceRequired;
+
+  /// No description provided for @sdSafeErrSequenceFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid format — e.g. L3-R5-L2-B'**
+  String get sdSafeErrSequenceFormat;
+
+  /// No description provided for @sdSafeErrSequenceTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'At most 16 segments'**
+  String get sdSafeErrSequenceTooLong;
+
+  /// No description provided for @sdSafeErrEndpointRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a webhook endpoint'**
+  String get sdSafeErrEndpointRequired;
+
+  /// No description provided for @sdSafeSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe entry saved'**
+  String get sdSafeSaved;
+
+  /// No description provided for @sdSafeFieldLockout.
+  ///
+  /// In en, this message translates to:
+  /// **'Lockout'**
+  String get sdSafeFieldLockout;
+
+  /// No description provided for @sdSafeFieldLockoutHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong attempts temporarily block input'**
+  String get sdSafeFieldLockoutHint;
+
+  /// No description provided for @sdSafeFieldLockAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'After N wrong'**
+  String get sdSafeFieldLockAfter;
+
+  /// No description provided for @sdSafeFieldLockSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock seconds'**
+  String get sdSafeFieldLockSeconds;
+
+  /// No description provided for @sdPrefsErrQuietFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Format: HH:MM-HH:MM (empty = off)'**
+  String get sdPrefsErrQuietFormat;
+
+  /// No description provided for @sdPrefsGestures.
+  ///
+  /// In en, this message translates to:
+  /// **'Gestures'**
+  String get sdPrefsGestures;
+
+  /// No description provided for @sdPrefsGesturesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Double click / long press presets; single click gets a 300 ms delay'**
+  String get sdPrefsGesturesHint;
+
+  /// No description provided for @sdPrefsBuzzer.
+  ///
+  /// In en, this message translates to:
+  /// **'Buzzer'**
+  String get sdPrefsBuzzer;
+
+  /// No description provided for @sdPrefsBuzzerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'All device beeps'**
+  String get sdPrefsBuzzerHint;
+
+  /// No description provided for @sdPrefsQuiet.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours'**
+  String get sdPrefsQuiet;
+
+  /// No description provided for @sdPrefsQuietHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Beeps muted in this window; needs the device clock (tz)'**
+  String get sdPrefsQuietHint;
+
+  /// No description provided for @sdPrefsTz.
+  ///
+  /// In en, this message translates to:
+  /// **'Timezone (POSIX)'**
+  String get sdPrefsTz;
+
+  /// No description provided for @sdPrefsTzHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Required for quiet hours, e.g. CET-1CEST,M3.5.0,M10.5.0/3'**
+  String get sdPrefsTzHint;
 
   /// No description provided for @deviceConnUnreachableTitle.
   ///

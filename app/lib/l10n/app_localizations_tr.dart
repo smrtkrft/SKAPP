@@ -971,6 +971,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get productLebensSpur => 'LebensSpur';
 
   @override
+  String get productSynDimm => 'SynDimm';
+
+  @override
   String get productGeneric => 'SmartKraft cihazı';
 
   @override
@@ -1866,6 +1869,365 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get sdSafeNote =>
       'Dizi girişi yalnızca cihazdaki düğmeyle yapılır — bu ekran durumu gösterir.';
+
+  @override
+  String get sdSettingsSectionControl => 'Kontrol';
+
+  @override
+  String get sdModesTitle => 'Modlar';
+
+  @override
+  String get sdSettingsModesSubtitle => '3 slot · davranış ve hedef ataması';
+
+  @override
+  String get sdProfilesTitle => 'Profiller';
+
+  @override
+  String get sdSettingsProfilesSubtitle => 'Hedef cihaz komut şablonları';
+
+  @override
+  String get sdSafeTitle => 'Kasa';
+
+  @override
+  String get sdSettingsSafeSubtitle => 'Diziler ve webhook\'lar';
+
+  @override
+  String get sdPrefsTitle => 'Tercihler';
+
+  @override
+  String get sdSettingsPrefsSubtitle => 'Jestler, buzzer, sessiz saatler';
+
+  @override
+  String get sdEventsTitle => 'Olaylar';
+
+  @override
+  String get sdSettingsEventsSubtitle => 'Canlı olay akışı';
+
+  @override
+  String get sdSettingsLogsSubtitle => 'Cihaz günlükleri';
+
+  @override
+  String get sdDashboardWebhooks => 'Webhook\'lar & API';
+
+  @override
+  String sdEventsModeChanged(String slot, String name) {
+    return 'Aktif mod: slot $slot · $name';
+  }
+
+  @override
+  String sdEventsModeError(String slot) {
+    return 'Slot $slot sürücü hatası';
+  }
+
+  @override
+  String sdEventsTargetOffline(String slot) {
+    return 'Slot $slot hedefine ulaşılamıyor';
+  }
+
+  @override
+  String sdEventsTargetOnline(String slot) {
+    return 'Slot $slot hedefi yeniden çevrimiçi';
+  }
+
+  @override
+  String get sdEventsSafeTriggered =>
+      'Kasa dizisi eşleşti — webhook tetiklendi';
+
+  @override
+  String get sdEventsSafeWrong => 'Yanlış kasa dizisi';
+
+  @override
+  String sdEventsSafeLockout(int seconds) {
+    return 'Kasa $seconds sn kilitlendi';
+  }
+
+  @override
+  String sdEventsGesture(String type) {
+    return 'Jest: $type';
+  }
+
+  @override
+  String sdEventsPrefChanged(String key) {
+    return 'Tercih değişti: $key';
+  }
+
+  @override
+  String get sdModesDisabled => 'devre dışı';
+
+  @override
+  String sdModesSlotN(int n) {
+    return 'Slot $n';
+  }
+
+  @override
+  String get sdModesMakeActive => 'Aktif yap';
+
+  @override
+  String sdModesEditTitle(int n) {
+    return 'Slot $n · Mod';
+  }
+
+  @override
+  String get sdModesFieldBehavior => 'Davranış';
+
+  @override
+  String get sdModesFieldName => 'Ad';
+
+  @override
+  String get sdModesFieldEnabled => 'Etkin';
+
+  @override
+  String get sdModesSafeHint =>
+      'Diziler ve webhook\'lar Ayarlar → Kasa\'da yapılandırılır. Dizi girişi yalnız cihazdandır.';
+
+  @override
+  String get sdModesFieldProfile => 'Profil';
+
+  @override
+  String get sdModesFieldHost => 'Hedef IP / host';
+
+  @override
+  String get sdModesFieldPort => 'Port';
+
+  @override
+  String get sdModesFieldStep => 'Adım';
+
+  @override
+  String get sdModesFieldDeviceId => 'Cihaz ID (isteğe bağlı)';
+
+  @override
+  String get sdModesFieldAuthKey => 'API anahtarı (isteğe bağlı)';
+
+  @override
+  String get sdModesFieldAccel => 'Hızlanma';
+
+  @override
+  String get sdModesFieldGestures => 'Jest preset\'leri';
+
+  @override
+  String get sdModesFieldGesturesHint =>
+      'Çift tık ve uzun basış preset değerine atlar';
+
+  @override
+  String get sdModesFieldPresetDouble => 'Çift tık %';
+
+  @override
+  String get sdModesFieldPresetLong => 'Uzun basış %';
+
+  @override
+  String get sdModesFieldBroker => 'MQTT broker';
+
+  @override
+  String get sdModesFieldBrokerPort => 'Broker portu';
+
+  @override
+  String get sdModesFieldTopic => 'Konu (topic)';
+
+  @override
+  String get sdModesFieldPayloadValue => 'Değer payload\'ı';
+
+  @override
+  String get sdModesFieldPayloadGesture => 'Jest payload\'ı';
+
+  @override
+  String get sdModesTemplateHint =>
+      'Şablon belirteçleri: value, toggle, device_id, auth_key';
+
+  @override
+  String get sdModesErrNameRequired => 'Ad gerekli';
+
+  @override
+  String get sdModesErrNameJsonSafe => 'Ad tırnak veya ters bölü içeremez';
+
+  @override
+  String get sdModesErrProfileRequired => 'Profil seçin';
+
+  @override
+  String get sdModesErrProfileId => 'Profil id: harf/rakam/_-, en çok 15';
+
+  @override
+  String get sdModesErrHostRequired => 'Hedef IP/host gerekli';
+
+  @override
+  String get sdModesErrTopicRequired => 'Topic gerekli';
+
+  @override
+  String get sdModesErrBrokerRequired => 'Broker gerekli';
+
+  @override
+  String get sdModesSaved => 'Mod kaydedildi';
+
+  @override
+  String sdModesTestOk(int status) {
+    return 'Test OK · HTTP $status';
+  }
+
+  @override
+  String sdModesTestFail(String error) {
+    return 'Test başarısız: $error';
+  }
+
+  @override
+  String get sdModesClearConfirmTitle => 'Slot temizlensin mi?';
+
+  @override
+  String get sdModesClearConfirmBody =>
+      'Bağlama cihazdan silinir; slot boş kalır.';
+
+  @override
+  String get sdModesTest => 'Test';
+
+  @override
+  String get sdModesClear => 'Temizle';
+
+  @override
+  String get sdProfilesRemoveTitle => 'Profil silinsin mi?';
+
+  @override
+  String sdProfilesRemoveBody(String id) {
+    return '$id cihazdan silinir.';
+  }
+
+  @override
+  String get sdProfilesErrInUse =>
+      'Profil bir mod slotunda kullanılıyor — önce slotu temizleyin';
+
+  @override
+  String get sdProfilesEmpty => 'Cihazda henüz profil yok. + ile ekleyin.';
+
+  @override
+  String get sdProfilesShowJson => 'JSON\'u göster';
+
+  @override
+  String get sdProfilesErrJsonEmpty => 'Profil JSON\'unu yapıştırın';
+
+  @override
+  String get sdProfilesErrTooBig => 'Profil 2048 baytı aşıyor';
+
+  @override
+  String sdProfilesErrJsonInvalid(String error) {
+    return 'Geçersiz JSON: $error';
+  }
+
+  @override
+  String get sdProfilesErrJsonNotObject =>
+      'En üst düzey bir JSON nesnesi olmalı';
+
+  @override
+  String get sdProfilesErrIdRequired => '\"id\" alanı gerekli';
+
+  @override
+  String get sdProfilesErrIdFormat => 'id: harf/rakam/_-, en çok 15 karakter';
+
+  @override
+  String get sdProfilesErrVersion => '\"v\": 2 olmalı';
+
+  @override
+  String get sdProfilesAdded => 'Profil kaydedildi';
+
+  @override
+  String get sdProfilesAddTitle => 'Profil ekle';
+
+  @override
+  String get sdProfilesAddHint =>
+      'Katalog profilini (v2 JSON) yapıştırın. Cihaz kaydederken yeniden doğrular.';
+
+  @override
+  String get sdSafeClearTitle => 'Kayıt silinsin mi?';
+
+  @override
+  String sdSafeClearBody(int n) {
+    return 'Kasa kaydı $n cihazdan silinir.';
+  }
+
+  @override
+  String get sdSafeIntro =>
+      'Her kayıt gizli bir düğme dizisini bir webhook\'a bağlar. Diziler YALNIZ cihazda girilir; bu ekran içeriklerini asla göstermez.';
+
+  @override
+  String get sdSafeEntryEmpty => 'Boş';
+
+  @override
+  String sdSafeEntryN(int n) {
+    return 'Kayıt $n';
+  }
+
+  @override
+  String sdSafeEditTitle(int n) {
+    return 'Kasa kaydı $n';
+  }
+
+  @override
+  String get sdSafeFieldSequence => 'Yeni dizi';
+
+  @override
+  String get sdSafeFieldSequenceHint =>
+      'Biçim: L3-R5-L2-B · L/R + tur (1-99), sona isteğe bağlı B (buton)';
+
+  @override
+  String get sdSafeFieldEndpoint => 'Webhook (API kaydı)';
+
+  @override
+  String get sdSafeFieldEndpointEmpty =>
+      'Cihazda kayıtlı endpoint yok — önce Webhook\'lar & API bölümünden ekleyin';
+
+  @override
+  String get sdSafeErrSequenceRequired => 'Dizi girin';
+
+  @override
+  String get sdSafeErrSequenceFormat => 'Geçersiz biçim — örn. L3-R5-L2-B';
+
+  @override
+  String get sdSafeErrSequenceTooLong => 'En çok 16 segment';
+
+  @override
+  String get sdSafeErrEndpointRequired => 'Webhook kaydı seçin';
+
+  @override
+  String get sdSafeSaved => 'Kasa kaydı kaydedildi';
+
+  @override
+  String get sdSafeFieldLockout => 'Kilitleme';
+
+  @override
+  String get sdSafeFieldLockoutHint =>
+      'Çok sayıda yanlış deneme girişi geçici kilitler';
+
+  @override
+  String get sdSafeFieldLockAfter => 'N yanlıştan sonra';
+
+  @override
+  String get sdSafeFieldLockSeconds => 'Kilit süresi (sn)';
+
+  @override
+  String get sdPrefsErrQuietFormat => 'Biçim: SS:DD-SS:DD (boş = kapalı)';
+
+  @override
+  String get sdPrefsGestures => 'Jestler';
+
+  @override
+  String get sdPrefsGesturesHint =>
+      'Çift tık / uzun basış preset\'leri; tek tık 300 ms gecikir';
+
+  @override
+  String get sdPrefsBuzzer => 'Buzzer';
+
+  @override
+  String get sdPrefsBuzzerHint => 'Cihazdaki tüm bipler';
+
+  @override
+  String get sdPrefsQuiet => 'Sessiz saatler';
+
+  @override
+  String get sdPrefsQuietHint =>
+      'Bu aralıkta bipler susar; cihaz saati (tz) gerekir';
+
+  @override
+  String get sdPrefsTz => 'Saat dilimi (POSIX)';
+
+  @override
+  String get sdPrefsTzHint =>
+      'Sessiz saatler için gerekli, örn. CET-1CEST,M3.5.0,M10.5.0/3';
 
   @override
   String get deviceConnUnreachableTitle => 'Cihaza ulaşılamıyor';
