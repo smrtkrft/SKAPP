@@ -1813,6 +1813,46 @@ class AppLocalizationsTr extends AppLocalizations {
   String get bfHomeLoadingSecure => 'Güvenli kanal açılıyor…';
 
   @override
+  String get sdHomeLoadingConnecting => 'Cihaza bağlanılıyor…';
+
+  @override
+  String get sdHomeLoadingSecure => 'Güvenli kanal açılıyor…';
+
+  @override
+  String get sdDashboardTitleFallback => 'SynDimm';
+
+  @override
+  String get sdDashboardWifiNone => 'WiFi yok';
+
+  @override
+  String get sdDashboardLinkBle => 'BLE';
+
+  @override
+  String get sdDashboardLinkWifi => 'WiFi';
+
+  @override
+  String get sdDashboardLinkUsb => 'USB';
+
+  @override
+  String get sdDashboardSlotEmpty => 'Boş';
+
+  @override
+  String get sdDashboardSlotError => 'Hata';
+
+  @override
+  String get sdDashboardOffline =>
+      'Hedefe ulaşılamıyor — yerel değer ilerlemeye devam ediyor';
+
+  @override
+  String get sdDashboardRecovery =>
+      'Kurtarma modu: slotlar yüklenmedi. Cihaz istikrarlı açılıştan sonra yeniden etkinleştirir.';
+
+  @override
+  String sdDashboardWriteFailed(String error) {
+    return 'Yazılamadı: $error';
+  }
+
+  @override
   String get deviceConnUnreachableTitle => 'Cihaza ulaşılamıyor';
 
   @override

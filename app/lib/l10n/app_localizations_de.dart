@@ -1818,6 +1818,46 @@ class AppLocalizationsDe extends AppLocalizations {
   String get bfHomeLoadingSecure => 'Sicherer Kanal wird geöffnet…';
 
   @override
+  String get sdHomeLoadingConnecting => 'Connecting to device…';
+
+  @override
+  String get sdHomeLoadingSecure => 'Opening secure channel…';
+
+  @override
+  String get sdDashboardTitleFallback => 'SynDimm';
+
+  @override
+  String get sdDashboardWifiNone => 'No WiFi';
+
+  @override
+  String get sdDashboardLinkBle => 'BLE';
+
+  @override
+  String get sdDashboardLinkWifi => 'WiFi';
+
+  @override
+  String get sdDashboardLinkUsb => 'USB';
+
+  @override
+  String get sdDashboardSlotEmpty => 'Empty';
+
+  @override
+  String get sdDashboardSlotError => 'Error';
+
+  @override
+  String get sdDashboardOffline =>
+      'Target unreachable — local value keeps advancing';
+
+  @override
+  String get sdDashboardRecovery =>
+      'Recovery mode: slots are not loaded. The device re-enables them after a stable boot.';
+
+  @override
+  String sdDashboardWriteFailed(String error) {
+    return 'Couldn\'t write: $error';
+  }
+
+  @override
   String get deviceConnUnreachableTitle => 'Gerät nicht erreichbar';
 
   @override

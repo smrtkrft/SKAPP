@@ -3244,6 +3244,78 @@ abstract class AppLocalizations {
   /// **'Opening secure channel…'**
   String get bfHomeLoadingSecure;
 
+  /// No description provided for @sdHomeLoadingConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to device…'**
+  String get sdHomeLoadingConnecting;
+
+  /// No description provided for @sdHomeLoadingSecure.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening secure channel…'**
+  String get sdHomeLoadingSecure;
+
+  /// No description provided for @sdDashboardTitleFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'SynDimm'**
+  String get sdDashboardTitleFallback;
+
+  /// No description provided for @sdDashboardWifiNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No WiFi'**
+  String get sdDashboardWifiNone;
+
+  /// No description provided for @sdDashboardLinkBle.
+  ///
+  /// In en, this message translates to:
+  /// **'BLE'**
+  String get sdDashboardLinkBle;
+
+  /// No description provided for @sdDashboardLinkWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'WiFi'**
+  String get sdDashboardLinkWifi;
+
+  /// No description provided for @sdDashboardLinkUsb.
+  ///
+  /// In en, this message translates to:
+  /// **'USB'**
+  String get sdDashboardLinkUsb;
+
+  /// No description provided for @sdDashboardSlotEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty'**
+  String get sdDashboardSlotEmpty;
+
+  /// No description provided for @sdDashboardSlotError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get sdDashboardSlotError;
+
+  /// No description provided for @sdDashboardOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Target unreachable — local value keeps advancing'**
+  String get sdDashboardOffline;
+
+  /// No description provided for @sdDashboardRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery mode: slots are not loaded. The device re-enables them after a stable boot.'**
+  String get sdDashboardRecovery;
+
+  /// No description provided for @sdDashboardWriteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t write: {error}'**
+  String sdDashboardWriteFailed(String error);
+
   /// No description provided for @deviceConnUnreachableTitle.
   ///
   /// In en, this message translates to:

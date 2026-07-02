@@ -21,6 +21,9 @@ class DeviceTypeVisual {
         return Icons.hourglass_bottom_rounded;
       case 'MS':
         return Icons.smartphone_outlined;
+      case 'SD':
+        // Rotary knob silhouette — the device IS a dial.
+        return Icons.adjust;
       default:
         return Icons.bluetooth_rounded;
     }
@@ -37,6 +40,8 @@ class DeviceTypeVisual {
         return 'LebensSpur';
       case 'MS':
         return 'SKAPP Mobile';
+      case 'SD':
+        return 'SynDimm';
       default:
         return prefix ?? '';
     }
