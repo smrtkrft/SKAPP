@@ -34,11 +34,10 @@ class DiscoveryScreen extends ConsumerStatefulWidget {
 
 class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
   _Stage _stage = _Stage.checking;
-  // Default: show everything. The SmartKraft name filter is helpful in
-  // production but actively hides debugging information when a real
-  // device is missing, turning it off lets the user see whether BLE
-  // is reaching us at all.
-  bool _onlySmartKraft = false;
+  // Default: SmartKraft cihazlarını göster (kullanıcı isteği). Keşif listesi
+  // yalnız SmartKraft cihazlarıyla başlar; kullanıcı üstteki filtre butonuyla
+  // (BLE hata ayıklaması için) tüm cihazları göstermeye geçebilir.
+  bool _onlySmartKraft = true;
 
   // mDNS results accumulate here in parallel with the BLE scan stream.
   // A SmartKraft device that's bonded to its WiFi appears via mDNS even

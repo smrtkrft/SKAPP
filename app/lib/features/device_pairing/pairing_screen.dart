@@ -140,17 +140,24 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     }
     _decideRunning = true;
     try {
-      // BondStore lookup decides the path. Note: hasBond is async (secure
-      // storage I/O), so the screen briefly shows the "Bağlanılıyor"
-      // step before either branch starts.
-      final bonded = await ref.read(bondStoreProvider).hasBond(widget.device.id);
+      // REQUEST-DRIVEN BOOTSTRAP FIRST (deterministik, yarış-bağışık).
+      //
+      // Eski tasarım: bond varsa reconnect'e giriyordu ve cihazın abonelik
+      // anında ATTIĞI proaktif hint'i (auth.challenge / pairing.required)
+      // beklerdi. macOS/BLE'de bu notify, setNotifyValue anında geldiğinden
+      // KAÇABİLİYOR → app 8-30 sn boşa bekliyor, "transient" sanıp otomatik
+      // bootstrap'a düşmüyor (gözlemlenen "X25519'da sonsuz takılma").
+      //
+      // Yeni tasarım: app önce PROAKTİF olarak pairing.ecdh.exchange yazar
+      // (bootstrap). Bu, cihazın konuşmasını beklemediğinden yarıştan
+      // bağımsızdır ve our_pub cevabı yazıdan SONRA geldiğinden güvenle
+      // yakalanır. Cihaz zaten bond'luysa (pairing penceresi kapalı) ECDH
+      // `ERR_PAIRING_NOT_OPEN` döner → _runFlow mevcut bond'la reconnect'e
+      // devreder. Böylece hem taze-ekleme hem repair tek deterministik yolla
+      // çalışır.
       if (!mounted) return;
-      setState(() => _isReconnect = bonded);
-      if (bonded) {
-        await _runReconnect();
-      } else {
-        await _runFlow();
-      }
+      setState(() => _isReconnect = false);
+      await _runFlow();
     } finally {
       _decideRunning = false;
     }
@@ -470,6 +477,24 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
         final params = reply['params'] as Map<String, dynamic>?;
         final peers  = (params?['peers'] as List?) ?? const [];
         if (mounted) _fail(bondStoreFullMessage(context, peers));
+        return;
+      }
+      // Cihaz pairing modunda DEĞİL (zaten bir bond'u var, pencere kapalı) →
+      // yeni eşleşme değil, mevcut bond'la RECONNECT gerekir. Bu bağlantıyı
+      // temizce kapatıp reconnect yoluna devret. (Bootstrap-first tasarımın
+      // repair ayağı.)
+      if (errCode == 'ERR_PAIRING_NOT_OPEN') {
+        _trace('bootstrap: device already bonded (window closed) → reconnect');
+        await _notifySub?.cancel();
+        _notifySub = null;
+        try {
+          await _btDevice?.disconnect();
+        } catch (_) {/* zaten kopuk */}
+        _btDevice = null;
+        ref.invalidate(deviceSessionProvider(widget.device.id));
+        if (!mounted) return;
+        setState(() => _isReconnect = true);
+        await _runReconnect();
         return;
       }
       if (!mounted) return;
