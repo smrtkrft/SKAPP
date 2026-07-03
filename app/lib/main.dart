@@ -153,7 +153,7 @@ Future<void> _bootstrap(List<String> args) async {
   // or fresh-token generation.
   String? bearerFromSecure;
   try {
-    const storage = skSecureStorage;
+    final storage = skSecureStorage;
     bearerFromSecure = await storage.read(key: bearerTokenSecureKey);
   } catch (e) {
     debugPrint('[secure-storage] bootstrap read failed: $e');

@@ -6,7 +6,7 @@ import 'package:convert/convert.dart';
 
 class TokenStore {
   TokenStore._();
-  static const _storage = skSecureStorage;
+  static final _storage = skSecureStorage;
 
   /// Persist a 32-byte session token for [deviceId].
   static Future<void> save(String deviceId, List<int> token) async {

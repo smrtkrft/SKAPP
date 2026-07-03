@@ -96,7 +96,7 @@ Future<SelfSignedCert> regenerateCert({required String uuid}) async {
 Future<SelfSignedCert?> _readCert() async {
   // Try secure storage first.
   try {
-    const storage = skSecureStorage;
+    final storage = skSecureStorage;
     final certPem = await storage.read(key: _kCertKey);
     final keyPem = await storage.read(key: _kKeyKey);
     if (certPem != null && keyPem != null) {
@@ -134,7 +134,7 @@ Future<void> _writeCert(SelfSignedCert cert) async {
   // the right home for a private key when it works.
   var secureOk = false;
   try {
-    const storage = skSecureStorage;
+    final storage = skSecureStorage;
     await storage.write(key: _kCertKey, value: cert.certPem);
     await storage.write(key: _kKeyKey, value: cert.privateKeyPem);
     secureOk = true;

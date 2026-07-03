@@ -83,7 +83,7 @@ final peerTokenBootstrapProvider = Provider<Map<String, String>>(
 );
 
 class PeerTokensNotifier extends Notifier<List<PeerTokenEntry>> {
-  static const _storage = skSecureStorage;
+  static final _storage = skSecureStorage;
 
   /// In-memory mirror of secure storage. Populated from the bootstrap
   /// provider on first build and kept in sync with every issue/revoke
@@ -252,7 +252,7 @@ final peerTokensProvider =
 Future<Map<String, String>> loadPeerTokensFromSecureStorage({
   required Iterable<String> peerUuids,
 }) async {
-  const storage = skSecureStorage;
+  final storage = skSecureStorage;
   final out = <String, String>{};
   for (final uuid in peerUuids) {
     try {

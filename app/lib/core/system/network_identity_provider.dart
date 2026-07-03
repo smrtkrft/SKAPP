@@ -119,7 +119,7 @@ class NetworkIdentityNotifier extends Notifier<NetworkIdentity> {
   /// Reusable secure storage handle. `FlutterSecureStorage` is stateless
   /// so a single const instance per notifier is safe and avoids
   /// re-initializing the platform channel on every write.
-  static const _storage = skSecureStorage;
+  static final _storage = skSecureStorage;
 
   @override
   NetworkIdentity build() {

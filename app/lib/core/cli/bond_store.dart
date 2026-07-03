@@ -23,16 +23,15 @@ import 'dart:typed_data';
 
 import 'package:convert/convert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../storage/sk_secure_storage.dart';
 
 import 'device_id.dart';
 
 class BondStore {
-  BondStore({FlutterSecureStorage? storage})
+  BondStore({SkSecureStore? storage})
       : _storage = storage ?? skSecureStorage;
 
-  final FlutterSecureStorage _storage;
+  final SkSecureStore _storage;
 
   static const _appPeerIdKey = 'app.peer_id';
 
