@@ -414,18 +414,39 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       }
     }
 
-    // Generate our keypair + send the multi-bond exchange (peer_id + label).
-    final ephemeral = await EcdhPairing().begin();
-    final ourPubHex = hex.encode(ephemeral.ourPublic);
-    final store = ref.read(bondStoreProvider);
-    final ourPeerId = await store.appPeerId();
-    final peerIdHex = hex.encode(ourPeerId);
-    // The bond_store `label` slot identifies THIS SKAPP instance for the
-    // device's logs and ERR_BOND_STORE_FULL peer list, not the device
-    // we're talking to. Pull our own name from NetworkIdentity so paired
-    // devices show "ali-telefon-skapp" rather than the device's own id.
-    final label =
-        shortPairingLabel(ref.read(networkIdentityProvider).name);
+    // Generate our keypair + resolve our stable peer_id + display label.
+    // A secure-storage failure here (e.g. macOS keychain unavailable) MUST
+    // surface as a clean pairing error — never an uncaught zone crash that
+    // leaves the UI spinning on "key exchange" forever. This was the root
+    // cause of the X25519 hang: `appPeerId()` wrote to the data-protection
+    // keychain, which threw errSecMissingEntitlement (-34018) on ad-hoc
+    // signed desktop builds, killing _runFlow before a single byte reached
+    // the device. The keychain itself is now fixed (skSecureStorage uses the
+    // legacy keychain on macOS); this guard is defence-in-depth so any future
+    // storage hiccup degrades to a retryable error, not a silent freeze.
+    final EphemeralPairing ephemeral;
+    final String ourPubHex;
+    final String peerIdHex;
+    final String label;
+    final BondStore store;
+    final Uint8List ourPeerId;
+    try {
+      ephemeral = await EcdhPairing().begin();
+      ourPubHex = hex.encode(ephemeral.ourPublic);
+      store = ref.read(bondStoreProvider);
+      // The bond_store `label` slot identifies THIS SKAPP instance for the
+      // device's logs and ERR_BOND_STORE_FULL peer list, not the device
+      // we're talking to. Pull our own name from NetworkIdentity so paired
+      // devices show "ali-telefon-skapp" rather than the device's own id.
+      ourPeerId = await store.appPeerId();
+      peerIdHex = hex.encode(ourPeerId);
+      label = shortPairingLabel(ref.read(networkIdentityProvider).name);
+    } catch (e) {
+      _trace('bootstrap: keygen/peer-id failed (secure storage?): $e');
+      if (!mounted) return;
+      _fail(AppLocalizations.of(context).pairingKeySendFailed(e.toString()));
+      return;
+    }
 
     armed = Completer<Map<String, dynamic>>();
     try {

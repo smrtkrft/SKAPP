@@ -67,8 +67,28 @@ class _WifiSuccessScreenState extends ConsumerState<WifiSuccessScreen> {
   }
 
   Future<void> _runFollowUp() async {
-    final session =
-        await ref.read(deviceSessionProvider(widget.device.id).future);
+    // The post-frame callback can fire after a fast unmount (an error on the
+    // previous screen pops us, the 6 s safety timer already advanced, …).
+    // Touching `ref` after unmount throws "Using ref when a widget is … been
+    // unmounted is unsafe", which — uncaught in this fire-and-forget call —
+    // took down the whole SynDimm UI. Bail before we touch any provider.
+    if (!mounted) return;
+
+    // Opening a session here is inherently racy: the device tears down and
+    // resumes its BLE link the instant it joins WiFi (event
+    // `ble.resume.after-wifi`), so this read can throw "CLI transport closed"
+    // / DeviceUnreachable. The WiFi save already succeeded (we only reach this
+    // screen on reply.ok); the follow-ups are best-effort, so on ANY failure
+    // we simply advance to the home shell, which opens its own fresh session.
+    final DeviceSession session;
+    try {
+      session = await ref.read(deviceSessionProvider(widget.device.id).future);
+    } catch (e) {
+      debugPrint('[WIFI-SUCCESS] follow-up session unavailable, advancing: $e');
+      _advance();
+      return;
+    }
+    if (!mounted) return;
 
     // 1. time.set, ignore failures, user does not care.
     final unixNow = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;

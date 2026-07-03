@@ -71,3 +71,4 @@ esp32/**/managed_components/
 .env
 .env.*
 *.swp
+app/ihlal.md
