@@ -21,7 +21,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../storage/sk_secure_storage.dart';
 
 import '../storage/paired_devices_store.dart';
 import '../storage/preferences_provider.dart';
@@ -83,7 +83,7 @@ final peerTokenBootstrapProvider = Provider<Map<String, String>>(
 );
 
 class PeerTokensNotifier extends Notifier<List<PeerTokenEntry>> {
-  static const _storage = FlutterSecureStorage();
+  static const _storage = skSecureStorage;
 
   /// In-memory mirror of secure storage. Populated from the bootstrap
   /// provider on first build and kept in sync with every issue/revoke
@@ -252,7 +252,7 @@ final peerTokensProvider =
 Future<Map<String, String>> loadPeerTokensFromSecureStorage({
   required Iterable<String> peerUuids,
 }) async {
-  const storage = FlutterSecureStorage();
+  const storage = skSecureStorage;
   final out = <String, String>{};
   for (final uuid in peerUuids) {
     try {

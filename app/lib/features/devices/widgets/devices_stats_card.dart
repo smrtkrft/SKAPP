@@ -12,6 +12,7 @@ class DevicesStatsCard extends StatelessWidget {
     required this.paired,
     required this.bf,
     required this.ls,
+    this.sd = 0,
     this.ms = 0,
     this.dk = 0,
   });
@@ -19,6 +20,10 @@ class DevicesStatsCard extends StatelessWidget {
   final int paired;
   final int bf;
   final int ls;
+
+  /// Paired SynDimm ("SD" prefix) hardware. Renders an extra stat when
+  /// non-zero; hidden at zero so the card doesn't grow for users without one.
+  final int sd;
 
   /// Paired mobile SKAPP peers ("MS" prefix). Renders an extra stat
   /// when non-zero; hidden at zero so the card doesn't grow for users
@@ -59,6 +64,10 @@ class DevicesStatsCard extends StatelessWidget {
           _Stat(value: bf, label: l.devicesStatBf, fg: fg),
           _Sep(fg: fg),
           _Stat(value: ls, label: l.devicesStatLs, fg: fg),
+          if (sd > 0) ...[
+            _Sep(fg: fg),
+            _Stat(value: sd, label: l.devicesStatSd, fg: fg),
+          ],
           if (dk > 0) ...[
             _Sep(fg: fg),
             _Stat(value: dk, label: l.devicesDesktopStatLabel, fg: fg),

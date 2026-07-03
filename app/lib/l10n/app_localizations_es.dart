@@ -1074,6 +1074,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get devicesStatMs => 'teléfono';
 
   @override
+  String get devicesStatSd => 'SD';
+
+  @override
   String get devicesEmptyHubLabel => 'Desconocido';
 
   @override

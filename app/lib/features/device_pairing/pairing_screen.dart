@@ -234,13 +234,24 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
         return;
       }
 
-      _trace('reconnect rejected ($e) — asking user for pairing-mode confirm');
-      if (!mounted) return;
-      final proceed = await _confirmPairingMode();
-      if (!mounted) return;
-      if (proceed != true) {
-        _fail(AppLocalizations.of(context).pairingRecoveryCancelled);
-        return;
+      // Cihaz "pairing.required (no_bond)" hint'i gönderdiyse pairing penceresi
+      // ZATEN açık (firmware sabit-güç fix'i: sahipsiz cihaz her zaman
+      // eşleşilebilir). Kullanıcıya "butona bas" dedirtmeden bayat bond'u
+      // otomatik temizleyip bootstrap'a düş — kusursuz/sürtünmesiz eşleşme.
+      // Diğer sert reddedişlerde (bond farklı/çürük, pencere gerçekten kapalı)
+      // onay dialog'unu göster.
+      if (e is! PairingRequiredException) {
+        _trace('reconnect rejected ($e) — asking user for pairing-mode confirm');
+        if (!mounted) return;
+        final proceed = await _confirmPairingMode();
+        if (!mounted) return;
+        if (proceed != true) {
+          _fail(AppLocalizations.of(context).pairingRecoveryCancelled);
+          return;
+        }
+      } else {
+        _trace('reconnect: device pairable (no_bond) — '
+            'auto-clearing stale bond and bootstrapping');
       }
 
       try {

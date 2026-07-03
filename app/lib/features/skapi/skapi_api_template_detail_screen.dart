@@ -98,11 +98,12 @@ class SkapiApiTemplateDetailScreen extends ConsumerWidget {
   ) async {
     final paired = ref.read(pairedDevicesProvider);
 
-    // Filter by target device type; same logic as SkapiScreen but the
-    // filter could differ if a future template targets LebensSpur etc.
-    final wantsBf = manifest.targetDeviceType == 'bf';
+    // Filter by target device type, generically: match the paired device's
+    // prefix (BF/LS/SD/…) against the template's declared target. Previously
+    // hardcoded to BF only, which dropped SynDimm (SD) and any future family.
+    final wantPrefix = manifest.targetDeviceType.toUpperCase();
     final candidates = paired
-        .where((d) => wantsBf ? d.prefix == 'BF' : false)
+        .where((d) => d.prefix.toUpperCase() == wantPrefix)
         .toList(growable: false);
 
     if (candidates.isEmpty) {

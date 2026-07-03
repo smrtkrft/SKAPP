@@ -683,10 +683,12 @@ class _DevicesStatsFromDevices extends StatelessWidget {
   Widget build(BuildContext context) {
     int bf = 0;
     int ls = 0;
+    int sd = 0;
     int ms = 0;
     for (final d in devices) {
       if (d.prefix == 'BF') bf++;
       if (d.prefix == 'LS') ls++;
+      if (d.prefix == 'SD') sd++;
       if (d.prefix == 'MS') ms++;
     }
     final dk = desktopPeers.length;
@@ -696,9 +698,10 @@ class _DevicesStatsFromDevices extends StatelessWidget {
     // arası tutarlı: bağlı = takip edilen online/offline cihazlar (SK +
     // desktop), telefon ayrı kategori.
     return DevicesStatsCard(
-      paired: bf + ls + dk,
+      paired: bf + ls + sd + dk,
       bf: bf,
       ls: ls,
+      sd: sd,
       ms: ms,
       dk: dk,
     );

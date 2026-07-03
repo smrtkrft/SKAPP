@@ -24,12 +24,13 @@ import 'dart:typed_data';
 import 'package:convert/convert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../storage/sk_secure_storage.dart';
 
 import 'device_id.dart';
 
 class BondStore {
   BondStore({FlutterSecureStorage? storage})
-      : _storage = storage ?? const FlutterSecureStorage();
+      : _storage = storage ?? skSecureStorage;
 
   final FlutterSecureStorage _storage;
 

@@ -18,7 +18,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../storage/sk_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../cli/bond_store.dart';
@@ -149,7 +149,7 @@ class ResetService {
 
     // 4. TLS cert'i temizle (bir sonraki listener start'ta yeniden uretilir).
     await _runStep(errors, 'tls.clear', () async {
-      const storage = FlutterSecureStorage();
+      const storage = skSecureStorage;
       await storage.delete(key: 'tls.cert.v1');
       await storage.delete(key: 'tls.key.v1');
       // Linux fallback path'i de temizle.

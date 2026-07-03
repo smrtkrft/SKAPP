@@ -368,6 +368,7 @@
   "devicesStatPaired": "bağlı",
   "devicesStatBf": "BF",
   "devicesStatLs": "LS",
+  "devicesStatSd": "SD",
   "devicesStatMs": "telefon",
   "devicesEmptyHubLabel": "Bilinmeyen",
   "devicesEmptyAddCta": "İlk Cihazı Ekle",

@@ -1960,6 +1960,12 @@ abstract class AppLocalizations {
   /// **'phone'**
   String get devicesStatMs;
 
+  /// No description provided for @devicesStatSd.
+  ///
+  /// In en, this message translates to:
+  /// **'SD'**
+  String get devicesStatSd;
+
   /// No description provided for @devicesEmptyHubLabel.
   ///
   /// In en, this message translates to:

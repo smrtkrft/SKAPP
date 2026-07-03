@@ -1075,6 +1075,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get devicesStatMs => 'celular';
 
   @override
+  String get devicesStatSd => 'SD';
+
+  @override
   String get devicesEmptyHubLabel => 'Desconhecido';
 
   @override

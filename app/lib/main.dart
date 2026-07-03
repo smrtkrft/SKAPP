@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'core/storage/sk_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:window_manager/window_manager.dart';
@@ -153,7 +153,7 @@ Future<void> _bootstrap(List<String> args) async {
   // or fresh-token generation.
   String? bearerFromSecure;
   try {
-    const storage = FlutterSecureStorage();
+    const storage = skSecureStorage;
     bearerFromSecure = await storage.read(key: bearerTokenSecureKey);
   } catch (e) {
     debugPrint('[secure-storage] bootstrap read failed: $e');

@@ -1062,6 +1062,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get devicesStatMs => 'phone';
 
   @override
+  String get devicesStatSd => 'SD';
+
+  @override
   String get devicesEmptyHubLabel => 'Unknown';
 
   @override

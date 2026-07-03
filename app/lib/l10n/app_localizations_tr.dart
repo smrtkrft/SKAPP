@@ -1066,6 +1066,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get devicesStatMs => 'telefon';
 
   @override
+  String get devicesStatSd => 'SD';
+
+  @override
   String get devicesEmptyHubLabel => 'Bilinmeyen';
 
   @override

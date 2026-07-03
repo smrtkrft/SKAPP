@@ -1073,6 +1073,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get devicesStatMs => 'телефон';
 
   @override
+  String get devicesStatSd => 'SD';
+
+  @override
   String get devicesEmptyHubLabel => 'Неизвестно';
 
   @override

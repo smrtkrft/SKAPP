@@ -369,6 +369,7 @@
   "devicesStatBf": "BF",
   "devicesStatLs": "LS",
   "devicesStatMs": "phone",
+  "devicesStatSd": "SD",
   "devicesEmptyHubLabel": "Unknown",
   "devicesEmptyAddCta": "Add first device",
   "devicesEmptyHintChip": "bring device close, press its button",

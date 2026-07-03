@@ -23,7 +23,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../storage/sk_secure_storage.dart';
 
 import '../storage/preferences_provider.dart';
 
@@ -119,7 +119,7 @@ class NetworkIdentityNotifier extends Notifier<NetworkIdentity> {
   /// Reusable secure storage handle. `FlutterSecureStorage` is stateless
   /// so a single const instance per notifier is safe and avoids
   /// re-initializing the platform channel on every write.
-  static const _storage = FlutterSecureStorage();
+  static const _storage = skSecureStorage;
 
   @override
   NetworkIdentity build() {

@@ -35,7 +35,7 @@ import 'dart:io';
 import 'package:basic_utils/basic_utils.dart';
 import 'package:crypto/crypto.dart' as crypto_pkg;
 import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../storage/sk_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
 const _kCertKey = 'tls.cert.v1';
@@ -96,7 +96,7 @@ Future<SelfSignedCert> regenerateCert({required String uuid}) async {
 Future<SelfSignedCert?> _readCert() async {
   // Try secure storage first.
   try {
-    const storage = FlutterSecureStorage();
+    const storage = skSecureStorage;
     final certPem = await storage.read(key: _kCertKey);
     final keyPem = await storage.read(key: _kKeyKey);
     if (certPem != null && keyPem != null) {
@@ -134,7 +134,7 @@ Future<void> _writeCert(SelfSignedCert cert) async {
   // the right home for a private key when it works.
   var secureOk = false;
   try {
-    const storage = FlutterSecureStorage();
+    const storage = skSecureStorage;
     await storage.write(key: _kCertKey, value: cert.certPem);
     await storage.write(key: _kKeyKey, value: cert.privateKeyPem);
     secureOk = true;

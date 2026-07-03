@@ -1,15 +1,12 @@
 // Persisted session tokens, one per paired device. Uses
 // flutter_secure_storage which maps to Keychain / Keystore / DPAPI.
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../storage/sk_secure_storage.dart';
 import 'package:convert/convert.dart';
 
 class TokenStore {
   TokenStore._();
-  static const _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-  );
+  static const _storage = skSecureStorage;
 
   /// Persist a 32-byte session token for [deviceId].
   static Future<void> save(String deviceId, List<int> token) async {
