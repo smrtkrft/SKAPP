@@ -298,7 +298,15 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     // kopuş, sonra taze GAP connect.
     try {
       await dev.disconnect().timeout(const Duration(seconds: 3));
-    } catch (_) {/* zaten kopuk */}
+      // Bağlantının GERÇEKTEN kapandığını bekle: bir önceki reconnect
+      // transport'unun link'i hâlâ kapanıyorsa connect() cached state
+      // üzerinde no-op'a döner, GATT keşfi eski state'i görür ve ECDH
+      // yazısı sessizce hiçbir yere gitmez (gözlemlenen "X25519'da takılma").
+      await dev.connectionState
+          .firstWhere((s) => s == BluetoothConnectionState.disconnected)
+          .timeout(const Duration(seconds: 3));
+    } catch (_) {/* zaten kopuk / timeout — yine de taze connect deneriz */}
+    await Future.delayed(const Duration(milliseconds: 300));
 
     // ── 1. Connect ────────────────────────────────────────────────────
     try {
