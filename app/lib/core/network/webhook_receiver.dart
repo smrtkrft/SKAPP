@@ -60,12 +60,13 @@ class WebhookReceiver {
 
   final BondStore _bondStore;
 
-  /// Replay protection — dedups (deviceId, nonce) tuples seen in the last
-  /// few minutes. Ring size 256 is generous: even at 1 webhook/second the
-  /// 60-second timestamp window only allows ~60 entries inside the
-  /// acceptable region, so 256 keeps a comfortable safety margin without
-  /// growing without bound.
-  static const int _nonceRingSize = 256;
+  /// Replay protection — dedups (deviceId, nonce) tuples seen recently.
+  /// The ring must hold at least as many entries as can arrive inside the
+  /// [_maxSkew] timestamp window, otherwise a still-valid nonce could be
+  /// evicted and its envelope replayed. Even under the per-peer rate limit
+  /// a burst can exceed the old 256 cap; 1024 keeps a wide margin across
+  /// all bonded peers while staying bounded.
+  static const int _nonceRingSize = 1024;
   final Queue<String> _nonceRing = Queue<String>();
   final Set<String> _nonceSet = <String>{};
 

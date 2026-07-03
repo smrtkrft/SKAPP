@@ -24,7 +24,7 @@ import 'dart:typed_data';
 
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import '../ble/paired_ble_scanner.dart' show beginBleExclusive, endBleExclusive;
@@ -59,7 +59,11 @@ Stream<({String message, DateTime ts})> get bleTraceStream =>
     _bleTraceController.stream;
 
 void _bleTrace(String message) {
-  debugPrint('[BLE] $message');
+  // Console log only in debug builds — release logcat/console must not
+  // capture device-response fragments (may include the start of a
+  // `mode.get` payload / auth_key). The in-app pairing trace stream stays
+  // (it's the user's own device, shown transiently on the pairing screen).
+  if (kDebugMode) debugPrint('[BLE] $message');
   _bleTraceController.add((message: message, ts: DateTime.now()));
 }
 
@@ -189,8 +193,12 @@ class BleCliTransport implements CliTransport {
       _lineBuf
         ..clear()
         ..write(s.substring(nl + 1));
-      final preview = line.length > 60 ? '${line.substring(0, 60)}…' : line;
-      _bleTrace('rx line: $preview');
+      // Only trace the raw line preview in debug; in release just note that
+      // a line arrived so the pairing UI still shows progress without
+      // surfacing response content.
+      _bleTrace(kDebugMode
+          ? 'rx line: ${line.length > 60 ? '${line.substring(0, 60)}…' : line}'
+          : 'rx line (${line.length} B)');
       _handleLine(line);
     }
   }

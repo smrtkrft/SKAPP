@@ -638,9 +638,12 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
                     const SizedBox(height: 12),
                     TextField(
                       controller: _authKey,
-                      // Hedef API anahtarı: omuz sörfüne karşı gizli;
-                      // cihaza şifresiz gider (yerel ağ hedef sınırı).
+                      // Hedef API anahtarı: omuz sörfüne karşı gizli, klavye
+                      // önbelleğine/öneri geçmişine girmesin (safe dizi alanı
+                      // ile tutarlı sertleştirme).
                       obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
                       decoration: InputDecoration(
                         labelText: l.sdModesFieldAuthKey,
                       ),
