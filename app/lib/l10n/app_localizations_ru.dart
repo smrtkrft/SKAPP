@@ -1823,419 +1823,420 @@ class AppLocalizationsRu extends AppLocalizations {
   String get bfHomeLoadingSecure => 'Открытие защищённого канала…';
 
   @override
-  String get sdHomeLoadingConnecting => 'Connecting to device…';
+  String get sdHomeLoadingConnecting => 'Подключение к устройству…';
 
   @override
-  String get sdHomeLoadingSecure => 'Opening secure channel…';
+  String get sdHomeLoadingSecure => 'Открытие защищённого канала…';
 
   @override
   String get sdDashboardTitleFallback => 'SynDimm';
 
   @override
-  String get sdDashboardWifiNone => 'No WiFi';
+  String get sdDashboardWifiNone => 'Нет Wi-Fi';
 
   @override
   String get sdDashboardLinkBle => 'BLE';
 
   @override
-  String get sdDashboardLinkWifi => 'WiFi';
+  String get sdDashboardLinkWifi => 'Wi-Fi';
 
   @override
   String get sdDashboardLinkUsb => 'USB';
 
   @override
-  String get sdDashboardSlotEmpty => 'Empty';
+  String get sdDashboardSlotEmpty => 'Пусто';
 
   @override
-  String get sdDashboardSlotError => 'Error';
+  String get sdDashboardSlotError => 'Ошибка';
 
   @override
   String get sdDashboardOffline =>
-      'Target unreachable — local value keeps advancing';
+      'Цель недоступна — локальное значение продолжает меняться';
 
   @override
   String get sdDashboardRecovery =>
-      'Recovery mode: slots are not loaded. The device re-enables them after a stable boot.';
+      'Режим восстановления: слоты не загружены. Устройство включит их снова после стабильной загрузки.';
 
   @override
   String sdDashboardWriteFailed(String error) {
-    return 'Couldn\'t write: $error';
+    return 'Не удалось записать: $error';
   }
 
   @override
-  String get sdSafeStatusIdle => 'Safe mode · Armed';
+  String get sdSafeStatusIdle => 'Режим сейфа · На страже';
 
   @override
-  String get sdSafeStatusFired => 'Triggered';
+  String get sdSafeStatusFired => 'Сработал';
 
   @override
   String sdSafeStatusLocked(int seconds) {
-    return 'Locked · ${seconds}s';
+    return 'Заблокировано · $seconds с';
   }
 
   @override
   String get sdSafeNote =>
-      'The sequence is entered only on the device knob — this screen mirrors status.';
+      'Последовательность вводится только на ручке устройства — этот экран лишь отражает состояние.';
 
   @override
-  String get sdSettingsSectionControl => 'Control';
+  String get sdSettingsSectionControl => 'Управление';
 
   @override
-  String get sdModesTitle => 'Modes';
+  String get sdModesTitle => 'Режимы';
 
   @override
-  String get sdSettingsModesSubtitle =>
-      '3 slots · behavior and target assignment';
+  String get sdSettingsModesSubtitle => '3 слота · поведение и назначение цели';
 
   @override
-  String get sdProfilesTitle => 'Profiles';
+  String get sdProfilesTitle => 'Профили';
 
   @override
-  String get sdSettingsProfilesSubtitle => 'Target device command templates';
+  String get sdSettingsProfilesSubtitle => 'Шаблоны команд целевых устройств';
 
   @override
-  String get sdSafeTitle => 'Safe';
+  String get sdSafeTitle => 'Сейф';
 
   @override
-  String get sdSettingsSafeSubtitle => 'Sequences and webhooks';
+  String get sdSettingsSafeSubtitle => 'Последовательности и вебхуки';
 
   @override
-  String get sdPrefsTitle => 'Preferences';
+  String get sdPrefsTitle => 'Настройки';
 
   @override
-  String get sdSettingsPrefsSubtitle => 'Gestures, buzzer, quiet hours';
+  String get sdSettingsPrefsSubtitle => 'Жесты, зуммер, тихие часы';
 
   @override
-  String get sdEventsTitle => 'Events';
+  String get sdEventsTitle => 'События';
 
   @override
-  String get sdSettingsEventsSubtitle => 'Live event stream';
+  String get sdSettingsEventsSubtitle => 'Живой поток событий';
 
   @override
-  String get sdSettingsLogsSubtitle => 'Device logs';
+  String get sdSettingsLogsSubtitle => 'Журналы устройства';
 
   @override
-  String get sdDashboardWebhooks => 'Webhooks & API';
+  String get sdDashboardWebhooks => 'Вебхуки и API';
 
   @override
   String sdEventsModeChanged(String slot, String name) {
-    return 'Active mode: slot $slot · $name';
+    return 'Активный режим: слот $slot · $name';
   }
 
   @override
   String sdEventsModeError(String slot) {
-    return 'Driver error on slot $slot';
+    return 'Ошибка драйвера в слоте $slot';
   }
 
   @override
   String sdEventsTargetOffline(String slot) {
-    return 'Slot $slot target unreachable';
+    return 'Цель слота $slot недоступна';
   }
 
   @override
   String sdEventsTargetOnline(String slot) {
-    return 'Slot $slot target back online';
+    return 'Цель слота $slot снова в сети';
   }
 
   @override
-  String get sdEventsSafeTriggered => 'Safe sequence matched — webhook fired';
+  String get sdEventsSafeTriggered =>
+      'Последовательность сейфа совпала — вебхук вызван';
 
   @override
-  String get sdEventsSafeWrong => 'Wrong safe sequence';
+  String get sdEventsSafeWrong => 'Неверная последовательность сейфа';
 
   @override
   String sdEventsSafeLockout(int seconds) {
-    return 'Safe locked for ${seconds}s';
+    return 'Сейф заблокирован на $seconds с';
   }
 
   @override
   String sdEventsGesture(String type) {
-    return 'Gesture: $type';
+    return 'Жест: $type';
   }
 
   @override
   String sdEventsPrefChanged(String key) {
-    return 'Preference changed: $key';
+    return 'Настройка изменена: $key';
   }
 
   @override
-  String get sdModesDisabled => 'disabled';
+  String get sdModesDisabled => 'отключено';
 
   @override
   String sdModesSlotN(int n) {
-    return 'Slot $n';
+    return 'Слот $n';
   }
 
   @override
-  String get sdModesMakeActive => 'Activate';
+  String get sdModesMakeActive => 'Активировать';
 
   @override
   String sdModesEditTitle(int n) {
-    return 'Slot $n · Mode';
+    return 'Слот $n · Режим';
   }
 
   @override
-  String get sdModesFieldBehavior => 'Behavior';
+  String get sdModesFieldBehavior => 'Поведение';
 
   @override
-  String get sdModesFieldName => 'Name';
+  String get sdModesFieldName => 'Имя';
 
   @override
-  String get sdModesFieldEnabled => 'Enabled';
+  String get sdModesFieldEnabled => 'Включено';
 
   @override
   String get sdModesSafeHint =>
-      'Sequences and webhooks are configured under Settings → Safe. Sequence entry is physical-only.';
+      'Последовательности и вебхуки настраиваются в Настройки → Сейф. Ввод последовательности только физический.';
 
   @override
-  String get sdModesFieldProfile => 'Profile';
+  String get sdModesFieldProfile => 'Профиль';
 
   @override
-  String get sdModesFieldHost => 'Target IP / host';
+  String get sdModesFieldHost => 'IP / хост цели';
 
   @override
-  String get sdModesFieldPort => 'Port';
+  String get sdModesFieldPort => 'Порт';
 
   @override
-  String get sdModesFieldStep => 'Step';
+  String get sdModesFieldStep => 'Шаг';
 
   @override
-  String get sdModesFieldDeviceId => 'Device ID (optional)';
+  String get sdModesFieldDeviceId => 'ID устройства (необязательно)';
 
   @override
-  String get sdModesFieldAuthKey => 'API key (optional)';
+  String get sdModesFieldAuthKey => 'Ключ API (необязательно)';
 
   @override
-  String get sdModesFieldAccel => 'Acceleration';
+  String get sdModesFieldAccel => 'Ускорение';
 
   @override
-  String get sdModesFieldGestures => 'Gesture presets';
+  String get sdModesFieldGestures => 'Пресеты жестов';
 
   @override
   String get sdModesFieldGesturesHint =>
-      'Double click and long press jump to preset values';
+      'Двойной клик и долгое нажатие переходят к заданным значениям';
 
   @override
-  String get sdModesFieldPresetDouble => 'Double click %';
+  String get sdModesFieldPresetDouble => 'Двойной клик %';
 
   @override
-  String get sdModesFieldPresetLong => 'Long press %';
+  String get sdModesFieldPresetLong => 'Долгое нажатие %';
 
   @override
-  String get sdModesFieldBroker => 'MQTT broker';
+  String get sdModesFieldBroker => 'MQTT-брокер';
 
   @override
-  String get sdModesFieldBrokerPort => 'Broker port';
+  String get sdModesFieldBrokerPort => 'Порт брокера';
 
   @override
-  String get sdModesFieldTopic => 'Topic';
+  String get sdModesFieldTopic => 'Топик';
 
   @override
-  String get sdModesFieldPayloadValue => 'Value payload';
+  String get sdModesFieldPayloadValue => 'Payload значения';
 
   @override
-  String get sdModesFieldPayloadGesture => 'Gesture payload';
+  String get sdModesFieldPayloadGesture => 'Payload жеста';
 
   @override
   String get sdModesTemplateHint =>
-      'Template tokens: value, toggle, device_id, auth_key';
+      'Токены шаблона: value, toggle, device_id, auth_key';
 
   @override
-  String get sdModesErrNameRequired => 'Name is required';
+  String get sdModesErrNameRequired => 'Имя обязательно';
 
   @override
   String get sdModesErrNameJsonSafe =>
-      'Name can\'t contain quotes or backslashes';
+      'Имя не может содержать кавычки или обратные слэши';
 
   @override
-  String get sdModesErrProfileRequired => 'Choose a profile';
+  String get sdModesErrProfileRequired => 'Выберите профиль';
 
   @override
-  String get sdModesErrProfileId => 'Profile id: letters/digits/_-, max 15';
+  String get sdModesErrProfileId => 'id профиля: буквы/цифры/_-, макс. 15';
 
   @override
-  String get sdModesErrHostRequired => 'Target IP/host is required';
+  String get sdModesErrHostRequired => 'IP/хост цели обязателен';
 
   @override
-  String get sdModesErrTopicRequired => 'Topic is required';
+  String get sdModesErrTopicRequired => 'Топик обязателен';
 
   @override
-  String get sdModesErrBrokerRequired => 'Broker is required';
+  String get sdModesErrBrokerRequired => 'Брокер обязателен';
 
   @override
-  String get sdModesSaved => 'Mode saved';
+  String get sdModesSaved => 'Режим сохранён';
 
   @override
   String sdModesTestOk(int status) {
-    return 'Test OK · HTTP $status';
+    return 'Тест OK · HTTP $status';
   }
 
   @override
   String sdModesTestFail(String error) {
-    return 'Test failed: $error';
+    return 'Тест не пройден: $error';
   }
 
   @override
-  String get sdModesClearConfirmTitle => 'Clear slot?';
+  String get sdModesClearConfirmTitle => 'Очистить слот?';
 
   @override
   String get sdModesClearConfirmBody =>
-      'The binding is removed from the device; the slot goes empty.';
+      'Привязка удаляется с устройства; слот становится пустым.';
 
   @override
-  String get sdModesTest => 'Test';
+  String get sdModesTest => 'Тест';
 
   @override
-  String get sdModesClear => 'Clear';
+  String get sdModesClear => 'Очистить';
 
   @override
-  String get sdProfilesRemoveTitle => 'Remove profile?';
+  String get sdProfilesRemoveTitle => 'Удалить профиль?';
 
   @override
   String sdProfilesRemoveBody(String id) {
-    return '$id is removed from the device.';
+    return '$id удаляется с устройства.';
   }
 
   @override
   String get sdProfilesErrInUse =>
-      'Profile is used by a mode slot — clear the slot first';
+      'Профиль используется слотом режима — сначала очистите слот';
 
   @override
   String get sdProfilesEmpty =>
-      'No profiles on the device yet. Add one with +.';
+      'На устройстве пока нет профилей. Добавьте один с помощью +.';
 
   @override
-  String get sdProfilesShowJson => 'Show JSON';
+  String get sdProfilesShowJson => 'Показать JSON';
 
   @override
-  String get sdProfilesErrJsonEmpty => 'Paste the profile JSON';
+  String get sdProfilesErrJsonEmpty => 'Вставьте JSON профиля';
 
   @override
-  String get sdProfilesErrTooBig => 'Profile exceeds 2048 bytes';
+  String get sdProfilesErrTooBig => 'Профиль превышает 2048 байт';
 
   @override
   String sdProfilesErrJsonInvalid(String error) {
-    return 'Invalid JSON: $error';
+    return 'Неверный JSON: $error';
   }
 
   @override
-  String get sdProfilesErrJsonNotObject => 'Top level must be a JSON object';
+  String get sdProfilesErrJsonNotObject =>
+      'Верхний уровень должен быть объектом JSON';
 
   @override
-  String get sdProfilesErrIdRequired => '\"id\" field is required';
+  String get sdProfilesErrIdRequired => 'Поле \"id\" обязательно';
 
   @override
-  String get sdProfilesErrIdFormat => 'id: letters/digits/_-, max 15 chars';
+  String get sdProfilesErrIdFormat => 'id: буквы/цифры/_-, макс. 15 символов';
 
   @override
-  String get sdProfilesErrVersion => '\"v\": 2 is required';
+  String get sdProfilesErrVersion => 'Требуется \"v\": 2';
 
   @override
-  String get sdProfilesAdded => 'Profile saved';
+  String get sdProfilesAdded => 'Профиль сохранён';
 
   @override
-  String get sdProfilesAddTitle => 'Add profile';
+  String get sdProfilesAddTitle => 'Добавить профиль';
 
   @override
   String get sdProfilesAddHint =>
-      'Paste a catalog profile (v2 JSON). The device validates it again on save.';
+      'Вставьте профиль из каталога (JSON v2). Устройство проверит его снова при сохранении.';
 
   @override
-  String get sdSafeClearTitle => 'Clear entry?';
+  String get sdSafeClearTitle => 'Удалить запись?';
 
   @override
   String sdSafeClearBody(int n) {
-    return 'Safe entry $n is removed from the device.';
+    return 'Запись сейфа $n удаляется с устройства.';
   }
 
   @override
   String get sdSafeIntro =>
-      'Each entry maps a secret knob sequence to a webhook. Sequences are entered ONLY on the device; this screen never shows their content.';
+      'Каждая запись связывает секретную последовательность ручки с вебхуком. Последовательности вводятся ТОЛЬКО на устройстве; этот экран никогда не показывает их содержимое.';
 
   @override
-  String get sdSafeEntryEmpty => 'Empty';
+  String get sdSafeEntryEmpty => 'Пусто';
 
   @override
   String sdSafeEntryN(int n) {
-    return 'Entry $n';
+    return 'Запись $n';
   }
 
   @override
   String sdSafeEditTitle(int n) {
-    return 'Safe entry $n';
+    return 'Запись сейфа $n';
   }
 
   @override
-  String get sdSafeFieldSequence => 'New sequence';
+  String get sdSafeFieldSequence => 'Новая последовательность';
 
   @override
   String get sdSafeFieldSequenceHint =>
-      'Format: L3-R5-L2-B · L/R + turns (1-99), optional trailing B (button)';
+      'Формат: L3-R5-L2-B · L/R + обороты (1-99), в конце необязательно B (кнопка)';
 
   @override
-  String get sdSafeFieldEndpoint => 'Webhook (API endpoint)';
+  String get sdSafeFieldEndpoint => 'Вебхук (endpoint API)';
 
   @override
   String get sdSafeFieldEndpointEmpty =>
-      'No endpoints on device — add one under Webhooks & API first';
+      'На устройстве нет endpoint\'ов — сначала добавьте один в разделе Вебхуки и API';
 
   @override
-  String get sdSafeErrSequenceRequired => 'Enter a sequence';
+  String get sdSafeErrSequenceRequired => 'Введите последовательность';
 
   @override
-  String get sdSafeErrSequenceFormat => 'Invalid format — e.g. L3-R5-L2-B';
+  String get sdSafeErrSequenceFormat => 'Неверный формат — напр. L3-R5-L2-B';
 
   @override
-  String get sdSafeErrSequenceTooLong => 'At most 16 segments';
+  String get sdSafeErrSequenceTooLong => 'Не более 16 сегментов';
 
   @override
-  String get sdSafeErrEndpointRequired => 'Choose a webhook endpoint';
+  String get sdSafeErrEndpointRequired => 'Выберите endpoint вебхука';
 
   @override
-  String get sdSafeSaved => 'Safe entry saved';
+  String get sdSafeSaved => 'Запись сейфа сохранена';
 
   @override
-  String get sdSafeFieldLockout => 'Lockout';
+  String get sdSafeFieldLockout => 'Блокировка';
 
   @override
   String get sdSafeFieldLockoutHint =>
-      'Too many wrong attempts temporarily block input';
+      'Слишком много неверных попыток временно блокируют ввод';
 
   @override
-  String get sdSafeFieldLockAfter => 'After N wrong';
+  String get sdSafeFieldLockAfter => 'После N неверных';
 
   @override
-  String get sdSafeFieldLockSeconds => 'Lock seconds';
+  String get sdSafeFieldLockSeconds => 'Секунды блокировки';
 
   @override
-  String get sdPrefsErrQuietFormat => 'Format: HH:MM-HH:MM (empty = off)';
+  String get sdPrefsErrQuietFormat => 'Формат: HH:MM-HH:MM (пусто = выкл.)';
 
   @override
-  String get sdPrefsGestures => 'Gestures';
+  String get sdPrefsGestures => 'Жесты';
 
   @override
   String get sdPrefsGesturesHint =>
-      'Double click / long press presets; single click gets a 300 ms delay';
+      'Пресеты двойного клика / долгого нажатия; одиночный клик с задержкой 300 мс';
 
   @override
-  String get sdPrefsBuzzer => 'Buzzer';
+  String get sdPrefsBuzzer => 'Зуммер';
 
   @override
-  String get sdPrefsBuzzerHint => 'All device beeps';
+  String get sdPrefsBuzzerHint => 'Все звуковые сигналы устройства';
 
   @override
-  String get sdPrefsQuiet => 'Quiet hours';
+  String get sdPrefsQuiet => 'Тихие часы';
 
   @override
   String get sdPrefsQuietHint =>
-      'Beeps muted in this window; needs the device clock (tz)';
+      'Сигналы отключены в этом интервале; требуется часы устройства (tz)';
 
   @override
-  String get sdPrefsTz => 'Timezone (POSIX)';
+  String get sdPrefsTz => 'Часовой пояс (POSIX)';
 
   @override
   String get sdPrefsTzHint =>
-      'Required for quiet hours, e.g. CET-1CEST,M3.5.0,M10.5.0/3';
+      'Требуется для тихих часов, напр. CET-1CEST,M3.5.0,M10.5.0/3';
 
   @override
   String get deviceConnUnreachableTitle => 'Не удаётся связаться с устройством';

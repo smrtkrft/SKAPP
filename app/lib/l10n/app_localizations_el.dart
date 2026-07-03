@@ -1827,16 +1827,16 @@ class AppLocalizationsEl extends AppLocalizations {
   String get bfHomeLoadingSecure => 'Άνοιγμα ασφαλούς καναλιού…';
 
   @override
-  String get sdHomeLoadingConnecting => 'Connecting to device…';
+  String get sdHomeLoadingConnecting => 'Σύνδεση με τη συσκευή…';
 
   @override
-  String get sdHomeLoadingSecure => 'Opening secure channel…';
+  String get sdHomeLoadingSecure => 'Άνοιγμα ασφαλούς καναλιού…';
 
   @override
   String get sdDashboardTitleFallback => 'SynDimm';
 
   @override
-  String get sdDashboardWifiNone => 'No WiFi';
+  String get sdDashboardWifiNone => 'Χωρίς WiFi';
 
   @override
   String get sdDashboardLinkBle => 'BLE';
@@ -1848,398 +1848,403 @@ class AppLocalizationsEl extends AppLocalizations {
   String get sdDashboardLinkUsb => 'USB';
 
   @override
-  String get sdDashboardSlotEmpty => 'Empty';
+  String get sdDashboardSlotEmpty => 'Κενό';
 
   @override
-  String get sdDashboardSlotError => 'Error';
+  String get sdDashboardSlotError => 'Σφάλμα';
 
   @override
   String get sdDashboardOffline =>
-      'Target unreachable — local value keeps advancing';
+      'Ο προορισμός δεν είναι προσβάσιμος — η τοπική τιμή συνεχίζει να αλλάζει';
 
   @override
   String get sdDashboardRecovery =>
-      'Recovery mode: slots are not loaded. The device re-enables them after a stable boot.';
+      'Λειτουργία ανάκτησης: οι υποδοχές δεν έχουν φορτωθεί. Η συσκευή τις ενεργοποιεί ξανά μετά από σταθερή εκκίνηση.';
 
   @override
   String sdDashboardWriteFailed(String error) {
-    return 'Couldn\'t write: $error';
+    return 'Αδυναμία εγγραφής: $error';
   }
 
   @override
-  String get sdSafeStatusIdle => 'Safe mode · Armed';
+  String get sdSafeStatusIdle => 'Λειτουργία ασφαλείας · Οπλισμένο';
 
   @override
-  String get sdSafeStatusFired => 'Triggered';
+  String get sdSafeStatusFired => 'Ενεργοποιήθηκε';
 
   @override
   String sdSafeStatusLocked(int seconds) {
-    return 'Locked · ${seconds}s';
+    return 'Κλειδωμένο · ${seconds}s';
   }
 
   @override
   String get sdSafeNote =>
-      'The sequence is entered only on the device knob — this screen mirrors status.';
+      'Η ακολουθία εισάγεται μόνο στο κουμπί της συσκευής — αυτή η οθόνη αντικατοπτρίζει την κατάσταση.';
 
   @override
-  String get sdSettingsSectionControl => 'Control';
+  String get sdSettingsSectionControl => 'Έλεγχος';
 
   @override
-  String get sdModesTitle => 'Modes';
+  String get sdModesTitle => 'Λειτουργίες';
 
   @override
   String get sdSettingsModesSubtitle =>
-      '3 slots · behavior and target assignment';
+      '3 υποδοχές · συμπεριφορά και ανάθεση προορισμού';
 
   @override
-  String get sdProfilesTitle => 'Profiles';
+  String get sdProfilesTitle => 'Προφίλ';
 
   @override
-  String get sdSettingsProfilesSubtitle => 'Target device command templates';
+  String get sdSettingsProfilesSubtitle =>
+      'Πρότυπα εντολών για συσκευές προορισμού';
 
   @override
-  String get sdSafeTitle => 'Safe';
+  String get sdSafeTitle => 'Χρηματοκιβώτιο';
 
   @override
-  String get sdSettingsSafeSubtitle => 'Sequences and webhooks';
+  String get sdSettingsSafeSubtitle => 'Ακολουθίες και webhooks';
 
   @override
-  String get sdPrefsTitle => 'Preferences';
+  String get sdPrefsTitle => 'Προτιμήσεις';
 
   @override
-  String get sdSettingsPrefsSubtitle => 'Gestures, buzzer, quiet hours';
+  String get sdSettingsPrefsSubtitle => 'Χειρονομίες, βομβητής, ώρες ησυχίας';
 
   @override
-  String get sdEventsTitle => 'Events';
+  String get sdEventsTitle => 'Συμβάντα';
 
   @override
-  String get sdSettingsEventsSubtitle => 'Live event stream';
+  String get sdSettingsEventsSubtitle => 'Ζωντανή ροή συμβάντων';
 
   @override
-  String get sdSettingsLogsSubtitle => 'Device logs';
+  String get sdSettingsLogsSubtitle => 'Αρχεία καταγραφής συσκευής';
 
   @override
-  String get sdDashboardWebhooks => 'Webhooks & API';
+  String get sdDashboardWebhooks => 'Webhooks και API';
 
   @override
   String sdEventsModeChanged(String slot, String name) {
-    return 'Active mode: slot $slot · $name';
+    return 'Ενεργή λειτουργία: υποδοχή $slot · $name';
   }
 
   @override
   String sdEventsModeError(String slot) {
-    return 'Driver error on slot $slot';
+    return 'Σφάλμα οδηγού στην υποδοχή $slot';
   }
 
   @override
   String sdEventsTargetOffline(String slot) {
-    return 'Slot $slot target unreachable';
+    return 'Ο προορισμός της υποδοχής $slot δεν είναι προσβάσιμος';
   }
 
   @override
   String sdEventsTargetOnline(String slot) {
-    return 'Slot $slot target back online';
+    return 'Ο προορισμός της υποδοχής $slot ξανά σε σύνδεση';
   }
 
   @override
-  String get sdEventsSafeTriggered => 'Safe sequence matched — webhook fired';
+  String get sdEventsSafeTriggered =>
+      'Η ακολουθία χρηματοκιβωτίου ταίριαξε — το webhook ενεργοποιήθηκε';
 
   @override
-  String get sdEventsSafeWrong => 'Wrong safe sequence';
+  String get sdEventsSafeWrong => 'Λάθος ακολουθία χρηματοκιβωτίου';
 
   @override
   String sdEventsSafeLockout(int seconds) {
-    return 'Safe locked for ${seconds}s';
+    return 'Χρηματοκιβώτιο κλειδωμένο για ${seconds}s';
   }
 
   @override
   String sdEventsGesture(String type) {
-    return 'Gesture: $type';
+    return 'Χειρονομία: $type';
   }
 
   @override
   String sdEventsPrefChanged(String key) {
-    return 'Preference changed: $key';
+    return 'Η προτίμηση άλλαξε: $key';
   }
 
   @override
-  String get sdModesDisabled => 'disabled';
+  String get sdModesDisabled => 'απενεργοποιημένο';
 
   @override
   String sdModesSlotN(int n) {
-    return 'Slot $n';
+    return 'Υποδοχή $n';
   }
 
   @override
-  String get sdModesMakeActive => 'Activate';
+  String get sdModesMakeActive => 'Ενεργοποίηση';
 
   @override
   String sdModesEditTitle(int n) {
-    return 'Slot $n · Mode';
+    return 'Υποδοχή $n · Λειτουργία';
   }
 
   @override
-  String get sdModesFieldBehavior => 'Behavior';
+  String get sdModesFieldBehavior => 'Συμπεριφορά';
 
   @override
-  String get sdModesFieldName => 'Name';
+  String get sdModesFieldName => 'Όνομα';
 
   @override
-  String get sdModesFieldEnabled => 'Enabled';
+  String get sdModesFieldEnabled => 'Ενεργό';
 
   @override
   String get sdModesSafeHint =>
-      'Sequences and webhooks are configured under Settings → Safe. Sequence entry is physical-only.';
+      'Οι ακολουθίες και τα webhooks ρυθμίζονται στις Ρυθμίσεις → Χρηματοκιβώτιο. Η εισαγωγή ακολουθίας γίνεται μόνο φυσικά.';
 
   @override
-  String get sdModesFieldProfile => 'Profile';
+  String get sdModesFieldProfile => 'Προφίλ';
 
   @override
-  String get sdModesFieldHost => 'Target IP / host';
+  String get sdModesFieldHost => 'IP / host προορισμού';
 
   @override
-  String get sdModesFieldPort => 'Port';
+  String get sdModesFieldPort => 'Θύρα';
 
   @override
-  String get sdModesFieldStep => 'Step';
+  String get sdModesFieldStep => 'Βήμα';
 
   @override
-  String get sdModesFieldDeviceId => 'Device ID (optional)';
+  String get sdModesFieldDeviceId => 'ID συσκευής (προαιρετικό)';
 
   @override
-  String get sdModesFieldAuthKey => 'API key (optional)';
+  String get sdModesFieldAuthKey => 'Κλειδί API (προαιρετικό)';
 
   @override
-  String get sdModesFieldAccel => 'Acceleration';
+  String get sdModesFieldAccel => 'Επιτάχυνση';
 
   @override
-  String get sdModesFieldGestures => 'Gesture presets';
+  String get sdModesFieldGestures => 'Προεπιλογές χειρονομιών';
 
   @override
   String get sdModesFieldGesturesHint =>
-      'Double click and long press jump to preset values';
+      'Το διπλό κλικ και το παρατεταμένο πάτημα μεταβαίνουν σε προκαθορισμένες τιμές';
 
   @override
-  String get sdModesFieldPresetDouble => 'Double click %';
+  String get sdModesFieldPresetDouble => 'Διπλό κλικ %';
 
   @override
-  String get sdModesFieldPresetLong => 'Long press %';
+  String get sdModesFieldPresetLong => 'Παρατεταμένο πάτημα %';
 
   @override
-  String get sdModesFieldBroker => 'MQTT broker';
+  String get sdModesFieldBroker => 'Broker MQTT';
 
   @override
-  String get sdModesFieldBrokerPort => 'Broker port';
+  String get sdModesFieldBrokerPort => 'Θύρα broker';
 
   @override
   String get sdModesFieldTopic => 'Topic';
 
   @override
-  String get sdModesFieldPayloadValue => 'Value payload';
+  String get sdModesFieldPayloadValue => 'Payload τιμής';
 
   @override
-  String get sdModesFieldPayloadGesture => 'Gesture payload';
+  String get sdModesFieldPayloadGesture => 'Payload χειρονομίας';
 
   @override
   String get sdModesTemplateHint =>
-      'Template tokens: value, toggle, device_id, auth_key';
+      'Tokens προτύπου: value, toggle, device_id, auth_key';
 
   @override
-  String get sdModesErrNameRequired => 'Name is required';
+  String get sdModesErrNameRequired => 'Το όνομα είναι υποχρεωτικό';
 
   @override
   String get sdModesErrNameJsonSafe =>
-      'Name can\'t contain quotes or backslashes';
+      'Το όνομα δεν μπορεί να περιέχει εισαγωγικά ή ανάστροφες καθέτους';
 
   @override
-  String get sdModesErrProfileRequired => 'Choose a profile';
+  String get sdModesErrProfileRequired => 'Επιλέξτε ένα προφίλ';
 
   @override
-  String get sdModesErrProfileId => 'Profile id: letters/digits/_-, max 15';
+  String get sdModesErrProfileId => 'id προφίλ: γράμματα/ψηφία/_-, μέγ. 15';
 
   @override
-  String get sdModesErrHostRequired => 'Target IP/host is required';
+  String get sdModesErrHostRequired =>
+      'Το IP/host προορισμού είναι υποχρεωτικό';
 
   @override
-  String get sdModesErrTopicRequired => 'Topic is required';
+  String get sdModesErrTopicRequired => 'Το topic είναι υποχρεωτικό';
 
   @override
-  String get sdModesErrBrokerRequired => 'Broker is required';
+  String get sdModesErrBrokerRequired => 'Ο broker είναι υποχρεωτικός';
 
   @override
-  String get sdModesSaved => 'Mode saved';
+  String get sdModesSaved => 'Η λειτουργία αποθηκεύτηκε';
 
   @override
   String sdModesTestOk(int status) {
-    return 'Test OK · HTTP $status';
+    return 'Δοκιμή OK · HTTP $status';
   }
 
   @override
   String sdModesTestFail(String error) {
-    return 'Test failed: $error';
+    return 'Η δοκιμή απέτυχε: $error';
   }
 
   @override
-  String get sdModesClearConfirmTitle => 'Clear slot?';
+  String get sdModesClearConfirmTitle => 'Εκκαθάριση υποδοχής;';
 
   @override
   String get sdModesClearConfirmBody =>
-      'The binding is removed from the device; the slot goes empty.';
+      'Το binding αφαιρείται από τη συσκευή· η υποδοχή αδειάζει.';
 
   @override
-  String get sdModesTest => 'Test';
+  String get sdModesTest => 'Δοκιμή';
 
   @override
-  String get sdModesClear => 'Clear';
+  String get sdModesClear => 'Εκκαθάριση';
 
   @override
-  String get sdProfilesRemoveTitle => 'Remove profile?';
+  String get sdProfilesRemoveTitle => 'Αφαίρεση προφίλ;';
 
   @override
   String sdProfilesRemoveBody(String id) {
-    return '$id is removed from the device.';
+    return 'Το $id αφαιρείται από τη συσκευή.';
   }
 
   @override
   String get sdProfilesErrInUse =>
-      'Profile is used by a mode slot — clear the slot first';
+      'Το προφίλ χρησιμοποιείται από μια υποδοχή λειτουργίας — αδειάστε πρώτα την υποδοχή';
 
   @override
   String get sdProfilesEmpty =>
-      'No profiles on the device yet. Add one with +.';
+      'Δεν υπάρχουν ακόμη προφίλ στη συσκευή. Προσθέστε ένα με +.';
 
   @override
-  String get sdProfilesShowJson => 'Show JSON';
+  String get sdProfilesShowJson => 'Εμφάνιση JSON';
 
   @override
-  String get sdProfilesErrJsonEmpty => 'Paste the profile JSON';
+  String get sdProfilesErrJsonEmpty => 'Επικολλήστε το JSON του προφίλ';
 
   @override
-  String get sdProfilesErrTooBig => 'Profile exceeds 2048 bytes';
+  String get sdProfilesErrTooBig => 'Το προφίλ υπερβαίνει τα 2048 bytes';
 
   @override
   String sdProfilesErrJsonInvalid(String error) {
-    return 'Invalid JSON: $error';
+    return 'Μη έγκυρο JSON: $error';
   }
 
   @override
-  String get sdProfilesErrJsonNotObject => 'Top level must be a JSON object';
+  String get sdProfilesErrJsonNotObject =>
+      'Το ανώτατο επίπεδο πρέπει να είναι αντικείμενο JSON';
 
   @override
-  String get sdProfilesErrIdRequired => '\"id\" field is required';
+  String get sdProfilesErrIdRequired => 'Το πεδίο \"id\" είναι υποχρεωτικό';
 
   @override
-  String get sdProfilesErrIdFormat => 'id: letters/digits/_-, max 15 chars';
+  String get sdProfilesErrIdFormat =>
+      'id: γράμματα/ψηφία/_-, μέγ. 15 χαρακτήρες';
 
   @override
-  String get sdProfilesErrVersion => '\"v\": 2 is required';
+  String get sdProfilesErrVersion => 'Απαιτείται \"v\": 2';
 
   @override
-  String get sdProfilesAdded => 'Profile saved';
+  String get sdProfilesAdded => 'Το προφίλ αποθηκεύτηκε';
 
   @override
-  String get sdProfilesAddTitle => 'Add profile';
+  String get sdProfilesAddTitle => 'Προσθήκη προφίλ';
 
   @override
   String get sdProfilesAddHint =>
-      'Paste a catalog profile (v2 JSON). The device validates it again on save.';
+      'Επικολλήστε ένα προφίλ καταλόγου (JSON v2). Η συσκευή το επικυρώνει ξανά κατά την αποθήκευση.';
 
   @override
-  String get sdSafeClearTitle => 'Clear entry?';
+  String get sdSafeClearTitle => 'Διαγραφή καταχώρησης;';
 
   @override
   String sdSafeClearBody(int n) {
-    return 'Safe entry $n is removed from the device.';
+    return 'Η καταχώρηση χρηματοκιβωτίου $n αφαιρείται από τη συσκευή.';
   }
 
   @override
   String get sdSafeIntro =>
-      'Each entry maps a secret knob sequence to a webhook. Sequences are entered ONLY on the device; this screen never shows their content.';
+      'Κάθε καταχώρηση αντιστοιχίζει μια μυστική ακολουθία του κουμπιού σε ένα webhook. Οι ακολουθίες εισάγονται ΜΟΝΟ στη συσκευή· αυτή η οθόνη δεν δείχνει ποτέ το περιεχόμενό τους.';
 
   @override
-  String get sdSafeEntryEmpty => 'Empty';
+  String get sdSafeEntryEmpty => 'Κενή';
 
   @override
   String sdSafeEntryN(int n) {
-    return 'Entry $n';
+    return 'Καταχώρηση $n';
   }
 
   @override
   String sdSafeEditTitle(int n) {
-    return 'Safe entry $n';
+    return 'Καταχώρηση χρηματοκιβωτίου $n';
   }
 
   @override
-  String get sdSafeFieldSequence => 'New sequence';
+  String get sdSafeFieldSequence => 'Νέα ακολουθία';
 
   @override
   String get sdSafeFieldSequenceHint =>
-      'Format: L3-R5-L2-B · L/R + turns (1-99), optional trailing B (button)';
+      'Μορφή: L3-R5-L2-B · L/R + στροφές (1-99), προαιρετικό B στο τέλος (κουμπί)';
 
   @override
-  String get sdSafeFieldEndpoint => 'Webhook (API endpoint)';
+  String get sdSafeFieldEndpoint => 'Webhook (endpoint API)';
 
   @override
   String get sdSafeFieldEndpointEmpty =>
-      'No endpoints on device — add one under Webhooks & API first';
+      'Δεν υπάρχουν endpoints στη συσκευή — προσθέστε ένα πρώτα στα Webhooks και API';
 
   @override
-  String get sdSafeErrSequenceRequired => 'Enter a sequence';
+  String get sdSafeErrSequenceRequired => 'Εισαγάγετε μια ακολουθία';
 
   @override
-  String get sdSafeErrSequenceFormat => 'Invalid format — e.g. L3-R5-L2-B';
+  String get sdSafeErrSequenceFormat => 'Μη έγκυρη μορφή — π.χ. L3-R5-L2-B';
 
   @override
-  String get sdSafeErrSequenceTooLong => 'At most 16 segments';
+  String get sdSafeErrSequenceTooLong => 'Το πολύ 16 τμήματα';
 
   @override
-  String get sdSafeErrEndpointRequired => 'Choose a webhook endpoint';
+  String get sdSafeErrEndpointRequired => 'Επιλέξτε ένα endpoint webhook';
 
   @override
-  String get sdSafeSaved => 'Safe entry saved';
+  String get sdSafeSaved => 'Η καταχώρηση χρηματοκιβωτίου αποθηκεύτηκε';
 
   @override
-  String get sdSafeFieldLockout => 'Lockout';
+  String get sdSafeFieldLockout => 'Κλείδωμα';
 
   @override
   String get sdSafeFieldLockoutHint =>
-      'Too many wrong attempts temporarily block input';
+      'Πάρα πολλές λανθασμένες προσπάθειες μπλοκάρουν προσωρινά την εισαγωγή';
 
   @override
-  String get sdSafeFieldLockAfter => 'After N wrong';
+  String get sdSafeFieldLockAfter => 'Μετά από N λάθη';
 
   @override
-  String get sdSafeFieldLockSeconds => 'Lock seconds';
+  String get sdSafeFieldLockSeconds => 'Δευτερόλεπτα κλειδώματος';
 
   @override
-  String get sdPrefsErrQuietFormat => 'Format: HH:MM-HH:MM (empty = off)';
+  String get sdPrefsErrQuietFormat => 'Μορφή: HH:MM-HH:MM (κενό = ανενεργό)';
 
   @override
-  String get sdPrefsGestures => 'Gestures';
+  String get sdPrefsGestures => 'Χειρονομίες';
 
   @override
   String get sdPrefsGesturesHint =>
-      'Double click / long press presets; single click gets a 300 ms delay';
+      'Προεπιλογές διπλού κλικ / παρατεταμένου πατήματος· το μονό κλικ έχει καθυστέρηση 300 ms';
 
   @override
-  String get sdPrefsBuzzer => 'Buzzer';
+  String get sdPrefsBuzzer => 'Βομβητής';
 
   @override
-  String get sdPrefsBuzzerHint => 'All device beeps';
+  String get sdPrefsBuzzerHint => 'Όλοι οι ήχοι της συσκευής';
 
   @override
-  String get sdPrefsQuiet => 'Quiet hours';
+  String get sdPrefsQuiet => 'Ώρες ησυχίας';
 
   @override
   String get sdPrefsQuietHint =>
-      'Beeps muted in this window; needs the device clock (tz)';
+      'Οι ήχοι σιγούν σε αυτό το διάστημα· απαιτεί το ρολόι της συσκευής (tz)';
 
   @override
-  String get sdPrefsTz => 'Timezone (POSIX)';
+  String get sdPrefsTz => 'Ζώνη ώρας (POSIX)';
 
   @override
   String get sdPrefsTzHint =>
-      'Required for quiet hours, e.g. CET-1CEST,M3.5.0,M10.5.0/3';
+      'Απαιτείται για τις ώρες ησυχίας, π.χ. CET-1CEST,M3.5.0,M10.5.0/3';
 
   @override
   String get deviceConnUnreachableTitle =>
