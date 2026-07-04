@@ -2153,7 +2153,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get sdSafeIntro =>
-      'Jeder Eintrag ordnet eine geheime Knopf-Sequenz einem Webhook zu. Sequenzen werden NUR am Gerät eingegeben; dieser Bildschirm zeigt ihren Inhalt nie.';
+      'Jeder Eintrag ordnet eine Knopf-Sequenz einem Webhook zu. Sequenzen werden am Gerät eingegeben; beim Bearbeiten hier bleibt die Sequenz sichtbar, gespeicherte Einträge zeigen ihren Inhalt jedoch nie.';
 
   @override
   String get sdSafeEntryEmpty => 'Leer';
@@ -2173,7 +2173,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get sdSafeFieldSequenceHint =>
-      'Format: L3-R5-L2-B · L/R + Drehungen (1-99), optional abschließendes B (Taste)';
+      'Format: L3-R5-L2-B · L/R + Drehungen (1-50), 3-6 Segmente, optional abschließendes B (Taste)';
 
   @override
   String get sdSafeFieldEndpoint => 'Webhook (API-Endpunkt)';
@@ -2189,7 +2189,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get sdSafeErrSequenceFormat => 'Ungültiges Format — z. B. L3-R5-L2-B';
 
   @override
-  String get sdSafeErrSequenceTooLong => 'Höchstens 16 Segmente';
+  String get sdSafeErrSequenceTooLong => 'Höchstens 6 Segmente';
+
+  @override
+  String get sdSafeErrSequenceTooShort => 'Mindestens 3 Segmente';
+
+  @override
+  String get sdSafeRecStart => 'Aufnahmemodus';
+
+  @override
+  String get sdSafeRecStop => 'Fertig';
+
+  @override
+  String get sdSafeRecClear => 'Löschen';
+
+  @override
+  String get sdSafeRecHint =>
+      '◀/▶ je Tipp eine Drehung; ● oder ein Richtungswechsel schließt das Segment.';
 
   @override
   String get sdSafeErrEndpointRequired => 'Wähle einen Webhook-Endpunkt';

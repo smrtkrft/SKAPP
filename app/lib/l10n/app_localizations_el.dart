@@ -2162,7 +2162,7 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get sdSafeIntro =>
-      'Κάθε καταχώρηση αντιστοιχίζει μια μυστική ακολουθία του κουμπιού σε ένα webhook. Οι ακολουθίες εισάγονται ΜΟΝΟ στη συσκευή· αυτή η οθόνη δεν δείχνει ποτέ το περιεχόμενό τους.';
+      'Κάθε καταχώρηση αντιστοιχίζει μια ακολουθία του κουμπιού σε ένα webhook. Οι ακολουθίες εισάγονται στη συσκευή· κατά την επεξεργασία εδώ η ακολουθία παραμένει ορατή, αλλά οι αποθηκευμένες καταχωρήσεις δεν αποκαλύπτουν ποτέ το περιεχόμενό τους.';
 
   @override
   String get sdSafeEntryEmpty => 'Κενή';
@@ -2182,7 +2182,7 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get sdSafeFieldSequenceHint =>
-      'Μορφή: L3-R5-L2-B · L/R + στροφές (1-99), προαιρετικό B στο τέλος (κουμπί)';
+      'Μορφή: L3-R5-L2-B · L/R + στροφές (1-50), 3-6 τμήματα, προαιρετικό B στο τέλος (κουμπί)';
 
   @override
   String get sdSafeFieldEndpoint => 'Webhook (endpoint API)';
@@ -2198,7 +2198,23 @@ class AppLocalizationsEl extends AppLocalizations {
   String get sdSafeErrSequenceFormat => 'Μη έγκυρη μορφή — π.χ. L3-R5-L2-B';
 
   @override
-  String get sdSafeErrSequenceTooLong => 'Το πολύ 16 τμήματα';
+  String get sdSafeErrSequenceTooLong => 'Το πολύ 6 τμήματα';
+
+  @override
+  String get sdSafeErrSequenceTooShort => 'Τουλάχιστον 3 τμήματα';
+
+  @override
+  String get sdSafeRecStart => 'Λειτουργία εγγραφής';
+
+  @override
+  String get sdSafeRecStop => 'Τέλος';
+
+  @override
+  String get sdSafeRecClear => 'Καθαρισμός';
+
+  @override
+  String get sdSafeRecHint =>
+      '◀/▶ μία στροφή ανά πάτημα· ● ή αλλαγή κατεύθυνσης κλείνει το τμήμα.';
 
   @override
   String get sdSafeErrEndpointRequired => 'Επιλέξτε ένα endpoint webhook';

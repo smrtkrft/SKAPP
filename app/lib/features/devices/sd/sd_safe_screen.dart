@@ -1,10 +1,17 @@
 // SD Kasa · design2.html "kasa / kasaEdit" görünümlerinin Flutter
 // karşılığı.
 //
-// GÜVENLİK MODELİ (bilinçli kararlar — SKAPP_CONTRACT.md):
-//   * Diziler SIRDIR: `safe.list` içeriği DEĞİL yalnız segment sayısını
-//     döner; bu ekran da asla dizi göstermez. Kayıttan sonra girilen
-//     dizi alan temizlenerek unutulur.
+// GÜVENLİK MODELİ (bilinçli kararlar — SKAPP_CONTRACT.md + ürün kararı
+// 2026-07-03):
+//   * DÜZENLERKEN dizi AÇIK görünür (ürün kararı: yanlış yapılandırmayı
+//     önlemek doğru girişten daha öncelikli; ekranı o an fiziksel olarak
+//     kullanan kişi zaten yetkili SKAPP oturumundadır). KAYITTAN SONRA
+//     sır cihaza aittir: `safe.list` içeriği DEĞİL yalnız segment sayısını
+//     döner, kayıt listesi asla dizi göstermez, alan kaydedince temizlenir.
+//   * Dizi kuralı: 3-6 segment, segment başına 1-50 tık (firmware
+//     SD_SEQ_MIN_SEGMENTS/SD_SEQ_MAX_SET_SEGMENTS/SD_SEQ_MAX_TICKS ile
+//     birebir). 6+ segmentlik kilit açma denemeleri cihazda BAŞARISIZ
+//     sayılır (lockout'u besler).
 //   * `safe.*` yalnız kimlikli kanalda çalışır (requires_auth) — SKAPP
 //     oturumu zaten ECDH+HMAC'lidir; USB'den istenirse firmware reddeder.
 //   * Dizi GİRİŞİ (tetikleme) yalnız cihazdaki fiziksel düğmedendir;
@@ -195,7 +202,8 @@ class _EntryCard extends StatelessWidget {
     final enabled = data?['enabled'] == true;
     final segments = (data?['segments'] as num?)?.toInt() ?? 0;
     final endpoint = data?['endpoint']?.toString() ?? '';
-    // Dizi içeriği asla gösterilmez — yalnız segment sayısı (● maskesi).
+    // Kayıtlı dizi içeriği gösterilmez — yalnız segment sayısı (● maskesi;
+    // ürün kuralı 3-6, eski kayıt payı için 16'ya kadar tolere edilir).
     final subtitle = set
         ? '${'●' * segments.clamp(0, 16)} · $endpoint'
             '${enabled ? '' : ' · ${l.sdModesDisabled}'}'
@@ -260,6 +268,75 @@ class _SdSafeEditScreenState extends State<SdSafeEditScreen> {
   bool _busy = false;
   String? _error;
 
+  // --- ⏺ kayıt modu (design2.html kasaEdit birebiri) --------------------
+  // Cihazdaki fiziksel girişin aynısını parmakla taklit eder: ◀L / R▶ her
+  // dokunuş 1 tık; yön değişimi ya da ● butonu segmenti kapatır. Firmware
+  // tavanları UI'da da geçerli: 6 segment (bekleyen dahil), 50 tık/segment.
+  bool _recOn = false;
+  final List<String> _recSegs = [];   // commit edilmiş segmentler ("L3")
+  int _recDir = 0;                    // +1 = R, -1 = L, 0 = bekleyen yok
+  int _recTicks = 0;
+
+  void _recSync() {
+    _sequence.text = [
+      ..._recSegs,
+      if (_recDir != 0) '${_recDir > 0 ? 'R' : 'L'}$_recTicks',
+    ].join('-');
+  }
+
+  void _recCommit() {
+    if (_recDir == 0 || _recTicks == 0) return;
+    if (_recSegs.length >= 6) return;
+    _recSegs.add('${_recDir > 0 ? 'R' : 'L'}$_recTicks');
+    _recDir = 0;
+    _recTicks = 0;
+  }
+
+  void _recRotate(int dir) {
+    setState(() {
+      if (_recDir != 0 && dir != _recDir) _recCommit();
+      // Tavan: 6 segment doluysa yeni segment AÇILMAZ (bekleyen yoksa).
+      if (_recDir == 0 && _recSegs.length >= 6) return;
+      _recDir = dir;
+      if (_recTicks < 50) _recTicks++;
+      _recSync();
+    });
+  }
+
+  void _recButton() {
+    setState(() {
+      _recCommit();
+      _recSync();
+    });
+  }
+
+  void _recClear() {
+    setState(() {
+      _recSegs.clear();
+      _recDir = 0;
+      _recTicks = 0;
+      _sequence.clear();
+    });
+  }
+
+  void _recToggle() {
+    setState(() {
+      if (_recOn) {
+        _recCommit();          // bekleyen segmenti kapat
+        _recSync();
+        _recOn = false;
+      } else {
+        // Kayıt her zaman temiz başlar — elle yazılmış metinle kayıt
+        // birleştirmek kafa karıştırır (mockup davranışı da böyle).
+        _recSegs.clear();
+        _recDir = 0;
+        _recTicks = 0;
+        _sequence.clear();
+        _recOn = true;
+      }
+    });
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -310,14 +387,22 @@ class _SdSafeEditScreenState extends State<SdSafeEditScreen> {
     } catch (_) {/* sessiz; dropdown boş kalır, kaydetmede uyarılır */}
   }
 
-  /// Dizi grameri firmware sd_sequence ile aynı: L/R + 1-99 tık, "-" ile
-  /// ayrılır, son segment "B" (buton) olabilir; ≤16 segment.
+  /// Dizi grameri firmware sd_sequence ile aynı: L/R + 1-50 tık, "-" ile
+  /// ayrılır, son segment "B" (buton) olabilir; 3-6 segment (kuyruk "-B"
+  /// segment SAYILMAZ — firmware parse'ı da onu yutar, slot tüketmez).
   String? _validate(AppLocalizations l) {
     final seq = _sequence.text.trim().toUpperCase();
     if (seq.isEmpty) return l.sdSafeErrSequenceRequired;
     final re = RegExp(r'^([LR][1-9][0-9]?)(-([LR][1-9][0-9]?))*(-B)?$');
     if (!re.hasMatch(seq)) return l.sdSafeErrSequenceFormat;
-    if (seq.split('-').length > 16) return l.sdSafeErrSequenceTooLong;
+    final parts =
+        seq.split('-').where((p) => p != 'B').toList(growable: false);
+    if (parts.length < 3) return l.sdSafeErrSequenceTooShort;
+    if (parts.length > 6) return l.sdSafeErrSequenceTooLong;
+    for (final p in parts) {
+      final ticks = int.tryParse(p.substring(1)) ?? 0;
+      if (ticks < 1 || ticks > 50) return l.sdSafeErrSequenceFormat;
+    }
     if (_endpoint == null || _endpoint!.isEmpty) {
       return l.sdSafeErrEndpointRequired;
     }
@@ -397,9 +482,11 @@ class _SdSafeEditScreenState extends State<SdSafeEditScreen> {
                 children: [
                   TextField(
                     controller: _sequence,
-                    // Dizi sırdır: yazarken maskelenir, otomatik
-                    // düzeltme/öneri kapalı (klavye önbelleğine girmesin).
-                    obscureText: true,
+                    // Ürün kararı (2026-07-03): düzenlerken dizi AÇIK
+                    // görünür — yanlış yapılandırmayı önlemek öncelikli.
+                    // Öneri/düzeltme kapalı (klavye önbelleğine girmesin);
+                    // kayıt modundayken elle yazım kilitli.
+                    readOnly: _recOn,
                     enableSuggestions: false,
                     autocorrect: false,
                     decoration: InputDecoration(
@@ -408,6 +495,57 @@ class _SdSafeEditScreenState extends State<SdSafeEditScreen> {
                       helperMaxLines: 3,
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  // ⏺ kayıt modu — cihaz girişinin dokunmatik taklidi.
+                  Row(
+                    children: [
+                      TextButton.icon(
+                        icon: Icon(
+                          _recOn
+                              ? Icons.stop_circle_outlined
+                              : Icons.fiber_manual_record,
+                          size: 18,
+                          color: _recOn ? cs.error : cs.tertiary,
+                        ),
+                        label: Text(_recOn ? l.sdSafeRecStop : l.sdSafeRecStart),
+                        onPressed: _busy ? null : _recToggle,
+                      ),
+                      if (_recOn) ...[
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left),
+                          tooltip: 'L',
+                          onPressed: () => _recRotate(-1),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.radio_button_checked, size: 18),
+                          tooltip: '●',
+                          onPressed: _recButton,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right),
+                          tooltip: 'R',
+                          onPressed: () => _recRotate(1),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.backspace_outlined, size: 18),
+                          tooltip: l.sdSafeRecClear,
+                          onPressed: _recClear,
+                        ),
+                      ],
+                    ],
+                  ),
+                  if (_recOn)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12, bottom: 4),
+                      child: Text(
+                        l.sdSafeRecHint,
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     initialValue: _endpoint,

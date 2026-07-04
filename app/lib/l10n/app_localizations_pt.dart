@@ -2163,7 +2163,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get sdSafeIntro =>
-      'Cada entrada associa uma sequência secreta do botão a um webhook. As sequências são introduzidas APENAS no dispositivo; este ecrã nunca mostra o seu conteúdo.';
+      'Cada entrada associa uma sequência do botão a um webhook. As sequências são introduzidas no dispositivo; ao editar aqui a sequência permanece visível, mas as entradas guardadas nunca revelam o seu conteúdo.';
 
   @override
   String get sdSafeEntryEmpty => 'Vazia';
@@ -2183,7 +2183,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get sdSafeFieldSequenceHint =>
-      'Formato: L3-R5-L2-B · L/R + voltas (1-99), B final opcional (botão)';
+      'Formato: L3-R5-L2-B · L/R + voltas (1-50), 3-6 segmentos, B final opcional (botão)';
 
   @override
   String get sdSafeFieldEndpoint => 'Webhook (endpoint API)';
@@ -2199,7 +2199,23 @@ class AppLocalizationsPt extends AppLocalizations {
   String get sdSafeErrSequenceFormat => 'Formato inválido — p. ex. L3-R5-L2-B';
 
   @override
-  String get sdSafeErrSequenceTooLong => 'No máximo 16 segmentos';
+  String get sdSafeErrSequenceTooLong => 'No máximo 6 segmentos';
+
+  @override
+  String get sdSafeErrSequenceTooShort => 'No mínimo 3 segmentos';
+
+  @override
+  String get sdSafeRecStart => 'Modo de gravação';
+
+  @override
+  String get sdSafeRecStop => 'Concluído';
+
+  @override
+  String get sdSafeRecClear => 'Limpar';
+
+  @override
+  String get sdSafeRecHint =>
+      '◀/▶ uma volta por toque; ● ou uma mudança de direção fecha o segmento.';
 
   @override
   String get sdSafeErrEndpointRequired => 'Escolhe um endpoint de webhook';

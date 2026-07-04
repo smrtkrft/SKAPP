@@ -3823,7 +3823,7 @@ abstract class AppLocalizations {
   /// No description provided for @sdSafeIntro.
   ///
   /// In en, this message translates to:
-  /// **'Each entry maps a secret knob sequence to a webhook. Sequences are entered ONLY on the device; this screen never shows their content.'**
+  /// **'Each entry maps a knob sequence to a webhook. Sequences are entered on the device; while editing here the sequence stays visible, but saved entries never reveal their content.'**
   String get sdSafeIntro;
 
   /// No description provided for @sdSafeEntryEmpty.
@@ -3853,7 +3853,7 @@ abstract class AppLocalizations {
   /// No description provided for @sdSafeFieldSequenceHint.
   ///
   /// In en, this message translates to:
-  /// **'Format: L3-R5-L2-B · L/R + turns (1-99), optional trailing B (button)'**
+  /// **'Format: L3-R5-L2-B · L/R + turns (1-50), 3-6 segments, optional trailing B (button)'**
   String get sdSafeFieldSequenceHint;
 
   /// No description provided for @sdSafeFieldEndpoint.
@@ -3883,8 +3883,38 @@ abstract class AppLocalizations {
   /// No description provided for @sdSafeErrSequenceTooLong.
   ///
   /// In en, this message translates to:
-  /// **'At most 16 segments'**
+  /// **'At most 6 segments'**
   String get sdSafeErrSequenceTooLong;
+
+  /// No description provided for @sdSafeErrSequenceTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 3 segments'**
+  String get sdSafeErrSequenceTooShort;
+
+  /// No description provided for @sdSafeRecStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get sdSafeRecStart;
+
+  /// No description provided for @sdSafeRecStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get sdSafeRecStop;
+
+  /// No description provided for @sdSafeRecClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get sdSafeRecClear;
+
+  /// No description provided for @sdSafeRecHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap ◀/▶ for one turn per tap; ● or a direction change closes the segment.'**
+  String get sdSafeRecHint;
 
   /// No description provided for @sdSafeErrEndpointRequired.
   ///

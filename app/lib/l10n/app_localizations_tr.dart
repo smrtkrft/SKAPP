@@ -2145,7 +2145,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get sdSafeIntro =>
-      'Her kayıt gizli bir düğme dizisini bir webhook\'a bağlar. Diziler YALNIZ cihazda girilir; bu ekran içeriklerini asla göstermez.';
+      'Her kayıt bir düğme dizisini bir webhook\'a bağlar. Diziler cihazda girilir; burada düzenlerken dizi açık görünür, kayıtlı girişlerin içeriği ise asla gösterilmez.';
 
   @override
   String get sdSafeEntryEmpty => 'Boş';
@@ -2165,7 +2165,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get sdSafeFieldSequenceHint =>
-      'Biçim: L3-R5-L2-B · L/R + tur (1-99), sona isteğe bağlı B (buton)';
+      'Biçim: L3-R5-L2-B · L/R + tur (1-50), 3-6 segment, sona isteğe bağlı B (buton)';
 
   @override
   String get sdSafeFieldEndpoint => 'Webhook (API kaydı)';
@@ -2181,7 +2181,23 @@ class AppLocalizationsTr extends AppLocalizations {
   String get sdSafeErrSequenceFormat => 'Geçersiz biçim — örn. L3-R5-L2-B';
 
   @override
-  String get sdSafeErrSequenceTooLong => 'En çok 16 segment';
+  String get sdSafeErrSequenceTooLong => 'En çok 6 segment';
+
+  @override
+  String get sdSafeErrSequenceTooShort => 'En az 3 segment';
+
+  @override
+  String get sdSafeRecStart => 'Kayıt modu';
+
+  @override
+  String get sdSafeRecStop => 'Bitti';
+
+  @override
+  String get sdSafeRecClear => 'Temizle';
+
+  @override
+  String get sdSafeRecHint =>
+      '◀/▶ her dokunuş 1 tur; ● ya da yön değişimi segmenti kapatır.';
 
   @override
   String get sdSafeErrEndpointRequired => 'Webhook kaydı seçin';

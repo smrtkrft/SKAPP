@@ -2154,7 +2154,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sdSafeIntro =>
-      'Каждая запись связывает секретную последовательность ручки с вебхуком. Последовательности вводятся ТОЛЬКО на устройстве; этот экран никогда не показывает их содержимое.';
+      'Каждая запись связывает последовательность ручки с вебхуком. Последовательности вводятся на устройстве; при редактировании здесь последовательность видна, но сохранённые записи никогда не раскрывают своё содержимое.';
 
   @override
   String get sdSafeEntryEmpty => 'Пусто';
@@ -2174,7 +2174,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sdSafeFieldSequenceHint =>
-      'Формат: L3-R5-L2-B · L/R + обороты (1-99), в конце необязательно B (кнопка)';
+      'Формат: L3-R5-L2-B · L/R + обороты (1-50), 3-6 сегментов, в конце необязательно B (кнопка)';
 
   @override
   String get sdSafeFieldEndpoint => 'Вебхук (endpoint API)';
@@ -2190,7 +2190,23 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sdSafeErrSequenceFormat => 'Неверный формат — напр. L3-R5-L2-B';
 
   @override
-  String get sdSafeErrSequenceTooLong => 'Не более 16 сегментов';
+  String get sdSafeErrSequenceTooLong => 'Не более 6 сегментов';
+
+  @override
+  String get sdSafeErrSequenceTooShort => 'Не менее 3 сегментов';
+
+  @override
+  String get sdSafeRecStart => 'Режим записи';
+
+  @override
+  String get sdSafeRecStop => 'Готово';
+
+  @override
+  String get sdSafeRecClear => 'Очистить';
+
+  @override
+  String get sdSafeRecHint =>
+      '◀/▶ — один оборот за касание; ● или смена направления закрывает сегмент.';
 
   @override
   String get sdSafeErrEndpointRequired => 'Выберите endpoint вебхука';
