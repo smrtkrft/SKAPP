@@ -41,7 +41,7 @@ Out of scope:
 ## Threat model
 
 The current threat model and mitigation layers are documented in
-[`achtung.md`](./achtung.md). If you discover a new threat, please report it
+[`achtung.md`](./docs/achtung.md). If you discover a new threat, please report it
 via the email above.
 
 ## Version support
