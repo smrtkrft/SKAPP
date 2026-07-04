@@ -1,61 +1,62 @@
-# Güvenlik Politikası
+# Security Policy
 
-SKAPP, SmartKraft IoT cihazlarının yapılandırma ve kontrol uygulamasıdır.
-Güvenliği ciddiye alıyoruz; topluluğun katkısıyla daha güvenli oluyor.
+SKAPP is the configuration and control app for SmartKraft IoT devices. We take
+security seriously; it gets stronger with the community's help.
 
-## Açık bildirimi
+## Reporting a vulnerability
 
-Bir güvenlik açığı keşfettiyseniz **lütfen GitHub Issues'a açmayın.**
-Açıklar koordineli ifşa ile sorumlu şekilde işlenir:
+If you have discovered a security vulnerability, **please do not open a GitHub
+Issue.** Vulnerabilities are handled responsibly through coordinated disclosure:
 
-- **E-posta:** code@smartkraft.ch
-- **Konu satırı:** `[SECURITY] kısa özet`
-- **İçerik:** etkilenen bileşen, reproduksiyon adımları, etkinin ciddiyeti hakkında
-  görüşünüz
+- **Email:** code@smartkraft.ch
+- **Subject line:** `[SECURITY] short summary`
+- **Body:** the affected component, reproduction steps, and your assessment of
+  the impact severity
 
-### Yanıt taahhüdü
+### Response commitment
 
-| Süre | Aksiyon |
+| Timeframe | Action |
 |---|---|
-| 24 saat | Bildirimin alındığına dair onay |
-| 7 gün | İlk analiz, ciddiyet değerlendirmesi |
-| 30 gün | Düzeltme planı veya yayın takvimi |
-| Yayın sonrası | Koordineli public disclosure (raporlayanla mutabakatla) |
+| 24 hours | Acknowledgement that the report was received |
+| 7 days | Initial analysis, severity assessment |
+| 30 days | Remediation plan or release schedule |
+| After the fix ships | Coordinated public disclosure (agreed with the reporter) |
 
-## Kapsam
+## Scope
 
-Bu güvenlik politikası şunları kapsar:
+This security policy covers:
 
-- SKAPP masaüstü uygulaması (Windows, macOS, Linux)
-- SKAPP mobil uygulaması (iOS, Android)
-- SmartKraft ESP32 cihaz firmware'leri (BF, LebensSpur ve gelecek cihazlar)
-- SKAPP ile cihaz arası iletişim protokolü (BLE, USB CLI, Wi-Fi)
-- SKAPP ile mobil peer arası iletişim (HTTP/TLS, HMAC)
+- SKAPP desktop app (Windows, macOS, Linux)
+- SKAPP mobile app (iOS, Android)
+- SmartKraft ESP32 device firmware (BF, LebensSpur and future devices)
+- The SKAPP-to-device communication protocol (BLE, USB CLI, Wi-Fi)
+- SKAPP-to-mobile-peer communication (HTTP/TLS, HMAC)
 
-Kapsam dışı:
+Out of scope:
 
-- Üçüncü taraf bağımlılıkları (lütfen onların kendi disclosure kanallarını kullanın)
-- Cihazınızın fiziksel güvenliği (kullanıcı sorumluluğu)
-- Sosyal mühendislik saldırıları
+- Third-party dependencies (please use their own disclosure channels)
+- Physical security of your device (user responsibility)
+- Social engineering attacks
 
-## Tehdit modeli
+## Threat model
 
-Mevcut tehdit modeli ve mitigation katmanları
-[`güvenlik.md`](./güvenlik.md) dosyasında belgelenmiştir. Yeni bir tehdit
-keşfettiyseniz lütfen yukarıdaki e-posta üzerinden bildirin.
+The current threat model and mitigation layers are documented in
+[`güvenlik.md`](./güvenlik.md). If you discover a new threat, please report it
+via the email above.
 
-## Versiyon kapsamı
+## Version support
 
-| Sürüm | Destek durumu |
+| Version | Support status |
 |---|---|
-| En son major.minor | Aktif güvenlik güncellemeleri |
-| Bir önceki minor | Sadece kritik düzeltmeler |
-| Eski sürümler | Destek dışı, yükseltme önerilir |
+| Latest major.minor | Active security updates |
+| Previous minor | Critical fixes only |
+| Older versions | Unsupported, upgrade recommended |
 
 ## Hall of Fame
 
-Doğrulanan kritik açıkları sorumlu şekilde bildirip yayın penceresine uyan
-araştırmacıları proje README'sinde ve sürüm notlarında (anonim isteğiniz
-yoksa) takdir ediyoruz.
+We credit researchers who responsibly report verified critical vulnerabilities
+and honor the disclosure window — in the project README and in release notes
+(unless you ask to remain anonymous).
 
-Bug bounty programımız şu an aktif değil; ileride değerlendirilecek.
+Our bug bounty program is not active at this time; it may be considered in the
+future.

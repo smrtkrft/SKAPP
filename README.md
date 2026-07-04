@@ -2,23 +2,23 @@
 
 # SKAPP
 
-**SmartKraft cihaz yapılandırma uygulaması** — BLE / WiFi üzerinden cihaz
-eşleştirme, yönetim, OTA ve SKAPI script otomasyonu. %100 P2P: sunucu yok,
-telemetri yok, hesap yok.
+**SmartKraft device configuration app** — device pairing, management, OTA and
+SKAPI script automation over BLE / WiFi. 100% P2P: no server, no telemetry,
+no account.
 
-[![Latest release](https://img.shields.io/github/v/release/smrtkrft/SKAPP?include_prereleases&label=indir)](https://github.com/smrtkrft/SKAPP/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/smrtkrft/SKAPP?include_prereleases&label=download)](https://github.com/smrtkrft/SKAPP/releases/latest)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPLv3-blue)](LICENSE)
 
 </div>
 
-> ⚠️ **Public beta / erken erişim.** Bazı özellikler eksik veya kararsız
-> olabilir. Sorunları [Issues](https://github.com/smrtkrft/SKAPP/issues)
-> üzerinden bildirin — uygulama içinden **Ayarlar → Tanılama → Logları
-> paylaş/kopyala** ile log dosyanızı ekleyebilirsiniz.
+> ⚠️ **Public beta / early access.** Some features may be incomplete or
+> unstable. Report problems via [Issues](https://github.com/smrtkrft/SKAPP/issues) —
+> you can attach your log file from inside the app via **Settings → Diagnostics →
+> Share/Copy logs**.
 
-## İndir
+## Download
 
-| Platform | Dosya |
+| Platform | File |
 |---|---|
 | macOS | [`SKAPP-macos.dmg`](https://github.com/smrtkrft/SKAPP/releases/latest/download/SKAPP-macos.dmg) |
 | Windows | [`SKAPP-windows-setup.exe`](https://github.com/smrtkrft/SKAPP/releases/latest/download/SKAPP-windows-setup.exe) |
@@ -26,19 +26,20 @@ telemetri yok, hesap yok.
 | Linux (Debian/Ubuntu) | [`SKAPP-linux-amd64.deb`](https://github.com/smrtkrft/SKAPP/releases/latest/download/SKAPP-linux-amd64.deb) |
 | Android | [`SKAPP-android.apk`](https://github.com/smrtkrft/SKAPP/releases/latest/download/SKAPP-android.apk) |
 
-> iOS bu sürümde yok. Beta yapıları imzasız/ad-hoc olduğu için ilk açılışta
-> işletim sistemi uyarı gösterebilir — kurulum talimatları her release notunda.
+> iOS is not included in this release. Because the beta builds are unsigned/ad-hoc,
+> the operating system may show a warning on first launch — installation
+> instructions are in every release note.
 
-## Kurulum notları (beta)
+## Installation notes (beta)
 
-- **macOS:** DMG'yi aç, uygulamayı Applications'a sürükle. İlk açılışta
-  sağ-tık → **Aç** → **Aç**. Takılırsa: `xattr -dr com.apple.quarantine /Applications/skapp.app`
-- **Windows:** SmartScreen çıkarsa **Daha fazla bilgi → Yine de çalıştır**.
+- **macOS:** Open the DMG and drag the app into Applications. On first launch,
+  right-click → **Open** → **Open**. If it gets stuck: `xattr -dr com.apple.quarantine /Applications/skapp.app`
+- **Windows:** If SmartScreen appears, **More info → Run anyway**.
 - **Linux (AppImage):** `chmod +x SKAPP-linux-x86_64.AppImage && ./SKAPP-linux-x86_64.AppImage`
-- **Android:** Tarayıcı/dosya yöneticisi için "bilinmeyen kaynaklardan kurulum"a
-  izin ver, sonra APK'yı aç.
+- **Android:** Allow "install from unknown sources" for your browser/file
+  manager, then open the APK.
 
-## Lisans
+## License
 
-[GNU AGPL v3](LICENSE). Her yayının karşılık gelen kaynak kodu, aynı git
-etiketindeki (tag) commit'tir.
+[GNU AGPL v3](LICENSE). The corresponding source code for each release is the
+commit at the same git tag.
