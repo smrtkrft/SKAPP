@@ -3538,6 +3538,18 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get sdModesFieldProfile;
 
+  /// No description provided for @sdModesNoProfileForBehavior.
+  ///
+  /// In en, this message translates to:
+  /// **'No profile on the device for this behavior yet.'**
+  String get sdModesNoProfileForBehavior;
+
+  /// No description provided for @sdModesAddFromCatalog.
+  ///
+  /// In en, this message translates to:
+  /// **'Add from catalog'**
+  String get sdModesAddFromCatalog;
+
   /// No description provided for @sdModesFieldHost.
   ///
   /// In en, this message translates to:
@@ -3807,6 +3819,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paste a catalog profile (v2 JSON). The device validates it again on save.'**
   String get sdProfilesAddHint;
+
+  /// No description provided for @sdProfilesCatalogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Device catalog'**
+  String get sdProfilesCatalogTitle;
+
+  /// No description provided for @sdProfilesCatalogAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to device'**
+  String get sdProfilesCatalogAdd;
+
+  /// No description provided for @sdProfilesCatalogMqttId.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile id (unique per device)'**
+  String get sdProfilesCatalogMqttId;
+
+  /// No description provided for @sdProfilesCatalogMqttPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'MQTT topic prefix'**
+  String get sdProfilesCatalogMqttPrefix;
+
+  /// No description provided for @sdProfilesAdvancedJson.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced: paste JSON'**
+  String get sdProfilesAdvancedJson;
 
   /// No description provided for @sdSafeClearTitle.
   ///

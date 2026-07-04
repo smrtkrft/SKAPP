@@ -112,6 +112,10 @@ flutter:
 
   assets:
     - assets/branding/
+    # SynDimm hedef-cihaz profil kataloğu. Kaynak-of-truth FIRMWARE
+    # repo'sudur: SynDimm/Code/neue/profiles/*.json — değişiklikte oradan
+    # elle kopyalanır (cihaz yalnız profile.add ile basılanı saklar).
+    - assets/sd_profiles/
     - assets/skapi/win/
     - assets/skapi/mac/
     - assets/skapi/lx/

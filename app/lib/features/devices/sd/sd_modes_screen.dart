@@ -25,6 +25,7 @@ import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
+import 'sd_profiles_screen.dart' show SdProfileAddScreen;
 import 'sd_session.dart';
 
 const _kBehaviors = ['dimmer', 'shutter', 'mqtt_remote', 'safe'];
@@ -246,7 +247,20 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
   bool _enabled = true;
   final _name = TextEditingController();
   String? _profile;
-  List<String> _profileIds = [];
+
+  /// profile.list girdileri: {id, behaviors[]}. behaviors boş/eksik olan
+  /// profil her davranışa uyar sayılır (geriye-uyum — firmware toleransıyla
+  /// aynı). Dropdown seçili davranışa göre filtrelenir.
+  List<Map<String, dynamic>> _profileEntries = [];
+
+  List<String> get _profileIdsForBehavior => [
+        for (final e in _profileEntries)
+          if (e['behaviors'] is! List ||
+              (e['behaviors'] as List).isEmpty ||
+              (e['behaviors'] as List).contains(_behavior) ||
+              e['id'] == _profile)   // bağlı-mevcut profil listede kalır
+            e['id'].toString(),
+      ];
   final _host = TextEditingController();
   final _port = TextEditingController(text: '80');
   final _deviceIdField = TextEditingController();
@@ -288,9 +302,15 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
     try {
       final p = await client.send('profile.list');
       if (mounted && p.ok && p.data is Map && (p.data as Map)['profiles'] is List) {
-        _profileIds = [
+        _profileEntries = [
           for (final e in (p.data as Map)['profiles'] as List)
-            if (e is Map && e['id'] != null) e['id'].toString(),
+            if (e is Map && e['id'] != null)
+              {
+                'id': e['id'].toString(),
+                'behaviors': e['behaviors'] is List
+                    ? [for (final b in e['behaviors'] as List) b.toString()]
+                    : const <String>[],
+              },
         ];
       }
     } catch (_) {/* sessiz */}
@@ -313,8 +333,14 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
     _name.text = b['name']?.toString() ?? '';
     final profile = b['profile']?.toString() ?? '';
     _profile = profile.isEmpty ? null : profile;
-    if (_profile != null && !_profileIds.contains(_profile)) {
-      _profileIds = [..._profileIds, _profile!];
+    if (_profile != null &&
+        !_profileEntries.any((e) => e['id'] == _profile)) {
+      // Cihazdan silinmiş/listelenmemiş ama hâlâ bağlı profil: dropdown'da
+      // görünür kalsın (davranış filtresi de `id == _profile` ile tolere eder).
+      _profileEntries = [
+        ..._profileEntries,
+        {'id': _profile!, 'behaviors': const <String>[]},
+      ];
     }
     final targets = b['targets'];
     if (targets is List && targets.isNotEmpty && targets.first is Map) {
@@ -552,8 +578,15 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
                       for (final b in _kBehaviors)
                         DropdownMenuItem(value: b, child: Text(b)),
                     ],
-                    onChanged: (v) =>
-                        setState(() => _behavior = v ?? 'dimmer'),
+                    onChanged: (v) => setState(() {
+                      _behavior = v ?? 'dimmer';
+                      // Yeni davranışa uymayan seçim dropdown item'larından
+                      // düşer — asserte çarpmadan null'a çek.
+                      if (_profile != null &&
+                          !_profileIdsForBehavior.contains(_profile)) {
+                        _profile = null;
+                      }
+                    }),
                   ),
                   const SizedBox(height: 12),
                   TextField(
@@ -590,16 +623,52 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
               SkNeuCard(
                 child: Column(
                   children: [
-                    DropdownButtonFormField<String>(
-                      initialValue: _profile,
-                      decoration:
-                          InputDecoration(labelText: l.sdModesFieldProfile),
-                      items: [
-                        for (final id in _profileIds)
-                          DropdownMenuItem(value: id, child: Text(id)),
-                      ],
-                      onChanged: (v) => setState(() => _profile = v),
-                    ),
+                    if (_profileIdsForBehavior.isNotEmpty)
+                      DropdownButtonFormField<String>(
+                        // Davranış değişince item seti değişir; eski
+                        // initialValue'nun sette olmayışı assert'e çarpmasın
+                        // diye key ile yeniden kurulur.
+                        key: ValueKey('profile-$_behavior'),
+                        initialValue: _profile,
+                        decoration:
+                            InputDecoration(labelText: l.sdModesFieldProfile),
+                        items: [
+                          for (final id in _profileIdsForBehavior)
+                            DropdownMenuItem(value: id, child: Text(id)),
+                        ],
+                        onChanged: (v) => setState(() => _profile = v),
+                      )
+                    else
+                      // Bu davranış için cihazda profil yok — katalogdan
+                      // ekleme kısayolu (dönüşte liste yenilenir).
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l.sdModesNoProfileForBehavior,
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: cs.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          OutlinedButton.icon(
+                            icon: const Icon(Icons.library_add_outlined,
+                                size: 18),
+                            label: Text(l.sdModesAddFromCatalog),
+                            onPressed: () async {
+                              await SdSession.push(
+                                context,
+                                SdProfileAddScreen(
+                                  deviceId: widget.deviceId,
+                                  behaviorFilter: _behavior,
+                                ),
+                              );
+                              if (mounted) await _bootstrap();
+                            },
+                          ),
+                        ],
+                      ),
                     const SizedBox(height: 12),
                     TextField(
                       controller: _host,

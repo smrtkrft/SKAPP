@@ -1992,6 +1992,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get sdModesFieldProfile => 'Profil';
 
   @override
+  String get sdModesNoProfileForBehavior =>
+      'Für dieses Verhalten ist noch kein Profil auf dem Gerät.';
+
+  @override
+  String get sdModesAddFromCatalog => 'Aus Katalog hinzufügen';
+
+  @override
   String get sdModesFieldHost => 'Ziel-IP / Host';
 
   @override
@@ -2142,6 +2149,21 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get sdProfilesAddHint =>
       'Füge ein Katalogprofil (v2-JSON) ein. Das Gerät validiert es beim Speichern erneut.';
+
+  @override
+  String get sdProfilesCatalogTitle => 'Gerätekatalog';
+
+  @override
+  String get sdProfilesCatalogAdd => 'Zum Gerät hinzufügen';
+
+  @override
+  String get sdProfilesCatalogMqttId => 'Profil-ID (pro Gerät eindeutig)';
+
+  @override
+  String get sdProfilesCatalogMqttPrefix => 'MQTT-Topic-Präfix';
+
+  @override
+  String get sdProfilesAdvancedJson => 'Erweitert: JSON einfügen';
 
   @override
   String get sdSafeClearTitle => 'Eintrag löschen?';

@@ -1980,6 +1980,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sdModesFieldProfile => 'Profile';
 
   @override
+  String get sdModesNoProfileForBehavior =>
+      'No profile on the device for this behavior yet.';
+
+  @override
+  String get sdModesAddFromCatalog => 'Add from catalog';
+
+  @override
   String get sdModesFieldHost => 'Target IP / host';
 
   @override
@@ -2128,6 +2135,21 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get sdProfilesAddHint =>
       'Paste a catalog profile (v2 JSON). The device validates it again on save.';
+
+  @override
+  String get sdProfilesCatalogTitle => 'Device catalog';
+
+  @override
+  String get sdProfilesCatalogAdd => 'Add to device';
+
+  @override
+  String get sdProfilesCatalogMqttId => 'Profile id (unique per device)';
+
+  @override
+  String get sdProfilesCatalogMqttPrefix => 'MQTT topic prefix';
+
+  @override
+  String get sdProfilesAdvancedJson => 'Advanced: paste JSON';
 
   @override
   String get sdSafeClearTitle => 'Clear entry?';

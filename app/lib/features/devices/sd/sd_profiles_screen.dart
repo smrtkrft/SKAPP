@@ -18,6 +18,7 @@ import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
+import 'sd_profile_catalog.dart';
 import 'sd_session.dart';
 
 class SdProfilesScreen extends StatefulWidget {
@@ -226,12 +227,21 @@ class _SdProfilesScreenState extends State<SdProfilesScreen> {
 }
 
 // ---------------------------------------------------------------------------
-// Profil ekleme — JSON yapıştır + firmware kurallarının aynası doğrulama
+// Profil ekleme — bundled katalogdan seçici (birincil yol) + "Gelişmiş"
+// ham-JSON yapıştırma (firmware kurallarının aynası doğrulama)
 // ---------------------------------------------------------------------------
 
 class SdProfileAddScreen extends StatefulWidget {
-  const SdProfileAddScreen({super.key, required this.deviceId});
+  const SdProfileAddScreen({
+    super.key,
+    required this.deviceId,
+    this.behaviorFilter,
+  });
   final String deviceId;
+
+  /// Mod formundaki "katalogdan ekle" kısayolu davranışa göre daraltır
+  /// (ör. shutter modu yalnız shutter-uyumluları görsün). null = tümü.
+  final String? behaviorFilter;
 
   @override
   State<SdProfileAddScreen> createState() => _SdProfileAddScreenState();
@@ -241,6 +251,20 @@ class _SdProfileAddScreenState extends State<SdProfileAddScreen> {
   final _json = TextEditingController();
   String? _error;
   bool _busy = false;
+  List<SdCatalogProfile> _catalog = [];
+
+  @override
+  void initState() {
+    super.initState();
+    SdProfileCatalog.load().then((c) {
+      if (!mounted) return;
+      setState(() {
+        _catalog = widget.behaviorFilter == null
+            ? c.profiles
+            : c.forBehavior(widget.behaviorFilter!);
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -269,9 +293,10 @@ class _SdProfileAddScreenState extends State<SdProfileAddScreen> {
     return null;
   }
 
-  Future<void> _add() async {
+  /// Ortak gönderme yolu — hem katalog seçimi hem ham-JSON kutusu buradan
+  /// geçer; doğrulama + kompaktlama + profile.add + başarıda ekranı kapat.
+  Future<void> _send(String raw) async {
     final l = AppLocalizations.of(context);
-    final raw = _json.text;
     final err = _validate(l, raw);
     if (err != null) {
       setState(() => _error = err);
@@ -283,8 +308,8 @@ class _SdProfileAddScreenState extends State<SdProfileAddScreen> {
     });
     final client = SdSession.of(context).client;
     try {
-      // Firmware kompakt tek satır bekler; yapıştırılan JSON yeniden
-      // encode edilerek boşluk/yeni satırlardan arındırılır.
+      // Firmware kompakt tek satır bekler; JSON yeniden encode edilerek
+      // boşluk/yeni satırlardan arındırılır.
       final compact = jsonEncode(jsonDecode(raw));
       final r = await client.send('profile.add', argv: [compact]);
       if (!mounted) return;
@@ -301,6 +326,104 @@ class _SdProfileAddScreenState extends State<SdProfileAddScreen> {
       if (mounted) setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _add() => _send(_json.text);
+
+  /// Katalog kartı → önizleme sheet'i. MQTT jenerik profillerinde topic
+  /// prefix'i (ve çoklu cihaz için id) düzenlenebilir — cihaz
+  /// kişiselleştirilmiş KOPYAYI saklar ({prefix} yalnız profilin üst-seviye
+  /// alanından çözülür, binding'den değil).
+  Future<void> _addFromCatalog(SdCatalogProfile p) async {
+    final l = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
+    final idCtl = TextEditingController(text: p.id);
+    final prefixCtl = TextEditingController();
+    if (p.isMqtt) {
+      try {
+        prefixCtl.text =
+            (jsonDecode(p.rawJson) as Map)['prefix']?.toString() ?? '';
+      } catch (_) {}
+    }
+    try {
+      final confirmed = await showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        builder: (ctx) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: 20 + MediaQuery.of(ctx).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(p.name, style: Theme.of(ctx).textTheme.titleMedium),
+              const SizedBox(height: 4),
+              Text(
+                '${p.protocol} · ${p.behaviors.join(", ")}',
+                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
+              ),
+              if (p.isMqtt) ...[
+                const SizedBox(height: 12),
+                TextField(
+                  controller: idCtl,
+                  decoration: InputDecoration(
+                    labelText: l.sdProfilesCatalogMqttId,
+                    helperText: l.sdProfilesErrIdFormat,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: prefixCtl,
+                  decoration: InputDecoration(
+                    labelText: l.sdProfilesCatalogMqttPrefix,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 12),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 260),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: SingleChildScrollView(
+                  child: SelectableText(
+                    p.rawJson,
+                    style: const TextStyle(
+                        fontFamily: 'monospace', fontSize: 11.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                icon: const Icon(Icons.add, size: 18),
+                label: Text(l.sdProfilesCatalogAdd),
+                onPressed: () => Navigator.of(ctx).pop(true),
+              ),
+            ],
+          ),
+        ),
+      );
+      if (confirmed != true || !mounted) return;
+      var raw = p.rawJson;
+      if (p.isMqtt) {
+        final m = jsonDecode(raw) as Map<String, dynamic>;
+        m['id'] = idCtl.text.trim();
+        if (prefixCtl.text.trim().isNotEmpty) {
+          m['prefix'] = prefixCtl.text.trim();
+        }
+        raw = jsonEncode(m);
+      }
+      await _send(raw);
+    } finally {
+      idCtl.dispose();
+      prefixCtl.dispose();
     }
   }
 
@@ -322,35 +445,77 @@ class _SdProfileAddScreenState extends State<SdProfileAddScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 48),
           children: [
+            // ── Katalog (birincil yol) ─────────────────────────────────
             Text(
-              l.sdProfilesAddHint,
-              style: TextStyle(fontSize: 12.5, color: cs.onSurfaceVariant),
+              l.sdProfilesCatalogTitle,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
-            const SizedBox(height: 12),
-            SkNeuCard(
-              child: TextField(
-                controller: _json,
-                maxLines: 16,
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-                decoration: InputDecoration(
-                  hintText: '{"v":2,"id":"shelly_dimmer2",...}',
-                  border: InputBorder.none,
-                  errorText: _error,
-                  errorMaxLines: 3,
+            const SizedBox(height: 8),
+            for (final p in _catalog) ...[
+              SkNeuCard(
+                padding: EdgeInsets.zero,
+                child: ListTile(
+                  leading: Icon(
+                    p.behaviors.contains('shutter')
+                        ? Icons.blinds_outlined
+                        : Icons.lightbulb_outline,
+                    color: cs.onSurfaceVariant,
+                  ),
+                  title: Text(p.name),
+                  subtitle: Text('${p.id} · ${p.protocol}'
+                      ' · ${p.behaviors.join(", ")}'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: _busy ? null : () => _addFromCatalog(p),
                 ),
-                onChanged: (_) {
-                  if (_error != null) setState(() => _error = null);
-                },
               ),
-            ),
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton.icon(
-                icon: const Icon(Icons.check, size: 18),
-                label: Text(l.commonSave),
-                onPressed: _busy ? null : _add,
+              const SizedBox(height: 8),
+            ],
+            if (_error != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(_error!, style: TextStyle(color: cs.error)),
               ),
+            const SizedBox(height: 8),
+            // ── Gelişmiş: ham JSON yapıştırma ──────────────────────────
+            ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              title: Text(
+                l.sdProfilesAdvancedJson,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              children: [
+                Text(
+                  l.sdProfilesAddHint,
+                  style:
+                      TextStyle(fontSize: 12.5, color: cs.onSurfaceVariant),
+                ),
+                const SizedBox(height: 12),
+                SkNeuCard(
+                  child: TextField(
+                    controller: _json,
+                    maxLines: 16,
+                    style: const TextStyle(
+                        fontFamily: 'monospace', fontSize: 12),
+                    decoration: const InputDecoration(
+                      hintText: '{"v":2,"id":"shelly_dimmer2",...}',
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (_) {
+                      if (_error != null) setState(() => _error = null);
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FilledButton.icon(
+                    icon: const Icon(Icons.check, size: 18),
+                    label: Text(l.commonSave),
+                    onPressed: _busy ? null : _add,
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
             ),
           ],
         ),

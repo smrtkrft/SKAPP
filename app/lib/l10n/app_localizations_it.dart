@@ -2003,6 +2003,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get sdModesFieldProfile => 'Profilo';
 
   @override
+  String get sdModesNoProfileForBehavior =>
+      'Nessun profilo sul dispositivo per questo comportamento.';
+
+  @override
+  String get sdModesAddFromCatalog => 'Aggiungi dal catalogo';
+
+  @override
   String get sdModesFieldHost => 'IP / host di destinazione';
 
   @override
@@ -2153,6 +2160,21 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get sdProfilesAddHint =>
       'Incolla un profilo del catalogo (JSON v2). Il dispositivo lo convalida di nuovo al salvataggio.';
+
+  @override
+  String get sdProfilesCatalogTitle => 'Catalogo dispositivi';
+
+  @override
+  String get sdProfilesCatalogAdd => 'Aggiungi al dispositivo';
+
+  @override
+  String get sdProfilesCatalogMqttId => 'ID profilo (unico per dispositivo)';
+
+  @override
+  String get sdProfilesCatalogMqttPrefix => 'Prefisso topic MQTT';
+
+  @override
+  String get sdProfilesAdvancedJson => 'Avanzate: incolla JSON';
 
   @override
   String get sdSafeClearTitle => 'Cancellare la voce?';

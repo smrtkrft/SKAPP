@@ -1987,6 +1987,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get sdModesFieldProfile => 'Profil';
 
   @override
+  String get sdModesNoProfileForBehavior =>
+      'Bu davranış için cihazda henüz profil yok.';
+
+  @override
+  String get sdModesAddFromCatalog => 'Katalogdan ekle';
+
+  @override
   String get sdModesFieldHost => 'Hedef IP / host';
 
   @override
@@ -2134,6 +2141,21 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get sdProfilesAddHint =>
       'Katalog profilini (v2 JSON) yapıştırın. Cihaz kaydederken yeniden doğrular.';
+
+  @override
+  String get sdProfilesCatalogTitle => 'Cihaz kataloğu';
+
+  @override
+  String get sdProfilesCatalogAdd => 'Cihaza ekle';
+
+  @override
+  String get sdProfilesCatalogMqttId => 'Profil id (cihaz başına benzersiz)';
+
+  @override
+  String get sdProfilesCatalogMqttPrefix => 'MQTT topic ön eki';
+
+  @override
+  String get sdProfilesAdvancedJson => 'Gelişmiş: JSON yapıştır';
 
   @override
   String get sdSafeClearTitle => 'Kayıt silinsin mi?';

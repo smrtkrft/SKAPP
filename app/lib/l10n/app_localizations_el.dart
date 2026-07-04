@@ -2000,6 +2000,13 @@ class AppLocalizationsEl extends AppLocalizations {
   String get sdModesFieldProfile => 'Προφίλ';
 
   @override
+  String get sdModesNoProfileForBehavior =>
+      'Δεν υπάρχει ακόμη προφίλ στη συσκευή για αυτή τη συμπεριφορά.';
+
+  @override
+  String get sdModesAddFromCatalog => 'Προσθήκη από τον κατάλογο';
+
+  @override
   String get sdModesFieldHost => 'IP / host προορισμού';
 
   @override
@@ -2151,6 +2158,21 @@ class AppLocalizationsEl extends AppLocalizations {
   @override
   String get sdProfilesAddHint =>
       'Επικολλήστε ένα προφίλ καταλόγου (JSON v2). Η συσκευή το επικυρώνει ξανά κατά την αποθήκευση.';
+
+  @override
+  String get sdProfilesCatalogTitle => 'Κατάλογος συσκευών';
+
+  @override
+  String get sdProfilesCatalogAdd => 'Προσθήκη στη συσκευή';
+
+  @override
+  String get sdProfilesCatalogMqttId => 'ID προφίλ (μοναδικό ανά συσκευή)';
+
+  @override
+  String get sdProfilesCatalogMqttPrefix => 'Πρόθεμα MQTT topic';
+
+  @override
+  String get sdProfilesAdvancedJson => 'Για προχωρημένους: επικόλληση JSON';
 
   @override
   String get sdSafeClearTitle => 'Διαγραφή καταχώρησης;';

@@ -1994,6 +1994,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sdModesFieldProfile => 'Профиль';
 
   @override
+  String get sdModesNoProfileForBehavior =>
+      'Для этого поведения на устройстве ещё нет профиля.';
+
+  @override
+  String get sdModesAddFromCatalog => 'Добавить из каталога';
+
+  @override
   String get sdModesFieldHost => 'IP / хост цели';
 
   @override
@@ -2143,6 +2150,21 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get sdProfilesAddHint =>
       'Вставьте профиль из каталога (JSON v2). Устройство проверит его снова при сохранении.';
+
+  @override
+  String get sdProfilesCatalogTitle => 'Каталог устройств';
+
+  @override
+  String get sdProfilesCatalogAdd => 'Добавить на устройство';
+
+  @override
+  String get sdProfilesCatalogMqttId => 'ID профиля (уникален для устройства)';
+
+  @override
+  String get sdProfilesCatalogMqttPrefix => 'Префикс MQTT-топика';
+
+  @override
+  String get sdProfilesAdvancedJson => 'Дополнительно: вставить JSON';
 
   @override
   String get sdSafeClearTitle => 'Удалить запись?';
