@@ -1,9 +1,10 @@
 ; SKAPP Windows kurulumcu (Inno Setup) — imzasız beta.
-; Derle:  iscc /DAppVersion=0.4.0 /O<cikti-klasoru> skapp.iss
-; AppVersion CI/script tarafından geçilir; yoksa aşağıdaki varsayılan kullanılır.
+; Derle:  iscc /DAppVersion=0.4.4 /O<cikti-klasoru> skapp.iss
+; AppVersion CI/script tarafından pubspec'ten geçilir; yoksa aşağıdaki
+; varsayılan kullanılır (yalnız elle derlemede devreye girer).
 
 #ifndef AppVersion
-  #define AppVersion "0.4.0"
+  #define AppVersion "0.4.4"
 #endif
 #define AppName "SKAPP"
 #define AppPublisher "SmartKraft"

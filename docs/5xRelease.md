@@ -56,7 +56,7 @@ git push origin main
 
 ## Adım 2 — Sürümü doğrula
 
-- `app/pubspec.yaml` → `version: 0.4.0+4` (biçim **daima** `X.Y.Z+N`; her yayında `+N` artar).
+- `app/pubspec.yaml` → `version: 0.4.4+10` (biçim **daima** `X.Y.Z+N`; her yayında `+N` artar).
 - `CHANGELOG.md` o sürümün notunu içeriyor.
 
 ---
@@ -64,8 +64,8 @@ git push origin main
 ## Adım 3 — Tag at ve push'la (CI'yi BU tetikler)
 
 ```bash
-git tag -a v0.4.0 -m "SKAPP v0.4.0 — public beta"
-git push origin v0.4.0
+git tag -a v0.4.4 -m "SKAPP v0.4.4 — public beta"
+git push origin v0.4.4
 ```
 Workflow `push: tags: ['v*']` ile tetiklenir. (Tag atmadan elle denemek için
 GitHub → Actions → Release → **Run workflow** = `workflow_dispatch` de var, ama
@@ -91,7 +91,7 @@ Toplam ~15-25 dk. Yeşil ✓ = başarı; kırmızı ✗ = o job'un log'una tıkl
 
 ## Adım 5 — Sonuç: GitHub Release
 
-GitHub → **Releases** → `v0.4.0`. İçinde 5 dosya + `.github/RELEASE_TEMPLATE.md`'den
+GitHub → **Releases** → `v0.4.4`. İçinde 5 dosya + `.github/RELEASE_TEMPLATE.md`'den
 gelen kurulum talimatlı açıklama. (Beta normal release olarak yayınlanır —
 pre-release işaretli değil — ki `latest` linkleri çalışsın.)
 
@@ -127,22 +127,22 @@ güncellemen gerekmez.
 **Bir job patlarsa:** Actions → ilgili çalışma → **Re-run failed jobs** (geçici hata ise).
 **Kod düzeltmesi gerekiyorsa** ve aynı sürümü yeniden denemek istersen tag'i taşı:
 ```bash
-git tag -d v0.4.0                 # yereldeki tag'i sil
-git push origin :refs/tags/v0.4.0 # uzaktaki tag'i sil
+git tag -d v0.4.4                 # yereldeki tag'i sil
+git push origin :refs/tags/v0.4.4 # uzaktaki tag'i sil
 # düzeltmeyi commit + push et, sonra:
-git tag -a v0.4.0 -m "..." && git push origin v0.4.0
+git tag -a v0.4.4 -m "..." && git push origin v0.4.4
 ```
-(Aynı tag'e bağlı Release güncellenir. Karışmasın istersen yeni sürüm: `v0.4.1`.)
+(Aynı tag'e bağlı Release güncellenir. Karışmasın istersen yeni sürüm: `v0.4.5`.)
 
 ---
 
 ## Sonraki sürümü yayınlama (kısa döngü)
 
-1. `app/pubspec.yaml` → sürümü artır (`0.4.1+5`; `+N` mutlaka artar).
+1. `app/pubspec.yaml` → sürümü artır (`0.4.5+11`; `+N` mutlaka artar).
 2. `CHANGELOG.md`'ye not ekle.
 3. `flutter analyze` temiz.
 4. commit + push.
-5. `git tag -a v0.4.1 -m "..." && git push origin v0.4.1` → CI gerisini yapar.
+5. `git tag -a v0.4.5 -m "..." && git push origin v0.4.5` → CI gerisini yapar.
 
 ---
 

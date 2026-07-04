@@ -32,6 +32,13 @@ set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE}")
 # Use Unicode for all projects.
 add_definitions(-DUNICODE -D_UNICODE)
 
+# The newest MSVC toolchain (VS 2026 / MSVC 14.51) promotes any use of
+# <experimental/coroutine> to a hard error (STL1011 static_assert).
+# permission_handler_windows' bundled cppwinrt still includes it, which crashes
+# `flutter build windows --release`. Silence the deprecation for all targets
+# (added below, plugins included) until the plugin migrates to <coroutine>.
+add_definitions(-D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
+
 # Compilation settings that should be applied to most targets.
 #
 # Be cautious about adding new options here, as plugins use this function by
