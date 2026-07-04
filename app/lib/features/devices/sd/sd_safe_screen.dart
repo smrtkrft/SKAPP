@@ -32,7 +32,10 @@ import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
+import '../../skapi/on_device_api_editor_screen.dart';
+import '../bf/bf_session.dart';
 import 'sd_session.dart';
+import 'sd_validators.dart';
 
 class SdSafeScreen extends StatefulWidget {
   const SdSafeScreen({super.key, required this.deviceId});
@@ -387,21 +390,17 @@ class _SdSafeEditScreenState extends State<SdSafeEditScreen> {
     } catch (_) {/* sessiz; dropdown boş kalır, kaydetmede uyarılır */}
   }
 
-  /// Dizi grameri firmware sd_sequence ile aynı: L/R + 1-50 tık, "-" ile
-  /// ayrılır, son segment "B" (buton) olabilir; 3-6 segment (kuyruk "-B"
-  /// segment SAYILMAZ — firmware parse'ı da onu yutar, slot tüketmez).
+  /// Saf dizi kuralları sd_validators.dart'ta (birim testli); burada
+  /// hata → yerelleştirilmiş metin eşlemesi + endpoint zorunluluğu.
   String? _validate(AppLocalizations l) {
-    final seq = _sequence.text.trim().toUpperCase();
-    if (seq.isEmpty) return l.sdSafeErrSequenceRequired;
-    final re = RegExp(r'^([LR][1-9][0-9]?)(-([LR][1-9][0-9]?))*(-B)?$');
-    if (!re.hasMatch(seq)) return l.sdSafeErrSequenceFormat;
-    final parts =
-        seq.split('-').where((p) => p != 'B').toList(growable: false);
-    if (parts.length < 3) return l.sdSafeErrSequenceTooShort;
-    if (parts.length > 6) return l.sdSafeErrSequenceTooLong;
-    for (final p in parts) {
-      final ticks = int.tryParse(p.substring(1)) ?? 0;
-      if (ticks < 1 || ticks > 50) return l.sdSafeErrSequenceFormat;
+    final err = validateSafeSequence(_sequence.text);
+    if (err != null) {
+      return switch (err) {
+        SdSafeSequenceError.required => l.sdSafeErrSequenceRequired,
+        SdSafeSequenceError.format => l.sdSafeErrSequenceFormat,
+        SdSafeSequenceError.tooShort => l.sdSafeErrSequenceTooShort,
+        SdSafeSequenceError.tooLong => l.sdSafeErrSequenceTooLong,
+      };
     }
     if (_endpoint == null || _endpoint!.isEmpty) {
       return l.sdSafeErrEndpointRequired;
@@ -562,6 +561,29 @@ class _SdSafeEditScreenState extends State<SdSafeEditScreen> {
                     ],
                     onChanged: (v) => setState(() => _endpoint = v),
                   ),
+                  if (_endpoints.isEmpty)
+                    // Çıkmaz sokak onarımı: cihazda hiç endpoint yokken
+                    // kullanıcıyı başka ekrana yollamak yerine paylaşılan
+                    // API editörünü buradan aç, dönüşte listeyi yenile.
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.add_link, size: 18),
+                          label: Text(l.sdSafeAddEndpoint),
+                          onPressed: () async {
+                            await BfSession.pushForDevice(
+                              context: context,
+                              deviceId: widget.deviceId,
+                              child: OnDeviceApiEditorScreen(
+                                  deviceId: widget.deviceId),
+                            );
+                            if (mounted) await _loadEndpoints();
+                          },
+                        ),
+                      ),
+                    ),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(l.sdModesFieldEnabled),

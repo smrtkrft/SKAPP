@@ -3424,6 +3424,78 @@ abstract class AppLocalizations {
   /// **'Device logs'**
   String get sdSettingsLogsSubtitle;
 
+  /// No description provided for @sdSettingsWebhooksSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage the device\'s webhook endpoints'**
+  String get sdSettingsWebhooksSubtitle;
+
+  /// No description provided for @sdSettingsSectionBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'BACKUP'**
+  String get sdSettingsSectionBackup;
+
+  /// No description provided for @sdSettingsExportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export configuration'**
+  String get sdSettingsExportTitle;
+
+  /// No description provided for @sdSettingsExportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Modes, profiles and preferences as one JSON (safe entries excluded)'**
+  String get sdSettingsExportSubtitle;
+
+  /// No description provided for @sdSettingsExportCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Configuration copied'**
+  String get sdSettingsExportCopied;
+
+  /// No description provided for @sdSettingsImportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore configuration'**
+  String get sdSettingsImportTitle;
+
+  /// No description provided for @sdSettingsImportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a previously exported JSON — device restarts after import'**
+  String get sdSettingsImportSubtitle;
+
+  /// No description provided for @sdSettingsImportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the full config.export output. Everything is validated before anything is written.'**
+  String get sdSettingsImportHint;
+
+  /// No description provided for @sdSettingsImportApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get sdSettingsImportApply;
+
+  /// No description provided for @sdSettingsImportConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore configuration?'**
+  String get sdSettingsImportConfirmTitle;
+
+  /// No description provided for @sdSettingsImportConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Current modes, profiles and preferences are replaced; the device restarts afterwards.'**
+  String get sdSettingsImportConfirmBody;
+
+  /// No description provided for @sdSettingsImportRestarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring — the device is rebooting, the session will reconnect.'**
+  String get sdSettingsImportRestarting;
+
   /// No description provided for @sdDashboardWebhooks.
   ///
   /// In en, this message translates to:
@@ -3909,6 +3981,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No endpoints on device — add one under Webhooks & API first'**
   String get sdSafeFieldEndpointEmpty;
+
+  /// No description provided for @sdSafeAddEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Create webhook endpoint'**
+  String get sdSafeAddEndpoint;
 
   /// No description provided for @sdSafeErrSequenceRequired.
   ///

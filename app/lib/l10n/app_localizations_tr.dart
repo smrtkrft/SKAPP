@@ -1910,6 +1910,48 @@ class AppLocalizationsTr extends AppLocalizations {
   String get sdSettingsLogsSubtitle => 'Cihaz günlükleri';
 
   @override
+  String get sdSettingsWebhooksSubtitle =>
+      'Cihazın webhook endpoint\'lerini yönet';
+
+  @override
+  String get sdSettingsSectionBackup => 'YEDEKLEME';
+
+  @override
+  String get sdSettingsExportTitle => 'Yapılandırmayı dışa aktar';
+
+  @override
+  String get sdSettingsExportSubtitle =>
+      'Modlar, profiller ve tercihler tek JSON (kasa kayıtları hariç)';
+
+  @override
+  String get sdSettingsExportCopied => 'Yapılandırma kopyalandı';
+
+  @override
+  String get sdSettingsImportTitle => 'Yapılandırmayı geri yükle';
+
+  @override
+  String get sdSettingsImportSubtitle =>
+      'Daha önce dışa aktarılan JSON\'u yapıştır — içe aktarım sonrası cihaz yeniden başlar';
+
+  @override
+  String get sdSettingsImportHint =>
+      'config.export çıktısının tamamını yapıştırın. Hiçbir şey yazılmadan önce tümü doğrulanır.';
+
+  @override
+  String get sdSettingsImportApply => 'Geri yükle';
+
+  @override
+  String get sdSettingsImportConfirmTitle => 'Yapılandırma geri yüklensin mi?';
+
+  @override
+  String get sdSettingsImportConfirmBody =>
+      'Mevcut modlar, profiller ve tercihler değiştirilir; ardından cihaz yeniden başlar.';
+
+  @override
+  String get sdSettingsImportRestarting =>
+      'Geri yükleniyor — cihaz yeniden başlıyor, oturum yeniden bağlanacak.';
+
+  @override
   String get sdDashboardWebhooks => 'Webhook\'lar & API';
 
   @override
@@ -2195,6 +2237,9 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get sdSafeFieldEndpointEmpty =>
       'Cihazda kayıtlı endpoint yok — önce Webhook\'lar & API bölümünden ekleyin';
+
+  @override
+  String get sdSafeAddEndpoint => 'Webhook endpoint oluştur';
 
   @override
   String get sdSafeErrSequenceRequired => 'Dizi girin';

@@ -1923,6 +1923,48 @@ class AppLocalizationsEl extends AppLocalizations {
   String get sdSettingsLogsSubtitle => 'Αρχεία καταγραφής συσκευής';
 
   @override
+  String get sdSettingsWebhooksSubtitle =>
+      'Διαχείριση των endpoint webhook της συσκευής';
+
+  @override
+  String get sdSettingsSectionBackup => 'ΑΝΤΙΓΡΑΦΟ ΑΣΦΑΛΕΙΑΣ';
+
+  @override
+  String get sdSettingsExportTitle => 'Εξαγωγή διαμόρφωσης';
+
+  @override
+  String get sdSettingsExportSubtitle =>
+      'Λειτουργίες, προφίλ και προτιμήσεις σε ένα JSON (οι καταχωρήσεις του χρηματοκιβωτίου εξαιρούνται)';
+
+  @override
+  String get sdSettingsExportCopied => 'Η διαμόρφωση αντιγράφηκε';
+
+  @override
+  String get sdSettingsImportTitle => 'Επαναφορά διαμόρφωσης';
+
+  @override
+  String get sdSettingsImportSubtitle =>
+      'Επικολλήστε ένα JSON που εξήχθη νωρίτερα — η συσκευή επανεκκινεί μετά την εισαγωγή';
+
+  @override
+  String get sdSettingsImportHint =>
+      'Επικολλήστε ολόκληρη την έξοδο του config.export. Όλα επικυρώνονται πριν γραφτεί οτιδήποτε.';
+
+  @override
+  String get sdSettingsImportApply => 'Επαναφορά';
+
+  @override
+  String get sdSettingsImportConfirmTitle => 'Επαναφορά της διαμόρφωσης;';
+
+  @override
+  String get sdSettingsImportConfirmBody =>
+      'Οι τρέχουσες λειτουργίες, τα προφίλ και οι προτιμήσεις αντικαθίστανται· στη συνέχεια η συσκευή επανεκκινεί.';
+
+  @override
+  String get sdSettingsImportRestarting =>
+      'Επαναφορά — η συσκευή επανεκκινεί, η συνεδρία θα επανασυνδεθεί.';
+
+  @override
   String get sdDashboardWebhooks => 'Webhooks και API';
 
   @override
@@ -2212,6 +2254,9 @@ class AppLocalizationsEl extends AppLocalizations {
   @override
   String get sdSafeFieldEndpointEmpty =>
       'Δεν υπάρχουν endpoints στη συσκευή — προσθέστε ένα πρώτα στα Webhooks και API';
+
+  @override
+  String get sdSafeAddEndpoint => 'Δημιουργία endpoint webhook';
 
   @override
   String get sdSafeErrSequenceRequired => 'Εισαγάγετε μια ακολουθία';

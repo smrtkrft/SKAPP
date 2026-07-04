@@ -1904,6 +1904,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sdSettingsLogsSubtitle => 'Device logs';
 
   @override
+  String get sdSettingsWebhooksSubtitle =>
+      'Manage the device\'s webhook endpoints';
+
+  @override
+  String get sdSettingsSectionBackup => 'BACKUP';
+
+  @override
+  String get sdSettingsExportTitle => 'Export configuration';
+
+  @override
+  String get sdSettingsExportSubtitle =>
+      'Modes, profiles and preferences as one JSON (safe entries excluded)';
+
+  @override
+  String get sdSettingsExportCopied => 'Configuration copied';
+
+  @override
+  String get sdSettingsImportTitle => 'Restore configuration';
+
+  @override
+  String get sdSettingsImportSubtitle =>
+      'Paste a previously exported JSON — device restarts after import';
+
+  @override
+  String get sdSettingsImportHint =>
+      'Paste the full config.export output. Everything is validated before anything is written.';
+
+  @override
+  String get sdSettingsImportApply => 'Restore';
+
+  @override
+  String get sdSettingsImportConfirmTitle => 'Restore configuration?';
+
+  @override
+  String get sdSettingsImportConfirmBody =>
+      'Current modes, profiles and preferences are replaced; the device restarts afterwards.';
+
+  @override
+  String get sdSettingsImportRestarting =>
+      'Restoring — the device is rebooting, the session will reconnect.';
+
+  @override
   String get sdDashboardWebhooks => 'Webhooks & API';
 
   @override
@@ -2189,6 +2231,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get sdSafeFieldEndpointEmpty =>
       'No endpoints on device — add one under Webhooks & API first';
+
+  @override
+  String get sdSafeAddEndpoint => 'Create webhook endpoint';
 
   @override
   String get sdSafeErrSequenceRequired => 'Enter a sequence';

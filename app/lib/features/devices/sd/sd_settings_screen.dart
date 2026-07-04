@@ -13,7 +13,10 @@
 // common*, deviceName*) bilinçli olarak yeniden kullanılıyor — 9 dilde
 // çevirileri hazır; sd* kopyaları yalnız İngilizce fallback üretirdi.
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/storage/paired_devices_store.dart';
@@ -23,6 +26,7 @@ import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
+import '../../skapi/on_device_api_editor_screen.dart';
 import '../bf/bf_bond_list_screen.dart';
 import '../bf/bf_device_info_screen.dart';
 import '../bf/bf_ota_screen.dart';
@@ -195,6 +199,140 @@ class _SdSettingsScreenState extends ConsumerState<SdSettingsScreen> {
     );
   }
 
+  /// config.export → tam JSON'u monospace dialog'da göster + panoya kopyala.
+  /// Boyut ~2-12 KB — BLE MTU parçalaması bilinen sınır, TCP'de sorunsuz
+  /// (sd_config_io.c başlık notu); hata olduğu gibi gösterilir.
+  Future<void> _exportConfig() async {
+    final client = SdSession.of(context).client;
+    final l = AppLocalizations.of(context);
+    String body;
+    bool ok = false;
+    try {
+      final r = await client.send('config.export');
+      ok = r.ok;
+      body = r.ok
+          ? const JsonEncoder.withIndent('  ').convert(r.data)
+          : '${l.commonError}: ${r.err ?? "?"}';
+    } catch (e) {
+      body = e.toString();
+    }
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l.sdSettingsExportTitle),
+        content: SizedBox(
+          width: 560,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              body,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 11.5),
+            ),
+          ),
+        ),
+        actions: [
+          if (ok)
+            TextButton.icon(
+              icon: const Icon(Icons.copy, size: 16),
+              label: Text(l.settingsNetworkIdentityCopy),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: body));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(l.sdSettingsExportCopied,
+                          textAlign: TextAlign.center)),
+                );
+              },
+            ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l.commonClose),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Yapıştırılan config.export dökümünü confirm-token akışıyla geri yükler.
+  /// Firmware iki geçişlidir (önce TÜM bölümleri doğrular, sonra yazar) ve
+  /// başarıda {"restarting":true} deyip yeniden başlar — oturum düşer,
+  /// kullanıcı bilgilendirilir.
+  Future<void> _importConfig() async {
+    final l = AppLocalizations.of(context);
+    final ctl = TextEditingController();
+    try {
+      final raw = await showDialog<String>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l.sdSettingsImportTitle),
+          content: SizedBox(
+            width: 560,
+            child: TextField(
+              controller: ctl,
+              maxLines: 12,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 11.5),
+              decoration: InputDecoration(
+                hintText: '{"v":1,"active":1,...}',
+                helperText: l.sdSettingsImportHint,
+                helperMaxLines: 3,
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(l.commonCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(ctl.text),
+              child: Text(l.sdSettingsImportApply),
+            ),
+          ],
+        ),
+      );
+      if (raw == null || raw.trim().isEmpty || !mounted) return;
+      String compact;
+      try {
+        compact = jsonEncode(jsonDecode(raw));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('${l.commonError}: $e',
+                  textAlign: TextAlign.center)),
+        );
+        return;
+      }
+      final client = SdSession.of(context).client;
+      final r = await client.sendCritical(
+        'config.import',
+        argv: [compact],
+        confirmRequest: (req) async {
+          if (!mounted) return false;
+          return await showSkConfirm(
+                context,
+                title: l.sdSettingsImportConfirmTitle,
+                message: l.sdSettingsImportConfirmBody,
+                confirmLabel: l.sdSettingsImportApply,
+                cancelLabel: l.commonCancel,
+                destructive: true,
+              ) ==
+              true;
+        },
+      );
+      if (!mounted) return;
+      final msg = r.ok
+          ? l.sdSettingsImportRestarting
+          : r.err == 'ERR_CONFIRM_TOKEN_REQUIRED'
+              ? l.commonCancel
+              : '${l.commonError}: ${r.err ?? "?"}';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg, textAlign: TextAlign.center)),
+      );
+    } finally {
+      ctl.dispose();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -252,6 +390,17 @@ class _SdSettingsScreenState extends ConsumerState<SdSettingsScreen> {
                 onTap: () => SdSession.push(
                   context,
                   SdSafeScreen(deviceId: widget.deviceId),
+                ),
+              ),
+              // Ürün kararı (2026-07-03): Webhooks dashboard alt kartından
+              // buraya taşındı — altta yalnız ayarlar girişi kaldı.
+              _Row(
+                icon: Icons.link,
+                title: l.sdDashboardWebhooks,
+                subtitle: l.sdSettingsWebhooksSubtitle,
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _pushShared(
+                  OnDeviceApiEditorScreen(deviceId: widget.deviceId),
                 ),
               ),
               _Row(
@@ -337,6 +486,26 @@ class _SdSettingsScreenState extends ConsumerState<SdSettingsScreen> {
                   context,
                   SdLogsScreen(deviceId: widget.deviceId),
                 ),
+              ),
+            ]),
+            const SizedBox(height: 24),
+            // Yedekleme — firmware sd_config_io (export: safe HARİÇ tek
+            // JSON; import: confirm-token + iki-geçişli doğrulama + reboot).
+            _Section(title: l.sdSettingsSectionBackup, children: [
+              _Row(
+                icon: Icons.file_upload_outlined,
+                title: l.sdSettingsExportTitle,
+                subtitle: l.sdSettingsExportSubtitle,
+                trailing: const Icon(Icons.chevron_right),
+                onTap: _exportConfig,
+              ),
+              _Row(
+                icon: Icons.file_download_outlined,
+                title: l.sdSettingsImportTitle,
+                subtitle: l.sdSettingsImportSubtitle,
+                trailing: const Icon(Icons.chevron_right),
+                tone: _Tone.warn,
+                onTap: _importConfig,
               ),
             ]),
             const SizedBox(height: 24),

@@ -1917,6 +1917,48 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sdSettingsLogsSubtitle => 'Журналы устройства';
 
   @override
+  String get sdSettingsWebhooksSubtitle =>
+      'Управление webhook-эндпойнтами устройства';
+
+  @override
+  String get sdSettingsSectionBackup => 'РЕЗЕРВНАЯ КОПИЯ';
+
+  @override
+  String get sdSettingsExportTitle => 'Экспорт конфигурации';
+
+  @override
+  String get sdSettingsExportSubtitle =>
+      'Режимы, профили и настройки одним JSON (записи сейфа исключены)';
+
+  @override
+  String get sdSettingsExportCopied => 'Конфигурация скопирована';
+
+  @override
+  String get sdSettingsImportTitle => 'Восстановить конфигурацию';
+
+  @override
+  String get sdSettingsImportSubtitle =>
+      'Вставьте ранее экспортированный JSON — после импорта устройство перезагрузится';
+
+  @override
+  String get sdSettingsImportHint =>
+      'Вставьте полный вывод config.export. Всё проверяется до какой-либо записи.';
+
+  @override
+  String get sdSettingsImportApply => 'Восстановить';
+
+  @override
+  String get sdSettingsImportConfirmTitle => 'Восстановить конфигурацию?';
+
+  @override
+  String get sdSettingsImportConfirmBody =>
+      'Текущие режимы, профили и настройки будут заменены; затем устройство перезагрузится.';
+
+  @override
+  String get sdSettingsImportRestarting =>
+      'Восстановление — устройство перезагружается, сессия переподключится.';
+
+  @override
   String get sdDashboardWebhooks => 'Вебхуки и API';
 
   @override
@@ -2204,6 +2246,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get sdSafeFieldEndpointEmpty =>
       'На устройстве нет endpoint\'ов — сначала добавьте один в разделе Вебхуки и API';
+
+  @override
+  String get sdSafeAddEndpoint => 'Создать webhook-эндпойнт';
 
   @override
   String get sdSafeErrSequenceRequired => 'Введите последовательность';

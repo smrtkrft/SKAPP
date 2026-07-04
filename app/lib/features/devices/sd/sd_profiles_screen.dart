@@ -20,6 +20,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
 import 'sd_profile_catalog.dart';
 import 'sd_session.dart';
+import 'sd_validators.dart';
 
 class SdProfilesScreen extends StatefulWidget {
   const SdProfilesScreen({super.key, required this.deviceId});
@@ -272,25 +273,21 @@ class _SdProfileAddScreenState extends State<SdProfileAddScreen> {
     super.dispose();
   }
 
-  /// Firmware doğrulamasının aynası (sd_profiles): geçerli JSON nesnesi,
-  /// id [A-Za-z0-9_-] ve ≤15 (NVS key sınırı), v=2, ≤2048 B.
+  /// Saf kurallar sd_validators.dart'ta (birim testli); burada yalnız
+  /// hata → yerelleştirilmiş metin eşlemesi yapılır.
   String? _validate(AppLocalizations l, String raw) {
-    if (raw.trim().isEmpty) return l.sdProfilesErrJsonEmpty;
-    if (utf8.encode(raw).length > 2048) return l.sdProfilesErrTooBig;
-    dynamic parsed;
-    try {
-      parsed = jsonDecode(raw);
-    } catch (e) {
-      return l.sdProfilesErrJsonInvalid(e.toString());
-    }
-    if (parsed is! Map) return l.sdProfilesErrJsonNotObject;
-    final id = parsed['id']?.toString() ?? '';
-    if (id.isEmpty) return l.sdProfilesErrIdRequired;
-    if (id.length > 15 || !RegExp(r'^[A-Za-z0-9_-]+$').hasMatch(id)) {
-      return l.sdProfilesErrIdFormat;
-    }
-    if (parsed['v'] != 2) return l.sdProfilesErrVersion;
-    return null;
+    final issue = validateProfileJson(raw);
+    if (issue == null) return null;
+    return switch (issue.kind) {
+      SdProfileJsonError.empty => l.sdProfilesErrJsonEmpty,
+      SdProfileJsonError.tooBig => l.sdProfilesErrTooBig,
+      SdProfileJsonError.invalidJson =>
+        l.sdProfilesErrJsonInvalid(issue.detail),
+      SdProfileJsonError.notObject => l.sdProfilesErrJsonNotObject,
+      SdProfileJsonError.idRequired => l.sdProfilesErrIdRequired,
+      SdProfileJsonError.idFormat => l.sdProfilesErrIdFormat,
+      SdProfileJsonError.version => l.sdProfilesErrVersion,
+    };
   }
 
   /// Ortak gönderme yolu — hem katalog seçimi hem ham-JSON kutusu buradan
