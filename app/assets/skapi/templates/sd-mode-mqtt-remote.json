@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "sd-mode-mqtt-remote",
+  "category": "mqtt",
+  "targetKind": "sd.mode",
+  "compatiblePrefixes": [
+    "SD"
+  ],
+  "i18n": {
+    "title": "MQTT Uzak Kumanda",
+    "summary": "skapiTplSumModeMqtt"
+  },
+  "params": [
+    {
+      "name": "name",
+      "placeholder": "{{name}}",
+      "i18nLabel": "Mod adı",
+      "type": "string",
+      "default": "MQTT",
+      "required": true
+    },
+    {
+      "name": "broker",
+      "placeholder": "{{broker}}",
+      "i18nLabel": "Broker IP",
+      "type": "host",
+      "required": true
+    },
+    {
+      "name": "broker-port",
+      "placeholder": "{{broker-port}}",
+      "i18nLabel": "Broker port",
+      "type": "int",
+      "default": "1883",
+      "min": 1,
+      "max": 65535,
+      "required": true
+    },
+    {
+      "name": "topic",
+      "placeholder": "{{topic}}",
+      "i18nLabel": "Topic",
+      "type": "string",
+      "default": "syndimm/knob",
+      "required": true
+    }
+  ],
+  "jsonBody": "{\"v\":2,\"behavior\":\"mqtt_remote\",\"enabled\":true,\"name\":\"{{name}}\",\"params\":{\"broker\":\"{{broker}}\",\"broker_port\":{{broker-port}},\"topic\":\"{{topic}}\",\"payload_value\":\"{value}\",\"payload_gesture\":\"{toggle}\",\"gestures_enabled\":true}}"
+}

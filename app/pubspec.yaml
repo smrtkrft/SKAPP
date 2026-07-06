@@ -2,7 +2,7 @@ name: skapp
 description: "SmartKraft device configuration app"
 publish_to: 'none'
 
-version: 0.4.5+11
+version: 0.4.9+15
 
 environment:
   sdk: ^3.10.3
@@ -112,21 +112,17 @@ flutter:
 
   assets:
     - assets/branding/
-    # SynDimm hedef-cihaz profil kataloğu. Kaynak-of-truth FIRMWARE
-    # repo'sudur: SynDimm/Code/neue/profiles/*.json — değişiklikte oradan
-    # elle kopyalanır (cihaz yalnız profile.add ile basılanı saklar).
-    - assets/sd_profiles/
+    # Cihaz Şablonları kütüphanesi (assets/skapi/templates/): SD profil
+    # sarmaları + mode/safe/webhook şablonları. SD profillerinin kaynak-of-
+    # truth'u FIRMWARE repo'sudur (SynDimm/Code/neue/profiles/*.json) —
+    # değişiklikte oradan yeniden üretilir; her şablonun "source" alanı
+    # köken dosyayı işaretler.
     - assets/skapi/win/
     - assets/skapi/mac/
     - assets/skapi/lx/
     - assets/skapi/lx-debian/
     - assets/skapi/lx-arch/
-    - assets/skapi/other/
-    - assets/skapi/other-syndimm/
-    - assets/skapi/other-lebensspur/
-    - assets/skapi/other-blockingfocus/
-    - assets/skapi/other-iot/
-    - assets/skapi/other-server/
+    - assets/skapi/templates/
 
 flutter_launcher_icons:
   android: "ic_launcher"

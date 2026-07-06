@@ -70,4 +70,19 @@ void main() {
     expect(result.ok, isFalse);
     expect(result.statusCode, 401);
   });
+
+  test('buildSignMessage yardımcısı verifier ile lockstep (Madde 18)',
+      () async {
+    // Helper'ın ürettiği mesajla imzalanan istek verifier'dan GEÇMELİ —
+    // yardımcı eski `body\n ts\n nonce` formuna geri kayarsa bu test kırılır.
+    final ts = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+    final msg = buildSignMessage(body: body, timestamp: ts, nonceHex: nonce);
+    final mac = Hmac(sha256, token).convert(msg).bytes;
+    final sig = _hex(mac.sublist(0, 16));
+    final result = await receiver.verify(
+      headers: headers(ts, sig),
+      body: body,
+    );
+    expect(result.ok, isTrue, reason: result.message);
+  });
 }

@@ -102,6 +102,7 @@ class ApiEndpoint {
     this.headerName,
     this.contentType,
     this.maskedToken,
+    this.payload,
     this.delayAfterSec = 0,
     this.slot = -1,
     this.expanded = false,
@@ -121,6 +122,13 @@ class ApiEndpoint {
   /// SKAPP never gets the plaintext, to rotate, the user supplies a new
   /// value via the "Token" field which goes back as `--token <plain>`.
   String? maskedToken;
+
+  /// Stored body template (USER kind, sk_api >= 0.5.0 firmware). Rendered
+  /// on-device at fire time: single-brace `{event}`-style tokens pull
+  /// scalars out of the trigger payload. Null/empty = firmware sends the
+  /// trigger payload verbatim (legacy behavior). Unlike the token this is
+  /// returned in full by `api.endpoint.list`, so it round-trips on edit.
+  String? payload;
 
   int delayAfterSec;
 
@@ -152,6 +160,7 @@ class ApiEndpoint {
             (j['header_name'] as String?),
         contentType: j['content_type']?.toString(),
         maskedToken: j['masked_token']?.toString(),
+        payload: j['payload']?.toString(),
         delayAfterSec:
             (j['delay_after_sec'] as num?)?.toInt() ?? 0,
         kind: kindFromWire(j['kind']?.toString()),

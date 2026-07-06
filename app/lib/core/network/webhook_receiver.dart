@@ -224,9 +224,10 @@ class WebhookEvent {
   /// The BF that sent the request (bond-verified).
   final String deviceId;
 
-  /// `event` field from the JSON body. BF currently emits
-  /// `focus_session_ended` from bf_timer_engine when the countdown ends.
-  /// Treated as the binding's event filter target.
+  /// `event` field from the JSON body. BF emits the canonical bus name
+  /// `timer.expired` from bf_timer_engine when the countdown ends (the
+  /// legacy `focus_session_ended` value only survives in the IFTTT
+  /// `value1` field). Treated as the binding's event filter target.
   final String eventName;
 
   /// Full body as a typed map; useful for binding param overrides that
@@ -243,14 +244,20 @@ String? webhookEventName(Map<String, Object?> body) {
   return null;
 }
 
-// Unused-but-kept-for-symmetry reference: build the canonical sign
-// message exactly the way the BF firmware does. The receiver above
-// inlines this for performance (avoid one extra UTF-8 copy), but we
-// also expose the helper for tests / diagnostics.
+// Reference: build the canonical sign message exactly the way the BF
+// firmware does (güvenlik.md Madde 18, length-prefixed form — matches
+// sk_api.c build_sign_msg and the verifier's inline computation above):
+//   <body_byte_len> "\n" <body> "\n" <ts> "\n" <nonce_hex>
+// The receiver inlines this for performance (avoid one extra UTF-8
+// copy); the helper exists for tests / diagnostics and MUST stay in
+// lockstep with the inline form — a divergence here mis-signs anything
+// built on it.
 Uint8List buildSignMessage({
   required String body,
   required String timestamp,
   required String nonceHex,
 }) {
-  return Uint8List.fromList(utf8.encode('$body\n$timestamp\n$nonceHex'));
+  final bodyByteLen = utf8.encode(body).length;
+  return Uint8List.fromList(
+      utf8.encode('$bodyByteLen\n$body\n$timestamp\n$nonceHex'));
 }

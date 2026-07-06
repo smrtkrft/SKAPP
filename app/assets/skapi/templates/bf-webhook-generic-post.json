@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "bf-webhook-generic-post",
+  "category": "webhook",
+  "targetKind": "bf.endpoint",
+  "compatiblePrefixes": [
+    "BF",
+    "LS",
+    "SD"
+  ],
+  "i18n": {
+    "title": "Generic POST Webhook",
+    "summary": "skapiTplSumGenericPost"
+  },
+  "platform": "templates",
+  "targetDeviceType": "any",
+  "defaults": {
+    "name": "webhook",
+    "type": "webhook_post",
+    "url": "{{url}}",
+    "method": "POST",
+    "auth": "none",
+    "payload": "{\"event\":\"{event}\",\"device\":\"{device}\"}",
+    "delayAfterSec": 0
+  },
+  "params": [
+    {
+      "name": "url",
+      "placeholder": "{{url}}",
+      "i18nLabel": "URL",
+      "secret": false
+    }
+  ]
+}

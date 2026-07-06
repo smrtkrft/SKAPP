@@ -113,6 +113,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get skapiTitle => 'SKAPI';
 
   @override
+  String get skapiQuickAccessHeading => 'Быстрый доступ';
+
+  @override
   String get skapiLibraryHeading => 'Библиотека SKAPI';
 
   @override
@@ -246,6 +249,47 @@ class AppLocalizationsRu extends AppLocalizations {
   String skapiHeaderSub(int platforms, int actions) {
     return '$platforms платформ · $actions действий';
   }
+
+  @override
+  String skapiHeaderSourcesActions(int sources, int actions) {
+    return '$sources sources · $actions actions';
+  }
+
+  @override
+  String get skapiTabLibrary => 'Library';
+
+  @override
+  String get skapiTabMine => 'My Library';
+
+  @override
+  String get skapiTabActions => 'Actions';
+
+  @override
+  String get skapiSearchHint => 'Search…';
+
+  @override
+  String get skapiSearchNoResults => 'No matching results.';
+
+  @override
+  String get skapiLibraryDevicesEmpty => 'No device templates available yet.';
+
+  @override
+  String get skapiDeviceDesktop => 'Desktop';
+
+  @override
+  String get skapiDesktopCardDesc =>
+      'Runs on your computer — bound to a device event';
+
+  @override
+  String get skapiDesktopNote =>
+      'These scripts run on your computer. Use the Actions tab to bind one to a device event.';
+
+  @override
+  String get skapiActionsExplainer =>
+      'An action is what happens when an event fires on a device — event on the left, result on the right.';
+
+  @override
+  String get skapiTplKindScript => 'SCRIPT';
 
   @override
   String get skapiNewActionPill => 'Новое действие';
@@ -5144,6 +5188,238 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get bfApiChainContentTypeLabel => 'Content-Type';
+
+  @override
+  String get bfApiChainPayloadLabel => 'Тело (payload)';
+
+  @override
+  String get bfApiChainPayloadHint =>
+      'Сохранённый шаблон тела — отправляется вместо данных триггера и заполняется на устройстве в момент срабатывания. Оставьте пустым, чтобы передать данные без изменений. Токены:';
+
+  @override
+  String get bfApiChainPayloadUnsupported =>
+      'Прошивка устройства не сохраняет шаблоны тела — тело было пропущено. Обновите прошивку, чтобы использовать его.';
+
+  @override
+  String get skapiTplParamsTitle => 'Параметры шаблона';
+
+  @override
+  String get skapiTplParamsSubtitle =>
+      'Значения ниже подставляются в URL и тело перед загрузкой.';
+
+  @override
+  String skapiTplUnresolvedError(String names) {
+    return 'Незаполненные параметры шаблона: $names';
+  }
+
+  @override
+  String get skapiBindEventTimerState => 'Состояние таймера изменилось';
+
+  @override
+  String get skapiTplLibraryTitle => 'Шаблоны устройств';
+
+  @override
+  String get skapiPlatformDeviceTemplates => 'Шаблоны устройств';
+
+  @override
+  String get skapiTplEmptyLibrary => 'Нет шаблонов, соответствующих фильтру.';
+
+  @override
+  String get skapiTplDevicesHeading => 'Устройства';
+
+  @override
+  String get skapiTplDevDescSd =>
+      'Поворотная ручка — управление диммером и жалюзи';
+
+  @override
+  String get skapiTplDevDescLs =>
+      'Таймер следа жизни — рассыльщик обратного отсчёта';
+
+  @override
+  String get skapiTplDevDescBf => 'Куб-таймер фокуса — физические грани';
+
+  @override
+  String get skapiTplSafeNote =>
+      'Последовательность сейфа задаётся на устройстве (не в SKAPI). Загрузите вебхук здесь, затем свяжите его с последовательностью на экране SD.';
+
+  @override
+  String get skapiTplDrivers => 'Драйверы';
+
+  @override
+  String get skapiTplModes => 'Режимы';
+
+  @override
+  String skapiTplDeviceCount(int count) {
+    return '$count скриптов';
+  }
+
+  @override
+  String get skapiTplMineHeading => 'Мои шаблоны';
+
+  @override
+  String get skapiTplMineEmpty =>
+      'Скопируйте готовый шаблон сюда через «Копировать в мои шаблоны», чтобы редактировать свою версию.';
+
+  @override
+  String get skapiTplCatDimmer => 'Диммер';
+
+  @override
+  String get skapiTplCatShutter => 'Жалюзи';
+
+  @override
+  String get skapiTplCatWebhook => 'Webhook / API';
+
+  @override
+  String get skapiTplCatMqtt => 'MQTT';
+
+  @override
+  String get skapiTplCatOther => 'Прочее';
+
+  @override
+  String skapiTplDeepLinkBanner(String deviceId) {
+    return 'Отфильтровано для $deviceId — после загрузки вернётесь на экран устройства.';
+  }
+
+  @override
+  String get skapiTplKindProfile => 'ПРОФИЛЬ';
+
+  @override
+  String get skapiTplKindMode => 'РЕЖИМ';
+
+  @override
+  String get skapiTplKindSafe => 'СЕЙФ';
+
+  @override
+  String get skapiTplKindWebhook => 'WEBHOOK';
+
+  @override
+  String get skapiTplDetailFormTab => 'Форма';
+
+  @override
+  String get skapiTplDetailJsonTab => 'Расширенный (JSON)';
+
+  @override
+  String get skapiTplPreviewHeading => 'Предпросмотр — JSON для устройства';
+
+  @override
+  String get skapiTplNoParams =>
+      'Шаблону не нужны параметры — загрузите как есть.';
+
+  @override
+  String get skapiTplUploadFilledInEditor =>
+      'Для этого типа шаблона параметры заполняются на экране загрузки.';
+
+  @override
+  String get skapiTplValidateCta => 'Проверить';
+
+  @override
+  String get skapiTplValidationOk => 'Схема корректна';
+
+  @override
+  String skapiTplValidationFail(String detail) {
+    return 'Ошибка проверки: $detail';
+  }
+
+  @override
+  String get skapiTplCopyCta => 'Копировать в мои шаблоны';
+
+  @override
+  String skapiTplCopiedToast(String title) {
+    return '«$title» скопирован в Мои шаблоны.';
+  }
+
+  @override
+  String get skapiTplDeployCta => 'Загрузить на устройство';
+
+  @override
+  String get skapiTplPickSlotTitle => 'Выберите слот режима';
+
+  @override
+  String get skapiTplSlotEmpty => 'пусто';
+
+  @override
+  String get skapiTplPickSafeEntryTitle => 'Выберите запись сейфа (1-5)';
+
+  @override
+  String get skapiTplProfileMissingTitle => 'Профиля нет на устройстве';
+
+  @override
+  String skapiTplProfileMissingBody(String profileId) {
+    return 'Этот режим ссылается на профиль «$profileId», которого нет на устройстве. Сначала загрузите шаблон профиля или продолжите всё равно.';
+  }
+
+  @override
+  String get skapiTplDeployAnyway => 'Загрузить всё равно';
+
+  @override
+  String skapiTplDeployOkToast(String name) {
+    return 'Загружено на $name · подтверждено обратным чтением.';
+  }
+
+  @override
+  String skapiTplDeployErrorToast(String err) {
+    return 'Устройство отклонило запись: $err';
+  }
+
+  @override
+  String skapiTplDeployMismatchToast(String detail) {
+    return 'Загружено, но обратное чтение не совпадает: $detail';
+  }
+
+  @override
+  String get skapiTplDeployOfflineToast =>
+      'Не удалось подключиться к устройству — повторите, когда оно будет в сети.';
+
+  @override
+  String get skapiTplDeviceOffline => 'не в сети';
+
+  @override
+  String get skapiTplOptional => 'необязательно';
+
+  @override
+  String get skapiTplSaveCta => 'Сохранить';
+
+  @override
+  String get skapiTplSavedToast => 'Шаблон сохранён.';
+
+  @override
+  String get skapiTplDeleteCta => 'Удалить шаблон';
+
+  @override
+  String get sdProfilesAddViaLibrary =>
+      'Открывает библиотеку шаблонов SKAPI с фильтром по профилям SynDimm.';
+
+  @override
+  String get skapiTplSumModeDimmer =>
+      'Привязывает слот ручки к HTTP-диммеру: целевой IP, профиль, шаг и пресет двойного клика.';
+
+  @override
+  String get skapiTplSumModeShutter =>
+      'Привязывает слот ручки к HTTP-жалюзи: целевой IP, профиль и шаг.';
+
+  @override
+  String get skapiTplSumModeMqtt =>
+      'Публикует значение ручки и жесты в MQTT-брокер; токены value/toggle заполняются на устройстве.';
+
+  @override
+  String get skapiTplSumSafeWebhook =>
+      'Запускает вебхук устройства при вводе секретной последовательности; неверные попытки блокируют.';
+
+  @override
+  String get skapiTplSumGenericPost =>
+      'Отправляет JSON POST на любой URL при срабатывании; токены event/device заполняются при отправке.';
+
+  @override
+  String get skapiTplSumHa =>
+      'Вызывает webhook-триггер Home Assistant; используйте в автоматизации HA.';
+
+  @override
+  String get skapiTplSumNtfy =>
+      'Отправляет push-уведомление через ntfy.sh — без аккаунта, нужен только topic.';
+
+  @override
+  String get skapiTplSumIfttt =>
+      'Запускает апплет IFTTT Maker; устройство автоматически заполняет value1/value2/value3.';
 
   @override
   String get bfApiChainSaveCta => 'Сохранить';

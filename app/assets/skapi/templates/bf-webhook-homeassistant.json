@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "bf-webhook-homeassistant",
+  "category": "webhook",
+  "targetKind": "bf.endpoint",
+  "compatiblePrefixes": [
+    "BF",
+    "LS",
+    "SD"
+  ],
+  "i18n": {
+    "title": "Home Assistant Webhook",
+    "summary": "skapiTplSumHa"
+  },
+  "platform": "templates",
+  "targetDeviceType": "any",
+  "defaults": {
+    "name": "homeassistant",
+    "type": "webhook_post",
+    "url": "http://{{ha-host}}:8123/api/webhook/{{webhook-id}}",
+    "method": "POST",
+    "auth": "none",
+    "payload": "{\"event\":\"{event}\",\"device\":\"{device}\",\"value\":\"{value2}\"}",
+    "delayAfterSec": 0
+  },
+  "params": [
+    {
+      "name": "ha-host",
+      "placeholder": "{{ha-host}}",
+      "i18nLabel": "HA host/IP",
+      "secret": false
+    },
+    {
+      "name": "webhook-id",
+      "placeholder": "{{webhook-id}}",
+      "i18nLabel": "Webhook ID",
+      "secret": false
+    }
+  ]
+}

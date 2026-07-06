@@ -16,7 +16,10 @@ class BfEvent {
 const List<BfEvent> kBfEvents = [
   // Names verified against esp32/BF/components/.../sk_event_bus_publish(...)
   // calls in firmware. Diverging from these breaks bindings silently.
-  BfEvent(value: 'timer.state', i18nLabel: 'skapiBindEventTimerStarted'),
+  // timer.state fires on EVERY engine transition (armed, paused, expired,
+  // cooldown, ...) — not just start. Label must say so or bindings built
+  // on it fire far more often than the user expects.
+  BfEvent(value: 'timer.state', i18nLabel: 'skapiBindEventTimerState'),
   BfEvent(value: 'timer.expired', i18nLabel: 'skapiBindEventTimerExpired'),
   BfEvent(value: 'face.changed', i18nLabel: 'skapiBindEventFaceChanged'),
   BfEvent(value: 'button.pressed', i18nLabel: 'skapiBindEventButtonPressed'),

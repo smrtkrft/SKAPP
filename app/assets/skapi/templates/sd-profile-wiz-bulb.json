@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "sd-profile-wiz-bulb",
+  "category": "dimmer",
+  "targetKind": "sd.profile",
+  "compatiblePrefixes": [
+    "SD"
+  ],
+  "i18n": {
+    "title": "WiZ Smart Bulb",
+    "summary": "UDP · dimmer · profile.add"
+  },
+  "params": [],
+  "jsonBody": {
+    "v": 2,
+    "id": "wiz_bulb",
+    "name": "WiZ Smart Bulb",
+    "manufacturer": "WiZ",
+    "protocol": "udp",
+    "port": 38899,
+    "behaviors": [
+      "dimmer"
+    ],
+    "commands": {
+      "set_value": {
+        "packet": "{\"method\":\"setPilot\",\"params\":{\"dimming\":{value}}}",
+        "min": 10,
+        "max": 100,
+        "step": 1
+      },
+      "toggle": {
+        "packet": "{\"method\":\"setState\",\"params\":{\"state\":{toggle}}}"
+      }
+    }
+  },
+  "source": "SynDimm/Code/neue/profiles/wiz_bulb.json"
+}

@@ -17,6 +17,7 @@ class EndpointCard extends StatelessWidget {
     required this.onSave,
     required this.onRemove,
     required this.onTest,
+    this.showPayloadField = false,
   });
 
   final ApiEndpoint endpoint;
@@ -24,6 +25,11 @@ class EndpointCard extends StatelessWidget {
   final Future<void> Function(ApiEndpoint draft, String? plainToken) onSave;
   final VoidCallback onRemove;
   final VoidCallback onTest;
+
+  /// Capability-gated (sk_api >= 0.5.0): older firmware silently ignores
+  /// `--payload`, so the field is hidden entirely rather than shown as a
+  /// value the device would never store.
+  final bool showPayloadField;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +44,7 @@ class EndpointCard extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
               child: _Body(
                 endpoint: endpoint,
+                showPayloadField: showPayloadField,
                 onChange: onChange,
                 onSave: onSave,
                 onRemove: onRemove,
@@ -120,6 +127,7 @@ class _Body extends StatefulWidget {
     required this.onSave,
     required this.onRemove,
     required this.onTest,
+    required this.showPayloadField,
   });
 
   final ApiEndpoint endpoint;
@@ -127,6 +135,7 @@ class _Body extends StatefulWidget {
   final Future<void> Function(ApiEndpoint draft, String? plainToken) onSave;
   final VoidCallback onRemove;
   final VoidCallback onTest;
+  final bool showPayloadField;
 
   @override
   State<_Body> createState() => _BodyState();
@@ -139,12 +148,21 @@ class _BodyState extends State<_Body> {
   late final TextEditingController _headerName;
   late final TextEditingController _contentType;
   late final TextEditingController _newToken;
+  late final TextEditingController _payload;
   bool _saving = false;
   bool _showAdvanced = false;
 
   late ApiType _type;
   late HttpMethod _method;
   late AuthMode _auth;
+
+  // Last url/payload values seen ON the endpoint model. The template
+  // param form (editor screen) rewrites the seeded draft's url/payload
+  // live; controller text only flows back to the model at save time, so
+  // any model-side difference from these mirrors is an external rewrite
+  // that must be pushed into the controllers (see build()).
+  late String _extUrl;
+  late String _extPayload;
 
   @override
   void initState() {
@@ -157,6 +175,9 @@ class _BodyState extends State<_Body> {
     _contentType =
         TextEditingController(text: e.contentType ?? 'application/json');
     _newToken = TextEditingController();
+    _payload = TextEditingController(text: e.payload ?? '');
+    _extUrl = e.url;
+    _extPayload = e.payload ?? '';
     _type = e.type;
     _method = e.method;
     _auth = e.auth;
@@ -170,7 +191,23 @@ class _BodyState extends State<_Body> {
     _headerName.dispose();
     _contentType.dispose();
     _newToken.dispose();
+    _payload.dispose();
     super.dispose();
+  }
+
+  /// Pull external (template-param-form) rewrites of the endpoint's
+  /// url/payload into the text controllers. Called from build().
+  void _syncExternalRewrites() {
+    final e = widget.endpoint;
+    if (e.url != _extUrl) {
+      _extUrl = e.url;
+      _url.text = e.url;
+    }
+    final p = e.payload ?? '';
+    if (p != _extPayload) {
+      _extPayload = p;
+      _payload.text = p;
+    }
   }
 
   /// Strip duplicated scheme prefixes ("https://http://example.com",
@@ -221,6 +258,7 @@ class _BodyState extends State<_Body> {
       // If sanitiser changed the value, write it back to the field so
       // the user sees what was actually saved.
       if (cleanedUrl != _url.text) _url.text = cleanedUrl;
+      final payloadText = _payload.text.trim();
       final draft = widget.endpoint
         ..name = _name.text.trim()
         ..type = _type
@@ -231,7 +269,10 @@ class _BodyState extends State<_Body> {
             _headerName.text.trim().isEmpty ? null : _headerName.text.trim()
         ..contentType =
             _contentType.text.trim().isEmpty ? null : _contentType.text.trim()
+        ..payload = payloadText.isEmpty ? null : payloadText
         ..delayAfterSec = clamped;
+      _extUrl = draft.url;
+      _extPayload = draft.payload ?? '';
       await widget.onSave(
         draft,
         _newToken.text.isEmpty ? null : _newToken.text,
@@ -244,6 +285,7 @@ class _BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
+    _syncExternalRewrites();
     final cs = Theme.of(context).colorScheme;
     final l = AppLocalizations.of(context);
     final saved = widget.endpoint.slot >= 0;
@@ -360,6 +402,34 @@ class _BodyState extends State<_Body> {
           ],
           const SizedBox(height: 12),
           _Field(label: l.bfApiChainContentTypeLabel, controller: _contentType),
+          // Stored body template — only on firmware that persists it
+          // (sk_api >= 0.5.0). Single-brace {event}-style tokens are
+          // rendered on-device at fire time; empty = trigger payload
+          // passes through verbatim (legacy behavior).
+          if (widget.showPayloadField) ...[
+            const SizedBox(height: 12),
+            _LabelText(l.bfApiChainPayloadLabel),
+            const SizedBox(height: 6),
+            TextField(
+              controller: _payload,
+              maxLines: 4,
+              minLines: 2,
+              maxLength: 512,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+              decoration: InputDecoration(
+                isDense: true,
+                border: const OutlineInputBorder(),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                // Token list lives in code, not the ARB — literal braces
+                // would read as ICU placeholders in l10n messages.
+                helperText: '${l.bfApiChainPayloadHint} '
+                    '{event} {duration_min} {face} {device} '
+                    '{value1} {value2} {value3} {payload}',
+                helperMaxLines: 4,
+              ),
+            ),
+          ],
         ],
         const SizedBox(height: 14),
         Row(

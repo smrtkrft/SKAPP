@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "sd-profile-tasmota-dimmer",
+  "category": "dimmer",
+  "targetKind": "sd.profile",
+  "compatiblePrefixes": [
+    "SD"
+  ],
+  "i18n": {
+    "title": "Tasmota Dimmer",
+    "summary": "MQTT · dimmer · profile.add"
+  },
+  "params": [
+    {
+      "name": "mqtt-id",
+      "placeholder": "{{mqtt-id}}",
+      "i18nLabel": "Profil ID",
+      "type": "string",
+      "default": "tasmota_dimmer",
+      "secret": false,
+      "required": true
+    },
+    {
+      "name": "mqtt-prefix",
+      "placeholder": "{{mqtt-prefix}}",
+      "i18nLabel": "Topic prefix",
+      "type": "string",
+      "default": "cmnd/tasmota_dimmer",
+      "secret": false,
+      "required": true
+    }
+  ],
+  "jsonBody": {
+    "v": 2,
+    "id": "{{mqtt-id}}",
+    "name": "Tasmota Dimmer",
+    "manufacturer": "Tasmota",
+    "protocol": "mqtt",
+    "prefix": "{{mqtt-prefix}}",
+    "state_prefix": "stat/tasmota_dimmer",
+    "behaviors": [
+      "dimmer"
+    ],
+    "commands": {
+      "set_value": {
+        "topic": "{prefix}/Dimmer",
+        "payload": "{value}",
+        "min": 0,
+        "max": 100,
+        "step": 1
+      },
+      "toggle": {
+        "topic": "{prefix}/Power",
+        "payload": "TOGGLE"
+      }
+    }
+  },
+  "source": "SynDimm/Code/neue/profiles/tasmota_dimmer.json"
+}

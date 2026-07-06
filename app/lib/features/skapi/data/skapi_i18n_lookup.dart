@@ -17,6 +17,24 @@ import '../../../l10n/app_localizations.dart';
 ///      translations are loud during dev rather than silent.
 String resolveSkapiI18nKey(AppLocalizations l, String key) {
   switch (key) {
+    // Cihaz şablonu özetleri (Faz B — assets/skapi/templates/)
+    case 'skapiTplSumModeDimmer':
+      return l.skapiTplSumModeDimmer;
+    case 'skapiTplSumModeShutter':
+      return l.skapiTplSumModeShutter;
+    case 'skapiTplSumModeMqtt':
+      return l.skapiTplSumModeMqtt;
+    case 'skapiTplSumSafeWebhook':
+      return l.skapiTplSumSafeWebhook;
+    case 'skapiTplSumGenericPost':
+      return l.skapiTplSumGenericPost;
+    case 'skapiTplSumHa':
+      return l.skapiTplSumHa;
+    case 'skapiTplSumNtfy':
+      return l.skapiTplSumNtfy;
+    case 'skapiTplSumIfttt':
+      return l.skapiTplSumIfttt;
+
     // Group: power
     case 'skapiGroupPowerTitle':
       return l.skapiGroupPowerTitle;

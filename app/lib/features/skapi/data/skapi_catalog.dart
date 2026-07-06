@@ -113,41 +113,8 @@ final List<SkapiPlatformSpec> kSkapiLinuxDistros = [
   ),
 ];
 
-/// Other (IoT/device-fired) splits at the next level into 5 categories.
-/// First three are SmartKraft-specific device templates (SynDimm, LebensSpur,
-/// Blocking Focus); last two are generic buckets (IoT for third-party
-/// devices, Server for self-hosted HTTP receivers).
-///
-/// Each spec's `id` matches its `assets/skapi/<id>/` folder. Templates
-/// inside these folders are NOT runnable scripts (the host doesn't fire
-/// them) — they are `ApiTemplateManifest` prefills that the user uploads
-/// onto a paired SmartKraft device, which fires them on its own trigger
-/// (BF: `timer.expired`). See `yapilacaklar.md` Madde 24 for the full
-/// architecture.
-final List<SkapiPlatformSpec> kSkapiOtherCategories = [
-  SkapiPlatformSpec(
-    id: 'other-syndimm',
-    label: 'SynDimm',
-    icon: FontAwesomeIcons.lightbulb.data,
-  ),
-  SkapiPlatformSpec(
-    id: 'other-lebensspur',
-    label: 'LebensSpur',
-    icon: FontAwesomeIcons.shoePrints.data,
-  ),
-  SkapiPlatformSpec(
-    id: 'other-blockingfocus',
-    label: 'Blocking Focus',
-    icon: FontAwesomeIcons.bullseye.data,
-  ),
-  SkapiPlatformSpec(
-    id: 'other-iot',
-    label: 'IoT',
-    icon: FontAwesomeIcons.networkWired.data,
-  ),
-  SkapiPlatformSpec(
-    id: 'other-server',
-    label: 'Server',
-    icon: FontAwesomeIcons.server.data,
-  ),
-];
+// kSkapiOtherCategories (other-syndimm/-lebensspur/-blockingfocus/-iot/
+// -server) Faz B'de kaldırıldı: cihaz-bazlı boş kategorilerin yerini
+// kategori-bazlı tek şablon kütüphanesi aldı (SkapiTemplateLibraryScreen +
+// assets/skapi/templates/). 4. kart ('other') artık doğrudan o kütüphaneyi
+// açar; etiketi l10n'da skapiPlatformDeviceTemplates.

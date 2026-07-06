@@ -35,7 +35,6 @@ class ScriptRepository {
   final Map<String, PlatformManifest> _platformCache = {};
   final Map<String, GroupManifest> _groupCache = {};
   final Map<String, ScriptManifest> _scriptCache = {};
-  final Map<String, ApiTemplateManifest> _apiTemplateCache = {};
 
   /// Loads and caches the platform manifest. `platformId` matches the
   /// asset folder name (`win`, `mac`, `lx`, `other`).
@@ -91,48 +90,10 @@ class ScriptRepository {
     }
   }
 
-  /// Loads one API template manifest (`other-*` platforms). Lives next to
-  /// scripts under the same folder but is parsed into [ApiTemplateManifest]
-  /// because the schema and downstream UI differ (on-device editor instead
-  /// of script editor).
-  Future<ApiTemplateManifest> loadApiTemplate(
-    String platformId,
-    String templateId,
-  ) async {
-    _guardId(platformId, 'platformId');
-    _guardId(templateId, 'templateId');
-    final key = '$platformId/$templateId';
-    final cached = _apiTemplateCache[key];
-    if (cached != null) return cached;
-    final path = '$assetRoot/$platformId/$templateId.json';
-    final source = await rootBundle.loadString(path);
-    try {
-      final manifest = ApiTemplateManifest.decode(source);
-      _apiTemplateCache[key] = manifest;
-      return manifest;
-    } on FormatException catch (e) {
-      throw ManifestParseException(path, e);
-    }
-  }
-
   static void _guardId(String value, String label) {
     if (!kAssetIdPattern.hasMatch(value)) {
       throw ArgumentError.value(value, label, 'Path traversal guard: invalid $label');
     }
-  }
-
-  /// Loads every API template declared in a platform's `_platform.json`
-  /// `apiTemplates` list, in declaration order. Used by the Other category
-  /// detail screen to render the template list.
-  Future<List<ApiTemplateManifest>> loadAllApiTemplates(
-    String platformId,
-  ) async {
-    final platform = await loadPlatform(platformId);
-    final templates = <ApiTemplateManifest>[];
-    for (final id in platform.apiTemplateIds) {
-      templates.add(await loadApiTemplate(platformId, id));
-    }
-    return templates;
   }
 
   /// Reads the raw, untranslated script source as bundled in the asset

@@ -25,7 +25,8 @@ import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
-import 'sd_profiles_screen.dart' show SdProfileAddScreen;
+import '../../skapi/data/device_template.dart';
+import '../../skapi/skapi_template_library_screen.dart';
 import 'sd_session.dart';
 
 const _kBehaviors = ['dimmer', 'shutter', 'mqtt_remote', 'safe'];
@@ -657,11 +658,25 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
                                 size: 18),
                             label: Text(l.sdModesAddFromCatalog),
                             onPressed: () async {
-                              await SdSession.push(
-                                context,
-                                SdProfileAddScreen(
-                                  deviceId: widget.deviceId,
-                                  behaviorFilter: _behavior,
+                              // SKAPI Cihaz Şablonları kütüphanesine derin
+                              // bağlantı — SD profilleri, davranış kategorisi
+                              // filtreli (dimmer/shutter; diğer davranışlar
+                              // profilsiz çalışır, filtre uygulanmaz).
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SkapiTemplateLibraryScreen(
+                                    libraryContext: TemplateLibraryContext(
+                                      deviceId: widget.deviceId,
+                                      devicePrefix: 'SD',
+                                      kinds: const {
+                                        TemplateTargetKind.sdProfile
+                                      },
+                                      categoryFilter: _behavior == 'dimmer' ||
+                                              _behavior == 'shutter'
+                                          ? _behavior
+                                          : null,
+                                    ),
+                                  ),
                                 ),
                               );
                               if (mounted) await _bootstrap();

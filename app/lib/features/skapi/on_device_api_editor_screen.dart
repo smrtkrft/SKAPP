@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/cli/cli_client.dart';
+import '../../core/cli/device_capabilities.dart';
 import '../../core/theme/responsive.dart';
 import '../../core/ui/sk_confirm_dialog.dart';
 import '../../core/ui/sk_neu_card.dart';
@@ -29,7 +30,9 @@ import '../main_shell/main_shell.dart';
 import '../devices/bf/widgets/bootstrap_banner.dart';
 import 'data/api_endpoint.dart';
 import 'data/script_manifest.dart';
+import 'data/skapi_i18n_lookup.dart';
 import 'data/system_endpoint_sync_service.dart';
+import 'data/template_render.dart';
 import 'widgets/on_device_api_endpoint_card.dart';
 
 
@@ -67,11 +70,13 @@ class OnDeviceApiEditorScreen extends StatefulWidget {
 
   /// When non-null, after [_bootstrap] finishes the editor seeds an
   /// expanded USER draft populated from the template (name, type, url,
-  /// method, auth, headers, payload, delay-after). Placeholders inside
-  /// the url/payload templates (`{{key}}`) are left verbatim for the
-  /// user to fill manually for now; smart param substitution UI lands
-  /// alongside S2.5 when the Other template detail screen wires
-  /// "Cihaza yükle" through here.
+  /// method, auth, headers, payload, delay-after). `{{key}}` placeholders
+  /// in the url/payload templates map onto [ApiTemplateManifest.params]:
+  /// the editor renders a param form above the draft and re-renders the
+  /// draft's url/payload live as values are typed. Saving is blocked
+  /// while unresolved `{{key}}` placeholders remain. Single-brace
+  /// `{event}`-style firmware tokens pass through untouched — the device
+  /// resolves them at fire time.
   final ApiTemplateManifest? prefillTemplate;
 
   /// AppBar title selector. BF dashboard "API zinciri" tile'ından açıldığında
@@ -91,6 +96,16 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
   String? _loadError;
   final List<ApiEndpoint> _endpoints = [];
   bool _bootstrapped = false;
+
+  /// Feature fingerprint of the connected device. Gates the payload field:
+  /// sk_api < 0.5.0 silently ignores `--payload`, so the UI must not
+  /// pretend the value was stored.
+  DeviceCapabilities _caps = DeviceCapabilities.none;
+
+  /// Template param form state ({{key}} → user value) + the draft the
+  /// form re-renders. Only set while a prefill template draft is alive.
+  final Map<String, String> _tplParamValues = {};
+  ApiEndpoint? _tplDraft;
 
   // Capacity constants mirror sk_api.h. Hard-coded here so the screen
   // doesn't need a CLI roundtrip just to render the "{N}/{cap}" badge —
@@ -157,6 +172,10 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
     bool masterOn = false;
     final endpoints = <ApiEndpoint>[];
 
+    // Fails soft to DeviceCapabilities.none (old firmware) — payload UI
+    // stays hidden and saves omit the arg.
+    final caps = await fetchDeviceCapabilities(client);
+
     try {
       final s = await client.send('api.status');
       if (s.ok && s.data is Map) {
@@ -187,6 +206,7 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
 
     if (!mounted) return;
     setState(() {
+      _caps = caps;
       _masterOn = masterOn;
       _endpoints
         ..clear()
@@ -208,24 +228,55 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
     }
   }
 
-  void _seedTemplateDraft(ApiTemplateManifest tpl) {
-    // Truncate at firmware-imposed limits so we never produce a draft
-    // the device would silently reject at save time. Limits live in
-    // sk_api.h (SK_API_NAME_MAX = 31, SK_API_URL_MAX = 191, etc).
-    String trunc(String s, int max) => s.length <= max ? s : s.substring(0, max);
+  // Truncate at firmware-imposed limits so we never produce a draft
+  // the device would silently reject at save time. Limits live in
+  // sk_api.h (SK_API_NAME_MAX = 31, SK_API_URL_MAX = 191,
+  // SK_API_EP_PAYLOAD_MAX = 512, etc).
+  static String _trunc(String s, int max) =>
+      s.length <= max ? s : s.substring(0, max);
 
+  void _seedTemplateDraft(ApiTemplateManifest tpl) {
+    // Param defaults pre-fill the form; secrets ship without defaults so
+    // their fields start empty.
+    _tplParamValues.clear();
+    for (final p in tpl.params) {
+      _tplParamValues[p.name] = p.defaultValue ?? '';
+    }
+
+    final draft = ApiEndpoint(
+      name: _trunc(tpl.defaultName, 31),
+      type: typeFromWire(tpl.type),
+      url: _trunc(renderTemplate(tpl.urlTemplate, _tplParamValues), 191),
+      method: methodFromWire(tpl.method),
+      auth: authFromWire(tpl.auth),
+      headerName: tpl.headerName,
+      contentType: tpl.contentType,
+      payload: tpl.payloadTemplate == null
+          ? null
+          : _trunc(renderTemplate(tpl.payloadTemplate!, _tplParamValues), 512),
+      delayAfterSec: tpl.delayAfterSec.clamp(0, 300),
+      expanded: true,
+    );
     setState(() {
-      _endpoints.add(ApiEndpoint(
-        name: trunc(tpl.defaultName, 31),
-        type: typeFromWire(tpl.type),
-        url: trunc(tpl.urlTemplate, 191),
-        method: methodFromWire(tpl.method),
-        auth: authFromWire(tpl.auth),
-        headerName: tpl.headerName,
-        contentType: tpl.contentType,
-        delayAfterSec: tpl.delayAfterSec.clamp(0, 300),
-        expanded: true,
-      ));
+      _tplDraft = draft;
+      _endpoints.add(draft);
+    });
+  }
+
+  /// Param form change → re-render the seeded draft's url/payload from the
+  /// RAW templates (not the current draft text) so corrected values replace
+  /// earlier substitutions instead of stacking on top of them.
+  void _onTplParamChanged(String name, String value) {
+    final tpl = widget.prefillTemplate;
+    final draft = _tplDraft;
+    if (tpl == null || draft == null) return;
+    setState(() {
+      _tplParamValues[name] = value;
+      draft.url = _trunc(renderTemplate(tpl.urlTemplate, _tplParamValues), 191);
+      if (tpl.payloadTemplate != null) {
+        draft.payload =
+            _trunc(renderTemplate(tpl.payloadTemplate!, _tplParamValues), 512);
+      }
     });
   }
 
@@ -292,6 +343,22 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
   Future<void> _saveEndpoint(ApiEndpoint draft, String? plainToken) async {
     final client = BfSession.of(context).client;
     final l = AppLocalizations.of(context);
+
+    // Block saves that would upload literal `{{key}}` placeholders — the
+    // device would fire them verbatim. Firmware `{token}`s are fine.
+    final unresolved = {
+      ...unresolvedPlaceholders(draft.url),
+      ...unresolvedPlaceholders(draft.payload ?? ''),
+    };
+    if (unresolved.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l.skapiTplUnresolvedError(unresolved.join(', '))),
+        ),
+      );
+      return;
+    }
+
     final args = <String, dynamic>{
       'name': draft.name,
       'type': typeWire(draft.type),
@@ -308,6 +375,18 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
     }
     if (draft.contentType != null && draft.contentType!.isNotEmpty) {
       args['content-type'] = draft.contentType!;
+    }
+    final payload = draft.payload;
+    if (payload != null && payload.isNotEmpty) {
+      if (_caps.supportsEndpointPayload) {
+        args['payload'] = payload;
+      } else {
+        // Old firmware would silently drop the arg — tell the user the
+        // body was skipped instead of letting them believe it was stored.
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l.bfApiChainPayloadUnsupported)),
+        );
+      }
     }
 
     final r = await client.sendCritical(
@@ -575,6 +654,20 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
                   const SizedBox(height: 8),
                 ],
 
+                // Template param form — only while the seeded prefill
+                // draft is alive and the template declares params. Values
+                // substitute into the draft's url/payload live.
+                if (_tplDraft != null &&
+                    _endpoints.contains(_tplDraft) &&
+                    (widget.prefillTemplate?.params.isNotEmpty ?? false)) ...[
+                  _TemplateParamsCard(
+                    params: widget.prefillTemplate!.params,
+                    values: _tplParamValues,
+                    onChanged: _onTplParamChanged,
+                  ),
+                  const SizedBox(height: 18),
+                ],
+
                 // USER bucket — manuel IoT (Shelly, Home Assistant, IFTTT).
                 _SectionHeader(
                   title: l.bfApiChainUserSectionTitle,
@@ -586,6 +679,7 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: EndpointCard(
                       endpoint: _userEndpoints[i],
+                      showPayloadField: _caps.supportsEndpointPayload,
                       onChange: () => setState(() {}),
                       onSave: _saveEndpoint,
                       onRemove: () => _removeEndpoint(_userEndpoints[i]),
@@ -596,6 +690,92 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
                   _AddCard(onAdd: _addDraft),
               ],
             ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Template param form ({{key}} substitution inputs)
+// ---------------------------------------------------------------------------
+
+class _TemplateParamsCard extends StatefulWidget {
+  const _TemplateParamsCard({
+    required this.params,
+    required this.values,
+    required this.onChanged,
+  });
+
+  final List<ApiTemplateParam> params;
+  final Map<String, String> values;
+  final void Function(String name, String value) onChanged;
+
+  @override
+  State<_TemplateParamsCard> createState() => _TemplateParamsCardState();
+}
+
+class _TemplateParamsCardState extends State<_TemplateParamsCard> {
+  final Map<String, TextEditingController> _controllers = {};
+
+  TextEditingController _controllerFor(ApiTemplateParam p) =>
+      _controllers.putIfAbsent(
+        p.name,
+        () => TextEditingController(text: widget.values[p.name] ?? ''),
+      );
+
+  @override
+  void dispose() {
+    for (final c in _controllers.values) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
+    return SkNeuCard(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.tune, size: 16, color: cs.onSurfaceVariant),
+              const SizedBox(width: 6),
+              Text(l.skapiTplParamsTitle,
+                  style: Theme.of(context).textTheme.titleSmall),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l.skapiTplParamsSubtitle,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: cs.onSurfaceVariant,
+                  height: 1.4,
+                ),
+          ),
+          const SizedBox(height: 12),
+          for (final p in widget.params) ...[
+            TextField(
+              controller: _controllerFor(p),
+              obscureText: p.secret,
+              autocorrect: !p.secret,
+              enableSuggestions: !p.secret,
+              decoration: InputDecoration(
+                labelText: resolveSkapiI18nKey(l, p.i18nLabel),
+                helperText: p.i18nHint == null
+                    ? p.placeholder
+                    : '${resolveSkapiI18nKey(l, p.i18nHint!)} — ${p.placeholder}',
+                border: const OutlineInputBorder(),
+                isDense: true,
+              ),
+              onChanged: (v) => widget.onChanged(p.name, v),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ],
       ),
     );
   }

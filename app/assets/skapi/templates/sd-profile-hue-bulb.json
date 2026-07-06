@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "sd-profile-hue-bulb",
+  "category": "dimmer",
+  "targetKind": "sd.profile",
+  "compatiblePrefixes": [
+    "SD"
+  ],
+  "i18n": {
+    "title": "Philips Hue Bulb",
+    "summary": "HTTP · dimmer · profile.add"
+  },
+  "params": [],
+  "jsonBody": {
+    "v": 2,
+    "id": "hue_bulb",
+    "name": "Philips Hue Bulb",
+    "manufacturer": "Philips",
+    "protocol": "http",
+    "port": 80,
+    "behaviors": [
+      "dimmer"
+    ],
+    "commands": {
+      "set_value": {
+        "method": "PUT",
+        "path": "/api/{auth_key}/lights/{device_id}/state",
+        "body": "{\"bri\":{value}}",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "map_min": 0,
+        "map_max": 254
+      },
+      "toggle": {
+        "method": "PUT",
+        "path": "/api/{auth_key}/lights/{device_id}/state",
+        "body": "{\"on\":{toggle}}"
+      }
+    }
+  },
+  "source": "SynDimm/Code/neue/profiles/hue_bulb.json"
+}

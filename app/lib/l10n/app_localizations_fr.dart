@@ -113,6 +113,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get skapiTitle => 'SKAPI';
 
   @override
+  String get skapiQuickAccessHeading => 'Accès rapide';
+
+  @override
   String get skapiLibraryHeading => 'Bibliothèque SKAPI';
 
   @override
@@ -246,6 +249,47 @@ class AppLocalizationsFr extends AppLocalizations {
   String skapiHeaderSub(int platforms, int actions) {
     return '$platforms plateformes · $actions actions';
   }
+
+  @override
+  String skapiHeaderSourcesActions(int sources, int actions) {
+    return '$sources sources · $actions actions';
+  }
+
+  @override
+  String get skapiTabLibrary => 'Library';
+
+  @override
+  String get skapiTabMine => 'My Library';
+
+  @override
+  String get skapiTabActions => 'Actions';
+
+  @override
+  String get skapiSearchHint => 'Search…';
+
+  @override
+  String get skapiSearchNoResults => 'No matching results.';
+
+  @override
+  String get skapiLibraryDevicesEmpty => 'No device templates available yet.';
+
+  @override
+  String get skapiDeviceDesktop => 'Desktop';
+
+  @override
+  String get skapiDesktopCardDesc =>
+      'Runs on your computer — bound to a device event';
+
+  @override
+  String get skapiDesktopNote =>
+      'These scripts run on your computer. Use the Actions tab to bind one to a device event.';
+
+  @override
+  String get skapiActionsExplainer =>
+      'An action is what happens when an event fires on a device — event on the left, result on the right.';
+
+  @override
+  String get skapiTplKindScript => 'SCRIPT';
 
   @override
   String get skapiNewActionPill => 'Nouvelle action';
@@ -5169,6 +5213,239 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get bfApiChainContentTypeLabel => 'Content-Type';
+
+  @override
+  String get bfApiChainPayloadLabel => 'Corps (payload)';
+
+  @override
+  String get bfApiChainPayloadHint =>
+      'Modèle de corps enregistré — envoyé à la place des données du déclencheur, rempli sur l\'appareil au moment de l\'envoi. Laisser vide pour transmettre les données telles quelles. Jetons :';
+
+  @override
+  String get bfApiChainPayloadUnsupported =>
+      'Le micrologiciel de l\'appareil ne stocke pas les modèles de corps — le corps a été ignoré. Mettez à jour le micrologiciel pour l\'utiliser.';
+
+  @override
+  String get skapiTplParamsTitle => 'Paramètres du modèle';
+
+  @override
+  String get skapiTplParamsSubtitle =>
+      'Les valeurs ci-dessous sont insérées dans l\'URL et le corps avant l\'envoi.';
+
+  @override
+  String skapiTplUnresolvedError(String names) {
+    return 'Paramètres de modèle non renseignés : $names';
+  }
+
+  @override
+  String get skapiBindEventTimerState => 'État du minuteur modifié';
+
+  @override
+  String get skapiTplLibraryTitle => 'Modèles d\'appareil';
+
+  @override
+  String get skapiPlatformDeviceTemplates => 'Modèles d\'appareil';
+
+  @override
+  String get skapiTplEmptyLibrary => 'Aucun modèle ne correspond à ce filtre.';
+
+  @override
+  String get skapiTplDevicesHeading => 'Appareils';
+
+  @override
+  String get skapiTplDevDescSd => 'Bouton rotatif — commande variateur & volet';
+
+  @override
+  String get skapiTplDevDescLs =>
+      'Minuteur trace de vie — mailer de compte à rebours';
+
+  @override
+  String get skapiTplDevDescBf =>
+      'Cube minuteur de concentration — faces physiques';
+
+  @override
+  String get skapiTplSafeNote =>
+      'La séquence du coffre se règle sur l\'appareil (pas dans SKAPI). Envoyez le webhook ici, puis liez-le à la séquence sur l\'écran SD.';
+
+  @override
+  String get skapiTplDrivers => 'Pilotes';
+
+  @override
+  String get skapiTplModes => 'Modes';
+
+  @override
+  String skapiTplDeviceCount(int count) {
+    return '$count scripts';
+  }
+
+  @override
+  String get skapiTplMineHeading => 'Mes modèles';
+
+  @override
+  String get skapiTplMineEmpty =>
+      'Copiez un modèle prêt à l\'emploi ici avec « Copier dans mes modèles » pour modifier votre propre version.';
+
+  @override
+  String get skapiTplCatDimmer => 'Variateur';
+
+  @override
+  String get skapiTplCatShutter => 'Volet';
+
+  @override
+  String get skapiTplCatWebhook => 'Webhook / API';
+
+  @override
+  String get skapiTplCatMqtt => 'MQTT';
+
+  @override
+  String get skapiTplCatOther => 'Autres';
+
+  @override
+  String skapiTplDeepLinkBanner(String deviceId) {
+    return 'Filtré pour $deviceId — après l\'envoi, retour à l\'écran de l\'appareil.';
+  }
+
+  @override
+  String get skapiTplKindProfile => 'PROFIL';
+
+  @override
+  String get skapiTplKindMode => 'MODE';
+
+  @override
+  String get skapiTplKindSafe => 'COFFRE';
+
+  @override
+  String get skapiTplKindWebhook => 'WEBHOOK';
+
+  @override
+  String get skapiTplDetailFormTab => 'Formulaire';
+
+  @override
+  String get skapiTplDetailJsonTab => 'Avancé (JSON)';
+
+  @override
+  String get skapiTplPreviewHeading => 'Aperçu — JSON envoyé à l\'appareil';
+
+  @override
+  String get skapiTplNoParams =>
+      'Ce modèle ne nécessite aucun paramètre — envoyez-le tel quel.';
+
+  @override
+  String get skapiTplUploadFilledInEditor =>
+      'Pour ce type de modèle, les paramètres sont renseignés sur l\'écran d\'envoi.';
+
+  @override
+  String get skapiTplValidateCta => 'Valider';
+
+  @override
+  String get skapiTplValidationOk => 'Schéma valide';
+
+  @override
+  String skapiTplValidationFail(String detail) {
+    return 'Erreur de validation : $detail';
+  }
+
+  @override
+  String get skapiTplCopyCta => 'Copier dans mes modèles';
+
+  @override
+  String skapiTplCopiedToast(String title) {
+    return '« $title » copié dans Mes modèles.';
+  }
+
+  @override
+  String get skapiTplDeployCta => 'Envoyer à l\'appareil';
+
+  @override
+  String get skapiTplPickSlotTitle => 'Choisir un emplacement de mode';
+
+  @override
+  String get skapiTplSlotEmpty => 'vide';
+
+  @override
+  String get skapiTplPickSafeEntryTitle =>
+      'Choisir un enregistrement de coffre (1-5)';
+
+  @override
+  String get skapiTplProfileMissingTitle => 'Profil absent de l\'appareil';
+
+  @override
+  String skapiTplProfileMissingBody(String profileId) {
+    return 'Ce mode référence le profil « $profileId », absent de l\'appareil. Envoyez d\'abord le modèle de profil ou continuez quand même.';
+  }
+
+  @override
+  String get skapiTplDeployAnyway => 'Envoyer quand même';
+
+  @override
+  String skapiTplDeployOkToast(String name) {
+    return 'Envoyé à $name · vérifié par relecture.';
+  }
+
+  @override
+  String skapiTplDeployErrorToast(String err) {
+    return 'L\'appareil a rejeté l\'enregistrement : $err';
+  }
+
+  @override
+  String skapiTplDeployMismatchToast(String detail) {
+    return 'Envoyé, mais la relecture ne correspond pas : $detail';
+  }
+
+  @override
+  String get skapiTplDeployOfflineToast =>
+      'Échec de connexion à l\'appareil — réessayez quand il sera en ligne.';
+
+  @override
+  String get skapiTplDeviceOffline => 'hors ligne';
+
+  @override
+  String get skapiTplOptional => 'facultatif';
+
+  @override
+  String get skapiTplSaveCta => 'Enregistrer';
+
+  @override
+  String get skapiTplSavedToast => 'Modèle enregistré.';
+
+  @override
+  String get skapiTplDeleteCta => 'Supprimer le modèle';
+
+  @override
+  String get sdProfilesAddViaLibrary =>
+      'Ouvre la bibliothèque de modèles SKAPI, filtrée sur les profils SynDimm.';
+
+  @override
+  String get skapiTplSumModeDimmer =>
+      'Associe un emplacement du bouton à un variateur HTTP : IP cible, profil, pas et préréglage double clic.';
+
+  @override
+  String get skapiTplSumModeShutter =>
+      'Associe un emplacement du bouton à un volet HTTP : IP cible, profil et pas.';
+
+  @override
+  String get skapiTplSumModeMqtt =>
+      'Publie la valeur du bouton et les gestes vers un broker MQTT ; les jetons value/toggle sont remplis sur l\'appareil.';
+
+  @override
+  String get skapiTplSumSafeWebhook =>
+      'Déclenche un webhook de l\'appareil à la saisie de la séquence secrète ; les erreurs verrouillent.';
+
+  @override
+  String get skapiTplSumGenericPost =>
+      'POSTe un corps JSON vers n\'importe quelle URL au déclenchement ; les jetons event/device sont remplis à l\'envoi.';
+
+  @override
+  String get skapiTplSumHa =>
+      'Appelle un déclencheur webhook Home Assistant ; à utiliser dans une automatisation HA.';
+
+  @override
+  String get skapiTplSumNtfy =>
+      'Envoie une notification push via ntfy.sh — aucun compte requis, juste un topic.';
+
+  @override
+  String get skapiTplSumIfttt =>
+      'Déclenche une applet IFTTT Maker ; l\'appareil remplit value1/value2/value3 automatiquement.';
 
   @override
   String get bfApiChainSaveCta => 'Enregistrer';

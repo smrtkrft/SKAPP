@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "sd-profile-mqtt-cover",
+  "category": "shutter",
+  "targetKind": "sd.profile",
+  "compatiblePrefixes": [
+    "SD"
+  ],
+  "i18n": {
+    "title": "Generic MQTT Cover — set topic prefix",
+    "summary": "MQTT · shutter · profile.add"
+  },
+  "params": [
+    {
+      "name": "mqtt-id",
+      "placeholder": "{{mqtt-id}}",
+      "i18nLabel": "Profil ID",
+      "type": "string",
+      "default": "mqtt_cover",
+      "secret": false,
+      "required": true
+    },
+    {
+      "name": "mqtt-prefix",
+      "placeholder": "{{mqtt-prefix}}",
+      "i18nLabel": "Topic prefix",
+      "type": "string",
+      "default": "cover1",
+      "secret": false,
+      "required": true
+    }
+  ],
+  "jsonBody": {
+    "v": 2,
+    "id": "{{mqtt-id}}",
+    "name": "Generic MQTT Cover — set topic prefix",
+    "manufacturer": "Generic",
+    "protocol": "mqtt",
+    "prefix": "{{mqtt-prefix}}",
+    "behaviors": [
+      "shutter"
+    ],
+    "commands": {
+      "set_value": {
+        "topic": "{prefix}/position/set",
+        "payload": "{value}",
+        "min": 0,
+        "max": 100,
+        "step": 5
+      },
+      "stop": {
+        "topic": "{prefix}/cmd",
+        "payload": "STOP"
+      }
+    }
+  },
+  "source": "SynDimm/Code/neue/profiles/mqtt_cover.json"
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "sd-profile-tasmota-shutter",
+  "category": "shutter",
+  "targetKind": "sd.profile",
+  "compatiblePrefixes": [
+    "SD"
+  ],
+  "i18n": {
+    "title": "Tasmota Shutter (HTTP)",
+    "summary": "HTTP · shutter · profile.add"
+  },
+  "params": [],
+  "jsonBody": {
+    "v": 2,
+    "id": "tasmota_shutter",
+    "name": "Tasmota Shutter (HTTP)",
+    "manufacturer": "Tasmota",
+    "protocol": "http",
+    "port": 80,
+    "behaviors": [
+      "shutter"
+    ],
+    "commands": {
+      "set_value": {
+        "method": "GET",
+        "path": "/cm?cmnd=ShutterPosition%20{value}",
+        "min": 0,
+        "max": 100,
+        "step": 5
+      },
+      "stop": {
+        "method": "GET",
+        "path": "/cm?cmnd=ShutterStop"
+      }
+    }
+  },
+  "source": "SynDimm/Code/neue/profiles/tasmota_shutter.json"
+}

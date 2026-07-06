@@ -39,6 +39,17 @@ import '../../../core/system/network_identity_provider.dart';
 import 'action_binding.dart';
 import 'skapi_providers.dart';
 
+/// The plain-HTTP port BF devices are told to call back on. The main
+/// `id.port` serves HTTPS with a self-signed cert BF's esp_http_client
+/// (public CA bundle) can't validate, so the server binds a dedicated
+/// plain listener ([SkappHttpServer.bfWebhookPort]); until it's up, fall
+/// back to the deterministic `id.port + 1`. Single source of truth for
+/// BOTH the URL actually pushed to devices (`_resolveListenerUrl`) and
+/// the URL shown in the UI (`resolveListenerUrlForUi`) — they diverged
+/// once and users saw a port BF never called.
+int resolveBfWebhookPort(SkappHttpServer server, NetworkIdentity id) =>
+    server.bfWebhookPort ?? (id.port + 1);
+
 /// Per-device snapshot of the SYSTEM endpoint sync state. Surfaced to
 /// the UI so the user can tell whether SKAPP successfully wrote its
 /// listener URL onto the BF (i.e., whether a sayım-bitti webhook will
@@ -454,12 +465,9 @@ class SystemEndpointSyncService {
 
       if (bestIp != null) {
         // BF (ESP32) connects over PLAIN HTTP to the dedicated BF webhook
-        // port (id.port + 1). The main id.port is HTTPS with a self-signed
-        // cert that BF's esp_http_client (public CA bundle) can't validate,
-        // so a plain-HTTP URL to id.port hit the TLS socket and BF reported
-        // ERR_API_CONNECT. SkappHttpServer.bfWebhookPort exposes the actual
-        // bound plain port; fall back to id.port + 1 if the server isn't up.
-        final bfPort = server.bfWebhookPort ?? (id.port + 1);
+        // port — see resolveBfWebhookPort for why id.port (HTTPS) is
+        // unusable from the device side.
+        final bfPort = resolveBfWebhookPort(server, id);
         debugPrint('[SYSEP] picked $bestIp via "$bestIface" '
             '(score=$bestScore) bfPort=$bfPort');
         return 'http://$bestIp:$bfPort/api/events/incoming';
@@ -583,7 +591,10 @@ Future<String?> resolveListenerUrlForUi(Ref ref) async {
   } catch (_) {/* offline */}
 
   if (bestIp == null) return null;
-  return 'http://$bestIp:${id.port}/api/events/incoming';
+  // Must match the URL _resolveListenerUrl actually pushes to devices —
+  // the BF-reachable plain-HTTP port, NOT the HTTPS id.port.
+  return 'http://$bestIp:${resolveBfWebhookPort(server, id)}'
+      '/api/events/incoming';
 }
 
 final currentListenerUrlProvider = FutureProvider<String?>((ref) {

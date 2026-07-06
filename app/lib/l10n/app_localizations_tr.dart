@@ -113,6 +113,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get skapiTitle => 'SKAPI';
 
   @override
+  String get skapiQuickAccessHeading => 'Hızlı Erişim';
+
+  @override
   String get skapiLibraryHeading => 'SKAPI Kütüphanesi';
 
   @override
@@ -244,6 +247,47 @@ class AppLocalizationsTr extends AppLocalizations {
   String skapiHeaderSub(int platforms, int actions) {
     return '$platforms platform · $actions aksiyon';
   }
+
+  @override
+  String skapiHeaderSourcesActions(int sources, int actions) {
+    return '$sources kaynak · $actions aksiyon';
+  }
+
+  @override
+  String get skapiTabLibrary => 'Kütüphane';
+
+  @override
+  String get skapiTabMine => 'Kitaplığım';
+
+  @override
+  String get skapiTabActions => 'Aksiyonlar';
+
+  @override
+  String get skapiSearchHint => 'Ara…';
+
+  @override
+  String get skapiSearchNoResults => 'Eşleşen sonuç yok.';
+
+  @override
+  String get skapiLibraryDevicesEmpty => 'Henüz cihaz şablonu yok.';
+
+  @override
+  String get skapiDeviceDesktop => 'Masaüstü';
+
+  @override
+  String get skapiDesktopCardDesc =>
+      'Bilgisayarında çalışır — cihaz olayına bağlanır';
+
+  @override
+  String get skapiDesktopNote =>
+      'Bu scriptler bilgisayarında çalışır. Bir cihaz olayına bağlamak için Aksiyonlar sekmesini kullan.';
+
+  @override
+  String get skapiActionsExplainer =>
+      'Aksiyon = cihazda bir olay olunca ne yapılacağı. Olay solda, sonuç sağda.';
+
+  @override
+  String get skapiTplKindScript => 'SCRIPT';
 
   @override
   String get skapiNewActionPill => 'Yeni Aksiyon';
@@ -5118,6 +5162,236 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get bfApiChainContentTypeLabel => 'Content-Type';
+
+  @override
+  String get bfApiChainPayloadLabel => 'Gövde (payload)';
+
+  @override
+  String get bfApiChainPayloadHint =>
+      'Saklanan gövde şablonu — tetikleyici verisi yerine gönderilir, ateşleme anında cihazda doldurulur. Boş bırakılırsa tetikleyici verisi olduğu gibi iletilir. Token\'lar:';
+
+  @override
+  String get bfApiChainPayloadUnsupported =>
+      'Cihaz firmware\'i gövde şablonunu saklamıyor — gövde atlandı. Kullanmak için firmware\'i güncelleyin.';
+
+  @override
+  String get skapiTplParamsTitle => 'Şablon parametreleri';
+
+  @override
+  String get skapiTplParamsSubtitle =>
+      'Aşağıdaki değerler yüklemeden önce URL\'ye ve gövdeye yerleştirilir.';
+
+  @override
+  String skapiTplUnresolvedError(String names) {
+    return 'Doldurulmamış şablon parametreleri: $names';
+  }
+
+  @override
+  String get skapiBindEventTimerState => 'Sayaç durumu değişti';
+
+  @override
+  String get skapiTplLibraryTitle => 'Cihaz Şablonları';
+
+  @override
+  String get skapiPlatformDeviceTemplates => 'Cihaz Şablonları';
+
+  @override
+  String get skapiTplEmptyLibrary => 'Bu filtreye uyan şablon yok.';
+
+  @override
+  String get skapiTplDevicesHeading => 'Cihazlar';
+
+  @override
+  String get skapiTplDevDescSd => 'Döner düğme — dimmer & panjur kumandası';
+
+  @override
+  String get skapiTplDevDescLs => 'Yaşam-izi sayacı — geri-sayım mailer';
+
+  @override
+  String get skapiTplDevDescBf => 'Odak sayacı küpü — fiziksel yüzler';
+
+  @override
+  String get skapiTplSafeNote =>
+      'Kasa dizisi cihazda ayarlanır (SKAPI\'ye girmez). Webhook\'u buradan yükle, SD ekranında diziye bağla.';
+
+  @override
+  String get skapiTplDrivers => 'Sürücüler';
+
+  @override
+  String get skapiTplModes => 'Modlar';
+
+  @override
+  String skapiTplDeviceCount(int count) {
+    return '$count script';
+  }
+
+  @override
+  String get skapiTplMineHeading => 'Şablonlarım';
+
+  @override
+  String get skapiTplMineEmpty =>
+      'Hazır bir şablonu \"Şablonlarıma kopyala\" ile buraya alıp kendi sürümünü düzenleyebilirsin.';
+
+  @override
+  String get skapiTplCatDimmer => 'Dimmer';
+
+  @override
+  String get skapiTplCatShutter => 'Panjur';
+
+  @override
+  String get skapiTplCatWebhook => 'Webhook / API';
+
+  @override
+  String get skapiTplCatMqtt => 'MQTT';
+
+  @override
+  String get skapiTplCatOther => 'Diğer';
+
+  @override
+  String skapiTplDeepLinkBanner(String deviceId) {
+    return '$deviceId için filtrelendi — yükleme bitince cihaz ekranına dönülür.';
+  }
+
+  @override
+  String get skapiTplKindProfile => 'PROFİL';
+
+  @override
+  String get skapiTplKindMode => 'MOD';
+
+  @override
+  String get skapiTplKindSafe => 'KASA';
+
+  @override
+  String get skapiTplKindWebhook => 'WEBHOOK';
+
+  @override
+  String get skapiTplDetailFormTab => 'Form';
+
+  @override
+  String get skapiTplDetailJsonTab => 'Gelişmiş (JSON)';
+
+  @override
+  String get skapiTplPreviewHeading => 'Önizleme — cihaza gidecek JSON';
+
+  @override
+  String get skapiTplNoParams =>
+      'Bu şablon parametre istemiyor — olduğu gibi yüklenebilir.';
+
+  @override
+  String get skapiTplUploadFilledInEditor =>
+      'Bu şablon türünde parametreler yükleme ekranında doldurulur.';
+
+  @override
+  String get skapiTplValidateCta => 'Doğrula';
+
+  @override
+  String get skapiTplValidationOk => 'Şema geçerli';
+
+  @override
+  String skapiTplValidationFail(String detail) {
+    return 'Doğrulama hatası: $detail';
+  }
+
+  @override
+  String get skapiTplCopyCta => 'Şablonlarıma kopyala';
+
+  @override
+  String skapiTplCopiedToast(String title) {
+    return '\"$title\" Şablonlarım\'a kopyalandı.';
+  }
+
+  @override
+  String get skapiTplDeployCta => 'Cihaza yükle';
+
+  @override
+  String get skapiTplPickSlotTitle => 'Mod slotu seç';
+
+  @override
+  String get skapiTplSlotEmpty => 'boş';
+
+  @override
+  String get skapiTplPickSafeEntryTitle => 'Kasa kaydı seç (1-5)';
+
+  @override
+  String get skapiTplProfileMissingTitle => 'Profil cihazda yok';
+
+  @override
+  String skapiTplProfileMissingBody(String profileId) {
+    return 'Bu mod \"$profileId\" profiline başvuruyor ama profil cihazda yok. Önce profil şablonunu yükle ya da yine de devam et.';
+  }
+
+  @override
+  String get skapiTplDeployAnyway => 'Yine de yükle';
+
+  @override
+  String skapiTplDeployOkToast(String name) {
+    return '$name cihazına yüklendi · geri-okuma doğrulandı.';
+  }
+
+  @override
+  String skapiTplDeployErrorToast(String err) {
+    return 'Cihaz kaydı reddetti: $err';
+  }
+
+  @override
+  String skapiTplDeployMismatchToast(String detail) {
+    return 'Yüklendi ama geri-okuma eşleşmiyor: $detail';
+  }
+
+  @override
+  String get skapiTplDeployOfflineToast =>
+      'Cihaz bağlantısı kurulamadı — çevrimiçi olunca tekrar dene.';
+
+  @override
+  String get skapiTplDeviceOffline => 'çevrimdışı';
+
+  @override
+  String get skapiTplOptional => 'isteğe bağlı';
+
+  @override
+  String get skapiTplSaveCta => 'Kaydet';
+
+  @override
+  String get skapiTplSavedToast => 'Şablon kaydedildi.';
+
+  @override
+  String get skapiTplDeleteCta => 'Şablonu sil';
+
+  @override
+  String get sdProfilesAddViaLibrary =>
+      'SKAPI şablon kütüphanesini SynDimm profilleriyle filtreli açar.';
+
+  @override
+  String get skapiTplSumModeDimmer =>
+      'Düğme slotunu HTTP dimmer\'a bağlar: hedef IP, profil, adım ve çift tık preset\'i.';
+
+  @override
+  String get skapiTplSumModeShutter =>
+      'Düğme slotunu HTTP panjura bağlar: hedef IP, profil ve adım.';
+
+  @override
+  String get skapiTplSumModeMqtt =>
+      'Düğme değerini ve jestleri MQTT broker\'a yayınlar; value/toggle token\'ları cihazda dolar.';
+
+  @override
+  String get skapiTplSumSafeWebhook =>
+      'Gizli düğme sırası girilince cihaz webhook\'unu ateşler; yanlış denemede kilitlenir.';
+
+  @override
+  String get skapiTplSumGenericPost =>
+      'Cihaz tetiklenince istenen URL\'e JSON gövde POST\'lar; event/device token\'ları ateşleme anında dolar.';
+
+  @override
+  String get skapiTplSumHa =>
+      'Home Assistant webhook tetikleyicisini çağırır; HA otomasyonunda kullanılır.';
+
+  @override
+  String get skapiTplSumNtfy =>
+      'ntfy.sh üzerinden anlık bildirim yollar — hesap gerekmez, topic yeter.';
+
+  @override
+  String get skapiTplSumIfttt =>
+      'IFTTT Maker applet\'ini tetikler; cihaz value1/value2/value3 alanlarını otomatik doldurur.';
 
   @override
   String get bfApiChainSaveCta => 'Kaydet';

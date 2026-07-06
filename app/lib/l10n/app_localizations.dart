@@ -298,6 +298,12 @@ abstract class AppLocalizations {
   /// **'SKAPI'**
   String get skapiTitle;
 
+  /// No description provided for @skapiQuickAccessHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Access'**
+  String get skapiQuickAccessHeading;
+
   /// No description provided for @skapiLibraryHeading.
   ///
   /// In en, this message translates to:
@@ -525,6 +531,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{platforms} platforms · {actions} actions'**
   String skapiHeaderSub(int platforms, int actions);
+
+  /// No description provided for @skapiHeaderSourcesActions.
+  ///
+  /// In en, this message translates to:
+  /// **'{sources} sources · {actions} actions'**
+  String skapiHeaderSourcesActions(int sources, int actions);
+
+  /// No description provided for @skapiTabLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get skapiTabLibrary;
+
+  /// No description provided for @skapiTabMine.
+  ///
+  /// In en, this message translates to:
+  /// **'My Library'**
+  String get skapiTabMine;
+
+  /// No description provided for @skapiTabActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get skapiTabActions;
+
+  /// No description provided for @skapiSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search…'**
+  String get skapiSearchHint;
+
+  /// No description provided for @skapiSearchNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching results.'**
+  String get skapiSearchNoResults;
+
+  /// No description provided for @skapiLibraryDevicesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No device templates available yet.'**
+  String get skapiLibraryDevicesEmpty;
+
+  /// No description provided for @skapiDeviceDesktop.
+  ///
+  /// In en, this message translates to:
+  /// **'Desktop'**
+  String get skapiDeviceDesktop;
+
+  /// No description provided for @skapiDesktopCardDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Runs on your computer — bound to a device event'**
+  String get skapiDesktopCardDesc;
+
+  /// No description provided for @skapiDesktopNote.
+  ///
+  /// In en, this message translates to:
+  /// **'These scripts run on your computer. Use the Actions tab to bind one to a device event.'**
+  String get skapiDesktopNote;
+
+  /// No description provided for @skapiActionsExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'An action is what happens when an event fires on a device — event on the left, result on the right.'**
+  String get skapiActionsExplainer;
+
+  /// No description provided for @skapiTplKindScript.
+  ///
+  /// In en, this message translates to:
+  /// **'SCRIPT'**
+  String get skapiTplKindScript;
 
   /// No description provided for @skapiNewActionPill.
   ///
@@ -8775,6 +8853,396 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Content-Type'**
   String get bfApiChainContentTypeLabel;
+
+  /// No description provided for @bfApiChainPayloadLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Body (payload)'**
+  String get bfApiChainPayloadLabel;
+
+  /// No description provided for @bfApiChainPayloadHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Stored body template — sent instead of the trigger data, rendered on the device at fire time. Leave empty to forward the trigger data unchanged. Tokens:'**
+  String get bfApiChainPayloadHint;
+
+  /// No description provided for @bfApiChainPayloadUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Device firmware doesn\'t store body templates — the body was skipped. Update the firmware to use it.'**
+  String get bfApiChainPayloadUnsupported;
+
+  /// No description provided for @skapiTplParamsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Template parameters'**
+  String get skapiTplParamsTitle;
+
+  /// No description provided for @skapiTplParamsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Values below are inserted into the URL and body before upload.'**
+  String get skapiTplParamsSubtitle;
+
+  /// No description provided for @skapiTplUnresolvedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfilled template parameters: {names}'**
+  String skapiTplUnresolvedError(String names);
+
+  /// No description provided for @skapiBindEventTimerState.
+  ///
+  /// In en, this message translates to:
+  /// **'Timer state changed'**
+  String get skapiBindEventTimerState;
+
+  /// No description provided for @skapiTplLibraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Templates'**
+  String get skapiTplLibraryTitle;
+
+  /// No description provided for @skapiPlatformDeviceTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Templates'**
+  String get skapiPlatformDeviceTemplates;
+
+  /// No description provided for @skapiTplEmptyLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'No templates match this filter.'**
+  String get skapiTplEmptyLibrary;
+
+  /// No description provided for @skapiTplDevicesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Devices'**
+  String get skapiTplDevicesHeading;
+
+  /// No description provided for @skapiTplDevDescSd.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotary knob — dimmer & shutter control'**
+  String get skapiTplDevDescSd;
+
+  /// No description provided for @skapiTplDevDescLs.
+  ///
+  /// In en, this message translates to:
+  /// **'Life-trace timer — countdown mailer'**
+  String get skapiTplDevDescLs;
+
+  /// No description provided for @skapiTplDevDescBf.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus timer cube — physical faces'**
+  String get skapiTplDevDescBf;
+
+  /// No description provided for @skapiTplSafeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The safe sequence is set on the device (not in SKAPI). Deploy the webhook here, then link it to the sequence on the SD screen.'**
+  String get skapiTplSafeNote;
+
+  /// No description provided for @skapiTplDrivers.
+  ///
+  /// In en, this message translates to:
+  /// **'Drivers'**
+  String get skapiTplDrivers;
+
+  /// No description provided for @skapiTplModes.
+  ///
+  /// In en, this message translates to:
+  /// **'Modes'**
+  String get skapiTplModes;
+
+  /// No description provided for @skapiTplDeviceCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} script'**
+  String skapiTplDeviceCount(int count);
+
+  /// No description provided for @skapiTplMineHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'My templates'**
+  String get skapiTplMineHeading;
+
+  /// No description provided for @skapiTplMineEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy a ready-made template here with \"Copy to my templates\" to edit and keep your own version.'**
+  String get skapiTplMineEmpty;
+
+  /// No description provided for @skapiTplCatDimmer.
+  ///
+  /// In en, this message translates to:
+  /// **'Dimmer'**
+  String get skapiTplCatDimmer;
+
+  /// No description provided for @skapiTplCatShutter.
+  ///
+  /// In en, this message translates to:
+  /// **'Shutter'**
+  String get skapiTplCatShutter;
+
+  /// No description provided for @skapiTplCatWebhook.
+  ///
+  /// In en, this message translates to:
+  /// **'Webhook / API'**
+  String get skapiTplCatWebhook;
+
+  /// No description provided for @skapiTplCatMqtt.
+  ///
+  /// In en, this message translates to:
+  /// **'MQTT'**
+  String get skapiTplCatMqtt;
+
+  /// No description provided for @skapiTplCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get skapiTplCatOther;
+
+  /// No description provided for @skapiTplDeepLinkBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Filtered for {deviceId} — deploy returns to the device screen.'**
+  String skapiTplDeepLinkBanner(String deviceId);
+
+  /// No description provided for @skapiTplKindProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'PROFILE'**
+  String get skapiTplKindProfile;
+
+  /// No description provided for @skapiTplKindMode.
+  ///
+  /// In en, this message translates to:
+  /// **'MODE'**
+  String get skapiTplKindMode;
+
+  /// No description provided for @skapiTplKindSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'SAFE'**
+  String get skapiTplKindSafe;
+
+  /// No description provided for @skapiTplKindWebhook.
+  ///
+  /// In en, this message translates to:
+  /// **'WEBHOOK'**
+  String get skapiTplKindWebhook;
+
+  /// No description provided for @skapiTplDetailFormTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Form'**
+  String get skapiTplDetailFormTab;
+
+  /// No description provided for @skapiTplDetailJsonTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced (JSON)'**
+  String get skapiTplDetailJsonTab;
+
+  /// No description provided for @skapiTplPreviewHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview — JSON sent to the device'**
+  String get skapiTplPreviewHeading;
+
+  /// No description provided for @skapiTplNoParams.
+  ///
+  /// In en, this message translates to:
+  /// **'This template needs no parameters — deploy it as is.'**
+  String get skapiTplNoParams;
+
+  /// No description provided for @skapiTplUploadFilledInEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Parameters are filled on the upload screen for this template type.'**
+  String get skapiTplUploadFilledInEditor;
+
+  /// No description provided for @skapiTplValidateCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Validate'**
+  String get skapiTplValidateCta;
+
+  /// No description provided for @skapiTplValidationOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Schema valid'**
+  String get skapiTplValidationOk;
+
+  /// No description provided for @skapiTplValidationFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Validation error: {detail}'**
+  String skapiTplValidationFail(String detail);
+
+  /// No description provided for @skapiTplCopyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to my templates'**
+  String get skapiTplCopyCta;
+
+  /// No description provided for @skapiTplCopiedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{title}\" copied to My templates.'**
+  String skapiTplCopiedToast(String title);
+
+  /// No description provided for @skapiTplDeployCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload to device'**
+  String get skapiTplDeployCta;
+
+  /// No description provided for @skapiTplPickSlotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a mode slot'**
+  String get skapiTplPickSlotTitle;
+
+  /// No description provided for @skapiTplSlotEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'empty'**
+  String get skapiTplSlotEmpty;
+
+  /// No description provided for @skapiTplPickSafeEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a safe entry (1-5)'**
+  String get skapiTplPickSafeEntryTitle;
+
+  /// No description provided for @skapiTplProfileMissingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile not on device'**
+  String get skapiTplProfileMissingTitle;
+
+  /// No description provided for @skapiTplProfileMissingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This mode references profile \"{profileId}\", which is not on the device. Deploy the profile template first, or continue anyway.'**
+  String skapiTplProfileMissingBody(String profileId);
+
+  /// No description provided for @skapiTplDeployAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Deploy anyway'**
+  String get skapiTplDeployAnyway;
+
+  /// No description provided for @skapiTplDeployOkToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded to {name} · read-back verified.'**
+  String skapiTplDeployOkToast(String name);
+
+  /// No description provided for @skapiTplDeployErrorToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Device rejected the record: {err}'**
+  String skapiTplDeployErrorToast(String err);
+
+  /// No description provided for @skapiTplDeployMismatchToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded, but read-back does not match: {detail}'**
+  String skapiTplDeployMismatchToast(String detail);
+
+  /// No description provided for @skapiTplDeployOfflineToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Device connection failed — try again when it is online.'**
+  String get skapiTplDeployOfflineToast;
+
+  /// No description provided for @skapiTplDeviceOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'offline'**
+  String get skapiTplDeviceOffline;
+
+  /// No description provided for @skapiTplOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'optional'**
+  String get skapiTplOptional;
+
+  /// No description provided for @skapiTplSaveCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get skapiTplSaveCta;
+
+  /// No description provided for @skapiTplSavedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Template saved.'**
+  String get skapiTplSavedToast;
+
+  /// No description provided for @skapiTplDeleteCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete template'**
+  String get skapiTplDeleteCta;
+
+  /// No description provided for @sdProfilesAddViaLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens the SKAPI template library, filtered to SynDimm profiles.'**
+  String get sdProfilesAddViaLibrary;
+
+  /// No description provided for @skapiTplSumModeDimmer.
+  ///
+  /// In en, this message translates to:
+  /// **'Binds a knob slot to an HTTP dimmer: target IP, profile, step and double-click preset.'**
+  String get skapiTplSumModeDimmer;
+
+  /// No description provided for @skapiTplSumModeShutter.
+  ///
+  /// In en, this message translates to:
+  /// **'Binds a knob slot to an HTTP shutter/cover: target IP, profile and step.'**
+  String get skapiTplSumModeShutter;
+
+  /// No description provided for @skapiTplSumModeMqtt.
+  ///
+  /// In en, this message translates to:
+  /// **'Publishes knob value and gestures to an MQTT broker; value/toggle tokens fill on the device.'**
+  String get skapiTplSumModeMqtt;
+
+  /// No description provided for @skapiTplSumSafeWebhook.
+  ///
+  /// In en, this message translates to:
+  /// **'Fires a device webhook when the secret knob sequence is entered; wrong tries lock out.'**
+  String get skapiTplSumSafeWebhook;
+
+  /// No description provided for @skapiTplSumGenericPost.
+  ///
+  /// In en, this message translates to:
+  /// **'POSTs a JSON body to any URL when the device triggers; event/device tokens fill at fire time.'**
+  String get skapiTplSumGenericPost;
+
+  /// No description provided for @skapiTplSumHa.
+  ///
+  /// In en, this message translates to:
+  /// **'Calls a Home Assistant webhook trigger; use it in an HA automation.'**
+  String get skapiTplSumHa;
+
+  /// No description provided for @skapiTplSumNtfy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sends a push notification via ntfy.sh — no account needed, just a topic.'**
+  String get skapiTplSumNtfy;
+
+  /// No description provided for @skapiTplSumIfttt.
+  ///
+  /// In en, this message translates to:
+  /// **'Triggers an IFTTT Maker applet; the device fills value1/value2/value3 automatically.'**
+  String get skapiTplSumIfttt;
 
   /// No description provided for @bfApiChainSaveCta.
   ///

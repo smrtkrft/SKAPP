@@ -7,6 +7,8 @@ import '../../../core/storage/preferences_provider.dart';
 import 'action_binding.dart';
 import 'bindings_store.dart';
 import 'bindings_trigger_service.dart';
+import 'device_template.dart';
+import 'device_template_repository.dart';
 import 'override_storage.dart';
 import 'script_manifest.dart';
 import 'script_repository.dart';
@@ -222,24 +224,28 @@ final skapiGroupScriptsProvider = FutureProvider.family.autoDispose<
       .loadGroupScripts(key.platform, key.group),
 );
 
-/// Loads one API template manifest. `(platformId, templateId)` keyed; the
-/// Other-category detail screen reads this to render the template card and
-/// the "Upload to device" CTA (S2.5).
-final skapiApiTemplateManifestProvider = FutureProvider.family
-    .autoDispose<ApiTemplateManifest, ({String platform, String template})>(
-  (ref, key) => ref
-      .watch(scriptRepositoryProvider)
-      .loadApiTemplate(key.platform, key.template),
+// skapiApiTemplateManifestProvider / skapiPlatformApiTemplatesProvider
+// Faz B'de kaldırıldı: other-* platform şablonlarının yerini aşağıdaki
+// deviceTemplates* sağlayıcıları aldı.
+
+/// Bundled cihaz şablonu kütüphanesi (assets/skapi/templates/). Uygulama
+/// ömrü boyunca değişmez — autoDispose yok, repository kendi cache'ini
+/// tutar.
+final deviceTemplateRepositoryProvider =
+    Provider<DeviceTemplateRepository>((ref) => DeviceTemplateRepository());
+
+final deviceTemplatesProvider = FutureProvider<List<DeviceTemplate>>(
+  (ref) => ref.watch(deviceTemplateRepositoryProvider).loadAll(),
 );
 
-/// All API templates under an `other-*` platform, in `_platform.json`
-/// declaration order. Used by the Other category screen to list available
-/// templates (S2.5). Empty list is normal during S2.1 skeleton stage.
-final skapiPlatformApiTemplatesProvider = FutureProvider.family
-    .autoDispose<List<ApiTemplateManifest>, String>(
-  (ref, platformId) =>
-      ref.watch(scriptRepositoryProvider).loadAllApiTemplates(platformId),
-);
+/// Kategori → şablon listesi ([kTemplateCategories] sırasında; bilinmeyen
+/// kategoriler "other" anahtarına düşer). Kütüphane ekranının bölüm
+/// yapısını doğrudan besler.
+final templatesByCategoryProvider =
+    FutureProvider<Map<String, List<DeviceTemplate>>>((ref) async {
+  final all = await ref.watch(deviceTemplatesProvider.future);
+  return DeviceTemplateRepository.groupByCategory(all);
+});
 
 /// Read-only summary of one on-device API endpoint, as returned by
 /// `api.endpoint.list`. Used by [_OnDeviceApiList] to render a row per

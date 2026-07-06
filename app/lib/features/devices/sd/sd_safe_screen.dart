@@ -35,7 +35,7 @@ import '../../main_shell/main_shell.dart';
 import '../../skapi/on_device_api_editor_screen.dart';
 import '../bf/bf_session.dart';
 import 'sd_session.dart';
-import 'sd_validators.dart';
+import '../../../core/devices/validators/sd_validators.dart';
 
 class SdSafeScreen extends StatefulWidget {
   const SdSafeScreen({super.key, required this.deviceId});

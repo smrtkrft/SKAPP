@@ -14,6 +14,8 @@ Icon?
 no_github/
 # --- Yerel kurulum/OTA artefaktları (paylaşılmaz) ---
 ota/
+# --- Yerel çalışma / denetim / doküman notları (paylaşılmaz) ---
+docs/
 
 # ============================================================
 #  Flutter / Dart  (app/)
@@ -71,4 +73,3 @@ esp32/**/managed_components/
 .env
 .env.*
 *.swp
-app/ihlal.md

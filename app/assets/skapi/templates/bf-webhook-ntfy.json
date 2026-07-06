@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "bf-webhook-ntfy",
+  "category": "webhook",
+  "targetKind": "bf.endpoint",
+  "compatiblePrefixes": [
+    "BF",
+    "LS",
+    "SD"
+  ],
+  "i18n": {
+    "title": "ntfy Bildirimi",
+    "summary": "skapiTplSumNtfy"
+  },
+  "platform": "templates",
+  "targetDeviceType": "any",
+  "defaults": {
+    "name": "ntfy",
+    "type": "webhook_post",
+    "url": "https://ntfy.sh/{{topic}}",
+    "method": "POST",
+    "auth": "none",
+    "contentType": "text/plain",
+    "payload": "{event} — {device}",
+    "delayAfterSec": 0
+  },
+  "params": [
+    {
+      "name": "topic",
+      "placeholder": "{{topic}}",
+      "i18nLabel": "ntfy topic",
+      "secret": false
+    }
+  ]
+}

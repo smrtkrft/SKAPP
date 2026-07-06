@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "sd-safe-webhook",
+  "category": "webhook",
+  "targetKind": "sd.safe",
+  "compatiblePrefixes": [
+    "SD"
+  ],
+  "i18n": {
+    "title": "Kasa → Webhook",
+    "summary": "skapiTplSumSafeWebhook"
+  },
+  "params": [
+    {
+      "name": "sequence",
+      "placeholder": "{{sequence}}",
+      "i18nLabel": "Düğme sırası",
+      "i18nHint": "örn L3-R5-L2, kuyrukta isteğe bağlı -B",
+      "type": "string",
+      "default": "L3-R5-L2",
+      "required": true
+    },
+    {
+      "name": "endpoint",
+      "placeholder": "{{endpoint}}",
+      "i18nLabel": "Endpoint adı",
+      "i18nHint": "cihazdaki api.endpoint kaydının adı",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "lockout-after",
+      "placeholder": "{{lockout-after}}",
+      "i18nLabel": "Kilitlenme: deneme",
+      "type": "int",
+      "default": "5",
+      "min": 1,
+      "max": 20,
+      "required": true
+    },
+    {
+      "name": "lockout-seconds",
+      "placeholder": "{{lockout-seconds}}",
+      "i18nLabel": "Kilitlenme: saniye",
+      "type": "int",
+      "default": "30",
+      "min": 5,
+      "max": 600,
+      "required": true
+    }
+  ],
+  "jsonBody": "{\"v\":2,\"enabled\":true,\"sequence\":\"{{sequence}}\",\"endpoint\":\"{{endpoint}}\",\"lockout\":{\"enabled\":true,\"after\":{{lockout-after}},\"seconds\":{{lockout-seconds}}}}"
+}

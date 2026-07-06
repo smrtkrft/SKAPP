@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "sd-mode-dimmer-http",
+  "category": "dimmer",
+  "targetKind": "sd.mode",
+  "compatiblePrefixes": [
+    "SD"
+  ],
+  "i18n": {
+    "title": "Dimmer Modu (HTTP)",
+    "summary": "skapiTplSumModeDimmer"
+  },
+  "params": [
+    {
+      "name": "name",
+      "placeholder": "{{name}}",
+      "i18nLabel": "Mod adı",
+      "type": "string",
+      "default": "Dimmer",
+      "required": true
+    },
+    {
+      "name": "host",
+      "placeholder": "{{host}}",
+      "i18nLabel": "Hedef IP",
+      "type": "host",
+      "required": true
+    },
+    {
+      "name": "port",
+      "placeholder": "{{port}}",
+      "i18nLabel": "Port",
+      "type": "int",
+      "default": "80",
+      "min": 1,
+      "max": 65535,
+      "required": true
+    },
+    {
+      "name": "profile",
+      "placeholder": "{{profile}}",
+      "i18nLabel": "Profil ID",
+      "type": "string",
+      "default": "shelly_dimmer2",
+      "required": true
+    },
+    {
+      "name": "step",
+      "placeholder": "{{step}}",
+      "i18nLabel": "Adım (step)",
+      "type": "int",
+      "default": "1",
+      "min": 1,
+      "max": 10,
+      "required": true
+    },
+    {
+      "name": "preset",
+      "placeholder": "{{preset}}",
+      "i18nLabel": "Çift tık preset (%)",
+      "type": "int",
+      "default": "100",
+      "min": 0,
+      "max": 100,
+      "required": true
+    }
+  ],
+  "jsonBody": "{\"v\":2,\"behavior\":\"dimmer\",\"enabled\":true,\"name\":\"{{name}}\",\"profile\":\"{{profile}}\",\"targets\":[{\"host\":\"{{host}}\",\"port\":{{port}}}],\"params\":{\"step\":{{step}},\"accel\":true,\"gestures_enabled\":true,\"presets\":{\"double_click\":{{preset}}}}}"
+}

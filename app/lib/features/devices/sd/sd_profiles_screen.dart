@@ -1,13 +1,14 @@
-// SD Profiller · design2.html "profiller / profilJson / profilAdd"
-// görünümlerinin Flutter karşılığı.
+// SD Profiller — cihazdaki profillerin İNCE görünümü (Faz C sadeleştirme).
 //
 //   profile.list           → kompakt liste (BLE MTU dostu)
 //   profile.get <id>       → tam JSON (görüntüleme)
-//   profile.add {json}     → doğrula + kaydet (id ≤15, [A-Za-z0-9_-])
 //   profile.remove <id>    → bağlı binding varsa firmware ERR_IN_USE döner
 //
-// JSON doğrulaması firmware kurallarının aynasıdır: erken/temiz hata
-// içindir, son söz her zaman cihazındır.
+// Profil OLUŞTURMA/EKLEME bu ekrandan kaldırıldı: bundled katalog seçici ve
+// ham-JSON yapıştırma alanının yerini SKAPI Cihaz Şablonları kütüphanesi
+// aldı ("+" → SkapiTemplateLibraryScreen, SD profilleriyle filtreli derin
+// bağlantı). Tek doğruluk kaynağı SKAPI; bu ekran listele · görüntüle ·
+// sil · yenile ile sınırlı.
 
 import 'dart:convert';
 
@@ -18,9 +19,9 @@ import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../main_shell/main_shell.dart';
-import 'sd_profile_catalog.dart';
+import '../../skapi/data/device_template.dart';
+import '../../skapi/skapi_template_library_screen.dart';
 import 'sd_session.dart';
-import 'sd_validators.dart';
 
 class SdProfilesScreen extends StatefulWidget {
   const SdProfilesScreen({super.key, required this.deviceId});
@@ -134,10 +135,20 @@ class _SdProfilesScreenState extends State<SdProfilesScreen> {
     await _refresh();
   }
 
+  /// "+" → SKAPI Cihaz Şablonları kütüphanesi, SD profilleriyle filtreli
+  /// derin bağlantı. Dağıtım servisinin session'ı deviceSessionProvider
+  /// üzerinden çözülür; dönüşte liste yenilenir.
   Future<void> _openAdd() async {
-    await SdSession.push(
-      context,
-      SdProfileAddScreen(deviceId: widget.deviceId),
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SkapiTemplateLibraryScreen(
+          libraryContext: TemplateLibraryContext(
+            deviceId: widget.deviceId,
+            devicePrefix: 'SD',
+            kinds: const {TemplateTargetKind.sdProfile},
+          ),
+        ),
+      ),
     );
     if (mounted) await _refresh();
   }
@@ -164,6 +175,7 @@ class _SdProfilesScreenState extends State<SdProfilesScreen> {
       bottomNavigationBar: const ShellNavBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: _openAdd,
+        tooltip: l.sdProfilesAddViaLibrary,
         child: const Icon(Icons.add),
       ),
       body: SkContentFrame(
@@ -220,300 +232,6 @@ class _SdProfilesScreenState extends State<SdProfilesScreen> {
               ),
               const SizedBox(height: 10),
             ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Profil ekleme — bundled katalogdan seçici (birincil yol) + "Gelişmiş"
-// ham-JSON yapıştırma (firmware kurallarının aynası doğrulama)
-// ---------------------------------------------------------------------------
-
-class SdProfileAddScreen extends StatefulWidget {
-  const SdProfileAddScreen({
-    super.key,
-    required this.deviceId,
-    this.behaviorFilter,
-  });
-  final String deviceId;
-
-  /// Mod formundaki "katalogdan ekle" kısayolu davranışa göre daraltır
-  /// (ör. shutter modu yalnız shutter-uyumluları görsün). null = tümü.
-  final String? behaviorFilter;
-
-  @override
-  State<SdProfileAddScreen> createState() => _SdProfileAddScreenState();
-}
-
-class _SdProfileAddScreenState extends State<SdProfileAddScreen> {
-  final _json = TextEditingController();
-  String? _error;
-  bool _busy = false;
-  List<SdCatalogProfile> _catalog = [];
-
-  @override
-  void initState() {
-    super.initState();
-    SdProfileCatalog.load().then((c) {
-      if (!mounted) return;
-      setState(() {
-        _catalog = widget.behaviorFilter == null
-            ? c.profiles
-            : c.forBehavior(widget.behaviorFilter!);
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _json.dispose();
-    super.dispose();
-  }
-
-  /// Saf kurallar sd_validators.dart'ta (birim testli); burada yalnız
-  /// hata → yerelleştirilmiş metin eşlemesi yapılır.
-  String? _validate(AppLocalizations l, String raw) {
-    final issue = validateProfileJson(raw);
-    if (issue == null) return null;
-    return switch (issue.kind) {
-      SdProfileJsonError.empty => l.sdProfilesErrJsonEmpty,
-      SdProfileJsonError.tooBig => l.sdProfilesErrTooBig,
-      SdProfileJsonError.invalidJson =>
-        l.sdProfilesErrJsonInvalid(issue.detail),
-      SdProfileJsonError.notObject => l.sdProfilesErrJsonNotObject,
-      SdProfileJsonError.idRequired => l.sdProfilesErrIdRequired,
-      SdProfileJsonError.idFormat => l.sdProfilesErrIdFormat,
-      SdProfileJsonError.version => l.sdProfilesErrVersion,
-    };
-  }
-
-  /// Ortak gönderme yolu — hem katalog seçimi hem ham-JSON kutusu buradan
-  /// geçer; doğrulama + kompaktlama + profile.add + başarıda ekranı kapat.
-  Future<void> _send(String raw) async {
-    final l = AppLocalizations.of(context);
-    final err = _validate(l, raw);
-    if (err != null) {
-      setState(() => _error = err);
-      return;
-    }
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    final client = SdSession.of(context).client;
-    try {
-      // Firmware kompakt tek satır bekler; JSON yeniden encode edilerek
-      // boşluk/yeni satırlardan arındırılır.
-      final compact = jsonEncode(jsonDecode(raw));
-      final r = await client.send('profile.add', argv: [compact]);
-      if (!mounted) return;
-      if (r.ok) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(l.sdProfilesAdded, textAlign: TextAlign.center)),
-        );
-        Navigator.of(context).maybePop();
-      } else {
-        setState(() => _error = r.err ?? '?');
-      }
-    } catch (e) {
-      if (mounted) setState(() => _error = e.toString());
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  Future<void> _add() => _send(_json.text);
-
-  /// Katalog kartı → önizleme sheet'i. MQTT jenerik profillerinde topic
-  /// prefix'i (ve çoklu cihaz için id) düzenlenebilir — cihaz
-  /// kişiselleştirilmiş KOPYAYI saklar ({prefix} yalnız profilin üst-seviye
-  /// alanından çözülür, binding'den değil).
-  Future<void> _addFromCatalog(SdCatalogProfile p) async {
-    final l = AppLocalizations.of(context);
-    final cs = Theme.of(context).colorScheme;
-    final idCtl = TextEditingController(text: p.id);
-    final prefixCtl = TextEditingController();
-    if (p.isMqtt) {
-      try {
-        prefixCtl.text =
-            (jsonDecode(p.rawJson) as Map)['prefix']?.toString() ?? '';
-      } catch (_) {}
-    }
-    try {
-      final confirmed = await showModalBottomSheet<bool>(
-        context: context,
-        isScrollControlled: true,
-        builder: (ctx) => Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: 20 + MediaQuery.of(ctx).viewInsets.bottom,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(p.name, style: Theme.of(ctx).textTheme.titleMedium),
-              const SizedBox(height: 4),
-              Text(
-                '${p.protocol} · ${p.behaviors.join(", ")}',
-                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
-              ),
-              if (p.isMqtt) ...[
-                const SizedBox(height: 12),
-                TextField(
-                  controller: idCtl,
-                  decoration: InputDecoration(
-                    labelText: l.sdProfilesCatalogMqttId,
-                    helperText: l.sdProfilesErrIdFormat,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: prefixCtl,
-                  decoration: InputDecoration(
-                    labelText: l.sdProfilesCatalogMqttPrefix,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 12),
-              Container(
-                constraints: const BoxConstraints(maxHeight: 260),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: cs.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: SingleChildScrollView(
-                  child: SelectableText(
-                    p.rawJson,
-                    style: const TextStyle(
-                        fontFamily: 'monospace', fontSize: 11.5),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              FilledButton.icon(
-                icon: const Icon(Icons.add, size: 18),
-                label: Text(l.sdProfilesCatalogAdd),
-                onPressed: () => Navigator.of(ctx).pop(true),
-              ),
-            ],
-          ),
-        ),
-      );
-      if (confirmed != true || !mounted) return;
-      var raw = p.rawJson;
-      if (p.isMqtt) {
-        final m = jsonDecode(raw) as Map<String, dynamic>;
-        m['id'] = idCtl.text.trim();
-        if (prefixCtl.text.trim().isNotEmpty) {
-          m['prefix'] = prefixCtl.text.trim();
-        }
-        raw = jsonEncode(m);
-      }
-      await _send(raw);
-    } finally {
-      idCtl.dispose();
-      prefixCtl.dispose();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final cs = Theme.of(context).colorScheme;
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
-        title: Text(l.sdProfilesAddTitle),
-      ),
-      bottomNavigationBar: const ShellNavBar(),
-      body: SkContentFrame(
-        maxWidth: 820,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 48),
-          children: [
-            // ── Katalog (birincil yol) ─────────────────────────────────
-            Text(
-              l.sdProfilesCatalogTitle,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: 8),
-            for (final p in _catalog) ...[
-              SkNeuCard(
-                padding: EdgeInsets.zero,
-                child: ListTile(
-                  leading: Icon(
-                    p.behaviors.contains('shutter')
-                        ? Icons.blinds_outlined
-                        : Icons.lightbulb_outline,
-                    color: cs.onSurfaceVariant,
-                  ),
-                  title: Text(p.name),
-                  subtitle: Text('${p.id} · ${p.protocol}'
-                      ' · ${p.behaviors.join(", ")}'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: _busy ? null : () => _addFromCatalog(p),
-                ),
-              ),
-              const SizedBox(height: 8),
-            ],
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(_error!, style: TextStyle(color: cs.error)),
-              ),
-            const SizedBox(height: 8),
-            // ── Gelişmiş: ham JSON yapıştırma ──────────────────────────
-            ExpansionTile(
-              tilePadding: EdgeInsets.zero,
-              title: Text(
-                l.sdProfilesAdvancedJson,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              children: [
-                Text(
-                  l.sdProfilesAddHint,
-                  style:
-                      TextStyle(fontSize: 12.5, color: cs.onSurfaceVariant),
-                ),
-                const SizedBox(height: 12),
-                SkNeuCard(
-                  child: TextField(
-                    controller: _json,
-                    maxLines: 16,
-                    style: const TextStyle(
-                        fontFamily: 'monospace', fontSize: 12),
-                    decoration: const InputDecoration(
-                      hintText: '{"v":2,"id":"shelly_dimmer2",...}',
-                      border: InputBorder.none,
-                    ),
-                    onChanged: (_) {
-                      if (_error != null) setState(() => _error = null);
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: FilledButton.icon(
-                    icon: const Icon(Icons.check, size: 18),
-                    label: Text(l.commonSave),
-                    onPressed: _busy ? null : _add,
-                  ),
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
           ],
         ),
       ),

@@ -1,15 +1,10 @@
-// sd_validators birim testleri + bundled katalog kapısı.
-//
-// Katalog testi assets/sd_profiles/*.json dosyalarını DOSYA SİSTEMİNDEN okur
-// (flutter test cwd = app kökü) — rootBundle/widget ortamı gerektirmez; bozuk
-// bir katalog asset'i CI'da burada yakalanır. Firmware tarafındaki ikizi:
-// SynDimm test/host/test_profiles.c (aynı kurallar, repo profiles/ üstünde).
-
-import 'dart:convert';
-import 'dart:io';
+// sd_validators birim testleri. (Bundled şablon asset kapısı Faz B'de
+// test/features/skapi/data/device_template_assets_test.dart'a taşındı —
+// assets/sd_profiles kaldırıldı, içerik assets/skapi/templates altında.)
+// Firmware tarafındaki ikiz: SynDimm test/host/test_profiles.c.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:skapp/features/devices/sd/sd_validators.dart';
+import 'package:skapp/core/devices/validators/sd_validators.dart';
 
 void main() {
   group('validateProfileJson', () {
@@ -84,29 +79,67 @@ void main() {
     });
   });
 
-  group('bundled katalog kapısı', () {
-    test('assets/sd_profiles/*.json tamamı kurallardan geçer', () {
-      final dir = Directory('assets/sd_profiles');
-      expect(dir.existsSync(), isTrue,
-          reason: 'katalog asset klasörü eksik');
-      final files = dir
-          .listSync()
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.json'))
-          .toList();
-      expect(files.length, greaterThanOrEqualTo(12),
-          reason: '2026-07-03 itibarıyla 12 profil');
-      for (final f in files) {
-        final raw = f.readAsStringSync();
-        expect(validateProfileJson(raw), isNull,
-            reason: '${f.path} katalog kurallarından geçemedi');
-        // Seçicinin gösterdiği alanlar mevcut ve davranış bildirimi var.
-        final m = jsonDecode(raw) as Map<String, dynamic>;
-        expect(m['behaviors'], isA<List<dynamic>>(),
-            reason: '${f.path}: behaviors[] seçici filtresi için şart');
-        expect((m['behaviors'] as List).isNotEmpty, isTrue,
-            reason: '${f.path}: boş behaviors[] filtrede her yerde görünür');
-      }
+  group('validateModeBindingJson (Binding v2 aynası)', () {
+    const validDimmer = '{"v":2,"behavior":"dimmer","enabled":true,'
+        '"targets":[{"host":"192.168.1.40","port":80}]}';
+    const validMqtt = '{"v":2,"behavior":"mqtt_remote",'
+        '"params":{"broker":"192.168.1.2","topic":"x"}}';
+
+    test('geçerli örnekler', () {
+      expect(validateModeBindingJson(validDimmer), isNull);
+      expect(validateModeBindingJson(validMqtt), isNull);
+    });
+    test('boş / bozuk / nesne değil', () {
+      expect(validateModeBindingJson('')!.kind, SdModeJsonError.empty);
+      expect(
+          validateModeBindingJson('{nope')!.kind, SdModeJsonError.invalidJson);
+      expect(validateModeBindingJson('[1]')!.kind, SdModeJsonError.notObject);
+    });
+    test('v == 2 şart', () {
+      expect(validateModeBindingJson('{"v":1,"behavior":"dimmer"}')!.kind,
+          SdModeJsonError.version);
+    });
+    test('behavior zorunlu ve bilinen küme', () {
+      expect(validateModeBindingJson('{"v":2}')!.kind,
+          SdModeJsonError.behaviorRequired);
+      expect(validateModeBindingJson('{"v":2,"behavior":"disco"}')!.kind,
+          SdModeJsonError.behaviorUnknown);
+    });
+    test('dimmer/shutter hedef ister, mqtt_remote istemez', () {
+      expect(validateModeBindingJson('{"v":2,"behavior":"dimmer"}')!.kind,
+          SdModeJsonError.targetRequired);
+      expect(
+          validateModeBindingJson(
+              '{"v":2,"behavior":"shutter","targets":[{}]}')!.kind,
+          SdModeJsonError.targetRequired);
+      expect(validateModeBindingJson('{"v":2,"behavior":"mqtt_remote"}'),
+          isNull);
+    });
+  });
+
+  group('validateSafeEntryJson (Safe v2 aynası)', () {
+    const valid = '{"v":2,"enabled":true,"sequence":"L3-R5-L2",'
+        '"endpoint":"webhook1"}';
+
+    test('geçerli örnek', () {
+      expect(validateSafeEntryJson(valid), isNull);
+    });
+    test('v == 2 şart', () {
+      expect(
+          validateSafeEntryJson(
+              '{"v":1,"sequence":"L3-R5-L2","endpoint":"x"}')!.kind,
+          SdSafeJsonError.version);
+    });
+    test('sequence kuralları detayıyla yüzeye çıkar', () {
+      final issue = validateSafeEntryJson(
+          '{"v":2,"sequence":"L3-R5","endpoint":"x"}')!;
+      expect(issue.kind, SdSafeJsonError.sequence);
+      expect(issue.detail, 'tooShort');
+    });
+    test('endpoint zorunlu', () {
+      expect(
+          validateSafeEntryJson('{"v":2,"sequence":"L3-R5-L2"}')!.kind,
+          SdSafeJsonError.endpointRequired);
     });
   });
 }

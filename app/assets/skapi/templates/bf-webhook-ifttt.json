@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "bf-webhook-ifttt",
+  "category": "webhook",
+  "targetKind": "bf.endpoint",
+  "compatiblePrefixes": [
+    "BF",
+    "LS",
+    "SD"
+  ],
+  "i18n": {
+    "title": "IFTTT Maker",
+    "summary": "skapiTplSumIfttt",
+    "note": "Maker anahtarı yükleme ekranındaki Token alanına girilir; cihaz value1/value2/value3 alanlarını otomatik doldurur."
+  },
+  "platform": "templates",
+  "targetDeviceType": "any",
+  "defaults": {
+    "name": "ifttt",
+    "type": "ifttt",
+    "url": "{{ifttt-event}}",
+    "method": "POST",
+    "auth": "none",
+    "delayAfterSec": 0
+  },
+  "params": [
+    {
+      "name": "ifttt-event",
+      "placeholder": "{{ifttt-event}}",
+      "i18nLabel": "IFTTT olay adı",
+      "secret": false
+    }
+  ]
+}

@@ -9,7 +9,6 @@ import 'data/script_manifest.dart';
 import 'data/skapi_catalog.dart';
 import 'data/skapi_i18n_lookup.dart';
 import 'data/skapi_providers.dart';
-import 'skapi_api_template_detail_screen.dart';
 import 'skapi_group_screen.dart';
 import 'widgets/skapi_platform_icon.dart';
 
@@ -28,7 +27,6 @@ class SkapiPlatformScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final platformLabel = _platformLabel(l, platform.id);
-    final isApiTemplatePlatform = platform.id.startsWith('other-');
 
     return Scaffold(
       bottomNavigationBar: const ShellNavBar(),
@@ -56,10 +54,10 @@ class SkapiPlatformScreen extends ConsumerWidget {
                 const SizedBox(height: 14),
                 _HowItWorksAccordion(),
                 const SizedBox(height: 18),
-                if (isApiTemplatePlatform)
-                  _ApiTemplateBody(platform: platform)
-                else
-                  _ScriptGroupBody(platform: platform),
+                // Cihaz şablonları Faz B'de kendi kütüphanesine taşındı
+                // (SkapiTemplateLibraryScreen); bu ekran artık yalnız
+                // Yapı-1 script platformlarını (win/mac/lx-*) render eder.
+                _ScriptGroupBody(platform: platform),
               ],
             ),
           ),
@@ -116,148 +114,6 @@ class _ScriptGroupBody extends ConsumerWidget {
           ),
         );
       },
-    );
-  }
-}
-
-/// API-template body for `other-*` platforms (Yapı 2). Reads
-/// [skapiPlatformApiTemplatesProvider] and renders a bordered list of
-/// templates. Tapping a template pushes
-/// [SkapiApiTemplateDetailScreen] which surfaces the "Cihaza yükle" CTA.
-/// Empty list during S2.1 skeleton stage is rendered as a friendly
-/// "templates coming soon" message — same look as the script-empty case.
-class _ApiTemplateBody extends ConsumerWidget {
-  const _ApiTemplateBody({required this.platform});
-  final SkapiPlatformSpec platform;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
-    final templatesAsync =
-        ref.watch(skapiPlatformApiTemplatesProvider(platform.id));
-
-    return templatesAsync.when(
-      loading: () => const _GroupListLoading(),
-      error: (e, _) => _GroupListError(
-        message: l.skapiPlatformGroupsLoadError(e.toString()),
-      ),
-      data: (templates) {
-        if (templates.isEmpty) {
-          return _PlatformEmpty(
-            title: l.skapiPlatformEmptyTitle,
-            body: l.skapiCategoryComingSoon,
-          );
-        }
-        return _ApiTemplateSection(templates: templates);
-      },
-    );
-  }
-}
-
-class _ApiTemplateSection extends StatelessWidget {
-  const _ApiTemplateSection({required this.templates});
-  final List<ApiTemplateManifest> templates;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Text(
-                  l.skapiApiTemplateSectionHeader,
-                  style:
-                      tt.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-                ),
-              ),
-              Text(
-                l.skapiApiTemplateSectionCount(templates.length),
-                style: tt.labelMedium?.copyWith(
-                  color: cs.onSurface.withValues(alpha: 0.65),
-                ),
-              ),
-            ],
-          ),
-        ),
-        SkNeuCard(
-          padding: EdgeInsets.zero,
-          borderRadius: 14,
-          child: Column(
-            children: [
-              for (int i = 0; i < templates.length; i++) ...[
-                if (i > 0)
-                  Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: cs.onSurface.withValues(alpha: 0.08),
-                  ),
-                _ApiTemplateRow(template: templates[i]),
-              ],
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ApiTemplateRow extends StatelessWidget {
-  const _ApiTemplateRow({required this.template});
-  final ApiTemplateManifest template;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    final title = resolveSkapiI18nKey(l, template.i18nTitle);
-    return InkWell(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => SkapiApiTemplateDetailScreen(manifest: template),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    title,
-                    style:
-                        tt.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${template.method.toUpperCase()} · ${template.urlTemplate}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: tt.labelSmall?.copyWith(
-                      color: cs.onSurface.withValues(alpha: 0.55),
-                      fontFamily: 'monospace',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Icon(Icons.chevron_right_rounded,
-                color: cs.onSurface.withValues(alpha: 0.4)),
-          ],
-        ),
-      ),
     );
   }
 }

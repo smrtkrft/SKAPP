@@ -113,6 +113,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skapiTitle => 'SKAPI';
 
   @override
+  String get skapiQuickAccessHeading => 'Quick Access';
+
+  @override
   String get skapiLibraryHeading => 'SKAPI Library';
 
   @override
@@ -244,6 +247,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String skapiHeaderSub(int platforms, int actions) {
     return '$platforms platforms · $actions actions';
   }
+
+  @override
+  String skapiHeaderSourcesActions(int sources, int actions) {
+    return '$sources sources · $actions actions';
+  }
+
+  @override
+  String get skapiTabLibrary => 'Library';
+
+  @override
+  String get skapiTabMine => 'My Library';
+
+  @override
+  String get skapiTabActions => 'Actions';
+
+  @override
+  String get skapiSearchHint => 'Search…';
+
+  @override
+  String get skapiSearchNoResults => 'No matching results.';
+
+  @override
+  String get skapiLibraryDevicesEmpty => 'No device templates available yet.';
+
+  @override
+  String get skapiDeviceDesktop => 'Desktop';
+
+  @override
+  String get skapiDesktopCardDesc =>
+      'Runs on your computer — bound to a device event';
+
+  @override
+  String get skapiDesktopNote =>
+      'These scripts run on your computer. Use the Actions tab to bind one to a device event.';
+
+  @override
+  String get skapiActionsExplainer =>
+      'An action is what happens when an event fires on a device — event on the left, result on the right.';
+
+  @override
+  String get skapiTplKindScript => 'SCRIPT';
 
   @override
   String get skapiNewActionPill => 'New action';
@@ -5113,6 +5157,236 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bfApiChainContentTypeLabel => 'Content-Type';
+
+  @override
+  String get bfApiChainPayloadLabel => 'Body (payload)';
+
+  @override
+  String get bfApiChainPayloadHint =>
+      'Stored body template — sent instead of the trigger data, rendered on the device at fire time. Leave empty to forward the trigger data unchanged. Tokens:';
+
+  @override
+  String get bfApiChainPayloadUnsupported =>
+      'Device firmware doesn\'t store body templates — the body was skipped. Update the firmware to use it.';
+
+  @override
+  String get skapiTplParamsTitle => 'Template parameters';
+
+  @override
+  String get skapiTplParamsSubtitle =>
+      'Values below are inserted into the URL and body before upload.';
+
+  @override
+  String skapiTplUnresolvedError(String names) {
+    return 'Unfilled template parameters: $names';
+  }
+
+  @override
+  String get skapiBindEventTimerState => 'Timer state changed';
+
+  @override
+  String get skapiTplLibraryTitle => 'Device Templates';
+
+  @override
+  String get skapiPlatformDeviceTemplates => 'Device Templates';
+
+  @override
+  String get skapiTplEmptyLibrary => 'No templates match this filter.';
+
+  @override
+  String get skapiTplDevicesHeading => 'Devices';
+
+  @override
+  String get skapiTplDevDescSd => 'Rotary knob — dimmer & shutter control';
+
+  @override
+  String get skapiTplDevDescLs => 'Life-trace timer — countdown mailer';
+
+  @override
+  String get skapiTplDevDescBf => 'Focus timer cube — physical faces';
+
+  @override
+  String get skapiTplSafeNote =>
+      'The safe sequence is set on the device (not in SKAPI). Deploy the webhook here, then link it to the sequence on the SD screen.';
+
+  @override
+  String get skapiTplDrivers => 'Drivers';
+
+  @override
+  String get skapiTplModes => 'Modes';
+
+  @override
+  String skapiTplDeviceCount(int count) {
+    return '$count script';
+  }
+
+  @override
+  String get skapiTplMineHeading => 'My templates';
+
+  @override
+  String get skapiTplMineEmpty =>
+      'Copy a ready-made template here with \"Copy to my templates\" to edit and keep your own version.';
+
+  @override
+  String get skapiTplCatDimmer => 'Dimmer';
+
+  @override
+  String get skapiTplCatShutter => 'Shutter';
+
+  @override
+  String get skapiTplCatWebhook => 'Webhook / API';
+
+  @override
+  String get skapiTplCatMqtt => 'MQTT';
+
+  @override
+  String get skapiTplCatOther => 'Other';
+
+  @override
+  String skapiTplDeepLinkBanner(String deviceId) {
+    return 'Filtered for $deviceId — deploy returns to the device screen.';
+  }
+
+  @override
+  String get skapiTplKindProfile => 'PROFILE';
+
+  @override
+  String get skapiTplKindMode => 'MODE';
+
+  @override
+  String get skapiTplKindSafe => 'SAFE';
+
+  @override
+  String get skapiTplKindWebhook => 'WEBHOOK';
+
+  @override
+  String get skapiTplDetailFormTab => 'Form';
+
+  @override
+  String get skapiTplDetailJsonTab => 'Advanced (JSON)';
+
+  @override
+  String get skapiTplPreviewHeading => 'Preview — JSON sent to the device';
+
+  @override
+  String get skapiTplNoParams =>
+      'This template needs no parameters — deploy it as is.';
+
+  @override
+  String get skapiTplUploadFilledInEditor =>
+      'Parameters are filled on the upload screen for this template type.';
+
+  @override
+  String get skapiTplValidateCta => 'Validate';
+
+  @override
+  String get skapiTplValidationOk => 'Schema valid';
+
+  @override
+  String skapiTplValidationFail(String detail) {
+    return 'Validation error: $detail';
+  }
+
+  @override
+  String get skapiTplCopyCta => 'Copy to my templates';
+
+  @override
+  String skapiTplCopiedToast(String title) {
+    return '\"$title\" copied to My templates.';
+  }
+
+  @override
+  String get skapiTplDeployCta => 'Upload to device';
+
+  @override
+  String get skapiTplPickSlotTitle => 'Pick a mode slot';
+
+  @override
+  String get skapiTplSlotEmpty => 'empty';
+
+  @override
+  String get skapiTplPickSafeEntryTitle => 'Pick a safe entry (1-5)';
+
+  @override
+  String get skapiTplProfileMissingTitle => 'Profile not on device';
+
+  @override
+  String skapiTplProfileMissingBody(String profileId) {
+    return 'This mode references profile \"$profileId\", which is not on the device. Deploy the profile template first, or continue anyway.';
+  }
+
+  @override
+  String get skapiTplDeployAnyway => 'Deploy anyway';
+
+  @override
+  String skapiTplDeployOkToast(String name) {
+    return 'Uploaded to $name · read-back verified.';
+  }
+
+  @override
+  String skapiTplDeployErrorToast(String err) {
+    return 'Device rejected the record: $err';
+  }
+
+  @override
+  String skapiTplDeployMismatchToast(String detail) {
+    return 'Uploaded, but read-back does not match: $detail';
+  }
+
+  @override
+  String get skapiTplDeployOfflineToast =>
+      'Device connection failed — try again when it is online.';
+
+  @override
+  String get skapiTplDeviceOffline => 'offline';
+
+  @override
+  String get skapiTplOptional => 'optional';
+
+  @override
+  String get skapiTplSaveCta => 'Save';
+
+  @override
+  String get skapiTplSavedToast => 'Template saved.';
+
+  @override
+  String get skapiTplDeleteCta => 'Delete template';
+
+  @override
+  String get sdProfilesAddViaLibrary =>
+      'Opens the SKAPI template library, filtered to SynDimm profiles.';
+
+  @override
+  String get skapiTplSumModeDimmer =>
+      'Binds a knob slot to an HTTP dimmer: target IP, profile, step and double-click preset.';
+
+  @override
+  String get skapiTplSumModeShutter =>
+      'Binds a knob slot to an HTTP shutter/cover: target IP, profile and step.';
+
+  @override
+  String get skapiTplSumModeMqtt =>
+      'Publishes knob value and gestures to an MQTT broker; value/toggle tokens fill on the device.';
+
+  @override
+  String get skapiTplSumSafeWebhook =>
+      'Fires a device webhook when the secret knob sequence is entered; wrong tries lock out.';
+
+  @override
+  String get skapiTplSumGenericPost =>
+      'POSTs a JSON body to any URL when the device triggers; event/device tokens fill at fire time.';
+
+  @override
+  String get skapiTplSumHa =>
+      'Calls a Home Assistant webhook trigger; use it in an HA automation.';
+
+  @override
+  String get skapiTplSumNtfy =>
+      'Sends a push notification via ntfy.sh — no account needed, just a topic.';
+
+  @override
+  String get skapiTplSumIfttt =>
+      'Triggers an IFTTT Maker applet; the device fills value1/value2/value3 automatically.';
 
   @override
   String get bfApiChainSaveCta => 'Save';

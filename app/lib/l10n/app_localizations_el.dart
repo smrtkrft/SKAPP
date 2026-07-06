@@ -113,6 +113,9 @@ class AppLocalizationsEl extends AppLocalizations {
   String get skapiTitle => 'SKAPI';
 
   @override
+  String get skapiQuickAccessHeading => 'Γρήγορη πρόσβαση';
+
+  @override
   String get skapiLibraryHeading => 'Βιβλιοθήκη SKAPI';
 
   @override
@@ -246,6 +249,47 @@ class AppLocalizationsEl extends AppLocalizations {
   String skapiHeaderSub(int platforms, int actions) {
     return '$platforms πλατφόρμες · $actions ενέργειες';
   }
+
+  @override
+  String skapiHeaderSourcesActions(int sources, int actions) {
+    return '$sources sources · $actions actions';
+  }
+
+  @override
+  String get skapiTabLibrary => 'Library';
+
+  @override
+  String get skapiTabMine => 'My Library';
+
+  @override
+  String get skapiTabActions => 'Actions';
+
+  @override
+  String get skapiSearchHint => 'Search…';
+
+  @override
+  String get skapiSearchNoResults => 'No matching results.';
+
+  @override
+  String get skapiLibraryDevicesEmpty => 'No device templates available yet.';
+
+  @override
+  String get skapiDeviceDesktop => 'Desktop';
+
+  @override
+  String get skapiDesktopCardDesc =>
+      'Runs on your computer — bound to a device event';
+
+  @override
+  String get skapiDesktopNote =>
+      'These scripts run on your computer. Use the Actions tab to bind one to a device event.';
+
+  @override
+  String get skapiActionsExplainer =>
+      'An action is what happens when an event fires on a device — event on the left, result on the right.';
+
+  @override
+  String get skapiTplKindScript => 'SCRIPT';
 
   @override
   String get skapiNewActionPill => 'Νέα ενέργεια';
@@ -5163,6 +5207,239 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get bfApiChainContentTypeLabel => 'Content-Type';
+
+  @override
+  String get bfApiChainPayloadLabel => 'Σώμα (payload)';
+
+  @override
+  String get bfApiChainPayloadHint =>
+      'Αποθηκευμένο πρότυπο σώματος — αποστέλλεται αντί των δεδομένων ενεργοποίησης και συμπληρώνεται στη συσκευή τη στιγμή της αποστολής. Αφήστε το κενό για να προωθηθούν τα δεδομένα ως έχουν. Tokens:';
+
+  @override
+  String get bfApiChainPayloadUnsupported =>
+      'Το firmware της συσκευής δεν αποθηκεύει πρότυπα σώματος — το σώμα παραλείφθηκε. Ενημερώστε το firmware για να το χρησιμοποιήσετε.';
+
+  @override
+  String get skapiTplParamsTitle => 'Παράμετροι προτύπου';
+
+  @override
+  String get skapiTplParamsSubtitle =>
+      'Οι παρακάτω τιμές εισάγονται στο URL και στο σώμα πριν από τη μεταφόρτωση.';
+
+  @override
+  String skapiTplUnresolvedError(String names) {
+    return 'Μη συμπληρωμένες παράμετροι προτύπου: $names';
+  }
+
+  @override
+  String get skapiBindEventTimerState => 'Η κατάσταση χρονομέτρου άλλαξε';
+
+  @override
+  String get skapiTplLibraryTitle => 'Πρότυπα συσκευών';
+
+  @override
+  String get skapiPlatformDeviceTemplates => 'Πρότυπα συσκευών';
+
+  @override
+  String get skapiTplEmptyLibrary =>
+      'Κανένα πρότυπο δεν ταιριάζει σε αυτό το φίλτρο.';
+
+  @override
+  String get skapiTplDevicesHeading => 'Συσκευές';
+
+  @override
+  String get skapiTplDevDescSd =>
+      'Περιστροφικό κουμπί — έλεγχος dimmer & ρολών';
+
+  @override
+  String get skapiTplDevDescLs =>
+      'Χρονόμετρο ίχνους ζωής — mailer αντίστροφης μέτρησης';
+
+  @override
+  String get skapiTplDevDescBf => 'Κύβος χρονομέτρου εστίασης — φυσικές όψεις';
+
+  @override
+  String get skapiTplSafeNote =>
+      'Η ακολουθία κλειδαριάς ορίζεται στη συσκευή (όχι στο SKAPI). Μεταφορτώστε εδώ το webhook και συνδέστε το με την ακολουθία στην οθόνη SD.';
+
+  @override
+  String get skapiTplDrivers => 'Οδηγοί';
+
+  @override
+  String get skapiTplModes => 'Λειτουργίες';
+
+  @override
+  String skapiTplDeviceCount(int count) {
+    return '$count script';
+  }
+
+  @override
+  String get skapiTplMineHeading => 'Τα πρότυπά μου';
+
+  @override
+  String get skapiTplMineEmpty =>
+      'Αντιγράψτε ένα έτοιμο πρότυπο εδώ με «Αντιγραφή στα πρότυπά μου» για να επεξεργαστείτε τη δική σας έκδοση.';
+
+  @override
+  String get skapiTplCatDimmer => 'Dimmer';
+
+  @override
+  String get skapiTplCatShutter => 'Ρολά';
+
+  @override
+  String get skapiTplCatWebhook => 'Webhook / API';
+
+  @override
+  String get skapiTplCatMqtt => 'MQTT';
+
+  @override
+  String get skapiTplCatOther => 'Άλλα';
+
+  @override
+  String skapiTplDeepLinkBanner(String deviceId) {
+    return 'Φιλτραρισμένο για $deviceId — μετά τη μεταφόρτωση επιστρέφετε στην οθόνη της συσκευής.';
+  }
+
+  @override
+  String get skapiTplKindProfile => 'ΠΡΟΦΙΛ';
+
+  @override
+  String get skapiTplKindMode => 'ΛΕΙΤ.';
+
+  @override
+  String get skapiTplKindSafe => 'ΚΛΕΙΔ.';
+
+  @override
+  String get skapiTplKindWebhook => 'WEBHOOK';
+
+  @override
+  String get skapiTplDetailFormTab => 'Φόρμα';
+
+  @override
+  String get skapiTplDetailJsonTab => 'Για προχωρημένους (JSON)';
+
+  @override
+  String get skapiTplPreviewHeading => 'Προεπισκόπηση — JSON προς τη συσκευή';
+
+  @override
+  String get skapiTplNoParams =>
+      'Αυτό το πρότυπο δεν χρειάζεται παραμέτρους — μεταφορτώστε το ως έχει.';
+
+  @override
+  String get skapiTplUploadFilledInEditor =>
+      'Σε αυτόν τον τύπο προτύπου οι παράμετροι συμπληρώνονται στην οθόνη μεταφόρτωσης.';
+
+  @override
+  String get skapiTplValidateCta => 'Επικύρωση';
+
+  @override
+  String get skapiTplValidationOk => 'Έγκυρο σχήμα';
+
+  @override
+  String skapiTplValidationFail(String detail) {
+    return 'Σφάλμα επικύρωσης: $detail';
+  }
+
+  @override
+  String get skapiTplCopyCta => 'Αντιγραφή στα πρότυπά μου';
+
+  @override
+  String skapiTplCopiedToast(String title) {
+    return 'Το «$title» αντιγράφηκε στα πρότυπά μου.';
+  }
+
+  @override
+  String get skapiTplDeployCta => 'Μεταφόρτωση στη συσκευή';
+
+  @override
+  String get skapiTplPickSlotTitle => 'Επιλέξτε υποδοχή λειτουργίας';
+
+  @override
+  String get skapiTplSlotEmpty => 'κενό';
+
+  @override
+  String get skapiTplPickSafeEntryTitle => 'Επιλέξτε εγγραφή κλειδαριάς (1-5)';
+
+  @override
+  String get skapiTplProfileMissingTitle => 'Το προφίλ δεν υπάρχει στη συσκευή';
+
+  @override
+  String skapiTplProfileMissingBody(String profileId) {
+    return 'Αυτή η λειτουργία αναφέρεται στο προφίλ «$profileId» που δεν υπάρχει στη συσκευή. Μεταφορτώστε πρώτα το πρότυπο προφίλ ή συνεχίστε ούτως ή άλλως.';
+  }
+
+  @override
+  String get skapiTplDeployAnyway => 'Μεταφόρτωση ούτως ή άλλως';
+
+  @override
+  String skapiTplDeployOkToast(String name) {
+    return 'Μεταφορτώθηκε στο $name · επαληθεύτηκε με ανάγνωση.';
+  }
+
+  @override
+  String skapiTplDeployErrorToast(String err) {
+    return 'Η συσκευή απέρριψε την εγγραφή: $err';
+  }
+
+  @override
+  String skapiTplDeployMismatchToast(String detail) {
+    return 'Μεταφορτώθηκε, αλλά η ανάγνωση δεν ταιριάζει: $detail';
+  }
+
+  @override
+  String get skapiTplDeployOfflineToast =>
+      'Αποτυχία σύνδεσης συσκευής — δοκιμάστε ξανά όταν είναι συνδεδεμένη.';
+
+  @override
+  String get skapiTplDeviceOffline => 'εκτός σύνδεσης';
+
+  @override
+  String get skapiTplOptional => 'προαιρετικό';
+
+  @override
+  String get skapiTplSaveCta => 'Αποθήκευση';
+
+  @override
+  String get skapiTplSavedToast => 'Το πρότυπο αποθηκεύτηκε.';
+
+  @override
+  String get skapiTplDeleteCta => 'Διαγραφή προτύπου';
+
+  @override
+  String get sdProfilesAddViaLibrary =>
+      'Ανοίγει τη βιβλιοθήκη προτύπων SKAPI, φιλτραρισμένη στα προφίλ SynDimm.';
+
+  @override
+  String get skapiTplSumModeDimmer =>
+      'Συνδέει μια υποδοχή περιστροφικού με HTTP dimmer: IP στόχου, προφίλ, βήμα και προεπιλογή διπλού κλικ.';
+
+  @override
+  String get skapiTplSumModeShutter =>
+      'Συνδέει μια υποδοχή περιστροφικού με ρολά HTTP: IP στόχου, προφίλ και βήμα.';
+
+  @override
+  String get skapiTplSumModeMqtt =>
+      'Δημοσιεύει τιμή και χειρονομίες σε MQTT broker· τα tokens value/toggle συμπληρώνονται στη συσκευή.';
+
+  @override
+  String get skapiTplSumSafeWebhook =>
+      'Πυροδοτεί webhook της συσκευής όταν εισαχθεί η μυστική ακολουθία· λανθασμένες απόπειρες κλειδώνουν.';
+
+  @override
+  String get skapiTplSumGenericPost =>
+      'Στέλνει POST με σώμα JSON σε οποιοδήποτε URL όταν ενεργοποιείται η συσκευή· τα tokens event/device συμπληρώνονται κατά την αποστολή.';
+
+  @override
+  String get skapiTplSumHa =>
+      'Καλεί έναν webhook trigger του Home Assistant· χρησιμοποιήστε τον σε αυτοματισμό HA.';
+
+  @override
+  String get skapiTplSumNtfy =>
+      'Στέλνει push ειδοποίηση μέσω ntfy.sh — δεν χρειάζεται λογαριασμός, μόνο topic.';
+
+  @override
+  String get skapiTplSumIfttt =>
+      'Ενεργοποιεί ένα IFTTT Maker applet· η συσκευή συμπληρώνει αυτόματα τα value1/value2/value3.';
 
   @override
   String get bfApiChainSaveCta => 'Αποθήκευση';
