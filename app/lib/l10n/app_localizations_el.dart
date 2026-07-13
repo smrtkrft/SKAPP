@@ -1441,6 +1441,10 @@ class AppLocalizationsEl extends AppLocalizations {
       'Αυτή η συσκευή είναι ήδη συζευγμένη με άλλο SKAPP. Η προσθήκη νέου peer μέσω WiFi δεν υποστηρίζεται από το τρέχον firmware (το TCP δέχεται μόνο την πρώτη σύζευξη). Χρησιμοποιήστε σύζευξη BLE, ή αποσυζεύξτε το υπάρχον peer από τη συσκευή.';
 
   @override
+  String get wifiPairingOpenWindowRetry =>
+      'Η συσκευή δεν άνοιξε το παράθυρο σύζευξης. Πατήστε σύντομα το κουμπί ελέγχου στη συσκευή για να ανοίξετε τη λειτουργία σύζευξης και μετά πατήστε Επανάληψη.';
+
+  @override
   String wifiPairingRejected(String error) {
     return 'Η συσκευή απέρριψε: $error';
   }

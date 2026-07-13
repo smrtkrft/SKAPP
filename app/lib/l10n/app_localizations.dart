@@ -2566,6 +2566,12 @@ abstract class AppLocalizations {
   /// **'This device is already paired with another SKAPP. Adding a new peer over WiFi is not supported by the current firmware (TCP only accepts the first pair). Use BLE pairing, or unpair the existing peer from the device.'**
   String get wifiPairingDeviceAlreadyBonded;
 
+  /// No description provided for @wifiPairingOpenWindowRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'The device didn\'t open its pairing window. On the device, briefly press the control button to open pairing mode, then tap Retry.'**
+  String get wifiPairingOpenWindowRetry;
+
   /// No description provided for @wifiPairingRejected.
   ///
   /// In en, this message translates to:

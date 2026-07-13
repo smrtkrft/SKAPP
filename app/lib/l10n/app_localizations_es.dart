@@ -1440,6 +1440,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Este dispositivo ya está emparejado con otro SKAPP. El firmware actual no admite añadir un nuevo par por WiFi (TCP solo acepta el primer emparejamiento). Usa el emparejamiento BLE o desempareja el par existente desde el dispositivo.';
 
   @override
+  String get wifiPairingOpenWindowRetry =>
+      'El dispositivo no abrió su ventana de emparejamiento. Pulsa brevemente el botón de control del dispositivo para abrir el modo de emparejamiento y luego toca Reintentar.';
+
+  @override
   String wifiPairingRejected(String error) {
     return 'El dispositivo lo rechazó: $error';
   }

@@ -498,6 +498,7 @@
   "wifiPairingNotOpen": "Cihazda eşleştirme penceresi açık değil. Butona kısaca bas ve tekrar dene.",
   "skapiBindFixedTriggerLabel": "Tetikleyici: zamanlayıcı bittiğinde",
   "wifiPairingDeviceAlreadyBonded": "Bu cihaz zaten başka bir SKAPP ile eşleşmiş. Mevcut firmware WiFi üzerinden ek peer eklemeyi desteklemiyor (TCP sadece ilk eşleşmeyi kabul ediyor). BLE üzerinden eşleştir, ya da cihazdaki mevcut eşleşmeyi sil.",
+  "wifiPairingOpenWindowRetry": "Cihaz eşleşme penceresini açmadı. Cihazın üzerindeki kontrol butonuna kısa basıp eşleşme modunu aç, sonra Tekrar Dene'ye dokun.",
   "wifiPairingRejected": "Cihaz reddetti: {error}",
   "@wifiPairingRejected": {"placeholders": {"error": {"type": "String"}}},
   "wifiPairingMissingPub": "Cihazdan our_pub eksik/bozuk.",

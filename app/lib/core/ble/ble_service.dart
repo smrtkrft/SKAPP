@@ -48,18 +48,40 @@ class RealBleService implements BleService {
     if (!await FlutterBluePlus.isSupported) {
       return BleReadiness.unsupported;
     }
-    // adapterState.first can latch the initial 'unknown' value before the
-    // platform plugin has had a chance to publish the real state. Wait
-    // briefly for a *known* state, falling back to "off" so the UI gives
-    // the user a clear next step rather than spinning forever.
-    final state = await FlutterBluePlus.adapterState
-        .firstWhere((s) => s != BluetoothAdapterState.unknown)
-        .timeout(const Duration(seconds: 3),
-            onTimeout: () => BluetoothAdapterState.off);
-    if (state != BluetoothAdapterState.on) {
-      return BleReadiness.adapterOff;
+    // adapterState latches an initial `unknown` while the platform manager
+    // spins up — CBCentralManager on Apple (which also drives the
+    // permission prompt), the WinRT radio on Windows. On desktop this can
+    // take a couple of seconds, so wait a real interval for a *known*
+    // state before concluding anything.
+    BluetoothAdapterState state;
+    try {
+      state = await FlutterBluePlus.adapterState
+          .firstWhere((s) => s != BluetoothAdapterState.unknown)
+          .timeout(const Duration(seconds: 8));
+    } on TimeoutException {
+      state = BluetoothAdapterState.unknown;
     }
-    return BleReadiness.ready;
+    switch (state) {
+      case BluetoothAdapterState.on:
+        return BleReadiness.ready;
+      // Radio present but the app hasn't been granted Bluetooth access
+      // (macOS/iOS TCC, Android runtime deny). Distinct from "turn it on":
+      // the user must grant permission in system settings, not toggle the
+      // radio. Conflating the two is why the app said "enable Bluetooth"
+      // while Bluetooth was already on.
+      case BluetoothAdapterState.unauthorized:
+        return BleReadiness.permissionsDenied;
+      case BluetoothAdapterState.off:
+        return BleReadiness.adapterOff;
+      // unknown (timed out) / turningOn / etc. The desktop state channel
+      // is not always reliable (notably the experimental Windows WinRT
+      // backend, which may never publish `on`). Rather than falsely claim
+      // the adapter is off, report ready and let startScan() surface the
+      // real error — the discovery screen already downgrades a failed scan
+      // to the adapterOff hint.
+      default:
+        return BleReadiness.ready;
+    }
   }
 
   @override

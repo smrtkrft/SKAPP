@@ -498,6 +498,7 @@
   "wifiPairingNotOpen": "Pairing window not open on the device. Press the button briefly and try again.",
   "skapiBindFixedTriggerLabel": "Trigger: when the timer expires",
   "wifiPairingDeviceAlreadyBonded": "This device is already paired with another SKAPP. Adding a new peer over WiFi is not supported by the current firmware (TCP only accepts the first pair). Use BLE pairing, or unpair the existing peer from the device.",
+  "wifiPairingOpenWindowRetry": "The device didn't open its pairing window. On the device, briefly press the control button to open pairing mode, then tap Retry.",
   "wifiPairingRejected": "Device rejected: {error}",
   "@wifiPairingRejected": {"placeholders": {"error": {"type": "String"}}},
   "wifiPairingMissingPub": "Missing/corrupt our_pub from device.",

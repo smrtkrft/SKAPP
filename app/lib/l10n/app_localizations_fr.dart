@@ -1442,6 +1442,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Cet appareil est déjà jumelé avec un autre SKAPP. L\'ajout d\'un nouveau pair en WiFi n\'est pas pris en charge par le firmware actuel (le TCP n\'accepte que le premier jumelage). Utilisez le jumelage BLE, ou désappairez le pair existant depuis l\'appareil.';
 
   @override
+  String get wifiPairingOpenWindowRetry =>
+      'L\'appareil n\'a pas ouvert sa fenêtre d\'appairage. Appuie brièvement sur le bouton de commande de l\'appareil pour ouvrir le mode d\'appairage, puis touche Réessayer.';
+
+  @override
   String wifiPairingRejected(String error) {
     return 'Appareil rejeté : $error';
   }

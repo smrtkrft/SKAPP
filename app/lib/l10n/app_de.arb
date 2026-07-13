@@ -937,6 +937,7 @@
   "wifiPairingNotOpen": "Kopplungsfenster am Gerät nicht offen. Drücke die Taste kurz und versuche es erneut.",
   "skapiBindFixedTriggerLabel": "Auslöser: wenn der Timer abläuft",
   "wifiPairingDeviceAlreadyBonded": "Dieses Gerät ist bereits mit einem anderen SKAPP gekoppelt. Das Hinzufügen eines neuen Peers über WiFi wird von der aktuellen Firmware nicht unterstützt (TCP akzeptiert nur die erste Kopplung). Nutze die BLE-Kopplung oder entkoppele den bestehenden Peer vom Gerät.",
+  "wifiPairingOpenWindowRetry": "Das Gerät hat sein Kopplungsfenster nicht geöffnet. Drücke kurz die Steuertaste am Gerät, um den Kopplungsmodus zu öffnen, und tippe dann auf Erneut versuchen.",
   "wifiPairingRejected": "Gerät hat abgelehnt: {error}",
   "@wifiPairingRejected": {
     "placeholders": {

@@ -178,32 +178,46 @@ class _WifiPairingScreenState extends ConsumerState<WifiPairingScreen> {
       return;
     }
 
+    // A device that already holds a bond greets EVERY TCP connection with
+    // `auth.challenge` (sk_secure_session_begin sends it the moment the
+    // socket opens — verified: it arrives before/with our exchange). That
+    // is NOT terminal for pairing: firmware's TCP recovery path
+    // (sk_transport_tcp.c:75-94, handle_line) still answers our
+    // `pairing.ecdh.exchange` with `our_pub` — AS LONG AS the pairing
+    // window is open on the device. So we skip auth.challenge and keep
+    // waiting for the real pairing reply. If the window is closed the
+    // device drops the socket (or we time out); either way we tell the
+    // user to open pairing mode (short-press the device button) and retry.
     Map<String, dynamic> reply;
-    try {
-      reply = await armed.future.timeout(const Duration(seconds: 12));
-    } on TimeoutException {
-      await sub.cancel();
-      _set(_Stage.failed, err: l.wifiPairingTimeout);
-      return;
-    } catch (e) {
-      await sub.cancel();
-      _set(_Stage.failed, err: '$e');
-      return;
-    }
-
-    // Firmware quirk (sk_transport_tcp.c:114-135): pairing-mode fallback
-    // is only entered when `sk_secure_session_begin` returns non-OK, i.e.
-    // when the device has ZERO bonds stored. As soon as the device has
-    // any bond at all, every TCP connection is greeted with
-    // `auth.challenge` and the bootstrap path is unreachable. We can't
-    // answer that challenge here (we don't have a token yet), so the
-    // honest move is to surface a clear error and steer the user to the
-    // BLE flow.
-    final evt = reply['evt'];
-    if (evt == 'auth.challenge') {
-      await sub.cancel();
-      _set(_Stage.failed, err: l.wifiPairingDeviceAlreadyBonded);
-      return;
+    final deadline = DateTime.now().add(const Duration(seconds: 15));
+    while (true) {
+      final remaining = deadline.difference(DateTime.now());
+      if (remaining <= Duration.zero) {
+        await sub.cancel();
+        _set(_Stage.failed, err: l.wifiPairingOpenWindowRetry);
+        return;
+      }
+      Map<String, dynamic> r;
+      try {
+        r = await armed!.future.timeout(remaining);
+      } on TimeoutException {
+        await sub.cancel();
+        _set(_Stage.failed, err: l.wifiPairingOpenWindowRetry);
+        return;
+      } catch (e) {
+        // Socket closed early = pairing window not open (device rejected
+        // the exchange on the bonded auth path) or a transient drop.
+        await sub.cancel();
+        _set(_Stage.failed, err: l.wifiPairingOpenWindowRetry);
+        return;
+      }
+      if (r['evt'] == 'auth.challenge') {
+        // Bonded greeting; re-arm and wait for the recovery `our_pub`.
+        armed = Completer<Map<String, dynamic>>();
+        continue;
+      }
+      reply = r;
+      break;
     }
 
     if (reply['ok'] != true) {

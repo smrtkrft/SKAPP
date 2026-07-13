@@ -1432,6 +1432,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bu cihaz zaten başka bir SKAPP ile eşleşmiş. Mevcut firmware WiFi üzerinden ek peer eklemeyi desteklemiyor (TCP sadece ilk eşleşmeyi kabul ediyor). BLE üzerinden eşleştir, ya da cihazdaki mevcut eşleşmeyi sil.';
 
   @override
+  String get wifiPairingOpenWindowRetry =>
+      'Cihaz eşleşme penceresini açmadı. Cihazın üzerindeki kontrol butonuna kısa basıp eşleşme modunu aç, sonra Tekrar Dene\'ye dokun.';
+
+  @override
   String wifiPairingRejected(String error) {
     return 'Cihaz reddetti: $error';
   }

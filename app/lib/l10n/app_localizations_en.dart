@@ -1425,6 +1425,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'This device is already paired with another SKAPP. Adding a new peer over WiFi is not supported by the current firmware (TCP only accepts the first pair). Use BLE pairing, or unpair the existing peer from the device.';
 
   @override
+  String get wifiPairingOpenWindowRetry =>
+      'The device didn\'t open its pairing window. On the device, briefly press the control button to open pairing mode, then tap Retry.';
+
+  @override
   String wifiPairingRejected(String error) {
     return 'Device rejected: $error';
   }

@@ -647,6 +647,7 @@
   "wifiPairingNotOpen": "Το παράθυρο σύζευξης δεν είναι ανοιχτό στη συσκευή. Πατήστε σύντομα το κουμπί και δοκιμάστε ξανά.",
   "skapiBindFixedTriggerLabel": "Trigger: όταν λήξει το χρονόμετρο",
   "wifiPairingDeviceAlreadyBonded": "Αυτή η συσκευή είναι ήδη συζευγμένη με άλλο SKAPP. Η προσθήκη νέου peer μέσω WiFi δεν υποστηρίζεται από το τρέχον firmware (το TCP δέχεται μόνο την πρώτη σύζευξη). Χρησιμοποιήστε σύζευξη BLE, ή αποσυζεύξτε το υπάρχον peer από τη συσκευή.",
+  "wifiPairingOpenWindowRetry": "Η συσκευή δεν άνοιξε το παράθυρο σύζευξης. Πατήστε σύντομα το κουμπί ελέγχου στη συσκευή για να ανοίξετε τη λειτουργία σύζευξης και μετά πατήστε Επανάληψη.",
   "wifiPairingRejected": "Η συσκευή απέρριψε: {error}",
   "@wifiPairingRejected": {"placeholders": {"error": {"type": "String"}}},
   "wifiPairingMissingPub": "Λείπει/είναι κατεστραμμένο το our_pub από τη συσκευή.",

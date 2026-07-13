@@ -937,6 +937,7 @@
   "wifiPairingNotOpen": "A janela de pareamento não está aberta no dispositivo. Pressione o botão rapidamente e tente de novo.",
   "skapiBindFixedTriggerLabel": "Gatilho: quando o timer expira",
   "wifiPairingDeviceAlreadyBonded": "Este dispositivo já está pareado com outro SKAPP. Adicionar um novo par por Wi-Fi não é suportado pelo firmware atual (o TCP só aceita o primeiro par). Use o pareamento por BLE, ou desfaça o pareamento do par existente no dispositivo.",
+  "wifiPairingOpenWindowRetry": "O dispositivo não abriu a janela de emparelhamento. No dispositivo, pressione rapidamente o botão de controlo para abrir o modo de emparelhamento e depois toque em Tentar novamente.",
   "wifiPairingRejected": "Dispositivo rejeitou: {error}",
   "@wifiPairingRejected": {
     "placeholders": {

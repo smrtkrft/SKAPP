@@ -610,6 +610,7 @@
   "wifiPairingNotOpen": "La fenêtre de jumelage n'est pas ouverte sur l'appareil. Appuyez brièvement sur le bouton et réessayez.",
   "skapiBindFixedTriggerLabel": "Déclencheur : à l'expiration du minuteur",
   "wifiPairingDeviceAlreadyBonded": "Cet appareil est déjà jumelé avec un autre SKAPP. L'ajout d'un nouveau pair en WiFi n'est pas pris en charge par le firmware actuel (le TCP n'accepte que le premier jumelage). Utilisez le jumelage BLE, ou désappairez le pair existant depuis l'appareil.",
+  "wifiPairingOpenWindowRetry": "L'appareil n'a pas ouvert sa fenêtre d'appairage. Appuie brièvement sur le bouton de commande de l'appareil pour ouvrir le mode d'appairage, puis touche Réessayer.",
   "wifiPairingRejected": "Appareil rejeté : {error}",
   "@wifiPairingRejected": {"placeholders": {"error": {"type": "String"}}},
   "wifiPairingMissingPub": "our_pub manquant/corrompu en provenance de l'appareil.",

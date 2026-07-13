@@ -647,6 +647,7 @@
   "wifiPairingNotOpen": "La ventana de emparejamiento no está abierta en el dispositivo. Pulsa brevemente el botón e inténtalo de nuevo.",
   "skapiBindFixedTriggerLabel": "Disparador: cuando expira el temporizador",
   "wifiPairingDeviceAlreadyBonded": "Este dispositivo ya está emparejado con otro SKAPP. El firmware actual no admite añadir un nuevo par por WiFi (TCP solo acepta el primer emparejamiento). Usa el emparejamiento BLE o desempareja el par existente desde el dispositivo.",
+  "wifiPairingOpenWindowRetry": "El dispositivo no abrió su ventana de emparejamiento. Pulsa brevemente el botón de control del dispositivo para abrir el modo de emparejamiento y luego toca Reintentar.",
   "wifiPairingRejected": "El dispositivo lo rechazó: {error}",
   "@wifiPairingRejected": {"placeholders": {"error": {"type": "String"}}},
   "wifiPairingMissingPub": "our_pub del dispositivo falta o está dañado.",
