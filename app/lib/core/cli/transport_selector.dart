@@ -52,7 +52,12 @@ class TransportSelector {
   // (the transport kind on the returned session) without needing to inspect
   // wall-clock behaviour.
   static const tcpCacheTimeout = Duration(seconds: 3);
-  static const mdnsResolveTimeout = Duration(milliseconds: 1500);
+  // In-process multicast_dns resolve. Kept short: where it works (mobile,
+  // macOS) it answers in well under a second, and where it's blocked (the
+  // Windows firewall routinely drops the app's own UDP-5353 socket) we want
+  // to fail fast and let the `.local` OS-resolver step below carry the
+  // connection instead of stalling here.
+  static const mdnsResolveTimeout = Duration(seconds: 2);
   static const tcpFreshTimeout = Duration(seconds: 8);
   static const bleTimeout = Duration(seconds: 15);
 
@@ -111,6 +116,23 @@ class TransportSelector {
       attempts.add('mDNS resolve($mdnsInstance): cevap yok');
     } else {
       final s = await _attemptTcp(deviceId, ep.host, ep.port, token, attempts);
+      if (s != null) return s;
+    }
+
+    // 2b) OS-resolver `.local` fast-path. Windows 10+ and macOS resolve
+    //     `<instance>.local` through the *system* mDNS responder (the
+    //     Windows DNS Client / Bonjour), which carries its own firewall
+    //     exception — far more reliable than our in-process multicast_dns
+    //     socket, which the Windows firewall routinely blocks. That block is
+    //     the usual reason a WiFi device pings fine yet the app can't resolve
+    //     it and drops onto a (desktop-flaky) BLE fallback. Socket.connect
+    //     does the hostname→A/AAAA lookup via the OS; no extra dependency.
+    //     On success `_attemptTcp` caches the `.local` name as lastIp, so the
+    //     next connect rides the TCP fast-path.
+    {
+      final port = paired?.lastPort ?? ep?.port ?? 8080;
+      final s = await _attemptTcp(
+          deviceId, '$mdnsInstance.local', port, token, attempts);
       if (s != null) return s;
     }
 

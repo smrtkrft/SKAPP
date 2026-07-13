@@ -54,6 +54,13 @@ class FakePairedDevicesNotifier extends PairedDevicesNotifier {
 const _kDeviceId = 'BF-TEST';
 final _kToken = Uint8List.fromList(List.generate(32, (i) => i));
 
+/// TCP factory that fails for every host. Used by tests that want the chain
+/// to reach BLE / unreachable — without it the `.local` OS-resolver step
+/// (host `<id>.local`) would fall through to a REAL socket and hang on the
+/// 5 s connect timeout.
+CliClient _failTcp(String host, int port, List<int> token) =>
+    CliClient(FakeCliTransport(connectError: Exception('no route: $host')));
+
 PairedDevice _device({String? lastIp, int? lastPort}) => PairedDevice(
       id: _kDeviceId,
       name: _kDeviceId,
@@ -226,9 +233,33 @@ void main() {
       expect(session.transportKind, CliTransportKind.tcp);
     });
 
+    test('mDNS paketi başarısız ama <id>.local OS ile çözülür → TCP '
+        '(BLE denenmez)', () async {
+      // Windows senaryosu: in-process multicast_dns firewall'a takılır
+      // (mdns null), ama OS `<id>.local`'i çözer → `.local` TCP yolu tutar.
+      var bleCalled = false;
+      final p = _makeProvider(
+        tcpFactory: (host, _, _) => host == '$_kDeviceId.local'
+            ? CliClient(FakeCliTransport())
+            : CliClient(FakeCliTransport(connectError: Exception('no route'))),
+        mdns: (_, _) async => null,
+        bleFactory: (_, _) {
+          bleCalled = true;
+          return CliClient(FakeCliTransport());
+        },
+      );
+      final c = _container(bond, [_device()]);
+      addTearDown(c.dispose);
+
+      final session = await _run(c, p);
+      expect(session.transportKind, CliTransportKind.tcp);
+      expect(bleCalled, isFalse);
+    });
+
     test('mDNS cevap vermez → BLE fallback\'a düşer', () async {
       var bleCalled = false;
       final p = _makeProvider(
+        tcpFactory: _failTcp,
         mdns: (_, _) async => null,
         bleFactory: (_, _) {
           bleCalled = true;
@@ -262,6 +293,7 @@ void main() {
 
     test('hepsi başarısız → DeviceUnreachableException', () async {
       final p = _makeProvider(
+        tcpFactory: _failTcp,
         mdns: (_, _) async => null,
         bleFactory: (_, _) =>
             CliClient(FakeCliTransport(connectError: Exception('BLE failed'))),
@@ -275,6 +307,7 @@ void main() {
 
     test('DeviceUnreachableException attempts listesi dolu', () async {
       final p = _makeProvider(
+        tcpFactory: _failTcp,
         mdns: (_, _) async => null,
         bleFactory: (_, _) => CliClient(
             FakeCliTransport(connectError: Exception('adapter off'))),
@@ -293,6 +326,7 @@ void main() {
 
     test('PairingRequiredException doğrudan iletilir (sarmalanmaz)', () async {
       final p = _makeProvider(
+        tcpFactory: _failTcp,
         mdns: (_, _) async => null,
         bleFactory: (_, _) => CliClient(
           FakeCliTransport(
@@ -312,6 +346,7 @@ void main() {
         () async {
       String? capturedInstance;
       final p = _makeProvider(
+        tcpFactory: _failTcp,
         mdns: (instance, _) async {
           capturedInstance = instance;
           return null;
