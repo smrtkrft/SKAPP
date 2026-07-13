@@ -23,6 +23,7 @@ class TemplateLibraryContext {
     this.devicePrefix,
     this.kinds,
     this.categoryFilter,
+    this.manufacturerFilter,
   });
 
   final String? deviceId;
@@ -37,6 +38,12 @@ class TemplateLibraryContext {
   /// [kTemplateCategories] üyesi (örn `dimmer`) — Modes ekranı davranışa
   /// göre filtreli açar.
   final String? categoryFilter;
+
+  /// Üretici alt-sayfası filtresi. Dolu ise kütüphane yalnız o üreticinin
+  /// (marka adı) şablonlarını gösterir; [kGenericManufacturerKey] = üretici-
+  /// bağımsız (Genel) kova. Dimmer/Panjur'da üretici kutucuğuna dokununca set
+  /// edilir; boşken (browse) üretici kutucukları gösterilir.
+  final String? manufacturerFilter;
 
   bool get isDeepLink => deviceId != null;
 
@@ -64,6 +71,26 @@ String categoryLabel(AppLocalizations l, String category) => switch (category) {
       _ => l.skapiTplCatOther,
     };
 
+/// Üretici-önce gruplamada üretici-bağımsız (Genel) kovanın sabit anahtarı.
+/// [DeviceTemplate.manufacturer] boş veya `generic` olan şablonlar buraya
+/// düşer (jenerik MQTT sürücüsü + Mod şablonları).
+const String kGenericManufacturerKey = '__generic__';
+
+/// Bir şablonun üretici kova anahtarı. Boş/`generic` → Genel (null döner),
+/// aksi halde marka adı (örn `Shelly`). Yalnız Dimmer/Panjur gruplamasında
+/// anlamlıdır (sürücüler manufacturer taşır; modlar taşımaz → Genel).
+String? mfrKeyOf(DeviceTemplate t) {
+  final m = t.manufacturer?.trim();
+  if (m == null || m.isEmpty) return null;
+  if (m.toLowerCase() == 'generic') return null;
+  return m;
+}
+
+/// Üretici kutucuğu/alt-sayfa başlığı etiketi. [kGenericManufacturerKey] →
+/// yerelleştirilmiş "Genel"; aksi halde marka adı olduğu gibi.
+String mfrDisplayLabel(AppLocalizations l, String key) =>
+    key == kGenericManufacturerKey ? l.skapiTplMfrGeneric : key;
+
 /// Cihaz Şablonları kütüphanesi — cihaz-önce. Üst düzeyde cihaz kartları
 /// (renk/ikon yok, kimliği ad + nötr önek taşır); bir cihaza girince o
 /// cihazın şablonları işlev başlıkları (Dimmer/Panjur/MQTT/Webhook) altında,
@@ -84,9 +111,11 @@ class SkapiTemplateLibraryScreen extends ConsumerWidget {
     final userTemplates = ref.watch(userTemplatesProvider);
 
     final detail = libraryContext.showDeviceDetail;
-    final title = detail
-        ? DeviceTypeVisual.friendlyName(libraryContext.devicePrefix)
-        : l.skapiTplLibraryTitle;
+    final title = libraryContext.manufacturerFilter != null
+        ? mfrDisplayLabel(l, libraryContext.manufacturerFilter!)
+        : detail
+            ? DeviceTypeVisual.friendlyName(libraryContext.devicePrefix)
+            : l.skapiTplLibraryTitle;
 
     return Scaffold(
       bottomNavigationBar: const ShellNavBar(),
@@ -322,6 +351,10 @@ class _DeviceDetail extends StatelessWidget {
     if (ctx.categoryFilter != null && t.category != ctx.categoryFilter) {
       return false;
     }
+    if (ctx.manufacturerFilter != null) {
+      final key = mfrKeyOf(t) ?? kGenericManufacturerKey;
+      if (key != ctx.manufacturerFilter) return false;
+    }
     final prefix = ctx.devicePrefix!;
     return t.compatiblePrefixes
         .map((p) => p.toUpperCase())
@@ -388,12 +421,30 @@ class _DeviceDetail extends StatelessWidget {
                 ),
               ],
               for (final cat in orderedCats)
-                _CategorySection(
-                  title: categoryLabel(l, cat),
-                  count: byCat[cat]!.length,
-                  note: cat == 'webhook' ? l.skapiTplSafeNote : null,
-                  groups: _groupByKind(byCat[cat]!, l),
-                ),
+                if (_useManufacturerTiles(cat))
+                  _ManufacturerTileSection(
+                    title: categoryLabel(l, cat),
+                    count: byCat[cat]!.length,
+                    buckets: _bucketByManufacturer(byCat[cat]!),
+                    onOpen: (key) => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => SkapiTemplateLibraryScreen(
+                          libraryContext: TemplateLibraryContext(
+                            devicePrefix: libraryContext.devicePrefix,
+                            categoryFilter: cat,
+                            manufacturerFilter: key,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  _CategorySection(
+                    title: categoryLabel(l, cat),
+                    count: byCat[cat]!.length,
+                    note: cat == 'webhook' ? l.skapiTplSafeNote : null,
+                    groups: _groupByKind(byCat[cat]!, l),
+                  ),
             ],
           ),
         ),
@@ -420,6 +471,36 @@ class _DeviceDetail extends StatelessWidget {
       if (modes.isNotEmpty) (l.skapiTplModes, modes),
       if (rest.isNotEmpty) (null, rest),
     ];
+  }
+
+  /// Gezinme (browse) modu: bir üretici alt-sayfasında değil ve seçici
+  /// (`kinds` filtreli derin bağlantı) değil. Yalnız bu modda Dimmer/Panjur
+  /// üretici kutucuğu ızgarası gösterir.
+  bool get _browseMode =>
+      libraryContext.manufacturerFilter == null && libraryContext.kinds == null;
+
+  bool _useManufacturerTiles(String cat) =>
+      _browseMode && (cat == 'dimmer' || cat == 'shutter');
+
+  /// Kategori şablonlarını üretici kovalarına ayırır. Sıralama: Genel en
+  /// sonda; sonra adet çok→az; eşitlikte ad A→Z (Shelly doğal olarak başa).
+  List<({String key, int count})> _bucketByManufacturer(
+      List<DeviceTemplate> list) {
+    final counts = <String, int>{};
+    for (final t in list) {
+      final key = mfrKeyOf(t) ?? kGenericManufacturerKey;
+      counts[key] = (counts[key] ?? 0) + 1;
+    }
+    final keys = counts.keys.toList()
+      ..sort((a, b) {
+        final ag = a == kGenericManufacturerKey ? 1 : 0;
+        final bg = b == kGenericManufacturerKey ? 1 : 0;
+        if (ag != bg) return ag - bg;
+        final byCount = counts[b]!.compareTo(counts[a]!);
+        if (byCount != 0) return byCount;
+        return a.toLowerCase().compareTo(b.toLowerCase());
+      });
+    return [for (final k in keys) (key: k, count: counts[k]!)];
   }
 }
 
@@ -508,6 +589,175 @@ class _SafeNote extends StatelessWidget {
               color: cs.onSurfaceVariant,
               height: 1.4,
             ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Üretici-önce: kutucuk ızgarası (Dimmer/Panjur browse) → üretici alt-sayfası
+// ---------------------------------------------------------------------------
+
+/// Bir kategori başlığı + üretici kutucuğu ızgarası. Kart yerine üreticileri
+/// listeler; bir kutucuğa dokununca [onOpen] o üreticinin alt-sayfasını açar.
+class _ManufacturerTileSection extends StatelessWidget {
+  const _ManufacturerTileSection({
+    required this.title,
+    required this.count,
+    required this.buckets,
+    required this.onOpen,
+  });
+
+  final String title;
+  final int count;
+  final List<({String key, int count})> buckets;
+  final ValueChanged<String> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(title,
+                  style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+              const SizedBox(width: 8),
+              Text('$count',
+                  style: tt.labelSmall?.copyWith(
+                      color: cs.onSurfaceVariant, fontFamily: 'monospace')),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SkapiResponsiveGrid(
+            minExtent: 170,
+            maxColumns: 3,
+            children: [
+              for (final b in buckets)
+                SkapiManufacturerTile(
+                  manufacturerKey: b.key,
+                  count: b.count,
+                  onTap: () => onOpen(b.key),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Üretici kutucuğu — nötr wordmark (renk/logo yok). Monogram soketi + marka
+/// adı + cihaz adedi + chevron; dokununca o üreticinin alt-sayfasını açar.
+class SkapiManufacturerTile extends StatelessWidget {
+  const SkapiManufacturerTile({
+    super.key,
+    required this.manufacturerKey,
+    required this.count,
+    required this.onTap,
+  });
+
+  final String manufacturerKey;
+  final int count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final label = mfrDisplayLabel(l, manufacturerKey);
+    return SkNeuCard(
+      padding: const EdgeInsets.fromLTRB(13, 12, 12, 12),
+      onTap: onTap,
+      child: Row(
+        children: [
+          _MonogramSlot(text: _monogram(label)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  l.skapiTplMfrDeviceCount(count),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          Icon(Icons.chevron_right, size: 20, color: cs.onSurfaceVariant),
+        ],
+      ),
+    );
+  }
+}
+
+/// Marka adından 2-harfli monogram (örn Shelly→SH, WiZ→WI, WLED→WL, Genel→GE).
+String _monogram(String label) {
+  final letters = label.replaceAll(RegExp(r'[^A-Za-z]'), '');
+  final base = letters.isEmpty ? label.trim() : letters;
+  if (base.isEmpty) return '?';
+  return base.substring(0, base.length >= 2 ? 2 : 1).toUpperCase();
+}
+
+/// Nötr monogram soketi — SkNeuIconSlot'un raised görünümünü metinle taklit
+/// eder (ikon yerine 2-harf). Renk yok; well içinde kabarık durur.
+class _MonogramSlot extends StatelessWidget {
+  const _MonogramSlot({required this.text});
+
+  final String text;
+
+  static const double size = 40;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = Theme.of(context).scaffoldBackgroundColor;
+    final cs = Theme.of(context).colorScheme;
+    final shDark = isDark
+        ? Colors.black.withValues(alpha: 0.55)
+        : Colors.black.withValues(alpha: 0.16);
+    final shLight = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.white.withValues(alpha: 0.90);
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(size * 0.30),
+        boxShadow: [
+          BoxShadow(color: shLight, offset: const Offset(-2, -2), blurRadius: 3),
+          BoxShadow(color: shDark, offset: const Offset(2, 2), blurRadius: 3),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.5,
+          fontFamily: 'monospace',
+          color: cs.onSurface.withValues(alpha: 0.75),
+        ),
       ),
     );
   }

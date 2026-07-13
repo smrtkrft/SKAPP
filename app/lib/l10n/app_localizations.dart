@@ -8962,6 +8962,18 @@ abstract class AppLocalizations {
   /// **'{count} script'**
   String skapiTplDeviceCount(int count);
 
+  /// No description provided for @skapiTplMfrGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Generic'**
+  String get skapiTplMfrGeneric;
+
+  /// No description provided for @skapiTplMfrDeviceCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} device'**
+  String skapiTplMfrDeviceCount(int count);
+
   /// No description provided for @skapiTplMineHeading.
   ///
   /// In en, this message translates to:

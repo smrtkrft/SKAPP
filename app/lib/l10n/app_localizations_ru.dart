@@ -5254,6 +5254,14 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get skapiTplMfrGeneric => 'Общий';
+
+  @override
+  String skapiTplMfrDeviceCount(int count) {
+    return '$count устройств';
+  }
+
+  @override
   String get skapiTplMineHeading => 'Мои шаблоны';
 
   @override

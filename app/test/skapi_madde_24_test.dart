@@ -90,7 +90,8 @@ void main() {
       expect(find.text('SD'), findsWidgets);
     });
 
-    testWidgets('cihaz detayı: işlev başlığı + Sürücüler/Modlar grupları',
+    testWidgets(
+        'cihaz detayı: Dimmer üretici-önce (kutucuk) → alt-sayfada Sürücüler/Modlar',
         (tester) async {
       // Hermetik: sabit liste enjekte edilir (ikinci gerçek-asset testinin
       // rootBundle future'ı FakeAsync bölgeleri arasında çözülmez tuzağı).
@@ -103,7 +104,9 @@ void main() {
         i18nTitle: 'Test Dimmer Profili',
         i18nSummary: 'HTTP · dimmer',
         jsonBody: '{"v":2,"id":"test_dim","protocol":"http"}',
+        manufacturer: 'Shelly',
       );
+      // Mod: üretici yok → Genel kovasına düşer.
       const dimMode = DeviceTemplate(
         id: 'sd-mode-test',
         schemaVersion: 1,
@@ -150,14 +153,26 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      // İşlev başlığı + tür alt-etiketleri (upper-case).
+      // Browse: Dimmer başlığı + üretici kutucukları (Shelly + Generic).
+      // Kartlar/tür etiketleri bu seviyede GÖRÜNMEZ (kutucuk arkasında).
       expect(find.text('Dimmer'), findsOneWidget);
-      expect(find.text('DRIVERS'), findsOneWidget); // Sürücüler (en)
-      expect(find.text('MODES'), findsOneWidget); // Modlar (en)
-      expect(find.text('Test Dimmer Profili'), findsOneWidget);
-      expect(find.text('Test Dimmer Modu'), findsOneWidget);
+      expect(find.text('Shelly'), findsOneWidget); // üretici kutucuğu
+      expect(find.text('Generic'), findsOneWidget); // üretici-bağımsız kova
+      expect(find.text('DRIVERS'), findsNothing);
+      expect(find.text('MODES'), findsNothing);
+      expect(find.text('Test Dimmer Profili'), findsNothing);
       // BF şablonu SD detayına düşmez (önek filtresi).
       expect(find.text('BF Test Webhook'), findsNothing);
+
+      // Shelly kutucuğuna dokun → alt-sayfa açılır (geri ok + üretici başlığı).
+      await tester.tap(find.text('Shelly'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BackButton), findsOneWidget); // geri ok
+      expect(find.text('DRIVERS'), findsOneWidget); // Sürücüler (en)
+      expect(find.text('Test Dimmer Profili'), findsOneWidget);
+      // Mod (Genel kovada) Shelly alt-sayfasında görünmez.
+      expect(find.text('Test Dimmer Modu'), findsNothing);
     });
   });
 

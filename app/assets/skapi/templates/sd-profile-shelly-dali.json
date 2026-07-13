@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "id": "sd-profile-shelly-dimmer2",
+  "id": "sd-profile-shelly-dali",
   "category": "dimmer",
   "targetKind": "sd.profile",
   "compatiblePrefixes": [
     "SD"
   ],
   "i18n": {
-    "title": "Shelly Dimmer 2",
-    "summary": "HTTP · dimmer · profile.add"
+    "title": "Shelly DALI Dimmer Gen3",
+    "summary": "HTTP · DALI dimmer · profile.add"
   },
   "params": [],
   "jsonBody": {
     "v": 2,
-    "id": "shelly_dimmer2",
-    "name": "Shelly Dimmer 2",
+    "id": "shelly_dali",
+    "name": "Shelly DALI Dimmer Gen3",
     "manufacturer": "Shelly",
     "protocol": "http",
     "port": 80,
@@ -24,16 +24,16 @@
     "commands": {
       "set_value": {
         "method": "GET",
-        "path": "/light/0?turn=on&brightness={value}",
+        "path": "/rpc/Light.Set?id=0&on=true&brightness={value}",
         "min": 0,
         "max": 100,
         "step": 1
       },
       "toggle": {
         "method": "GET",
-        "path": "/light/0?turn=toggle"
+        "path": "/rpc/Light.Toggle?id=0"
       }
     }
   },
-  "source": "SynDimm/Code/neue/profiles/shelly_dimmer2.json"
+  "source": "SynDimm/Code/neue/profiles/shelly_dali.json"
 }

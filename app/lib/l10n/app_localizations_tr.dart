@@ -5226,6 +5226,14 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get skapiTplMfrGeneric => 'Genel';
+
+  @override
+  String skapiTplMfrDeviceCount(int count) {
+    return '$count cihaz';
+  }
+
+  @override
   String get skapiTplMineHeading => 'Şablonlarım';
 
   @override

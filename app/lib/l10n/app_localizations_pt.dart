@@ -5269,6 +5269,14 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get skapiTplMfrGeneric => 'Genérico';
+
+  @override
+  String skapiTplMfrDeviceCount(int count) {
+    return '$count dispositivos';
+  }
+
+  @override
   String get skapiTplMineHeading => 'Meus modelos';
 
   @override

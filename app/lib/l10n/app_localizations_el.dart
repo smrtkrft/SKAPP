@@ -5274,6 +5274,14 @@ class AppLocalizationsEl extends AppLocalizations {
   }
 
   @override
+  String get skapiTplMfrGeneric => 'Γενικό';
+
+  @override
+  String skapiTplMfrDeviceCount(int count) {
+    return '$count συσκευές';
+  }
+
+  @override
   String get skapiTplMineHeading => 'Τα πρότυπά μου';
 
   @override

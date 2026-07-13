@@ -143,6 +143,7 @@ class DeviceTemplate {
     this.params = const [],
     this.endpoint,
     this.jsonBody,
+    this.manufacturer,
     this.source,
   });
 
@@ -173,6 +174,13 @@ class DeviceTemplate {
   /// targetKind == sd.*: cihaza gidecek ham JSON gövdesi ({{param}} yer
   /// tutucularıyla). Firmware `{token}`ları dokunulmadan geçer.
   final String? jsonBody;
+
+  /// sd.profile sürücülerinde `jsonBody.manufacturer` (örn `Shelly`,
+  /// `Tasmota`, `Generic`); kütüphanede Dimmer/Panjur'u üreticiye göre
+  /// gruplamak için kullanılır. Modlarda (jsonBody string + {{param}}) yok →
+  /// null (Genel kovasına düşer). Yalnızca gömülü obje biçiminden okunur;
+  /// yer-tutuculu string asla jsonDecode edilmez.
+  final String? manufacturer;
 
   /// Bundled sd.profile şablonlarında köken işareti
   /// (`SynDimm/Code/neue/profiles/<dosya>`); firmware deposu doğruluk
@@ -208,6 +216,14 @@ class DeviceTemplate {
       jsonBody: rawBody == null
           ? null
           : (rawBody is String ? rawBody : jsonEncode(rawBody)),
+      // manufacturer yalnızca gömülü obje (sürücü) biçiminden okunur; mod
+      // gövdeleri {{param}} yer-tutuculu string olduğundan (geçersiz JSON)
+      // decode edilmez, alan null kalır.
+      manufacturer: rawBody is Map
+          ? ((rawBody['manufacturer'] as String?)?.trim().isNotEmpty ?? false
+              ? (rawBody['manufacturer'] as String).trim()
+              : null)
+          : null,
       source: j['source'] as String?,
     );
   }
