@@ -1751,6 +1751,7 @@
   "skapiTplMfrGeneric": "Genérico",
   "skapiTplMfrDeviceCount": "{count} dispositivos",
   "@skapiTplMfrDeviceCount": {"placeholders": {"count": {"type": "int"}}},
+  "skapiTplBrandDisclaimer": "Los nombres de marca y logotipos son propiedad de sus respectivos dueños y se muestran solo para identificar dispositivos compatibles. SmartKraft no está afiliada ni respaldada por estas empresas.",
   "skapiTplMineHeading": "Mis plantillas",
   "skapiTplMineEmpty": "Copia una plantilla lista con \"Copiar a mis plantillas\" para editar tu propia versión.",
   "skapiTplCatDimmer": "Dimmer",

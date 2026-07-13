@@ -5234,6 +5234,10 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get skapiTplBrandDisclaimer =>
+      'Marka adları ve logoları sahiplerine aittir; yalnızca uyumlu cihazları tanımlamak için gösterilir. SmartKraft bu firmalarla bağlı veya onlar tarafından onaylı değildir.';
+
+  @override
   String get skapiTplMineHeading => 'Şablonlarım';
 
   @override

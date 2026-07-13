@@ -5258,6 +5258,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get skapiTplBrandDisclaimer =>
+      'Markennamen und Logos sind Eigentum ihrer jeweiligen Inhaber und werden nur zur Kennzeichnung kompatibler Geräte angezeigt. SmartKraft ist mit diesen Unternehmen weder verbunden noch von ihnen unterstützt.';
+
+  @override
   String get skapiTplMineHeading => 'Meine Vorlagen';
 
   @override

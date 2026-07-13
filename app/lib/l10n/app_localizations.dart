@@ -8974,6 +8974,12 @@ abstract class AppLocalizations {
   /// **'{count} device'**
   String skapiTplMfrDeviceCount(int count);
 
+  /// No description provided for @skapiTplBrandDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand names and logos are the property of their respective owners and are shown only to identify compatible devices. SmartKraft is not affiliated with or endorsed by these companies.'**
+  String get skapiTplBrandDisclaimer;
+
   /// No description provided for @skapiTplMineHeading.
   ///
   /// In en, this message translates to:

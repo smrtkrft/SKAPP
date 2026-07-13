@@ -2,7 +2,7 @@ name: skapp
 description: "SmartKraft device configuration app"
 publish_to: 'none'
 
-version: 0.4.11+17
+version: 0.4.12+18
 
 environment:
   sdk: ^3.10.3
@@ -96,6 +96,7 @@ dependencies:
   qr_flutter: ^4.1.0
   mobile_scanner: ^5.2.3
   share_plus: ^12.0.2
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -123,6 +124,12 @@ flutter:
     - assets/skapi/lx-debian/
     - assets/skapi/lx-arch/
     - assets/skapi/templates/
+    # Üretici marka logoları (üretici kutucukları): monokrom SVG, çağrı
+    # yerinde cs.onSurface ile tint edilir (tema-uyumlu, tek renk). Shelly/
+    # Tasmota resmi işaretler (simple-icons, CC0 dosya). Logosu olmayan
+    # üreticiler nötr monogram'a düşer. Markalar sahiplerine aittir —
+    # yalnızca uyumlu cihazı tanımlamak için kullanılır (bkz. feragat notu).
+    - assets/skapi/logos/
 
 flutter_launcher_icons:
   android: "ic_launcher"

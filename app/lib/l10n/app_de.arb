@@ -2660,6 +2660,7 @@
   "skapiTplMfrGeneric": "Generisch",
   "skapiTplMfrDeviceCount": "{count} Geräte",
   "@skapiTplMfrDeviceCount": {"placeholders": {"count": {"type": "int"}}},
+  "skapiTplBrandDisclaimer": "Markennamen und Logos sind Eigentum ihrer jeweiligen Inhaber und werden nur zur Kennzeichnung kompatibler Geräte angezeigt. SmartKraft ist mit diesen Unternehmen weder verbunden noch von ihnen unterstützt.",
   "skapiTplMineHeading": "Meine Vorlagen",
   "skapiTplMineEmpty": "Kopiere eine fertige Vorlage mit \"In meine Vorlagen kopieren\" hierher, um deine eigene Version zu bearbeiten.",
   "skapiTplCatDimmer": "Dimmer",

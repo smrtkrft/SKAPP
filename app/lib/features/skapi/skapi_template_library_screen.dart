@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/ble/device_type_visual.dart';
 import '../../core/theme/colors.dart';
@@ -90,6 +91,36 @@ String? mfrKeyOf(DeviceTemplate t) {
 /// yerelleştirilmiş "Genel"; aksi halde marka adı olduğu gibi.
 String mfrDisplayLabel(AppLocalizations l, String key) =>
     key == kGenericManufacturerKey ? l.skapiTplMfrGeneric : key;
+
+/// Üretici → monokrom marka logosu (SVG asset). Yalnız resmi/güvenli
+/// işaretimiz olan üreticiler burada; gerisi (WiZ/WLED/Philips/Genel) nötr
+/// monogram'a düşer. Anahtar [mfrKeyOf]'un döndürdüğü marka adının küçük-
+/// harflisi. SVG'ler `fill="currentColor"` taşır ama çağrı yerinde
+/// `ColorFilter`(srcIn) ile `cs.onSurface`'e boyanır — tema-uyumlu tek renk.
+/// Logolar sahiplerinin markasıdır; yalnızca uyumlu cihazı tanımlar.
+const Map<String, String> kManufacturerLogos = {
+  'shelly': 'assets/skapi/logos/shelly.svg',
+  'tasmota': 'assets/skapi/logos/tasmota.svg',
+  // Philips kovası bir Hue ampul şablonu → resmi "Philips Hue" işareti.
+  'philips': 'assets/skapi/logos/philips.svg',
+};
+
+/// Üretici anahtarı için logo asset yolu; yoksa null (→ wordmark/monogram).
+String? mfrLogoAsset(String manufacturerKey) =>
+    kManufacturerLogos[manufacturerKey.toLowerCase()];
+
+/// Resmi monokrom logosu olmayan ama wordmark-tabanlı markalar. Slot'ta
+/// 2-harf monogram yerine markanın tam adı stilize (tek-renk, tema-tint)
+/// basılır — SVG `<text>` render'ı flutter'da kırılgan olduğundan Flutter
+/// `Text` + `FittedBox` ile (her boyutta net). Değer = gösterilecek biçim.
+const Map<String, String> kManufacturerWordmarks = {
+  'wiz': 'WiZ',
+  'wled': 'WLED',
+};
+
+/// Üretici anahtarı için wordmark biçimi; yoksa null (→ 2-harf monogram).
+String? mfrWordmark(String manufacturerKey) =>
+    kManufacturerWordmarks[manufacturerKey.toLowerCase()];
 
 /// Cihaz Şablonları kütüphanesi — cihaz-önce. Üst düzeyde cihaz kartları
 /// (renk/ikon yok, kimliği ad + nötr önek taşır); bir cihaza girince o
@@ -382,6 +413,14 @@ class _DeviceDetail extends StatelessWidget {
         if (!kTemplateCategories.contains(c)) c,
     ];
 
+    // Görünür üretici-kutucuğu bölümünde gerçek bir marka logosu veya
+    // wordmark'ı (marka adı) render edilecekse marka-sahipliği feragat
+    // notunu göster. Yalnız nötr monogram varsa (Genel) gereksiz.
+    final showBrandDisclaimer = orderedCats
+        .where(_useManufacturerTiles)
+        .expand((cat) => _bucketByManufacturer(byCat[cat]!))
+        .any((b) => mfrLogoAsset(b.key) != null || mfrWordmark(b.key) != null);
+
     if (orderedCats.isEmpty && mine.isEmpty) {
       return Center(
         child: Padding(
@@ -445,6 +484,17 @@ class _DeviceDetail extends StatelessWidget {
                     note: cat == 'webhook' ? l.skapiTplSafeNote : null,
                     groups: _groupByKind(byCat[cat]!, l),
                   ),
+              if (showBrandDisclaimer)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2, bottom: 4),
+                  child: Text(
+                    l.skapiTplBrandDisclaimer,
+                    style: tt.labelSmall?.copyWith(
+                      color: cs.onSurfaceVariant,
+                      height: 1.3,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -653,8 +703,9 @@ class _ManufacturerTileSection extends StatelessWidget {
   }
 }
 
-/// Üretici kutucuğu — nötr wordmark (renk/logo yok). Monogram soketi + marka
-/// adı + cihaz adedi + chevron; dokununca o üreticinin alt-sayfasını açar.
+/// Üretici kutucuğu — tek-renk. İşaret soketi (resmi monokrom marka logosu
+/// varsa o, yoksa 2-harf monogram) + marka adı + cihaz adedi + chevron;
+/// dokununca o üreticinin alt-sayfasını açar.
 class SkapiManufacturerTile extends StatelessWidget {
   const SkapiManufacturerTile({
     super.key,
@@ -678,7 +729,10 @@ class SkapiManufacturerTile extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          _MonogramSlot(text: _monogram(label)),
+          _ManufacturerMark(
+            manufacturerKey: manufacturerKey,
+            monogram: _monogram(label),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -717,12 +771,18 @@ String _monogram(String label) {
   return base.substring(0, base.length >= 2 ? 2 : 1).toUpperCase();
 }
 
-/// Nötr monogram soketi — SkNeuIconSlot'un raised görünümünü metinle taklit
-/// eder (ikon yerine 2-harf). Renk yok; well içinde kabarık durur.
-class _MonogramSlot extends StatelessWidget {
-  const _MonogramSlot({required this.text});
+/// Üretici işareti soketi — SkNeuIconSlot'un raised görünümünü taklit eden
+/// nötr well. İçinde üç olasılık, sırayla: resmi monokrom marka logosu
+/// ([mfrLogoAsset] → tint'li SVG); wordmark ([mfrWordmark] → tam ad stilize
+/// Text); yoksa 2-harf monogram. Üçü de tek-renk, well içinde kabarık durur.
+class _ManufacturerMark extends StatelessWidget {
+  const _ManufacturerMark({
+    required this.manufacturerKey,
+    required this.monogram,
+  });
 
-  final String text;
+  final String manufacturerKey;
+  final String monogram;
 
   static const double size = 40;
 
@@ -737,6 +797,51 @@ class _MonogramSlot extends StatelessWidget {
     final shLight = isDark
         ? Colors.white.withValues(alpha: 0.06)
         : Colors.white.withValues(alpha: 0.90);
+    final tint = cs.onSurface.withValues(alpha: 0.75);
+    final logoAsset = mfrLogoAsset(manufacturerKey);
+    final wordmark = mfrWordmark(manufacturerKey);
+
+    final Widget mark;
+    if (logoAsset != null) {
+      mark = SvgPicture.asset(
+        logoAsset,
+        width: size * 0.5,
+        height: size * 0.5,
+        colorFilter: ColorFilter.mode(tint, BlendMode.srcIn),
+        // Marka logosu ekran-okuyucuya üretici adıyla duyurulur.
+        semanticsLabel: manufacturerKey,
+      );
+    } else if (wordmark != null) {
+      // Tam ad wordmark; FittedBox 4 harfe kadar (WLED) soket içine sığdırır.
+      mark = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            wordmark,
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.2,
+              color: tint,
+            ),
+          ),
+        ),
+      );
+    } else {
+      mark = Text(
+        monogram,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.5,
+          fontFamily: 'monospace',
+          color: tint,
+        ),
+      );
+    }
+
     return Container(
       width: size,
       height: size,
@@ -749,16 +854,7 @@ class _MonogramSlot extends StatelessWidget {
         ],
       ),
       alignment: Alignment.center,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0.5,
-          fontFamily: 'monospace',
-          color: cs.onSurface.withValues(alpha: 0.75),
-        ),
-      ),
+      child: mark,
     );
   }
 }

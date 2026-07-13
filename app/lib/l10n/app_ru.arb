@@ -1640,6 +1640,7 @@
   "skapiTplMfrGeneric": "Общий",
   "skapiTplMfrDeviceCount": "{count} устройств",
   "@skapiTplMfrDeviceCount": {"placeholders": {"count": {"type": "int"}}},
+  "skapiTplBrandDisclaimer": "Названия брендов и логотипы являются собственностью их владельцев и показаны только для обозначения совместимых устройств. SmartKraft не связана с этими компаниями и не одобрена ими.",
   "skapiTplMineHeading": "Мои шаблоны",
   "skapiTplMineEmpty": "Скопируйте готовый шаблон сюда через «Копировать в мои шаблоны», чтобы редактировать свою версию.",
   "skapiTplCatDimmer": "Диммер",

@@ -5282,6 +5282,10 @@ class AppLocalizationsEl extends AppLocalizations {
   }
 
   @override
+  String get skapiTplBrandDisclaimer =>
+      'Τα ονόματα και τα λογότυπα των εμπορικών σημάτων ανήκουν στους κατόχους τους και εμφανίζονται μόνο για την αναγνώριση συμβατών συσκευών. Η SmartKraft δεν συνδέεται ούτε υποστηρίζεται από αυτές τις εταιρείες.';
+
+  @override
   String get skapiTplMineHeading => 'Τα πρότυπά μου';
 
   @override

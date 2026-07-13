@@ -5285,6 +5285,10 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get skapiTplBrandDisclaimer =>
+      'I nomi dei marchi e i loghi sono di proprietà dei rispettivi titolari e vengono mostrati solo per identificare i dispositivi compatibili. SmartKraft non è affiliata né approvata da queste aziende.';
+
+  @override
   String get skapiTplMineHeading => 'I miei modelli';
 
   @override

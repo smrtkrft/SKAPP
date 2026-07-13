@@ -1640,6 +1640,7 @@
   "skapiTplMfrGeneric": "Générique",
   "skapiTplMfrDeviceCount": "{count} appareils",
   "@skapiTplMfrDeviceCount": {"placeholders": {"count": {"type": "int"}}},
+  "skapiTplBrandDisclaimer": "Les noms de marque et logos sont la propriété de leurs détenteurs respectifs et servent uniquement à identifier les appareils compatibles. SmartKraft n'est ni affiliée à ces sociétés ni approuvée par elles.",
   "skapiTplMineHeading": "Mes modèles",
   "skapiTplMineEmpty": "Copiez un modèle prêt à l'emploi ici avec « Copier dans mes modèles » pour modifier votre propre version.",
   "skapiTplCatDimmer": "Variateur",

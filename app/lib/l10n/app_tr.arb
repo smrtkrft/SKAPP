@@ -1763,6 +1763,7 @@
   "skapiTplMfrGeneric": "Genel",
   "skapiTplMfrDeviceCount": "{count} cihaz",
   "@skapiTplMfrDeviceCount": {"placeholders": {"count": {"type": "int"}}},
+  "skapiTplBrandDisclaimer": "Marka adları ve logoları sahiplerine aittir; yalnızca uyumlu cihazları tanımlamak için gösterilir. SmartKraft bu firmalarla bağlı veya onlar tarafından onaylı değildir.",
   "skapiTplMineHeading": "Şablonlarım",
   "skapiTplMineEmpty": "Hazır bir şablonu \"Şablonlarıma kopyala\" ile buraya alıp kendi sürümünü düzenleyebilirsin.",
   "skapiTplCatDimmer": "Dimmer",

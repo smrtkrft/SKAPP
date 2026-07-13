@@ -1751,6 +1751,7 @@
   "skapiTplMfrGeneric": "Γενικό",
   "skapiTplMfrDeviceCount": "{count} συσκευές",
   "@skapiTplMfrDeviceCount": {"placeholders": {"count": {"type": "int"}}},
+  "skapiTplBrandDisclaimer": "Τα ονόματα και τα λογότυπα των εμπορικών σημάτων ανήκουν στους κατόχους τους και εμφανίζονται μόνο για την αναγνώριση συμβατών συσκευών. Η SmartKraft δεν συνδέεται ούτε υποστηρίζεται από αυτές τις εταιρείες.",
   "skapiTplMineHeading": "Τα πρότυπά μου",
   "skapiTplMineEmpty": "Αντιγράψτε ένα έτοιμο πρότυπο εδώ με «Αντιγραφή στα πρότυπά μου» για να επεξεργαστείτε τη δική σας έκδοση.",
   "skapiTplCatDimmer": "Dimmer",
