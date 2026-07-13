@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skapp/core/settings/settings_providers.dart';
 import 'package:skapp/core/storage/paired_devices_store.dart';
 import 'package:skapp/core/storage/preferences_provider.dart';
 import 'package:skapp/features/skapi/data/device_template.dart';
@@ -70,7 +71,56 @@ const _modeTemplate = DeviceTemplate(
       '"targets":[{"host":"{{host}}","port":80}]}',
 );
 
+/// Sabit-değerli developerMode notifier — ham-kod dev-mode kapısı testleri.
+class _FixedDevMode extends DeveloperModeNotifier {
+  _FixedDevMode(this._v);
+  final bool _v;
+  @override
+  bool build() => _v;
+}
+
+Future<void> _mountDetail(WidgetTester tester, {required bool devMode}) async {
+  SharedPreferences.setMockInitialValues({});
+  final prefs = await SharedPreferences.getInstance();
+  await tester.pumpWidget(
+    ProviderScope(
+      retry: (_, _) => null,
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        developerModeProvider.overrideWith(() => _FixedDevMode(devMode)),
+      ],
+      child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale('en'),
+        home: SkapiTemplateDetailScreen(template: _modeTemplate),
+      ),
+    ),
+  );
+  await tester.pump();
+}
+
 void main() {
+  group('Ham kod dev-mode kapısı', () {
+    testWidgets('dev-mode KAPALI: JSON/Gelişmiş sekmesi gizli, host alanı var',
+        (tester) async {
+      await _mountDetail(tester, devMode: false);
+      final ctx = tester.element(find.byType(SkapiTemplateDetailScreen));
+      final l = AppLocalizations.of(ctx);
+      // Ham-kod sekmesi etiketi yalnız _TabSelector'da geçer → gizli olmalı.
+      expect(find.text(l.skapiTplDetailJsonTab), findsNothing);
+      // Tipli form alanı (Hedef IP) görünür.
+      expect(find.text('Hedef IP'), findsOneWidget);
+    });
+
+    testWidgets('dev-mode AÇIK: JSON/Gelişmiş sekmesi görünür', (tester) async {
+      await _mountDetail(tester, devMode: true);
+      final ctx = tester.element(find.byType(SkapiTemplateDetailScreen));
+      final l = AppLocalizations.of(ctx);
+      expect(find.text(l.skapiTplDetailJsonTab), findsOneWidget);
+    });
+  });
+
   group('Şablon kütüphanesi · cihaz-önce · gerçek asset\'lerle', () {
     testWidgets('gezinme cihaz kartlarını gösterir (renksiz, ikonsuz)',
         (tester) async {
@@ -197,8 +247,8 @@ void main() {
       expect(find.text('Upload to device'), findsOneWidget);
     });
 
-    testWidgets('doldurulmamış zorunlu paramla yükleme JSON sekmesine düşer '
-        've hata gösterir', (tester) async {
+    testWidgets('doldurulmamış zorunlu paramla yükleme engellenir '
+        've hata gösterir (dev-mode kapalı → SnackBar)', (tester) async {
       await _mountWithPrefs(
         tester,
         const SkapiTemplateDetailScreen(template: _modeTemplate),

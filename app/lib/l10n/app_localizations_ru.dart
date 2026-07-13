@@ -5217,6 +5217,16 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String skapiTplParamBadHost(String field) {
+    return '\'$field\' не является допустимым IP-адресом или именем хоста.';
+  }
+
+  @override
+  String skapiTplParamRange(String field, String min, String max) {
+    return '\'$field\' должно быть между $min и $max.';
+  }
+
+  @override
   String get skapiBindEventTimerState => 'Состояние таймера изменилось';
 
   @override

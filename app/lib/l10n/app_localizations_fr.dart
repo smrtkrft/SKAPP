@@ -5242,6 +5242,16 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String skapiTplParamBadHost(String field) {
+    return '\'$field\' n\'est pas une adresse IP ou un nom d\'hôte valide.';
+  }
+
+  @override
+  String skapiTplParamRange(String field, String min, String max) {
+    return '\'$field\' doit être entre $min et $max.';
+  }
+
+  @override
   String get skapiBindEventTimerState => 'État du minuteur modifié';
 
   @override

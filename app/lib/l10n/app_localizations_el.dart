@@ -5236,6 +5236,16 @@ class AppLocalizationsEl extends AppLocalizations {
   }
 
   @override
+  String skapiTplParamBadHost(String field) {
+    return 'Το \'$field\' δεν είναι έγκυρη διεύθυνση IP ή όνομα κεντρικού υπολογιστή.';
+  }
+
+  @override
+  String skapiTplParamRange(String field, String min, String max) {
+    return 'Το \'$field\' πρέπει να είναι μεταξύ $min και $max.';
+  }
+
+  @override
   String get skapiBindEventTimerState => 'Η κατάσταση χρονομέτρου άλλαξε';
 
   @override

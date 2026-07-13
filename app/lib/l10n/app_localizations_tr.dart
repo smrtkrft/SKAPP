@@ -5191,6 +5191,16 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String skapiTplParamBadHost(String field) {
+    return '\'$field\' geçerli bir IP adresi veya host adı değil.';
+  }
+
+  @override
+  String skapiTplParamRange(String field, String min, String max) {
+    return '\'$field\' $min–$max aralığında olmalı.';
+  }
+
+  @override
   String get skapiBindEventTimerState => 'Sayaç durumu değişti';
 
   @override

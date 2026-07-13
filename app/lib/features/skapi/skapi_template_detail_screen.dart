@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/devices/validators/bf_endpoint_rules.dart';
 import '../../core/devices/validators/sd_validators.dart';
+import '../../core/settings/settings_providers.dart';
 import '../../core/storage/paired_devices_store.dart';
 import '../../core/theme/colors.dart';
 import '../../core/theme/responsive.dart';
@@ -22,6 +23,30 @@ import 'data/user_template.dart';
 import 'on_device_api_editor_screen.dart';
 import 'skapi_template_library_screen.dart'
     show TemplateLibraryContext, TemplateKindBadge, DevicePrefixChip;
+
+/// `type:"host"` param'ları için hafif IP/hostname geçerlilik kontrolü.
+/// IPv4 (oktet ≤255) veya nokta ayraçlı hostname (`SD-BNBWT4RDP.local` dâhil)
+/// kabul eder. Amaç bariz-hatalı girişi formda yakalamak; son söz firmware'in.
+bool isValidHostOrIp(String s) {
+  final v = s.trim();
+  if (v.isEmpty) return false;
+  // Yalnız rakam ve nokta içeriyorsa bir IP denemesidir (typo'lu IP'yi
+  // "hostname" sayıp geçirmeyelim) → geçerli IPv4 olmak zorunda.
+  if (RegExp(r'^[0-9.]+$').hasMatch(v)) {
+    final ipv4 = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$')
+        .firstMatch(v);
+    if (ipv4 == null) return false;
+    for (var i = 1; i <= 4; i++) {
+      if (int.parse(ipv4.group(i)!) > 255) return false;
+    }
+    return true;
+  }
+  // hostname: harf/rakam ile başlayan, harf/rakam/tire içeren nokta-ayraçlı
+  // etiketler (her etiket ≤63; `SD-BNBWT4RDP.local` dâhil).
+  return RegExp(
+    r'^[A-Za-z0-9]([A-Za-z0-9-]{0,62})(\.[A-Za-z0-9]([A-Za-z0-9-]{0,62}))*$',
+  ).hasMatch(v);
+}
 
 /// Cihaz şablonu detayı — Form / Gelişmiş (JSON) sekmeli.
 ///
@@ -114,10 +139,15 @@ class _SkapiTemplateDetailScreenState
     });
   }
 
-  /// Dağıtıma giden nihai gövde: Gelişmiş sekmesi kirliyse oradaki metin,
-  /// değilse formdan render edilen.
+  /// Geliştirici modu — ham JSON/Gelişmiş yüzeyi yalnız açıkken görünür ve
+  /// düzenlenebilir. Kapalıyken kullanıcı sadece tipli form alanlarını görür.
+  bool get _devMode => ref.read(developerModeProvider);
+
+  /// Dağıtıma giden nihai gövde: yalnız geliştirici modunda ham metin
+  /// (Gelişmiş sekmesi kirliyse) kaynak olur; aksi halde her zaman formdan
+  /// render edilen gövde.
   String get _effectiveBody =>
-      _advancedDirty ? _advanced.text : _renderedBody();
+      (_devMode && _advancedDirty) ? _advanced.text : _renderedBody();
 
   void _onParamChanged(String name, String value) {
     setState(() {
@@ -129,7 +159,43 @@ class _SkapiTemplateDetailScreenState
 
   // -- Doğrulama -------------------------------------------------------------
 
+  /// Form param değerlerini tipe göre doğrular: `host` = geçerli IP/hostname,
+  /// `int` = sayısal + min/max aralığı. Boş zorunlu alanlar ayrıca
+  /// [unresolvedPlaceholders] ile yakalanır; burada dolu-ama-geçersiz
+  /// değerleri bloklarız. Yalnız form yolunda anlamlı (ham JSON kirliyse
+  /// kullanıcı gövdeyi elle kurmuştur).
+  String? _validateParamValues() {
+    final l = AppLocalizations.of(context);
+    for (final p in _tpl.params) {
+      final v = (_values[p.name] ?? '').trim();
+      if (v.isEmpty) continue; // boşsa unresolvedPlaceholders halleder
+      final label = resolveSkapiI18nKey(l, p.i18nLabel);
+      switch (p.type) {
+        case 'host':
+          if (!isValidHostOrIp(v)) return l.skapiTplParamBadHost(label);
+        case 'int':
+          final n = int.tryParse(v);
+          if (n == null ||
+              (p.min != null && n < p.min!.round()) ||
+              (p.max != null && n > p.max!.round())) {
+            return l.skapiTplParamRange(
+              label,
+              p.min?.round().toString() ?? '—',
+              p.max?.round().toString() ?? '—',
+            );
+          }
+      }
+    }
+    return null;
+  }
+
   String? _validate(String body) {
+    // Form yolunda tipli değerleri de doğrula (geçerli IP, aralık). Ham JSON
+    // kirliyse (yalnız geliştirici modu) bunu atla — yapısal doğrulama yeter.
+    if (!(_devMode && _advancedDirty)) {
+      final paramErr = _validateParamValues();
+      if (paramErr != null) return paramErr;
+    }
     final unresolved = unresolvedPlaceholders(body);
     if (unresolved.isNotEmpty) {
       return AppLocalizations.of(context)
@@ -274,10 +340,22 @@ class _SkapiTemplateDetailScreenState
     // Zorunlu paramlar dolu mu? (Gelişmiş kirliyse metnin kendisi denetlenir.)
     final err = _validate(_effectiveBody);
     if (err != null) {
-      setState(() {
-        _validationError = err;
-        _tab = 1;
-      });
+      if (_devMode) {
+        // Geliştirici modu: ham JSON sekmesine geçip hatayı orada göster.
+        setState(() {
+          _validationError = err;
+          _tab = 1;
+        });
+      } else {
+        // Kullanıcı modu: JSON sekmesi yok → hatayı SnackBar ile bildir
+        // (çözülmemiş {{param}} mesajı eksik alanları zaten adıyla listeler).
+        setState(() => _validationError = err);
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(
+            content: Text(err, textAlign: TextAlign.center),
+          ));
+      }
       return;
     }
 
@@ -563,6 +641,10 @@ class _SkapiTemplateDetailScreenState
     final l = AppLocalizations.of(context);
     final tt = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
+    // Ham JSON/Gelişmiş yüzeyi yalnız geliştirici modunda. Kapalıyken
+    // kullanıcı sade, tipli form alanlarını görür; kod ne gösterilir ne
+    // düzenlenir (kullanıcı kararı: "tamamen gizle").
+    final devMode = ref.watch(developerModeProvider);
     final title = resolveSkapiI18nKey(l, _tpl.i18nTitle);
     final summary = resolveSkapiI18nKey(l, _tpl.i18nSummary);
     final note =
@@ -638,14 +720,18 @@ class _SkapiTemplateDetailScreenState
                   ),
                 ],
                 const SizedBox(height: 14),
-                _TabSelector(
-                  selected: _tab,
-                  formLabel: l.skapiTplDetailFormTab,
-                  jsonLabel: l.skapiTplDetailJsonTab,
-                  onChanged: (i) => setState(() => _tab = i),
-                ),
-                const SizedBox(height: 14),
-                if (_tab == 0) ...[
+                // Sekme seçici (Form / ham JSON) yalnız geliştirici modunda.
+                // Kapalıyken tek yüzey: Form.
+                if (devMode) ...[
+                  _TabSelector(
+                    selected: _tab,
+                    formLabel: l.skapiTplDetailFormTab,
+                    jsonLabel: l.skapiTplDetailJsonTab,
+                    onChanged: (i) => setState(() => _tab = i),
+                  ),
+                  const SizedBox(height: 14),
+                ],
+                if (!devMode || _tab == 0) ...[
                   if (_tpl.params.isEmpty)
                     SkNeuCard(
                       padding: const EdgeInsets.all(14),
@@ -674,19 +760,23 @@ class _SkapiTemplateDetailScreenState
                         ],
                       ),
                     ),
-                  const SizedBox(height: 14),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4, bottom: 8),
-                    child: Text(
-                      l.skapiTplPreviewHeading.toUpperCase(),
-                      style: tt.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.1,
-                        color: cs.onSurfaceVariant,
+                  // Cihaza gidecek ham gövde önizlemesi de bir kod yüzeyi →
+                  // yalnız geliştirici modunda göster.
+                  if (devMode) ...[
+                    const SizedBox(height: 14),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4, bottom: 8),
+                      child: Text(
+                        l.skapiTplPreviewHeading.toUpperCase(),
+                        style: tt.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.1,
+                          color: cs.onSurfaceVariant,
+                        ),
                       ),
                     ),
-                  ),
-                  _JsonCard(text: _effectiveBody),
+                    _JsonCard(text: _effectiveBody),
+                  ],
                 ] else ...[
                   SkNeuCard(
                     padding: const EdgeInsets.all(12),

@@ -263,6 +263,9 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
             e['id'].toString(),
       ];
   final _host = TextEditingController();
+  // Katalogdan sürücü kurulduktan sonra IP alanına odaklanmak için
+  // (birleşik akış: "sürücü hazır → hedef IP'yi gir").
+  final _hostFocus = FocusNode();
   final _port = TextEditingController(text: '80');
   final _deviceIdField = TextEditingController();
   final _authKey = TextEditingController();
@@ -294,6 +297,7 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
     ]) {
       c.dispose();
     }
+    _hostFocus.dispose();
     super.dispose();
   }
 
@@ -658,10 +662,15 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
                                 size: 18),
                             label: Text(l.sdModesAddFromCatalog),
                             onPressed: () async {
-                              // SKAPI Cihaz Şablonları kütüphanesine derin
-                              // bağlantı — SD profilleri, davranış kategorisi
-                              // filtreli (dimmer/shutter; diğer davranışlar
-                              // profilsiz çalışır, filtre uygulanmaz).
+                              // Birleşik akış: SKAPI kütüphanesine derin
+                              // bağlantı (SD profilleri, davranış filtreli) →
+                              // sürücü kurulup dönülünce yeni profil otomatik
+                              // seçilir ve IP alanına odaklanılır; kullanıcı
+                              // ham kod görmeden "sürücü seç → IP gir" tek akış.
+                              final before = {
+                                for (final e in _profileEntries)
+                                  e['id'].toString()
+                              };
                               await Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => SkapiTemplateLibraryScreen(
@@ -679,7 +688,25 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
                                   ),
                                 ),
                               );
-                              if (mounted) await _bootstrap();
+                              if (!mounted) return;
+                              await _bootstrap();
+                              if (!mounted) return;
+                              // Katalogdan yeni eklenen profil(ler).
+                              final added = [
+                                for (final e in _profileEntries)
+                                  if (!before.contains(e['id'].toString()))
+                                    e['id'].toString()
+                              ];
+                              if (added.isNotEmpty) {
+                                setState(() => _profile = added.first);
+                                // IP boşsa kullanıcıyı doğrudan oraya yönlendir.
+                                if (_host.text.trim().isEmpty) {
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    if (mounted) _hostFocus.requestFocus();
+                                  });
+                                }
+                              }
                             },
                           ),
                         ],
@@ -687,6 +714,8 @@ class _SdModeEditScreenState extends State<SdModeEditScreen> {
                     const SizedBox(height: 12),
                     TextField(
                       controller: _host,
+                      focusNode: _hostFocus,
+                      keyboardType: TextInputType.url,
                       decoration:
                           InputDecoration(labelText: l.sdModesFieldHost),
                     ),

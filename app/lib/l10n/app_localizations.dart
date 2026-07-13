@@ -8896,6 +8896,18 @@ abstract class AppLocalizations {
   /// **'Unfilled template parameters: {names}'**
   String skapiTplUnresolvedError(String names);
 
+  /// No description provided for @skapiTplParamBadHost.
+  ///
+  /// In en, this message translates to:
+  /// **'\'{field}\' is not a valid IP address or hostname.'**
+  String skapiTplParamBadHost(String field);
+
+  /// No description provided for @skapiTplParamRange.
+  ///
+  /// In en, this message translates to:
+  /// **'\'{field}\' must be between {min} and {max}.'**
+  String skapiTplParamRange(String field, String min, String max);
+
   /// No description provided for @skapiBindEventTimerState.
   ///
   /// In en, this message translates to:
