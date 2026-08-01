@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ble/device_model.dart';
 import '../../core/cli/cli_providers.dart';
+import '../../core/cli/transport_selector.dart';
+import '../../core/logging/app_logger.dart';
 import '../../l10n/app_localizations.dart';
 import '../device_home/device_home_screen.dart';
 
@@ -74,6 +76,18 @@ class _WifiSuccessScreenState extends ConsumerState<WifiSuccessScreen> {
     // took down the whole SynDimm UI. Bail before we touch any provider.
     if (!mounted) return;
 
+    // ref.read'i unmount ÖNCESİ senkron yap; devamı widget'a bağımlı değil.
+    final sessionFuture =
+        ref.read(deviceSessionProvider(widget.device.id).future);
+    unawaited(_followUpDetached(sessionFuture));
+  }
+
+  /// Widget yaşam döngüsünden BAĞIMSIZ: 6 s güvenlik zamanlayıcısı ekranı
+  /// ilerletse bile time.set/device.info tamamlanır. Eski kod işi widget'a
+  /// bağlıyordu; oturum açılışı (BLE zincirinde 15-40 s) 6 s'lik zamanlayıcıyı
+  /// hep kaybediyor, time.set HİÇ çalışmıyor ve cihaz saati sessizce yanlış
+  /// kalıyordu (audit C20).
+  Future<void> _followUpDetached(Future<DeviceSession> sessionFuture) async {
     // Opening a session here is inherently racy: the device tears down and
     // resumes its BLE link the instant it joins WiFi (event
     // `ble.resume.after-wifi`), so this read can throw "CLI transport closed"
@@ -82,30 +96,40 @@ class _WifiSuccessScreenState extends ConsumerState<WifiSuccessScreen> {
     // we simply advance to the home shell, which opens its own fresh session.
     final DeviceSession session;
     try {
-      session = await ref.read(deviceSessionProvider(widget.device.id).future);
+      session =
+          await sessionFuture.timeout(TransportSelector.chainWorstCase);
     } catch (e) {
-      debugPrint('[WIFI-SUCCESS] follow-up session unavailable, advancing: $e');
-      _advance();
+      AppLogger.instance
+          .warn('wifi-success', 'follow-up session unavailable: $e');
+      if (mounted) _advance();
       return;
     }
-    if (!mounted) return;
 
-    // 1. time.set, ignore failures, user does not care.
+    // 1. time.set — cihaz saatinin doğruluğu log/event timestamp'lerinin
+    // temelidir; başarısızlık kullanıcıyı bloklamaz ama loglanır.
     final unixNow = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
     try {
       await session.client.send('time.set', args: {'unix': '$unixNow'});
-    } catch (_) {/* silent */}
+    } catch (e) {
+      AppLogger.instance.warn('wifi-success', 'time.set failed: $e');
+    }
 
-    if (!mounted) return;
-    setState(() => _status = AppLocalizations.of(context).wifiSuccessFetchingInfo);
+    if (mounted) {
+      setState(
+          () => _status = AppLocalizations.of(context).wifiSuccessFetchingInfo);
+    }
 
     // 2. device.info, gives the home strip its identity row.
     try {
       await session.client.send('device.info');
-    } catch (_) {/* silent */}
+    } catch (e) {
+      AppLogger.instance.warn('wifi-success', 'device.info failed: $e');
+    }
 
-    if (!mounted) return;
-    setState(() => _status = AppLocalizations.of(context).wifiSuccessPreparingUi);
+    if (mounted) {
+      setState(
+          () => _status = AppLocalizations.of(context).wifiSuccessPreparingUi);
+    }
 
     // 3. device.manifest, prefetch (cached in CliClient pending? No
     // it's a one-shot send/response, so the result is just discarded).
@@ -121,9 +145,11 @@ class _WifiSuccessScreenState extends ConsumerState<WifiSuccessScreen> {
               l.wifiSuccessManifestRejected(reply.err ?? 'ERR_UNKNOWN');
         });
       }
-    } catch (_) {/* silent */}
+    } catch (e) {
+      AppLogger.instance.warn('wifi-success', 'device.manifest failed: $e');
+    }
 
-    _advance();
+    if (mounted) _advance();
   }
 
   void _advance() {

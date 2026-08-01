@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ble/device_model.dart';
 import '../../core/cli/cli_providers.dart';
+import '../../core/cli/transport_selector.dart';
 import '../../core/theme/responsive.dart';
 import '../../core/ui/sk_neu_card.dart';
 import '../../l10n/app_localizations.dart';
@@ -88,9 +89,12 @@ class _WifiPasswordScreenState extends ConsumerState<WifiPasswordScreen> {
 
     try {
       _trace('opening session for ${widget.device.id}');
+      // Tek kaynak: eski 12 s, bağlantı zincirinin kendi iç bütçesinin
+      // (~36 s+) altındaydı — yavaş ama sağlıklı BLE açılışını kesiyordu;
+      // kardeş ekranlar 30 s kullanıyordu (tutarsızlık, audit).
       final session = await ref
           .read(deviceSessionProvider(widget.device.id).future)
-          .timeout(const Duration(seconds: 12));
+          .timeout(TransportSelector.chainWorstCase);
       _trace('session ready');
 
       // wifi.connect, wait up to 25 s, BF tries to associate. BF marks
