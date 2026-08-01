@@ -83,6 +83,17 @@ class AppLogger {
     if (stack != null) log(stack.toString(), level: 'E');
   }
 
+  /// Levelled convenience wrappers. `warn` = beklenen-ama-kayda-değer
+  /// (best-effort adım başarısız, geri düşüş çalıştı); `error` = akışı
+  /// bozan veya veri kaybettiren durum. Tag'ler nokta-ayrımlı alt sistem
+  /// adı ('pair.ble', 'session.tcp', 'bond-store').
+  void warn(String tag, Object message) => log('[$tag] $message', level: 'W');
+
+  void error(String tag, Object error, [StackTrace? stack]) {
+    log('[$tag] $error', level: 'E');
+    if (stack != null) log(stack.toString(), level: 'E');
+  }
+
   Future<void> _appendToFile(String line) async {
     final f = _file;
     if (f == null || !_ready) return;
