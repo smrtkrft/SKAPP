@@ -6842,4 +6842,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get updateLater => 'Más tarde';
+
+  @override
+  String pairingUnexpectedError(String detail) {
+    return 'Error de emparejamiento inesperado: $detail';
+  }
+
+  @override
+  String pairingBondClearFailed(String detail) {
+    return 'No se pudo borrar el registro de emparejamiento guardado: $detail. Inténtalo de nuevo.';
+  }
+
+  @override
+  String discoveryScanFailed(String detail) {
+    return 'No se pudo iniciar el escaneo: $detail';
+  }
 }

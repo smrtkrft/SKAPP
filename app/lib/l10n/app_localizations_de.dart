@@ -6799,4 +6799,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get updateLater => 'Später';
+
+  @override
+  String pairingUnexpectedError(String detail) {
+    return 'Unerwarteter Kopplungsfehler: $detail';
+  }
+
+  @override
+  String pairingBondClearFailed(String detail) {
+    return 'Gespeicherter Kopplungseintrag konnte nicht gelöscht werden: $detail. Bitte erneut versuchen.';
+  }
+
+  @override
+  String discoveryScanFailed(String detail) {
+    return 'Scan konnte nicht gestartet werden: $detail';
+  }
 }

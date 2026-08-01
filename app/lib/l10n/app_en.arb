@@ -2289,5 +2289,12 @@
   "updateAvailableBody": "A new version ({version}) is available. You're on {current}.",
   "@updateAvailableBody": {"placeholders": {"version": {"type": "String"}, "current": {"type": "String"}}},
   "updateDownloadAction": "Download",
-  "updateLater": "Later"
+  "updateLater": "Later",
+
+  "pairingUnexpectedError": "Unexpected pairing error: {detail}",
+  "@pairingUnexpectedError": {"placeholders": {"detail": {"type": "String"}}},
+  "pairingBondClearFailed": "Could not clear the stored pairing record: {detail}. Please retry.",
+  "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailed": "Scan could not start: {detail}",
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
 }

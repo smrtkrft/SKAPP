@@ -2285,5 +2285,12 @@
   "updateAvailableTitle": "Güncelleme mevcut",
   "updateAvailableBody": "Yeni bir sürüm ({version}) mevcut. Sen {current} kullanıyorsun.",
   "updateDownloadAction": "İndir",
-  "updateLater": "Sonra"
+  "updateLater": "Sonra",
+
+  "pairingUnexpectedError": "Beklenmeyen eşleştirme hatası: {detail}",
+  "@pairingUnexpectedError": {"placeholders": {"detail": {"type": "String"}}},
+  "pairingBondClearFailed": "Kayıtlı eşleşme temizlenemedi: {detail}. Lütfen tekrar deneyin.",
+  "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailed": "Tarama başlatılamadı: {detail}",
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
 }

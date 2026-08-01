@@ -6831,4 +6831,19 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get updateLater => 'Più tardi';
+
+  @override
+  String pairingUnexpectedError(String detail) {
+    return 'Errore di associazione imprevisto: $detail';
+  }
+
+  @override
+  String pairingBondClearFailed(String detail) {
+    return 'Impossibile cancellare il record di associazione salvato: $detail. Riprova.';
+  }
+
+  @override
+  String discoveryScanFailed(String detail) {
+    return 'Impossibile avviare la scansione: $detail';
+  }
 }

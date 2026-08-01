@@ -6841,4 +6841,19 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get updateLater => 'Plus tard';
+
+  @override
+  String pairingUnexpectedError(String detail) {
+    return 'Erreur d\'appairage inattendue : $detail';
+  }
+
+  @override
+  String pairingBondClearFailed(String detail) {
+    return 'Impossible d\'effacer l\'enregistrement d\'appairage : $detail. Veuillez réessayer.';
+  }
+
+  @override
+  String discoveryScanFailed(String detail) {
+    return 'Impossible de démarrer le scan : $detail';
+  }
 }

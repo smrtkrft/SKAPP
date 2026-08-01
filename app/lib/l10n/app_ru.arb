@@ -2135,5 +2135,12 @@
   "updateAvailableBody": "Доступна новая версия ({version}). У вас установлена {current}.",
   "@updateAvailableBody": {"placeholders": {"version": {"type": "String"}, "current": {"type": "String"}}},
   "updateDownloadAction": "Загрузить",
-  "updateLater": "Позже"
+  "updateLater": "Позже",
+
+  "pairingUnexpectedError": "Непредвиденная ошибка сопряжения: {detail}",
+  "@pairingUnexpectedError": {"placeholders": {"detail": {"type": "String"}}},
+  "pairingBondClearFailed": "Не удалось удалить сохранённую запись сопряжения: {detail}. Повторите попытку.",
+  "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailed": "Не удалось запустить сканирование: {detail}",
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
 }

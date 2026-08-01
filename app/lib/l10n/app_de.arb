@@ -3614,5 +3614,12 @@
     }
   },
   "updateDownloadAction": "Herunterladen",
-  "updateLater": "Später"
+  "updateLater": "Später",
+
+  "pairingUnexpectedError": "Unerwarteter Kopplungsfehler: {detail}",
+  "@pairingUnexpectedError": {"placeholders": {"detail": {"type": "String"}}},
+  "pairingBondClearFailed": "Gespeicherter Kopplungseintrag konnte nicht gelöscht werden: {detail}. Bitte erneut versuchen.",
+  "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailed": "Scan konnte nicht gestartet werden: {detail}",
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
 }

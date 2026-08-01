@@ -3614,5 +3614,12 @@
     }
   },
   "updateDownloadAction": "Baixar",
-  "updateLater": "Depois"
+  "updateLater": "Depois",
+
+  "pairingUnexpectedError": "Erro de emparelhamento inesperado: {detail}",
+  "@pairingUnexpectedError": {"placeholders": {"detail": {"type": "String"}}},
+  "pairingBondClearFailed": "Não foi possível limpar o registo de emparelhamento guardado: {detail}. Tente novamente.",
+  "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailed": "Não foi possível iniciar a busca: {detail}",
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
 }

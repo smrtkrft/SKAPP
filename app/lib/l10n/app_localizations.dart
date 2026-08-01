@@ -11493,6 +11493,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Later'**
   String get updateLater;
+
+  /// No description provided for @pairingUnexpectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected pairing error: {detail}'**
+  String pairingUnexpectedError(String detail);
+
+  /// No description provided for @pairingBondClearFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not clear the stored pairing record: {detail}. Please retry.'**
+  String pairingBondClearFailed(String detail);
+
+  /// No description provided for @discoveryScanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan could not start: {detail}'**
+  String discoveryScanFailed(String detail);
 }
 
 class _AppLocalizationsDelegate

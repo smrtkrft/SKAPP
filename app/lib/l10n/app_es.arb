@@ -2274,5 +2274,12 @@
   "updateAvailableBody": "Hay una nueva versión ({version}) disponible. Estás en la {current}.",
   "@updateAvailableBody": {"placeholders": {"version": {"type": "String"}, "current": {"type": "String"}}},
   "updateDownloadAction": "Descargar",
-  "updateLater": "Más tarde"
+  "updateLater": "Más tarde",
+
+  "pairingUnexpectedError": "Error de emparejamiento inesperado: {detail}",
+  "@pairingUnexpectedError": {"placeholders": {"detail": {"type": "String"}}},
+  "pairingBondClearFailed": "No se pudo borrar el registro de emparejamiento guardado: {detail}. Inténtalo de nuevo.",
+  "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailed": "No se pudo iniciar el escaneo: {detail}",
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
 }

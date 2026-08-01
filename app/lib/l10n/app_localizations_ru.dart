@@ -6803,4 +6803,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get updateLater => 'Позже';
+
+  @override
+  String pairingUnexpectedError(String detail) {
+    return 'Непредвиденная ошибка сопряжения: $detail';
+  }
+
+  @override
+  String pairingBondClearFailed(String detail) {
+    return 'Не удалось удалить сохранённую запись сопряжения: $detail. Повторите попытку.';
+  }
+
+  @override
+  String discoveryScanFailed(String detail) {
+    return 'Не удалось запустить сканирование: $detail';
+  }
 }

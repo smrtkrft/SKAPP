@@ -6769,4 +6769,19 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get updateLater => 'Sonra';
+
+  @override
+  String pairingUnexpectedError(String detail) {
+    return 'Beklenmeyen eşleştirme hatası: $detail';
+  }
+
+  @override
+  String pairingBondClearFailed(String detail) {
+    return 'Kayıtlı eşleşme temizlenemedi: $detail. Lütfen tekrar deneyin.';
+  }
+
+  @override
+  String discoveryScanFailed(String detail) {
+    return 'Tarama başlatılamadı: $detail';
+  }
 }

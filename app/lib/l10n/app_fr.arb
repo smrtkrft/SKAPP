@@ -2135,5 +2135,12 @@
   "updateAvailableBody": "Une nouvelle version ({version}) est disponible. Vous êtes sur {current}.",
   "@updateAvailableBody": {"placeholders": {"version": {"type": "String"}, "current": {"type": "String"}}},
   "updateDownloadAction": "Télécharger",
-  "updateLater": "Plus tard"
+  "updateLater": "Plus tard",
+
+  "pairingUnexpectedError": "Erreur d'appairage inattendue : {detail}",
+  "@pairingUnexpectedError": {"placeholders": {"detail": {"type": "String"}}},
+  "pairingBondClearFailed": "Impossible d'effacer l'enregistrement d'appairage : {detail}. Veuillez réessayer.",
+  "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailed": "Impossible de démarrer le scan : {detail}",
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
 }

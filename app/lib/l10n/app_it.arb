@@ -3614,5 +3614,12 @@
     }
   },
   "updateDownloadAction": "Scarica",
-  "updateLater": "Più tardi"
+  "updateLater": "Più tardi",
+
+  "pairingUnexpectedError": "Errore di associazione imprevisto: {detail}",
+  "@pairingUnexpectedError": {"placeholders": {"detail": {"type": "String"}}},
+  "pairingBondClearFailed": "Impossibile cancellare il record di associazione salvato: {detail}. Riprova.",
+  "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailed": "Impossibile avviare la scansione: {detail}",
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
 }

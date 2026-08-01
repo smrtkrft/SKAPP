@@ -5,6 +5,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/pairing/pairing_error.dart';
+import '../../core/pairing/pairing_timeouts.dart';
 import '../../l10n/app_localizations.dart';
 
 /// Trim a device name to fit the firmware bond label slot (24 chars,
@@ -33,6 +35,45 @@ String bondStoreFullMessage(BuildContext context, List<dynamic> peers) {
   }
   lines.write('\n${l.bondStoreFullFooter}');
   return lines.toString();
+}
+
+/// PairingException → locale mesaj. Tek eşleme noktası: iki eşleştirme
+/// ekranı da bunu kullanır; kod → mesaj eşlemesi UI'nin son adımıdır,
+/// teknik detay (stage/cause) debug trail'de kalır.
+String pairingFailureMessage(BuildContext context, PairingException e,
+    {required bool wifiFlow}) {
+  final l = AppLocalizations.of(context);
+  switch (e.code) {
+    case PairingErrorCode.pairingNotOpen:
+      return l.wifiPairingNotOpen;
+    case PairingErrorCode.bondStoreFull:
+      return bondStoreFullMessage(
+          context, (e.params?['peers'] as List?) ?? const []);
+    case PairingErrorCode.passphraseIncorrect:
+      return l.pairingPassphraseFailed(e.deviceErr ?? 'ERR_PASSPHRASE_INCORRECT');
+    case PairingErrorCode.passphraseLockout:
+      return l.passphraseLockoutTriggered;
+    case PairingErrorCode.noPendingBond:
+      return l.pairingWindowClosedRetry;
+    case PairingErrorCode.cancelled:
+      return l.pairingPassphraseCancelled;
+    case PairingErrorCode.timeout:
+      return wifiFlow
+          ? l.wifiPairingOpenWindowRetry
+          : l.pairingDeviceNoReply(PairingTimeouts.replyDeadline.inSeconds);
+    case PairingErrorCode.linkClosed:
+      return wifiFlow
+          ? l.wifiPairingClosedEarly
+          : l.pairingKeySendFailed(e.cause?.toString() ?? e.code.name);
+    case PairingErrorCode.invalidReply:
+      return wifiFlow ? l.wifiPairingMissingPub : l.pairingInvalidReplyMissingPub;
+    case PairingErrorCode.storage:
+      return l.pairingKeySendFailed(e.cause?.toString() ?? 'storage');
+    case PairingErrorCode.rejected:
+      return wifiFlow
+          ? l.wifiPairingRejected(e.deviceErr ?? 'ERR_UNKNOWN')
+          : l.pairingDeviceRejected(e.deviceErr ?? 'ERR_UNKNOWN');
+  }
 }
 
 /// Modal passphrase prompt for the pairing-time gate. Returns the entered

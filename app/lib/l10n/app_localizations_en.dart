@@ -6761,4 +6761,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateLater => 'Later';
+
+  @override
+  String pairingUnexpectedError(String detail) {
+    return 'Unexpected pairing error: $detail';
+  }
+
+  @override
+  String pairingBondClearFailed(String detail) {
+    return 'Could not clear the stored pairing record: $detail. Please retry.';
+  }
+
+  @override
+  String discoveryScanFailed(String detail) {
+    return 'Scan could not start: $detail';
+  }
 }

@@ -3,28 +3,29 @@
 // Akış:
 //   1. Kullanıcıya "Cihazdaki kontrol butonuna kısa bas" prompt'u
 //      (cihaz pairing modunu fiziksel onayla açar, bu yeterli güvenlik)
-//   2. SKAPP TCP socket açar (mDNS'ten alınan host:port'a)
-//   3. Cihaz bond kontrolü: bond yok + pairing açık → pairing-mode line
-//   4. SKAPP `pairing.ecdh.exchange { peer_pub }` gönderir
-//   5. Cihaz ECDH yapar, bond persist eder, `our_pub` döner
-//   6. SKAPP shared secret'tan token türetir, BondStore'a kaydeder
-//   7. PairedDevice upsert → home/devices listesinde görünür
-//   8. Cihaz socket'i kapatır, SKAPP DeviceHomeScreen'e geçer
+//   2. SKAPP TCP socket açar (mDNS'ten alınan host:port'a) → TcpPairingLink
+//   3. Protokolün tamamı (ECDH + bonded-greeting atlama + parola kapısı)
+//      core/pairing/PairingSession'da — BLE ekranıyla AYNI durum makinesi.
+//   4. SKAPP shared secret'tan token türetir, BondStore'a kaydeder
+//   5. PairedDevice upsert → home/devices listesinde görünür
+//   6. Cihaz socket'i kapatır, SKAPP DeviceHomeScreen'e geçer
 //      (bonded artık → cli_providers TCP cache fast-path ile bağlanır)
+//
+// Hata sözleşmesi: HİÇBİR yol spinner'da asılı bırakamaz. PairingException
+// locale mesaja çevrilir; beklenmeyen her şey AppLogger'a E ile düşer ve
+// pairingUnexpectedError kartına iner.
 
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:convert/convert.dart' as cvt;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ble/device_model.dart';
 import '../../core/cli/bond_store.dart';
-import '../../core/cli/ecdh_pairing.dart';
 import '../../core/cli/mdns_discovery.dart';
+import '../../core/logging/app_logger.dart';
+import '../../core/pairing/pairing_error.dart';
+import '../../core/pairing/pairing_link.dart';
+import '../../core/pairing/pairing_session.dart';
+import '../../core/pairing/pairing_timeouts.dart';
 import '../../core/storage/paired_devices_store.dart';
 import '../../core/system/network_identity_provider.dart';
 import '../../core/theme/responsive.dart';
@@ -53,12 +54,12 @@ class WifiPairingScreen extends ConsumerStatefulWidget {
 class _WifiPairingScreenState extends ConsumerState<WifiPairingScreen> {
   _Stage _stage = _Stage.awaitingButton;
   String? _errorMsg;
-  Socket? _socket;
+  TcpPairingLink? _link;
   final List<String> _trail = [];
 
   @override
   void dispose() {
-    _socket?.destroy();
+    _link?.close();
     super.dispose();
   }
 
@@ -87,295 +88,101 @@ class _WifiPairingScreenState extends ConsumerState<WifiPairingScreen> {
     _set(_Stage.connecting);
     _trace('connect ${widget.endpoint.host}:${widget.endpoint.port}');
 
-    Socket socket;
+    // Tüm gövde korunur: PairingException → locale mesaj; beklenmeyen her
+    // şey → E-log + pairingUnexpectedError. Eski kod persist/kripto
+    // aşamalarını korumasız bırakıyordu → sonsuz spinner (audit C7).
+    TcpPairingLink? link;
     try {
-      socket = await Socket.connect(
-        widget.endpoint.host,
-        widget.endpoint.port,
-        timeout: const Duration(seconds: 5),
-      );
-    } catch (e) {
-      _set(_Stage.failed, err: l.wifiPairingConnectFailed(e.toString()));
-      return;
-    }
-    _socket = socket;
-    _trace('socket open');
-
-    // Re-armable reply pump: the bootstrap may need >1 reply because of
-    // the optional pairing.passphrase.verify follow-up. Each turn we set
-    // `armed` to a fresh completer just before the corresponding write.
-    Completer<Map<String, dynamic>>? armed;
-    final buffer = StringBuffer();
-    final sub = utf8.decoder.bind(socket).listen(
-      (chunk) {
-        buffer.write(chunk);
-        while (true) {
-          final s = buffer.toString();
-          final nl = s.indexOf('\n');
-          if (nl < 0) break;
-          final line = s.substring(0, nl).trim();
-          buffer
-            ..clear()
-            ..write(s.substring(nl + 1));
-          if (line.isEmpty) continue;
-          _trace('rx: $line');
-          final c = armed;
-          if (c == null || c.isCompleted) continue;
-          try {
-            final json = jsonDecode(line) as Map<String, dynamic>;
-            c.complete(json);
-          } catch (e) {
-            c.completeError(l.wifiPairingInvalidJson(e.toString()));
-          }
-        }
-      },
-      onError: (Object e) {
-        final c = armed;
-        if (c != null && !c.isCompleted) c.completeError(e);
-      },
-      onDone: () {
-        final c = armed;
-        if (c != null && !c.isCompleted) {
-          c.completeError(l.wifiPairingClosedEarly);
-        }
-      },
-    );
-
-    Future<void> writeLine(Map<String, dynamic> obj) async {
-      socket.add(utf8.encode('${jsonEncode(obj)}\n'));
-      await socket.flush();
-    }
-
-    _set(_Stage.exchanging);
-
-    final ephemeral = await EcdhPairing().begin();
-    final peerPubHex = cvt.hex.encode(ephemeral.ourPublic);
-    final store = ref.read(bondStoreProvider);
-    final ourPeerId = await store.appPeerId();
-    final peerIdHex = cvt.hex.encode(ourPeerId);
-    // `identity` cihazın adı (örn. "BF-A06TMFSQT") — daha aşağıda
-    // PairedDevice + BondStore.upsert için gerekli, dokunmuyoruz.
-    // `label` ise bond slot'unda peer'i (yani BU SKAPP'i) tanıtmak için;
-    // cihazın değil, kendi NetworkIdentity ismimizden okunur.
-    final identity = widget.endpoint.instance;
-    final label =
-        shortPairingLabel(ref.read(networkIdentityProvider).name);
-
-    armed = Completer<Map<String, dynamic>>();
-    _trace('tx: pairing.ecdh.exchange (peer_id=${peerIdHex.substring(0, 8)}…)');
-    try {
-      await writeLine({
-        'cmd': 'pairing.ecdh.exchange',
-        'args': {
-          'peer_pub': peerPubHex,
-          'peer_id':  peerIdHex,
-          'label':    label,
-        },
-      });
-    } catch (e) {
-      await sub.cancel();
-      _set(_Stage.failed, err: l.wifiPairingSendFailed(e.toString()));
-      return;
-    }
-
-    // A device that already holds a bond greets EVERY TCP connection with
-    // `auth.challenge` (sk_secure_session_begin sends it the moment the
-    // socket opens — verified: it arrives before/with our exchange). That
-    // is NOT terminal for pairing: firmware's TCP recovery path
-    // (sk_transport_tcp.c:75-94, handle_line) still answers our
-    // `pairing.ecdh.exchange` with `our_pub` — AS LONG AS the pairing
-    // window is open on the device. So we skip auth.challenge and keep
-    // waiting for the real pairing reply. If the window is closed the
-    // device drops the socket (or we time out); either way we tell the
-    // user to open pairing mode (short-press the device button) and retry.
-    Map<String, dynamic> reply;
-    final deadline = DateTime.now().add(const Duration(seconds: 15));
-    while (true) {
-      final remaining = deadline.difference(DateTime.now());
-      if (remaining <= Duration.zero) {
-        await sub.cancel();
-        _set(_Stage.failed, err: l.wifiPairingOpenWindowRetry);
-        return;
-      }
-      Map<String, dynamic> r;
       try {
-        r = await armed!.future.timeout(remaining);
-      } on TimeoutException {
-        await sub.cancel();
-        _set(_Stage.failed, err: l.wifiPairingOpenWindowRetry);
-        return;
+        link = await TcpPairingLink.connect(
+            widget.endpoint.host, widget.endpoint.port);
       } catch (e) {
-        // Socket closed early = pairing window not open (device rejected
-        // the exchange on the bonded auth path) or a transient drop.
-        await sub.cancel();
-        _set(_Stage.failed, err: l.wifiPairingOpenWindowRetry);
+        _trace('connect failed: $e');
+        _set(_Stage.failed, err: l.wifiPairingConnectFailed(e.toString()));
         return;
       }
-      if (r['evt'] == 'auth.challenge') {
-        // Bonded greeting; re-arm and wait for the recovery `our_pub`.
-        armed = Completer<Map<String, dynamic>>();
-        continue;
-      }
-      reply = r;
-      break;
+      _link = link;
+      _trace('socket open');
+      _set(_Stage.exchanging);
+
+      final store = ref.read(bondStoreProvider);
+      final ourPeerId = await store.appPeerId();
+      // `identity` cihazın adı (örn. "BF-A06TMFSQT") — PairedDevice +
+      // BondStore kayıtları için. `label` ise bond slot'unda BU SKAPP'i
+      // tanıtır; kendi NetworkIdentity ismimizden okunur.
+      final identity = widget.endpoint.instance;
+
+      final result = await PairingSession(
+        link: link,
+        ourPeerId: ourPeerId,
+        label: shortPairingLabel(ref.read(networkIdentityProvider).name),
+        onTrace: _trace,
+      ).run(promptPassphrase: (attemptsLeft) async {
+        if (!mounted) return null;
+        return promptPairingPassphrase(context, attemptsLeft: attemptsLeft);
+      });
+
+      // Persist: bond key + paired metadata. Bond store BLE remoteId
+      // formatını bekliyor; mDNS-only akışta BLE MAC bilinmiyor, instance
+      // adını id olarak kullanıyoruz, cli_providers da bunu kullanır.
+      // Defensive: also save under case variants in case BF firmware
+      // ever returns the SmartKraft id with different casing in webhook
+      // headers — BondStore lookup is case-sensitive otherwise.
+      final prefix = identity.length >= 2 ? identity.substring(0, 2) : '??';
+      final aliases = <String>{
+        identity.toLowerCase(),
+        identity.toUpperCase(),
+      }..remove(identity);
+      await store.save(
+        identity,
+        result.token,
+        peerId: ourPeerId,
+        slot: result.slot,
+        aliasIds: aliases.toList(),
+      );
+      await ref.read(pairedDevicesProvider.notifier).upsert(PairedDevice(
+            id: identity,
+            name: identity,
+            prefix: prefix,
+            pairedAt: DateTime.now(),
+            lastIp: widget.endpoint.host,
+            lastPort: widget.endpoint.port,
+          ));
+
+      // Cihaz socket'i kapatıyor; biz de kendi tarafımızdan kapatalım.
+      await link.close();
+      _link = null;
+
+      _set(_Stage.done);
+
+      // Cihazın yeni bonded TCP'yi açabilmesi için kısa bir nefes payı
+      // sk_auth_close_pairing_mode + listener'ın yeniden ready olması
+      // ~250ms sürer. SKAPP hemen reconnect denerse bind yarış olabilir.
+      await Future.delayed(PairingTimeouts.tcpPostPairSettle);
+      if (!mounted) return;
+
+      // Direkt cihaz home'a geç: cli_providers TCP cache fast-path ile
+      // bonded TCP açar, secure session handshake yapar, dashboard render.
+      final dd = DiscoveredDevice(id: identity, name: identity, rssi: 0);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => DeviceHomeScreen(device: dd)),
+        (route) => route.isFirst,
+      );
+    } on PairingException catch (e) {
+      AppLogger.instance.warn('pair.wifi', e);
+      _trace('$e');
+      await link?.close();
+      _link = null;
+      if (!mounted) return;
+      _set(_Stage.failed, err: pairingFailureMessage(context, e, wifiFlow: true));
+    } catch (e, st) {
+      AppLogger.instance.error('pair.wifi', e, st);
+      _trace('unexpected: $e');
+      await link?.close();
+      _link = null;
+      if (!mounted) return;
+      _set(_Stage.failed, err: l.pairingUnexpectedError(e.toString()));
     }
-
-    if (reply['ok'] != true) {
-      final err = reply['err']?.toString() ?? 'ERR_UNKNOWN';
-      String msg;
-      if (err == 'ERR_PAIRING_NOT_OPEN') {
-        msg = l.wifiPairingNotOpen;
-      } else if (err == 'ERR_BOND_STORE_FULL') {
-        final params = reply['params'] as Map<String, dynamic>?;
-        final peers  = (params?['peers'] as List?) ?? const [];
-        msg = mounted
-            ? bondStoreFullMessage(context, peers)
-            : 'BOND_STORE_FULL';
-      } else {
-        msg = l.wifiPairingRejected(err);
-      }
-      await sub.cancel();
-      _set(_Stage.failed, err: msg);
-      return;
-    }
-
-    final data = reply['data'] as Map?;
-    final ourPub = data?['our_pub']?.toString();
-    if (ourPub == null || ourPub.length != 64) {
-      await sub.cancel();
-      _set(_Stage.failed, err: l.wifiPairingMissingPub);
-      return;
-    }
-
-    Uint8List devicePub;
-    try {
-      devicePub = Uint8List.fromList(cvt.hex.decode(ourPub));
-    } catch (e) {
-      await sub.cancel();
-      _set(_Stage.failed, err: l.wifiPairingHexError(e.toString()));
-      return;
-    }
-
-    final bond = await ephemeral.complete(devicePub);
-    _trace('bond derived (${bond.token.length}B token)');
-
-    int? assignedSlot = (data?['slot'] as num?)?.toInt();
-
-    // Pairing-time passphrase gate (same flow as BLE pairing screen).
-    if (data?['need_passphrase'] == true) {
-      int attemptsLeft =
-          (data?['attempts_left'] as num?)?.toInt() ?? 10;
-      bool unlocked = false;
-      while (!unlocked) {
-        final plain = !mounted
-            ? null
-            : await promptPairingPassphrase(context, attemptsLeft: attemptsLeft);
-        if (plain == null) {
-          await sub.cancel();
-          _set(_Stage.failed, err: l.pairingPassphraseCancelled);
-          return;
-        }
-        armed = Completer<Map<String, dynamic>>();
-        try {
-          await writeLine({
-            'cmd':  'pairing.passphrase.verify',
-            'args': {'plain': plain},
-          });
-        } catch (e) {
-          await sub.cancel();
-          _set(_Stage.failed,
-              err: l.wifiPairingSendFailed(e.toString()));
-          return;
-        }
-
-        Map<String, dynamic> vr;
-        try {
-          vr = await armed.future.timeout(const Duration(seconds: 12));
-        } on TimeoutException {
-          await sub.cancel();
-          _set(_Stage.failed, err: l.wifiPairingTimeout);
-          return;
-        } catch (e) {
-          await sub.cancel();
-          _set(_Stage.failed, err: '$e');
-          return;
-        }
-
-        if (vr['ok'] == true) {
-          unlocked = true;
-          assignedSlot = (vr['data']?['slot'] as num?)?.toInt() ?? assignedSlot;
-        } else {
-          final code = vr['err']?.toString() ?? '';
-          if (code == 'ERR_PASSPHRASE_INCORRECT') {
-            attemptsLeft = (vr['params']?['attempts_left'] as num?)?.toInt()
-                ?? (attemptsLeft > 0 ? attemptsLeft - 1 : 0);
-            if (attemptsLeft <= 0) {
-              await sub.cancel();
-              _set(_Stage.failed, err: l.passphraseLockoutTriggered);
-              return;
-            }
-          } else if (code == 'ERR_NO_PENDING_BOND') {
-            await sub.cancel();
-            _set(_Stage.failed, err: l.pairingWindowClosedRetry);
-            return;
-          } else {
-            await sub.cancel();
-            _set(_Stage.failed, err: l.pairingPassphraseFailed(code));
-            return;
-          }
-        }
-      }
-    }
-
-    // Persist: bond key + paired metadata. Bond store BLE remoteId
-    // formatını bekliyor; mDNS-only akışta BLE MAC bilinmiyor, instance
-    // adını id olarak kullanıyoruz, cli_providers da bunu kullanır.
-    // Defensive: also save under lowercase variant in case BF firmware
-    // ever returns the SmartKraft id with different casing in webhook
-    // headers — BondStore lookup is case-sensitive otherwise.
-    final prefix = identity.length >= 2 ? identity.substring(0, 2) : '??';
-    final aliases = <String>{
-      identity.toLowerCase(),
-      identity.toUpperCase(),
-    }..remove(identity);
-    await store.save(
-      identity,
-      bond.token,
-      peerId: ourPeerId,
-      slot: assignedSlot,
-      aliasIds: aliases.toList(),
-    );
-    await ref.read(pairedDevicesProvider.notifier).upsert(PairedDevice(
-          id: identity,
-          name: identity,
-          prefix: prefix,
-          pairedAt: DateTime.now(),
-          lastIp: widget.endpoint.host,
-          lastPort: widget.endpoint.port,
-        ));
-
-    // Cihaz socket'i kapatıyor; biz de kendi tarafımızdan kapatalım.
-    await sub.cancel();
-    try {
-      await socket.close();
-    } catch (_) {/* already gone */}
-    _socket = null;
-
-    _set(_Stage.done);
-
-    // Cihazın yeni bonded TCP'yi açabilmesi için kısa bir nefes payı
-    // sk_auth_close_pairing_mode + listener'ın yeniden ready olması
-    // ~250ms sürer. SKAPP hemen reconnect denerse bind yarış olabilir.
-    await Future.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
-
-    // Direkt cihaz home'a geç: cli_providers TCP cache fast-path ile
-    // bonded TCP açar, secure session handshake yapar, dashboard render.
-    final dd = DiscoveredDevice(id: identity, name: identity, rssi: 0);
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => DeviceHomeScreen(device: dd)),
-      (route) => route.isFirst,
-    );
   }
 
   @override

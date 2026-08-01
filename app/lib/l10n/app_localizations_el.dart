@@ -6828,4 +6828,19 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get updateLater => 'Αργότερα';
+
+  @override
+  String pairingUnexpectedError(String detail) {
+    return 'Απροσδόκητο σφάλμα σύζευξης: $detail';
+  }
+
+  @override
+  String pairingBondClearFailed(String detail) {
+    return 'Δεν ήταν δυνατή η διαγραφή της αποθηκευμένης σύζευξης: $detail. Δοκιμάστε ξανά.';
+  }
+
+  @override
+  String discoveryScanFailed(String detail) {
+    return 'Δεν ήταν δυνατή η έναρξη της σάρωσης: $detail';
+  }
 }
