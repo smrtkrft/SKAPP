@@ -6784,4 +6784,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String discoveryScanFailed(String detail) {
     return 'Tarama başlatılamadı: $detail';
   }
+
+  @override
+  String get discoveryScanFailedTitle => 'Tarama başarısız';
 }

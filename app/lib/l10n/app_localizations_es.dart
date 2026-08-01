@@ -6857,4 +6857,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String discoveryScanFailed(String detail) {
     return 'No se pudo iniciar el escaneo: $detail';
   }
+
+  @override
+  String get discoveryScanFailedTitle => 'Error de escaneo';
 }

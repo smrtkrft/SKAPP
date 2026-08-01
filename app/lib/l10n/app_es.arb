@@ -2281,5 +2281,6 @@
   "pairingBondClearFailed": "No se pudo borrar el registro de emparejamiento guardado: {detail}. Inténtalo de nuevo.",
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "No se pudo iniciar el escaneo: {detail}",
-  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailedTitle": "Error de escaneo"
 }

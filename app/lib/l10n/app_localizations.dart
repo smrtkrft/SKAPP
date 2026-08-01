@@ -11511,6 +11511,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan could not start: {detail}'**
   String discoveryScanFailed(String detail);
+
+  /// No description provided for @discoveryScanFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan failed'**
+  String get discoveryScanFailedTitle;
 }
 
 class _AppLocalizationsDelegate

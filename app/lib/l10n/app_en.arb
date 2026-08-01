@@ -2296,5 +2296,6 @@
   "pairingBondClearFailed": "Could not clear the stored pairing record: {detail}. Please retry.",
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Scan could not start: {detail}",
-  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailedTitle": "Scan failed"
 }

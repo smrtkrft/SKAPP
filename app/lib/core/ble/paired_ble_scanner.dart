@@ -170,10 +170,26 @@ class PairedBleScannerNotifier extends Notifier<PairedBleScannerState> {
 
     try {
       // Adapter durum kontrolü: kapalıysa scan başlatmayız.
-      final adapterState = await FlutterBluePlus.adapterState
-          .firstWhere((s) => s != BluetoothAdapterState.unknown)
-          .timeout(const Duration(seconds: 2),
-              onTimeout: () => BluetoothAdapterState.off);
+      BluetoothAdapterState adapterState;
+      try {
+        // 8 s: ble_service.checkReadiness ile hizalı — desktop state kanalı
+        // birkaç saniye sürebiliyor. Eski 2 s + onTimeout→off, yavaş ama
+        // SAĞLIKLI adapter'ı "kapalı" ilan ediyordu; her 30 s'lik tick aynı
+        // yalanı tekrarlayınca eşleşmiş cihazlar kalıcı offline görünüyordu
+        // (audit C19).
+        adapterState = await FlutterBluePlus.adapterState
+            .firstWhere((s) => s != BluetoothAdapterState.unknown)
+            .timeout(const Duration(seconds: 8));
+      } on TimeoutException {
+        // Sonda cevap vermedi — adapter'ın KAPALI olduğunu iddia etme;
+        // sweep'i atla, gerçek durumu etikete yaz.
+        state = state.copyWith(
+          isScanning: false,
+          lastScanAt: DateTime.now(),
+          lastError: 'adapter state unknown (probe timeout)',
+        );
+        return;
+      }
       if (adapterState != BluetoothAdapterState.on) {
         state = state.copyWith(
           isScanning: false,
@@ -202,11 +218,15 @@ class PairedBleScannerNotifier extends Notifier<PairedBleScannerState> {
           }
           if (hitId != null && !matched.contains(hitId)) {
             matched.add(hitId);
-            // touch lastSeen — fire and forget, errors swallowed for stability.
+            // touch lastSeen — fire and forget; sürekli başarısızsa her
+            // eşleşmiş cihaz sebepsizce offline görünür, o yüzden loglu.
+            final id = hitId;
             ref
                 .read(pairedDevicesProvider.notifier)
-                .touch(hitId)
-                .catchError((_) {/* silent */});
+                .touch(id)
+                .catchError((Object e) {
+              debugPrint('[BLE-SCAN] touch($id) failed: $e');
+            });
           }
         }
       }, onError: (Object e, StackTrace _) {
@@ -222,7 +242,11 @@ class PairedBleScannerNotifier extends Notifier<PairedBleScannerState> {
         if (FlutterBluePlus.isScanningNow) {
           await FlutterBluePlus.stopScan();
         }
-      } catch (_) {/* swallow */}
+      } catch (e) {
+        // Sızdırılmış scan bir sonraki connect'le çakışır (auth.challenge
+        // kaybı bug'ının bilinen tetiği) — sessiz kalamaz.
+        debugPrint('[BLE-SCAN] stopScan failed: $e');
+      }
       await _resultSub?.cancel();
       _resultSub = null;
 
@@ -240,13 +264,17 @@ class PairedBleScannerNotifier extends Notifier<PairedBleScannerState> {
       debugPrint('[BLE-SCAN] sweep failed: $e\n$st');
       try {
         await _resultSub?.cancel();
-      } catch (_) {/* swallow */}
+      } catch (e2) {
+        debugPrint('[BLE-SCAN] result-sub cancel failed: $e2');
+      }
       _resultSub = null;
       try {
         if (FlutterBluePlus.isScanningNow) {
           await FlutterBluePlus.stopScan();
         }
-      } catch (_) {/* swallow */}
+      } catch (e2) {
+        debugPrint('[BLE-SCAN] cleanup stopScan failed: $e2');
+      }
       state = state.copyWith(
         isScanning: false,
         lastError: e.toString(),

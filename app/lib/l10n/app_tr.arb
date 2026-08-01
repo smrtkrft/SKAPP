@@ -2292,5 +2292,6 @@
   "pairingBondClearFailed": "Kayıtlı eşleşme temizlenemedi: {detail}. Lütfen tekrar deneyin.",
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Tarama başlatılamadı: {detail}",
-  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailedTitle": "Tarama başarısız"
 }

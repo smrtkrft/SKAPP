@@ -6818,4 +6818,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String discoveryScanFailed(String detail) {
     return 'Не удалось запустить сканирование: $detail';
   }
+
+  @override
+  String get discoveryScanFailedTitle => 'Сбой сканирования';
 }

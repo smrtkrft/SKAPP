@@ -2142,5 +2142,6 @@
   "pairingBondClearFailed": "Не удалось удалить сохранённую запись сопряжения: {detail}. Повторите попытку.",
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Не удалось запустить сканирование: {detail}",
-  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}}
+  "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
+  "discoveryScanFailedTitle": "Сбой сканирования"
 }

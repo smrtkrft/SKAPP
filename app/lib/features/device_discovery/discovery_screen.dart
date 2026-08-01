@@ -22,6 +22,7 @@ enum _Stage {
   permissionsDenied,
   adapterOff,
   unsupported,
+  scanFailed,
   scanning,
 }
 
@@ -34,6 +35,8 @@ class DiscoveryScreen extends ConsumerStatefulWidget {
 
 class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
   _Stage _stage = _Stage.checking;
+  // scanFailed durumunda gösterilen teknik detay (startScan hatası).
+  String? _scanFailDetail;
   // Default: SmartKraft cihazlarını göster (kullanıcı isteği). Keşif listesi
   // yalnız SmartKraft cihazlarıyla başlar; kullanıcı üstteki filtre butonuyla
   // (BLE hata ayıklaması için) tüm cihazları göstermeye geçebilir.
@@ -90,14 +93,18 @@ class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
         break;
     }
 
-    // 3) Scan. Failures here are usually transient (radio busy, just
-    //    toggled off), surface them as adapterOff so the user sees a
-    //    "Try again / open settings" affordance rather than a silent UI.
+    // 3) Scan. Gerçek scan hatası "Bluetooth kapalı" DEĞİLDİR: izin iptali,
+    //    radyo meşgul, sürücü hatası buraya düşer (audit C21 — eski kod
+    //    adapterOff maskesi takıp çalışmayan bir "Bluetooth'u aç" butonu
+    //    gösteriyordu). Hata metniyle birlikte scanFailed'e in; retry
+    //    _bootstrap'ı baştan çalıştırır.
     _set(_Stage.scanning);
     try {
       await svc.startScan();
-    } catch (_) {
-      _set(_Stage.adapterOff);
+    } catch (e) {
+      debugPrint('[DISCOVERY] startScan failed: $e');
+      _scanFailDetail = e.toString();
+      _set(_Stage.scanFailed);
     }
 
     // 4) mDNS sweep alongside BLE. Independent of BLE permissions/state
@@ -127,9 +134,11 @@ class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
       );
       if (!mounted) return;
       setState(() => _mdnsResults = results);
-    } catch (_) {
-      // Silent, multicast permission, network change, etc.
-      // Next tick will retry.
+    } catch (e) {
+      // Multicast izni, ağ değişimi vb. — bir sonraki tick yeniden dener.
+      // Best-effort ama izlenebilir: sürekli başarısızlık "WiFi cihazları
+      // neden hiç görünmüyor" sorusunun tek teşhis kaynağı.
+      debugPrint('[DISCOVERY] mDNS sweep failed: $e');
     } finally {
       _mdnsBusy = false;
     }
@@ -177,8 +186,9 @@ class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
       await FlutterBluePlus.turnOn();
       _set(_Stage.checking);
       await _bootstrap();
-    } catch (_) {
+    } catch (e) {
       // iOS rejects programmatic toggle; user must do it from Settings.
+      debugPrint('[DISCOVERY] turnOn failed: $e');
     }
   }
 
@@ -254,6 +264,17 @@ class _DiscoveryScreenState extends ConsumerState<DiscoveryScreen> {
           icon: Icons.error_outline,
           title: l.discoveryUnsupportedTitle,
           body: l.discoveryUnsupportedBody,
+        );
+      case _Stage.scanFailed:
+        return _statusView(
+          icon: Icons.error_outline,
+          title: l.discoveryScanFailedTitle,
+          body: l.discoveryScanFailed(_scanFailDetail ?? ''),
+          actionLabel: l.discoveryPermissionsRetry,
+          onAction: () async {
+            _set(_Stage.checking);
+            await _bootstrap();
+          },
         );
       case _Stage.scanning:
         return _scanningView(l);

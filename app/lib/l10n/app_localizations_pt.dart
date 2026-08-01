@@ -6838,4 +6838,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String discoveryScanFailed(String detail) {
     return 'Não foi possível iniciar a busca: $detail';
   }
+
+  @override
+  String get discoveryScanFailedTitle => 'Falha na busca';
 }

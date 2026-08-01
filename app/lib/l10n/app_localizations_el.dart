@@ -6843,4 +6843,7 @@ class AppLocalizationsEl extends AppLocalizations {
   String discoveryScanFailed(String detail) {
     return 'Δεν ήταν δυνατή η έναρξη της σάρωσης: $detail';
   }
+
+  @override
+  String get discoveryScanFailedTitle => 'Η σάρωση απέτυχε';
 }

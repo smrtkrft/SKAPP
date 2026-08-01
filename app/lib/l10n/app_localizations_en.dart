@@ -6776,4 +6776,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String discoveryScanFailed(String detail) {
     return 'Scan could not start: $detail';
   }
+
+  @override
+  String get discoveryScanFailedTitle => 'Scan failed';
 }
