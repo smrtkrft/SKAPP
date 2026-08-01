@@ -23,6 +23,8 @@ import 'dart:typed_data';
 
 import 'package:convert/convert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../logging/app_logger.dart';
 import '../storage/sk_secure_storage.dart';
 
 import 'device_id.dart';
@@ -50,8 +52,12 @@ class BondStore {
       if (hexStr == null || hexStr.isEmpty) continue;
       try {
         return Uint8List.fromList(hex.decode(hexStr));
-      } catch (_) {
-        // Corrupt entry, wipe so subsequent reads stay deterministic.
+      } catch (e) {
+        // Corrupt entry, wipe so subsequent reads stay deterministic — ama
+        // SESSİZCE değil: bond VARDI ve yok edildi; caller'a "hiç
+        // eşleşmemiş" görünecek, teşhis edilebilir kalmalı (audit C16).
+        AppLogger.instance
+            .error('bond-store', 'corrupt bond token for "$id" — wiped ($e)');
         await _storage.delete(key: _key(id));
       }
     }
@@ -171,7 +177,9 @@ class BondStore {
     if (hexStr == null || hexStr.isEmpty) return null;
     try {
       return Uint8List.fromList(hex.decode(hexStr));
-    } catch (_) {
+    } catch (e) {
+      AppLogger.instance.error(
+          'bond-store', 'corrupt peer_id for "$deviceId" — wiped ($e)');
       await _storage.delete(key: _peerKey(deviceId));
       return null;
     }
@@ -186,8 +194,15 @@ class BondStore {
       try {
         final bytes = hex.decode(cached);
         if (bytes.length == 16) return Uint8List.fromList(bytes);
-      } catch (_) {
-        // fall through and regenerate
+        AppLogger.instance.error('bond-store',
+            'app.peer_id has wrong length (${bytes.length}B) — REGENERATING '
+            'install identity; existing device-side bond slots are now orphaned');
+      } catch (e) {
+        // Sessiz kimlik yenileme (audit C17): her cihaz tarafındaki bond
+        // slot'u yetim kalır — bu asla izsiz olmamalı.
+        AppLogger.instance.error('bond-store',
+            'app.peer_id corrupt — REGENERATING install identity; existing '
+            'device-side bond slots are now orphaned ($e)');
       }
     }
     final fresh = _generatePeerId();

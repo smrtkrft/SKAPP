@@ -5,6 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/ble/device_model.dart';
 import '../../core/ble/notification_state.dart';
 import '../../core/ble/notification_state_provider.dart';
+import '../../core/cli/bond_store.dart';
+import '../../core/cli/device_id.dart';
+import '../../core/logging/app_logger.dart';
 import '../../core/network/mdns_browser.dart';
 import '../../core/network/skapp_http_client.dart';
 import '../../core/network/skapp_peer_store.dart';
@@ -442,6 +445,21 @@ class DevicesScreen extends ConsumerWidget {
     await ref
         .read(bindingsProvider.notifier)
         .removeForDevice(paired.id);
+    // Bond token'ini da temizle: eski akis PairedDevice'i silip 32-byte
+    // token'i + alias'lari (BLE MAC ↔ SmartKraft id, case katlamalari)
+    // secure storage'da yetim birakiyordu. Silme basarisizsa metadata
+    // zaten gitti — devam ederiz ama E-log ile iz birakiriz.
+    try {
+      final bonds = ref.read(bondStoreProvider);
+      for (final key in {
+        ...deviceIdKeyVariants(paired.id),
+        ...deviceIdKeyVariants(paired.name),
+      }) {
+        await bonds.clear(key);
+      }
+    } catch (e, st) {
+      AppLogger.instance.error('devices.forget', e, st);
+    }
     if (!context.mounted) return;
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
