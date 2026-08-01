@@ -25,3 +25,13 @@ abstract class CliTransport {
 
 /// Common transport kinds advertised in the discovery UI.
 enum CliTransportKind { ble, tcp, usb }
+
+/// Cihaz mutual-auth el sıkışmasını aktif reddetti (token uyuşmazlığı veya
+/// auth sırasında açık hata zarfı). Transient timeout'lardan ayrı tutulur;
+/// pairing_screen bunu "bond çürümüş" sinyali sayar.
+class AuthRejectedException implements Exception {
+  const AuthRejectedException(this.detail);
+  final String detail;
+  @override
+  String toString() => 'AuthRejectedException($detail)';
+}
