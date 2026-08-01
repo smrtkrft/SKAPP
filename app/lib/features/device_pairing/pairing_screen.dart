@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:convert/convert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -10,11 +8,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/ble/ble_service.dart';
 import '../../core/ble/device_model.dart';
 import '../../core/ble/device_type_visual.dart';
+import '../../core/ble/paired_ble_scanner.dart'
+    show beginBleExclusive, endBleExclusive;
 import '../../core/cli/ble_transport.dart'
     show bleTraceStream, PairingRequiredException;
 import '../../core/cli/bond_store.dart';
 import '../../core/cli/cli_providers.dart';
-import '../../core/cli/ecdh_pairing.dart';
+import '../../core/cli/transport_selector.dart';
+import '../../core/logging/app_logger.dart';
+import '../../core/pairing/pairing_error.dart';
+import '../../core/pairing/pairing_link.dart';
+import '../../core/pairing/pairing_session.dart';
+import '../../core/pairing/pairing_timeouts.dart';
 import '../../core/storage/paired_devices_store.dart';
 import '../../core/system/network_identity_provider.dart';
 import '../../core/theme/responsive.dart';
@@ -47,14 +52,8 @@ import 'pairing_helpers.dart';
 /// Failure surfaces a retryable error card without leaving the screen.
 enum _PairStage { connecting, exchanging, verifying, done, failed }
 
-/// Cihazın bond'u açıkça reddettiğini gösteren marker. Transient hatalardan
-/// (timeout, BLE drop) ayrıştırmak için _runReconnect catch'inde kullanılır.
-class _BondRejectedError implements Exception {
-  _BondRejectedError(this.code);
-  final String code;
-  @override
-  String toString() => 'bond reddedildi: $code';
-}
+// Bond-reddi marker'ı artık core/pairing/pairing_error.dart'ta
+// (BondRejectedError) — isHardBondRejection ile birlikte tek yerde.
 
 const _svcUuid = 'f100d001-7a5b-4c1e-8d2f-4a6b9c3e1d01';
 const _cmdRxUuid = 'f100d002-7a5b-4c1e-8d2f-4a6b9c3e1d01';
@@ -72,7 +71,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
   _PairStage _stage = _PairStage.connecting;
   String? _errorMsg;
   BluetoothDevice? _btDevice;
-  StreamSubscription<List<int>>? _notifySub;
+  BlePairingLink? _pairingLink;
   // null until BondStore lookup resolves: keeps the UI on a generic
   // "checking…" state instead of briefly flashing the bootstrap labels
   // before flipping to reconnect (or vice versa).
@@ -125,8 +124,10 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
   @override
   void dispose() {
     _bleTraceSub?.cancel();
-    _notifySub?.cancel();
-    _btDevice?.disconnect().catchError((_) {});
+    _pairingLink?.close();
+    _btDevice?.disconnect().catchError((Object e) {
+      debugPrint('[PAIR] dispose disconnect: $e');
+    });
     super.dispose();
   }
 
@@ -158,6 +159,17 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       if (!mounted) return;
       setState(() => _isReconnect = false);
       await _runFlow();
+    } catch (e, st) {
+      // Son savunma hattı: _runFlow/_runReconnect'ten kaçan HERHANGİ bir
+      // hata (kripto ArgumentError, secure-storage PlatformException,
+      // provider hatası) spinner'ı sonsuza kadar döndürmek yerine hata
+      // kartına iner. Zone handler'a hiçbir eşleştirme hatası kaçmaz
+      // (audit C1 — kalıcı-takılı-UI'nin tek kaynağı buydu).
+      AppLogger.instance.error('pair.ble', e, st);
+      _trace('unhandled: $e');
+      if (mounted) {
+        _fail(AppLocalizations.of(context).pairingUnexpectedError(e.toString()));
+      }
     } finally {
       _decideRunning = false;
     }
@@ -185,27 +197,28 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       _set(_PairStage.connecting);
       try {
         await svc.deviceFor(widget.device.id).disconnect();
-      } catch (_) {/* ignore */}
+      } catch (e) {
+        _trace('stale-link disconnect: $e (devam)');
+      }
 
       _trace('reconnect: opening session via provider');
       _set(_PairStage.exchanging);
-      // 30s wrapper: deviceSessionProvider zinciri (TCP cache → mDNS 1.5s
-      // → mDNS-TCP 8s → BLE connect 12s + discover 8s + subscribe 5s +
-      // auth 8s) en kötü ihtimalle ~30s sürer. Eski 12s değer BF'nin
-      // bir önceki eşleşmenin link'ini kapatıp advertise'ı geri açtığı
-      // pencerede yanlış pozitif veriyordu — sonra bond clear edip
-      // ECDH bootstrap'a düşüyordu ve oradaki yazma da "pairing modu
-      // kapalı" yüzünden PlatformException'la fail ediyordu.
+      // chainWorstCase wrapper: deviceSessionProvider zincirinin (TCP cache
+      // → mDNS → .local → BLE) toplam bütçesi tek kaynaktan gelir. Eski
+      // el-ile-30s değer, zincir bütçeleri düzeltilince (BLE 15s→~45s)
+      // yine iç toplamın altında kalacaktı — aynı erken-kesme hatası
+      // (yanlış pozitif → bond clear → PlatformException döngüsü) geri
+      // gelirdi.
       final session = await ref
           .read(deviceSessionProvider(widget.device.id).future)
-          .timeout(const Duration(seconds: 30));
+          .timeout(TransportSelector.chainWorstCase);
       _set(_PairStage.verifying);
 
       _trace('reconnect: sending device.info ping');
       final ping = await session.client
           .send('device.info', timeout: const Duration(seconds: 8));
       if (!ping.ok) {
-        throw _BondRejectedError(ping.err ?? 'device.info');
+        throw BondRejectedError(ping.err ?? 'device.info');
       }
 
       await ref
@@ -214,7 +227,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
 
       _trace('reconnect: success');
       _set(_PairStage.done);
-      await Future.delayed(const Duration(milliseconds: 350));
+      await Future.delayed(PairingTimeouts.reconnectDoneDwell);
       if (!mounted) return;
       await _routeAfterPairing();
     } catch (e) {
@@ -225,13 +238,10 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       // event'i ile bildirdi (bond yok, kendisi de NORMAL mode'da değil).
       // Reconnect'i 8 sn beklemeden hard rejection sayıp pairing-mode
       // dialog'unu otomatik açıyoruz.
-      final eMsg = e.toString().toLowerCase();
-      final isHardRejection = e is _BondRejectedError ||
-          e is PairingRequiredException ||
-          eMsg.contains('auth answer verification') ||
-          eMsg.contains('auth rejected') ||
-          eMsg.contains('reddedildi') ||
-          eMsg.contains('err_');
+      // Tipli sınıflandırma: eski substring eşleştirme ('err_',
+      // 'reddedildi') locale'e bağımlıydı ve TransportClosedException gibi
+      // transient hataları yanlışlıkla hard sayıp bond silebiliyordu.
+      final isHardRejection = isHardBondRejection(e);
 
       if (!isHardRejection) {
         _trace('reconnect transient ($e) — keeping bond, prompting retry');
@@ -263,7 +273,15 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
 
       try {
         await ref.read(bondStoreProvider).clear(widget.device.id);
-      } catch (_) {/* sil silinmediyse zaten gerekenden az şey kayıp */}
+      } catch (e2, st2) {
+        // Bayat bond diskte kalırsa bootstrap ERR_PAIRING_NOT_OPEN /
+        // PlatformException döngüsüne girer — sessizce devam etmek YASAK
+        // (audit C3'ün tehlikeli çifti).
+        AppLogger.instance.error('pair.ble', e2, st2);
+        if (!mounted) return;
+        _fail(AppLocalizations.of(context).pairingBondClearFailed(e2.toString()));
+        return;
+      }
       // Provider scope'unu yenile ki taze BleCliTransport oluşturulabilsin.
       ref.invalidate(deviceSessionProvider(widget.device.id));
       if (!mounted) return;
@@ -297,6 +315,20 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
 
     await svc.stopScan();
 
+    // PairedBleScanner sweep'leriyle yarışı kapat: pairing GATT trafiği
+    // boyunca adapter exclusive kullanılır. Concurrent scan + connect
+    // Android'de adapter state machine'ini bozuyor (auth.challenge/notify
+    // pipe kaybı) — BleCliTransport bu kilidi zaten alıyordu, bootstrap
+    // akışı açıkta kalmıştı.
+    beginBleExclusive();
+    try {
+      await _runFlowLocked(dev);
+    } finally {
+      endBleExclusive();
+    }
+  }
+
+  Future<void> _runFlowLocked(BluetoothDevice dev) async {
     // Defensive disconnect: önceki başarısız reconnect, recovery transition
     // veya başka bir oturumdan kalmış half-open link, dev.connect()'i no-op'a
     // dönüştürür. Bu durumda discoverServices/setNotifyValue cached state
@@ -304,43 +336,46 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     // pairing.ecdh.exchange writes sessizce başarısız olur. Önce temiz
     // kopuş, sonra taze GAP connect.
     try {
-      await dev.disconnect().timeout(const Duration(seconds: 3));
+      await dev.disconnect().timeout(PairingTimeouts.bleDisconnect);
       // Bağlantının GERÇEKTEN kapandığını bekle: bir önceki reconnect
       // transport'unun link'i hâlâ kapanıyorsa connect() cached state
       // üzerinde no-op'a döner, GATT keşfi eski state'i görür ve ECDH
       // yazısı sessizce hiçbir yere gitmez (gözlemlenen "X25519'da takılma").
       await dev.connectionState
           .firstWhere((s) => s == BluetoothConnectionState.disconnected)
-          .timeout(const Duration(seconds: 3));
-    } catch (_) {/* zaten kopuk / timeout — yine de taze connect deneriz */}
-    await Future.delayed(const Duration(milliseconds: 300));
+          .timeout(PairingTimeouts.bleDisconnect);
+    } catch (e) {
+      _trace('pre-connect cleanup: $e (taze connect ile devam)');
+    }
+    await Future.delayed(PairingTimeouts.bleDisconnectSettle);
 
     // ── 1. Connect ────────────────────────────────────────────────────
     try {
       _set(_PairStage.connecting);
       _trace('bootstrap: connecting…');
       await dev
-          .connect(timeout: const Duration(seconds: 10), license: License.free)
-          .timeout(const Duration(seconds: 12));
+          .connect(timeout: PairingTimeouts.bleConnect, license: License.free)
+          .timeout(PairingTimeouts.bleConnectOuter);
       try {
-        await dev.requestMtu(247).timeout(const Duration(seconds: 5));
-      } catch (_) {/* fall back to negotiated MTU */}
+        await dev.requestMtu(247).timeout(PairingTimeouts.bleMtu);
+      } catch (e) {
+        _trace('MTU exchange failed ($e), negotiated default ile devam');
+      }
     } catch (e) {
       if (!mounted) return;
       _fail(AppLocalizations.of(context).pairingBleConnectFailed(e.toString()));
       return;
     }
 
-    // ── 2/3. Discover GATT + send peer_pub ────────────────────────────
+    // ── 2. Discover GATT + pairing linki ──────────────────────────────
     BluetoothCharacteristic cmdRx;
     BluetoothCharacteristic eventTx;
     final lEarly = mounted ? AppLocalizations.of(context) : null;
     try {
       _set(_PairStage.exchanging);
       _trace('bootstrap: discovering services…');
-      final services = await dev
-          .discoverServices()
-          .timeout(const Duration(seconds: 8));
+      final services =
+          await dev.discoverServices().timeout(PairingTimeouts.bleDiscover);
       final svc = services.firstWhere(
         (s) => s.uuid.str.toLowerCase() == _svcUuid,
         orElse: () => throw StateError(
@@ -356,161 +391,73 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
         orElse: () => throw StateError(
             lEarly?.pairingGattEventTxMissing ?? 'event_tx characteristic missing'),
       );
-      await eventTx.setNotifyValue(true).timeout(const Duration(seconds: 5));
-      _trace('bootstrap: GATT ready, notify subscribed');
     } catch (e) {
       if (!mounted) return;
       _fail(AppLocalizations.of(context).pairingGattDiscoveryFailed(e.toString()));
       return;
     }
 
-    // Reply pump: lines arriving on event_tx are dispatched to whichever
-    // completer is "armed" right now. The bootstrap flow now talks to the
-    // device twice over the same characteristic (pairing.ecdh.exchange,
-    // then optionally pairing.passphrase.verify), so we re-arm between
-    // turns instead of locking in a single completer.
-    Completer<Map<String, dynamic>>? armed;
-    final lineBuf = StringBuffer();
-    _notifySub = eventTx.onValueReceived.listen((bytes) {
-      _trace('rx ${bytes.length}B');
-      lineBuf.write(utf8.decode(bytes, allowMalformed: true));
-      while (true) {
-        final s = lineBuf.toString();
-        final nl = s.indexOf('\n');
-        if (nl < 0) break;
-        final line = s.substring(0, nl);
-        lineBuf
-          ..clear()
-          ..write(s.substring(nl + 1));
-        if (line.isEmpty) continue;
-        _trace('rx line: ${line.length > 80 ? "${line.substring(0, 80)}…" : line}');
-        try {
-          final msg = jsonDecode(line) as Map<String, dynamic>;
-          // Cihaz pairing modunda subscribe'ı görür görmez "pairing.required"
-          // hint'i yayınlıyor — bu sinyal reconnect path'i için anlamlı.
-          // Bootstrap'ta zaten pairing yapıyoruz, bu yüzden hint'i sessizce
-          // gözardı et; sıradaki gerçek cevap (our_pub) `armed`'ı tamamlar.
-          if (msg['evt'] == 'pairing.required') {
-            _trace('rx: pairing.required hint (ignored in bootstrap)');
-            continue;
-          }
-          final c = armed;
-          if (c != null && !c.isCompleted) c.complete(msg);
-        } catch (e) {
-          _trace('rx parse fail: $e');
-        }
-      }
-    });
-
-    Future<void> writeLine(Map<String, dynamic> obj) async {
-      final cmd = jsonEncode(obj);
-      final cmdBytes = utf8.encode('$cmd\n');
-      const chunk = 180;
-      for (var i = 0; i < cmdBytes.length; i += chunk) {
-        final end = (i + chunk > cmdBytes.length) ? cmdBytes.length : i + chunk;
-        await cmdRx
-            .write(cmdBytes.sublist(i, end), withoutResponse: false)
-            .timeout(const Duration(seconds: 5));
-      }
-    }
-
-    // Generate our keypair + resolve our stable peer_id + display label.
-    // A secure-storage failure here (e.g. macOS keychain unavailable) MUST
-    // surface as a clean pairing error — never an uncaught zone crash that
-    // leaves the UI spinning on "key exchange" forever. This was the root
-    // cause of the X25519 hang: `appPeerId()` wrote to the data-protection
-    // keychain, which threw errSecMissingEntitlement (-34018) on ad-hoc
-    // signed desktop builds, killing _runFlow before a single byte reached
-    // the device. The keychain itself is now fixed (skSecureStorage uses the
-    // legacy keychain on macOS); this guard is defence-in-depth so any future
-    // storage hiccup degrades to a retryable error, not a silent freeze.
-    final EphemeralPairing ephemeral;
-    final String ourPubHex;
-    final String peerIdHex;
-    final String label;
-    final BondStore store;
-    final Uint8List ourPeerId;
+    // Notify aboneliği + satır pompası artık BlePairingLink'te (listener
+    // CCCD'den önce bağlanır — macOS notify yarışına karşı).
+    final link = BlePairingLink(cmdRx: cmdRx, eventTx: eventTx);
     try {
-      ephemeral = await EcdhPairing().begin();
-      ourPubHex = hex.encode(ephemeral.ourPublic);
-      store = ref.read(bondStoreProvider);
-      // The bond_store `label` slot identifies THIS SKAPP instance for the
-      // device's logs and ERR_BOND_STORE_FULL peer list, not the device
-      // we're talking to. Pull our own name from NetworkIdentity so paired
-      // devices show "ali-telefon-skapp" rather than the device's own id.
+      await link.start();
+    } catch (e) {
+      if (!mounted) return;
+      _fail(AppLocalizations.of(context).pairingGattDiscoveryFailed(e.toString()));
+      return;
+    }
+    _pairingLink = link;
+    _trace('bootstrap: GATT ready, notify subscribed');
+
+    // Kimlik: install peer_id + görünen label. Secure-storage hatası temiz
+    // eşleştirme hatasına inmeli — asla "key exchange"de dönen sonsuz
+    // spinner değil. (X25519 takılmasının kök nedeni: appPeerId() macOS
+    // ad-hoc imzalı build'de errSecMissingEntitlement -34018 fırlatıyordu.
+    // Keychain düzeltildi; bu guard defence-in-depth.)
+    final store = ref.read(bondStoreProvider);
+    final Uint8List ourPeerId;
+    final String label;
+    try {
+      // bond_store `label` slotu BU SKAPP kurulumunu tanıtır (cihazın
+      // loglarında ve ERR_BOND_STORE_FULL peer listesinde görünür), bu
+      // yüzden NetworkIdentity'den kendi adımızı okuyoruz.
       ourPeerId = await store.appPeerId();
-      peerIdHex = hex.encode(ourPeerId);
       label = shortPairingLabel(ref.read(networkIdentityProvider).name);
     } catch (e) {
-      _trace('bootstrap: keygen/peer-id failed (secure storage?): $e');
+      _trace('bootstrap: peer-id/label failed (secure storage?): $e');
       if (!mounted) return;
       _fail(AppLocalizations.of(context).pairingKeySendFailed(e.toString()));
       return;
     }
 
-    armed = Completer<Map<String, dynamic>>();
-    try {
-      _trace('bootstrap: writing pairing.ecdh.exchange (peer_id=${peerIdHex.substring(0, 8)}…)');
-      await writeLine({
-        'cmd': 'pairing.ecdh.exchange',
-        'args': {
-          'peer_pub': ourPubHex,
-          'peer_id': peerIdHex,
-          'label':   label,
-        },
-      });
-      _trace('bootstrap: write complete, awaiting reply…');
-    } catch (e) {
-      // BLE quirk: firmware closes the bootstrap link the moment it
-      // sends back `our_pub` (per ecdh_pairing.dart contract). The
-      // notify reaches SKAPP before the BLE stack delivers the
-      // write-with-response ACK, so flutter_blue_plus throws
-      // PlatformException(Unknown error) on a write that did, in fact,
-      // get through. If the reply already arrived, treat the write
-      // exception as benign and proceed; otherwise it's a genuine
-      // delivery failure.
-      if (armed.isCompleted) {
-        _trace('write threw after reply arrived, ignoring: $e');
-      } else {
-        if (!mounted) return;
-        _fail(AppLocalizations.of(context).pairingKeySendFailed(e.toString()));
-        return;
-      }
-    }
-
-    // ── 4/5/6. Wait for our_pub, derive token, persist bond ───────────
+    // ── 3. Protokol: ortak PairingSession (BLE + TCP tek durum makinesi) ─
     _set(_PairStage.verifying);
-    Map<String, dynamic> reply;
+    final PairingSessionResult result;
     try {
-      reply = await armed.future.timeout(const Duration(seconds: 8));
-    } catch (_) {
-      if (!mounted) return;
-      _fail(AppLocalizations.of(context).pairingDeviceNoReply(8));
-      return;
-    }
-
-    // Slot-full short-circuit: device returned the peer list, let the
-    // user know what's in the way; they remove a peer from the device's
-    // settings (via another paired SKAPP / USB) and retry.
-    if (reply['ok'] != true) {
-      final errCode = reply['err']?.toString() ?? 'ERR_UNKNOWN';
-      if (errCode == 'ERR_BOND_STORE_FULL') {
-        final params = reply['params'] as Map<String, dynamic>?;
-        final peers  = (params?['peers'] as List?) ?? const [];
-        if (mounted) _fail(bondStoreFullMessage(context, peers));
-        return;
-      }
+      result = await PairingSession(
+        link: link,
+        ourPeerId: ourPeerId,
+        label: label,
+        onTrace: _trace,
+      ).run(promptPassphrase: (attemptsLeft) async {
+        if (!mounted) return null;
+        return promptPairingPassphrase(context, attemptsLeft: attemptsLeft);
+      });
+    } on PairingException catch (e) {
       // Cihaz pairing modunda DEĞİL (zaten bir bond'u var, pencere kapalı) →
       // yeni eşleşme değil, mevcut bond'la RECONNECT gerekir. Bu bağlantıyı
       // temizce kapatıp reconnect yoluna devret. (Bootstrap-first tasarımın
       // repair ayağı.)
-      if (errCode == 'ERR_PAIRING_NOT_OPEN') {
+      if (e.code == PairingErrorCode.pairingNotOpen) {
         _trace('bootstrap: device already bonded (window closed) → reconnect');
-        await _notifySub?.cancel();
-        _notifySub = null;
+        await link.close();
+        _pairingLink = null;
         try {
           await _btDevice?.disconnect();
-        } catch (_) {/* zaten kopuk */}
+        } catch (e2) {
+          _trace('handoff disconnect: $e2 (zaten kopuk)');
+        }
         _btDevice = null;
         ref.invalidate(deviceSessionProvider(widget.device.id));
         if (!mounted) return;
@@ -518,124 +465,57 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
         await _runReconnect();
         return;
       }
+      AppLogger.instance.warn('pair.ble', e);
       if (!mounted) return;
-      _fail(AppLocalizations.of(context).pairingDeviceRejected(errCode));
+      _fail(pairingFailureMessage(context, e, wifiFlow: false));
       return;
     }
 
-    final data = reply['data'] as Map<String, dynamic>?;
-    final ourPub = data?['our_pub'] as String?;
-    if (ourPub == null || ourPub.length != 64) {
-      if (!mounted) return;
-      _fail(AppLocalizations.of(context).pairingInvalidReplyMissingPub);
-      return;
-    }
-
-    Uint8List devicePub;
-    try {
-      devicePub = Uint8List.fromList(hex.decode(ourPub));
-    } catch (e) {
-      if (!mounted) return;
-      _fail(AppLocalizations.of(context).pairingHexDecodeFailed(e.toString()));
-      return;
-    }
-
-    final bond = await ephemeral.complete(devicePub);
-    int? assignedSlot = (data?['slot'] as num?)?.toInt();
-
-    // Passphrase gate: device derived our session key but has not yet
-    // committed it, we must prove the user passphrase first. Loop until
-    // success or the user cancels (pairing window closes server-side
-    // after 60s anyway, and 10 wrong attempts factory-resets the device).
-    if (data?['need_passphrase'] == true) {
-      int attemptsLeft =
-          (data?['attempts_left'] as num?)?.toInt() ?? 10;
-      bool unlocked = false;
-      while (!unlocked) {
-        final plain = !mounted
-            ? null
-            : await promptPairingPassphrase(context, attemptsLeft: attemptsLeft);
-        final l = !mounted ? null : AppLocalizations.of(context);
-        if (plain == null) {
-          _fail(l?.pairingPassphraseCancelled ?? 'pairing cancelled');
-          return;
-        }
-        armed = Completer<Map<String, dynamic>>();
-        try {
-          await writeLine({
-            'cmd':  'pairing.passphrase.verify',
-            'args': {'plain': plain},
-          });
-        } catch (e) {
-          // Same write-after-reply quirk as the ECDH write above.
-          if (armed.isCompleted) {
-            _trace('passphrase write threw after reply arrived: $e');
-          } else {
-            _fail(l?.pairingPassphraseSendError(e.toString()) ?? '$e');
-            return;
-          }
-        }
-
-        Map<String, dynamic> vr;
-        try {
-          vr = await armed.future.timeout(const Duration(seconds: 8));
-        } catch (_) {
-          _fail(l?.pairingPassphraseTimeout ?? 'timeout');
-          return;
-        }
-
-        if (vr['ok'] == true) {
-          unlocked = true;
-          assignedSlot = (vr['data']?['slot'] as num?)?.toInt() ?? assignedSlot;
-        } else {
-          final code = vr['err']?.toString() ?? '';
-          if (code == 'ERR_PASSPHRASE_INCORRECT') {
-            attemptsLeft = (vr['params']?['attempts_left'] as num?)?.toInt()
-                ?? (attemptsLeft > 0 ? attemptsLeft - 1 : 0);
-            if (attemptsLeft <= 0) {
-              _fail(l?.passphraseLockoutTriggered ?? 'lockout');
-              return;
-            }
-            // loop, re-prompt with updated attempts_left
-          } else if (code == 'ERR_NO_PENDING_BOND') {
-            _fail(l?.pairingWindowClosedRetry ?? 'window closed');
-            return;
-          } else {
-            _fail(l?.pairingPassphraseFailed(code) ?? 'failed: $code');
-            return;
-          }
-        }
-      }
-    }
-
+    // ── 4. Persist ────────────────────────────────────────────────────
     // Save under both the BLE MAC (widget.device.id, used for session
     // setup + paired-list ordering) AND the SmartKraft id (widget.device.
     // name, what BF firmware sends as X-SK-Device-Id in webhooks). Without
     // the alias every webhook lands at SKAPP, fails BondStore lookup, and
     // is rejected as "Device not paired with this SKAPP" — even though
     // the device is in fact paired.
-    await store.save(
-      widget.device.id,
-      bond.token,
-      peerId: ourPeerId,
-      slot: assignedSlot,
-      aliasIds: [widget.device.name],
-    );
-
-    // Persist user-visible metadata so home/devices listings can render
-    // this device even before any session is open.
-    await ref.read(pairedDevicesProvider.notifier).upsert(PairedDevice(
-          id: widget.device.id,
-          name: widget.device.name,
-          prefix: widget.device.typePrefix ?? '??',
-          pairedAt: DateTime.now(),
-        ));
+    try {
+      await store.save(
+        widget.device.id,
+        result.token,
+        peerId: ourPeerId,
+        slot: result.slot,
+        aliasIds: [widget.device.name],
+      );
+      // Persist user-visible metadata so home/devices listings can render
+      // this device even before any session is open.
+      await ref.read(pairedDevicesProvider.notifier).upsert(PairedDevice(
+            id: widget.device.id,
+            name: widget.device.name,
+            prefix: widget.device.typePrefix ?? '??',
+            pairedAt: DateTime.now(),
+          ));
+    } catch (e, st) {
+      // Bond diske yazılamadıysa eşleşme TAMAMLANMAMIŞTIR — sessiz devam
+      // "eşleşti ama hiç bağlanamıyor" hayalet durumu üretir (audit C1).
+      AppLogger.instance.error('pair.ble', e, st);
+      if (!mounted) return;
+      _fail(pairingFailureMessage(
+          context,
+          PairingException(PairingStage.persist, PairingErrorCode.storage,
+              cause: e, stackTrace: st),
+          wifiFlow: false));
+      return;
+    }
 
     // The device closes the link itself once it's written the reply, but
     // we explicitly disconnect to make sure both sides agree about state.
+    await link.close();
+    _pairingLink = null;
     try {
       await _btDevice?.disconnect();
-    } catch (_) {/* already gone is fine */}
+    } catch (e) {
+      _trace('post-pair disconnect: $e (already gone is fine)');
+    }
     // Hand off BLE ownership: the next screen's deviceSessionProvider
     // will open a *new* connection on the same BluetoothDevice handle.
     // If we keep `_btDevice` non-null, this State's dispose() would
@@ -645,7 +525,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     // post-pair status probe.
     _btDevice = null;
 
-    // ── 7. Done ──────────────────────────────────────────────────────
+    // ── 5. Done ──────────────────────────────────────────────────────
     _set(_PairStage.done);
     // Give NimBLE on the device side a beat to finish closing the
     // bootstrap link before the provider tries to re-open one. The
@@ -653,7 +533,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     // "advertising as ... pairable=0". 800 ms covered the device side but
     // not Android's own link teardown; the immediate re-connect then
     // stalled and the wizard timed out. 1.8 s gives both sides room.
-    await Future.delayed(const Duration(milliseconds: 1800));
+    await Future.delayed(PairingTimeouts.blePostPairSettle);
     if (!mounted) return;
     await _routeAfterPairing();
   }
@@ -678,7 +558,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     try {
       final session = await ref
           .read(deviceSessionProvider(widget.device.id).future)
-          .timeout(const Duration(seconds: 30));
+          .timeout(TransportSelector.chainWorstCase);
 
       final infoReply = await session.client
           .send('device.info', timeout: const Duration(seconds: 5));
@@ -713,6 +593,9 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
           '${userConfiguredKnown ? skipWizard : "n/a"} '
           '→ skipWizard=$skipWizard ssid=${connectedSsid ?? "(none)"}');
     } catch (e) {
+      // Sessiz yönlendirme değişikliği (audit C5): probe hatası kullanıcıyı
+      // sihirbaza sokar — güvenli varsayılan, ama artık iz bırakıyor.
+      AppLogger.instance.warn('pair.ble', 'post-pair probe failed: $e — wizard fallback');
       _trace('post-pair: probe failed ($e), showing wizard');
     }
     if (!mounted) return;
@@ -739,11 +622,13 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
   }
 
   Future<void> _retry() async {
-    await _notifySub?.cancel();
-    _notifySub = null;
+    await _pairingLink?.close();
+    _pairingLink = null;
     try {
       await _btDevice?.disconnect();
-    } catch (_) {}
+    } catch (e) {
+      _trace('retry cleanup disconnect: $e');
+    }
     // KRİTİK: deviceSessionProvider AsyncError state'inde takılı kalmış
     // olabilir; .future her okumada cached hatayı 1ms'de döndürür. Bu
     // yüzden retry sahte "transient" oluyordu — gerçek BLE denemesi
@@ -769,14 +654,23 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     if (!mounted) return;
     if (proceed != true) return;
 
-    await _notifySub?.cancel();
-    _notifySub = null;
+    await _pairingLink?.close();
+    _pairingLink = null;
     try {
       await _btDevice?.disconnect();
-    } catch (_) {}
+    } catch (e) {
+      _trace('recovery cleanup disconnect: $e');
+    }
     try {
       await ref.read(bondStoreProvider).clear(widget.device.id);
-    } catch (_) {/* silent */}
+    } catch (e, st) {
+      // Bond temizlenemeden bootstrap'a girmek bilinen döngüye sokar
+      // (ERR_PAIRING_NOT_OPEN → PlatformException) — hatayı yüzeye çıkar.
+      AppLogger.instance.error('pair.ble', e, st);
+      if (!mounted) return;
+      _fail(AppLocalizations.of(context).pairingBondClearFailed(e.toString()));
+      return;
+    }
     ref.invalidate(deviceSessionProvider(widget.device.id));
     if (!mounted) return;
     setState(() {
