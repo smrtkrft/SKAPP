@@ -6,6 +6,9 @@
 // Tests inject [tcpClientFactory], [bleClientFactory] and [mdnsResolver] to
 // avoid real sockets / BLE adapters while exercising the full selection logic.
 
+import 'dart:async' show TimeoutException;
+import 'dart:io' show SocketException;
+
 import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,16 +53,38 @@ class TransportSelector {
 
   // All timeouts are named constants so tests can verify which path was taken
   // (the transport kind on the returned session) without needing to inspect
-  // wall-clock behaviour.
-  static const tcpCacheTimeout = Duration(seconds: 3);
+  // wall-clock behaviour. Invariant: dış sarmalayıcı ≥ iç aşamaların toplamı
+  // (timeout_budget_test.dart) — eski değerler (cache 3 s, fresh 8 s,
+  // BLE 15 s) iç bütçelerin ALTINDAYDI ve yavaş-ama-sağlıklı bağlantıları
+  // yapay olarak kesiyordu.
+  /// Cache yolunda Socket.connect bütçesi: ölü IP hızlı düşsün.
+  static const tcpCacheConnectTimeout = Duration(seconds: 3);
+  /// Cache yolu toplamı: connect 3 s + auth 10 s + 1 s pay. Eski tek 3 s
+  /// tavan, canlı-ama-yavaş endpoint'te auth'u kesip İYİ cache'i siliyordu.
+  static const tcpCacheTimeout = Duration(seconds: 14);
   // In-process multicast_dns resolve. Kept short: where it works (mobile,
   // macOS) it answers in well under a second, and where it's blocked (the
   // Windows firewall routinely drops the app's own UDP-5353 socket) we want
   // to fail fast and let the `.local` OS-resolver step below carry the
   // connection instead of stalling here.
   static const mdnsResolveTimeout = Duration(seconds: 2);
-  static const tcpFreshTimeout = Duration(seconds: 8);
-  static const bleTimeout = Duration(seconds: 15);
+  /// connect 5 s + auth 10 s + 1 s pay.
+  static const tcpFreshTimeout = Duration(seconds: 16);
+  /// BLE zincirinin iç bütçesi + 4 s pay. 15 s'lik eski tavan ~41 s'lik
+  /// zinciri ortadan kesiyor, aşama bilgisini yok ediyor ve cihazın
+  /// pairing.required ipucuyla yarışıyordu (audit C11).
+  static Duration get bleTimeout =>
+      BleCliTransport.connectBudget + const Duration(seconds: 4);
+
+  /// Ekranların oturum-açma sarmalayıcıları için zincirin en kötü durumu.
+  /// Tek kaynak: wifi_password'ün eski 12 s'i gibi ekran-başına kopyalanan
+  /// (ve iç bütçenin altında kalan) literal'lerin yerini alır.
+  static Duration get chainWorstCase =>
+      tcpCacheTimeout +
+      mdnsResolveTimeout +
+      tcpFreshTimeout * 2 +
+      bleTimeout +
+      const Duration(seconds: 5);
 
   /// Tries TCP cache → mDNS fresh-resolve + TCP → BLE in order.
   ///
@@ -86,9 +111,9 @@ class TransportSelector {
 
     final attempts = <String>[];
 
-    // 1) TCP cache fast-path — tighter 3 s timeout so a stale cached IP
-    //    fails fast; cache is also cleared on failure so the next cold-start
-    //    skips the dead endpoint.
+    // 1) TCP cache fast-path — connect 3 s ile ölü IP hızlı düşer; bağlantı
+    //    kurulamazsa cache temizlenir ki sonraki cold-start ölü endpoint'e
+    //    takılmasın. Auth aşaması hatası cache'i SİLMEZ (endpoint canlı).
     if (paired != null && paired.lastIp != null) {
       final port = paired.lastPort ?? 8080;
       final s = await _attemptTcp(
@@ -98,6 +123,7 @@ class TransportSelector {
         token,
         attempts,
         timeout: tcpCacheTimeout,
+        connectTimeout: tcpCacheConnectTimeout,
         clearCacheOnFail: true,
       );
       if (s != null) return s;
@@ -156,10 +182,16 @@ class TransportSelector {
     return MdnsDiscovery.resolveInstance(instance, timeout: timeout);
   }
 
-  CliClient _makeTcpClient(String host, int port, List<int> token) {
+  CliClient _makeTcpClient(String host, int port, List<int> token,
+      {Duration? connectTimeout}) {
     if (tcpClientFactory != null) return tcpClientFactory!(host, port, token);
     return CliClient(
-      TcpCliTransport(host: host, port: port, token: token),
+      TcpCliTransport(
+        host: host,
+        port: port,
+        token: token,
+        connectTimeout: connectTimeout ?? const Duration(seconds: 5),
+      ),
       signer: CliSigner(token),
     );
   }
@@ -181,9 +213,11 @@ class TransportSelector {
     List<int> token,
     List<String> attempts, {
     Duration timeout = tcpFreshTimeout,
+    Duration? connectTimeout,
     bool clearCacheOnFail = false,
   }) async {
-    final client = _makeTcpClient(host, port, token);
+    final client = _makeTcpClient(host, port, token,
+        connectTimeout: connectTimeout);
 
     try {
       await client.start().timeout(timeout);
@@ -192,13 +226,23 @@ class TransportSelector {
       attempts.add('TCP $host:$port: $e');
       try {
         await client.stop();
-      } catch (_) {}
-      if (clearCacheOnFail) {
+      } catch (e2) {
+        debugPrint('[session] TCP cleanup stop failed (best-effort): $e2');
+      }
+      // Cache'i YALNIZ bağlantı kurulamadıysa temizle: SocketException =
+      // connect reddi/ulaşılamaz, TimeoutException = dış tavan. Auth
+      // aşaması hatası (AuthRejectedException) endpoint'in CANLI olduğunu
+      // kanıtlar — iyi cache'i silmek her cold-start'ı yavaşlatır.
+      if (clearCacheOnFail && (e is SocketException || e is TimeoutException)) {
         try {
           await ref
               .read(pairedDevicesProvider.notifier)
               .clearLastEndpoint(deviceId);
-        } catch (_) {}
+        } catch (e2) {
+          // Ölü IP diskte kalırsa her cold-start cache bütçesini boşa
+          // yakar — en azından görünür olsun.
+          debugPrint('[session] clearLastEndpoint($deviceId) failed: $e2');
+        }
       }
       return null;
     }
@@ -209,7 +253,9 @@ class TransportSelector {
             lastIp: host,
             lastPort: port,
           );
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[session] touch($deviceId) failed (best-effort): $e');
+    }
 
     final session = DeviceSession(
       deviceId: deviceId,
@@ -228,13 +274,17 @@ class TransportSelector {
     } catch (e) {
       try {
         await client.stop();
-      } catch (_) {}
+      } catch (e2) {
+        debugPrint('[session] BLE cleanup stop failed (best-effort): $e2');
+      }
       rethrow;
     }
 
     try {
       await ref.read(pairedDevicesProvider.notifier).touch(deviceId);
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[session] touch($deviceId) failed (best-effort): $e');
+    }
 
     final session = DeviceSession(
       deviceId: deviceId,
@@ -258,6 +308,8 @@ class TransportSelector {
   void _wireSessionLifetime(CliClient client, DeviceSession session) {
     ref.onDispose(session.dispose);
     client.whenClosed.then((_) {
+      final r = client.closedReason;
+      if (r != null) debugPrint('[session] transport closed: $r');
       // Wrap in microtask: whenClosed can fire during the current provider
       // build dispatch (e.g. transport closes immediately after connect);
       // deferring to a microtask avoids Riverpod re-entrancy and the
@@ -265,7 +317,11 @@ class TransportSelector {
       Future.microtask(() {
         try {
           ref.invalidateSelf();
-        } catch (_) {}
+        } catch (e) {
+          // Oturum yeniden AÇILMAYACAK — sessiz kalırsa "neden hep offline"
+          // sorusunun cevabı kaybolur.
+          debugPrint('[session] invalidateSelf after close failed: $e');
+        }
       });
     });
   }

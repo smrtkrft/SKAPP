@@ -8,6 +8,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show debugPrint;
+
 import 'cli_transport.dart';
 import 'cli_signer.dart';
 
@@ -66,6 +68,11 @@ class CliClient {
   final _closedCompleter = Completer<void>();
   bool _closed = false;
 
+  /// Kapanışa yol açan alt hata (socket reset, BLE drop). Temiz stop()'ta
+  /// null. whenClosed tamamlandıktan sonra okunabilir — TransportSelector
+  /// loglar, UI "bağlantı koptu"yu sebep bilgisiyle gösterebilir.
+  Object? closedReason;
+
   StreamSubscription<String>? _sub;
 
   Future<void> start() async {
@@ -73,7 +80,7 @@ class CliClient {
     _sub = transport.incoming.listen(
       _onLine,
       onDone: _onTransportClosed,
-      onError: (Object _) => _onTransportClosed(),
+      onError: (Object e) => _onTransportClosed(e),
     );
   }
 
@@ -83,12 +90,13 @@ class CliClient {
   /// instead of waiting out their per-request timeout, and [whenClosed]
   /// completes so listeners (Riverpod providers) can decide whether to
   /// auto-reconnect or surface "connection lost" to the user.
-  void _onTransportClosed() {
+  void _onTransportClosed([Object? reason]) {
     if (_closed) return;
     _closed = true;
+    closedReason ??= reason;
     for (final c in _pending.values) {
       if (!c.isCompleted) {
-        c.completeError(StateError('CLI transport closed'));
+        c.completeError(TransportClosedException(closedReason));
       }
     }
     _pending.clear();
@@ -181,7 +189,9 @@ class CliClient {
     try {
       msg = jsonDecode(line) as Map<String, dynamic>;
     } catch (_) {
-      return; // ignore malformed lines
+      // Sessiz düşürme garantili TimeoutException üretiyordu; iz bırak.
+      debugPrint('[cli] malformed line dropped (${line.length}B)');
+      return;
     }
     if (msg.containsKey('evt')) {
       _events.add(msg);
@@ -197,6 +207,8 @@ class CliClient {
         err: msg['err'] as String?,
         params: (msg['params'] as Map?)?.cast<String, dynamic>(),
       ));
+    } else {
+      debugPrint('[cli] response with unknown id $idRaw dropped');
     }
   }
 }

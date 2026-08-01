@@ -19,6 +19,7 @@ import 'dart:typed_data';
 
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 import 'cli_transport.dart';
 
@@ -27,11 +28,16 @@ class TcpCliTransport implements CliTransport {
     required this.host,
     this.port = 8080,
     required List<int> token,
+    this.connectTimeout = const Duration(seconds: 5),
   }) : _token = Uint8List.fromList(token);
 
   final String host;
   final int port;
   final Uint8List _token;
+
+  /// Socket.connect bütçesi. TransportSelector cache yolunda 3 s verir
+  /// (ölü IP hızlı düşsün), taze yolda default 5 s.
+  final Duration connectTimeout;
 
   final _incoming = StreamController<String>.broadcast();
   final _authDone = Completer<void>();
@@ -48,10 +54,15 @@ class TcpCliTransport implements CliTransport {
 
   @override
   Future<void> connect() async {
-    _socket = await Socket.connect(host, port,
-        timeout: const Duration(seconds: 5));
+    _socket = await Socket.connect(host, port, timeout: connectTimeout);
     utf8.decoder.bind(_socket!).listen(_onChunk,
-        onError: (Object _) {}, onDone: close);
+        onError: (Object e, StackTrace st) {
+      // Soket okuma hatası SESSİZCE YUTULMAZ: handshake beklemedeyse oraya,
+      // her durumda incoming stream'e düşer (CliClient closedReason'a taşır).
+      if (!_authDone.isCompleted) _authDone.completeError(e, st);
+      if (!_incoming.isClosed) _incoming.addError(e, st);
+      close();
+    }, onDone: close);
     await _authDone.future.timeout(const Duration(seconds: 10));
   }
 
@@ -75,6 +86,9 @@ class TcpCliTransport implements CliTransport {
     try {
       msg = jsonDecode(line) as Map<String, dynamic>;
     } catch (_) {
+      // Bozuk satır handshake sırasında gelirse asıl sebep 10 s'lik jenerik
+      // timeout'a dönüşüyordu — en azından iz bırak (audit C13).
+      debugPrint('[TCP] malformed line dropped (${line.length}B)');
       return;
     }
 
@@ -113,7 +127,7 @@ class TcpCliTransport implements CliTransport {
           if (!_authDone.isCompleted) _authDone.complete();
         } else if (!_authDone.isCompleted) {
           _authDone.completeError(
-              StateError('TCP auth answer verification failed'));
+              const AuthRejectedException('TCP auth answer verification failed'));
         }
         return;
       }
@@ -121,8 +135,8 @@ class TcpCliTransport implements CliTransport {
       if (msg['ok'] == false) {
         _incoming.add(line);
         if (!_authDone.isCompleted) {
-          _authDone.completeError(
-              StateError(msg['err']?.toString() ?? 'TCP auth rejected'));
+          _authDone.completeError(AuthRejectedException(
+              msg['err']?.toString() ?? 'TCP auth rejected'));
         }
         return;
       }
@@ -163,7 +177,9 @@ class TcpCliTransport implements CliTransport {
     _authenticated = false;
     try {
       await _socket?.close();
-    } catch (_) {/* already gone */}
+    } catch (e) {
+      debugPrint('[TCP] close: $e'); // best-effort, zaten kopuk olabilir
+    }
     _socket = null;
     if (!_incoming.isClosed) await _incoming.close();
   }

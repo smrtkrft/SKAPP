@@ -71,6 +71,32 @@ class BleCliTransport implements CliTransport {
   BleCliTransport({required this.device, required List<int> token})
       : _token = Uint8List.fromList(token);
 
+  // Aşama bütçeleri — TransportSelector.bleTimeout bunların toplamından
+  // türetilir; teker teker değişirse invariant testi kırılır (bilinçli,
+  // bkz. timeout_budget_test.dart).
+  static const kDisconnectTimeout = Duration(seconds: 3);
+  static const kConnectTimeout = Duration(seconds: 10);
+  static const kConnectOuterTimeout = Duration(seconds: 12);
+  static const kDiscoverTimeout = Duration(seconds: 8);
+  static const kSubscribeTimeout = Duration(seconds: 5);
+  static const kChallengeSettle = Duration(milliseconds: 200);
+  static const kMtuTimeout = Duration(seconds: 5);
+  static const kAuthTimeout = Duration(seconds: 8);
+
+  /// connect()'in iç aşamalarının toplamı. Dış sarmalayıcılar bundan KISA
+  /// olamaz — 15 s'lik eski TransportSelector.bleTimeout tavanı ~41 s'lik
+  /// bu zinciri her yavaş bağlantıda ortadan kesiyor ve gerçek aşama
+  /// bilgisini (discover'da mı kaldı?) çıplak TimeoutException'a
+  /// çeviriyordu; üstelik cihazın pairing.required ipucuyla yarışıyordu.
+  static Duration get connectBudget =>
+      kDisconnectTimeout +
+      kConnectOuterTimeout +
+      kDiscoverTimeout +
+      kSubscribeTimeout +
+      kChallengeSettle +
+      kMtuTimeout +
+      kAuthTimeout;
+
   final BluetoothDevice device;
   final Uint8List _token;
 
@@ -82,6 +108,7 @@ class BleCliTransport implements CliTransport {
   BluetoothCharacteristic? _cmdRx;
   BluetoothCharacteristic? _eventTx;
   StreamSubscription<List<int>>? _notifySub;
+  StreamSubscription<BluetoothConnectionState>? _connSub;
   final _lineBuf = StringBuffer();
 
   @override
@@ -119,22 +146,38 @@ class BleCliTransport implements CliTransport {
       // Once kisa bir defensive disconnect ile temizle; zaten bagli degilse
       // no-op, maliyeti yok.
       try {
-        await device.disconnect().timeout(const Duration(seconds: 3));
-      } catch (_) {/* zaten bagli degil */}
+        await device.disconnect().timeout(kDisconnectTimeout);
+      } catch (e) {
+        _bleTrace('pre-connect disconnect: $e (zaten bagli degil, devam)');
+      }
       _bleTrace('connect: GAP connect → ${device.remoteId.str}');
       await device
           .connect(
-            timeout: const Duration(seconds: 10),
+            timeout: kConnectTimeout,
             license: License.free,
             autoConnect: false,
           )
-          .timeout(const Duration(seconds: 12));
+          .timeout(kConnectOuterTimeout);
       _bleTrace('connect: GAP connected');
 
+      // Kopuş algılama: BLE linki düşerse (cihaz reboot, menzil) bekleyen
+      // istekler 10 s'lik komut timeout'unu beklemek yerine anında
+      // TransportClosedException alsın diye incoming'e hata düşürüp
+      // kapanıyoruz. connectionState listen ilk emisyonda mevcut durumu
+      // (connected) verir; yalnız disconnected'a tepki veririz.
+      _connSub = device.connectionState.listen((s) {
+        if (s == BluetoothConnectionState.disconnected) {
+          _bleTrace('link dropped (GAP disconnected)');
+          if (!_incoming.isClosed) {
+            _incoming.addError(const TransportClosedException('BLE link dropped'));
+          }
+          close();
+        }
+      });
+
       _bleTrace('discover: services');
-      final services = await device
-          .discoverServices()
-          .timeout(const Duration(seconds: 8));
+      final services =
+          await device.discoverServices().timeout(kDiscoverTimeout);
       _bleTrace('discover: ${services.length} services');
       final svc = services.firstWhere(
         (s) => s.uuid.str.toLowerCase() == _svcUuid,
@@ -154,28 +197,26 @@ class BleCliTransport implements CliTransport {
       // arasında BF tarafının yayınladığı auth.challenge kaybolabilir.
       _notifySub = _eventTx!.onValueReceived.listen(_onNotify);
       _bleTrace('subscribe: listener attached, enabling CCCD');
-      await _eventTx!
-          .setNotifyValue(true)
-          .timeout(const Duration(seconds: 5));
+      await _eventTx!.setNotifyValue(true).timeout(kSubscribeTimeout);
       _bleTrace('subscribe: CCCD enabled, awaiting auth.challenge');
 
       // BF on_subscribe → sk_secure_session_begin → notify yayını arası
       // tipik olarak <50 ms. 200ms tampon: auth.challenge'ın stream'e
       // düşmesi ve _onNotify dispatch'inin başlamasına süre tanır.
-      await Future.delayed(const Duration(milliseconds: 200));
+      await Future.delayed(kChallengeSettle);
 
       // MTU yükseltmesini auth handshake'inin sonuna taşıdık.
       try {
-        await device.requestMtu(247).timeout(const Duration(seconds: 5));
+        await device.requestMtu(247).timeout(kMtuTimeout);
         _bleTrace('MTU exchange OK (target 247)');
-      } catch (_) {
-        _bleTrace('MTU exchange failed, default ATT');
+      } catch (e) {
+        _bleTrace('MTU exchange failed ($e), default ATT');
       }
 
       // Device sends auth.challenge as soon as a bonded peer connects.
       // 8s is generous, typical handshake completes in <500 ms.
-      _bleTrace('await auth handshake (8s timeout)');
-      await _authDone.future.timeout(const Duration(seconds: 8));
+      _bleTrace('await auth handshake (${kAuthTimeout.inSeconds}s timeout)');
+      await _authDone.future.timeout(kAuthTimeout);
       _bleTrace('auth handshake OK');
     } finally {
       endBleExclusive();
@@ -209,6 +250,9 @@ class BleCliTransport implements CliTransport {
     try {
       msg = jsonDecode(line) as Map<String, dynamic>;
     } catch (_) {
+      // Handshake sırasında bozuk/kesik notify sıfır izle kayboluyordu ve
+      // asıl sebep (fragmentasyon/MTU) 8 s jenerik timeout'a dönüşüyordu.
+      _bleTrace('rx malformed line dropped (${line.length}B)');
       return;
     }
 
@@ -238,7 +282,16 @@ class BleCliTransport implements CliTransport {
       if (msg['evt'] == 'auth.challenge') {
         _bleTrace('auth.challenge received, sending response');
         final hexChallenge = msg['data'] as String?;
-        if (hexChallenge == null) return;
+        if (hexChallenge == null) {
+          // Sessiz return _authDone'u askıda bırakıp 8 s jenerik timeout
+          // üretiyordu; asıl sebep ("cihaz bozuk challenge gönderdi")
+          // artık anında yüzeye çıkıyor.
+          if (!_authDone.isCompleted) {
+            _authDone.completeError(
+                const AuthRejectedException('malformed auth.challenge'));
+          }
+          return;
+        }
         final challenge = Uint8List.fromList(hex.decode(hexChallenge));
 
         // Our response = HMAC(token, deviceChallenge)[:16]
@@ -263,7 +316,12 @@ class BleCliTransport implements CliTransport {
       if (msg['ok'] == true && msg['data'] is Map) {
         final data = msg['data'] as Map<String, dynamic>;
         final answerHex = data['answer'] as String?;
-        if (answerHex == null || _ourChallenge == null) return;
+        if (answerHex == null || _ourChallenge == null) {
+          _bleTrace('handshake: ok-frame without answer/our-challenge, '
+              'ignored (answer=${answerHex != null}, '
+              'ourChallenge=${_ourChallenge != null})');
+          return;
+        }
 
         final answer = Uint8List.fromList(hex.decode(answerHex));
         final expected = Hmac(sha256, _token)
@@ -279,7 +337,7 @@ class BleCliTransport implements CliTransport {
           _bleTrace('auth answer MISMATCH (token differs from BF bond)');
           if (!_authDone.isCompleted) {
             _authDone.completeError(
-              StateError('auth answer verification failed'),
+              const AuthRejectedException('auth answer verification failed'),
             );
           }
         }
@@ -293,11 +351,12 @@ class BleCliTransport implements CliTransport {
         _incoming.add(line);
         if (!_authDone.isCompleted) {
           _authDone.completeError(
-            StateError(msg['err']?.toString() ?? 'auth rejected'),
+            AuthRejectedException(msg['err']?.toString() ?? 'auth rejected'),
           );
         }
         return;
       }
+      _bleTrace('handshake: unexpected frame ignored');
       return;
     }
 
@@ -343,10 +402,14 @@ class BleCliTransport implements CliTransport {
   @override
   Future<void> close() async {
     _authenticated = false;
+    await _connSub?.cancel();
+    _connSub = null;
     await _notifySub?.cancel();
     try {
       await device.disconnect();
-    } catch (_) {/* already gone */}
+    } catch (e) {
+      _bleTrace('close: disconnect: $e'); // best-effort, zaten kopuk olabilir
+    }
     if (!_incoming.isClosed) await _incoming.close();
   }
 }

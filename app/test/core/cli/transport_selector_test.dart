@@ -9,6 +9,7 @@
 // provider'ı canlı tutar, hem data hem error durumunu propagate eder.
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +39,9 @@ class FakePairedDevicesNotifier extends PairedDevicesNotifier {
   FakePairedDevicesNotifier(this._devices);
   final List<PairedDevice> _devices;
 
+  /// Cache-temizleme semantiği testleri için çağrı kaydı.
+  final clearedEndpoints = <String>[];
+
   @override
   List<PairedDevice> build() => _devices;
 
@@ -45,7 +49,9 @@ class FakePairedDevicesNotifier extends PairedDevicesNotifier {
   Future<void> touch(String id, {String? lastIp, int? lastPort}) async {}
 
   @override
-  Future<void> clearLastEndpoint(String id) async {}
+  Future<void> clearLastEndpoint(String id) async {
+    clearedEndpoints.add(id);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -75,8 +81,9 @@ PairedDevice _device({String? lastIp, int? lastPort}) => PairedDevice(
 
 ProviderContainer _container(
   MockBondStore bondStore,
-  List<PairedDevice> devices,
-) =>
+  List<PairedDevice> devices, {
+  FakePairedDevicesNotifier? notifier,
+}) =>
     ProviderContainer(
       // Riverpod 3 defaults to exponential-backoff retry for all Exception
       // subclasses (up to 10 attempts). Disable it here so error tests resolve
@@ -84,8 +91,8 @@ ProviderContainer _container(
       retry: (_, _) => null,
       overrides: [
         bondStoreProvider.overrideWithValue(bondStore),
-        pairedDevicesProvider
-            .overrideWith(() => FakePairedDevicesNotifier(devices)),
+        pairedDevicesProvider.overrideWith(
+            () => notifier ?? FakePairedDevicesNotifier(devices)),
       ],
     );
 
@@ -165,6 +172,46 @@ void main() {
       addTearDown(c.dispose);
 
       await expectLater(_run(c, p), throwsA(isA<BondMissingException>()));
+    });
+  });
+
+  group('TCP cache temizleme semantiği', () {
+    test('SocketException (connect reddi) cache temizler', () async {
+      final devices = [_device(lastIp: '10.0.0.9', lastPort: 8080)];
+      final notifier = FakePairedDevicesNotifier(devices);
+      final p = _makeProvider(
+        tcpFactory: (_, _, _) => CliClient(
+            FakeCliTransport(connectError: const SocketException('refused'))),
+        mdns: (_, _) async => null,
+        bleFactory: (_, _) =>
+            CliClient(FakeCliTransport(kind: CliTransportKind.ble)),
+      );
+      final c = _container(bond, devices, notifier: notifier);
+      addTearDown(c.dispose);
+
+      final session = await _run(c, p);
+      expect(session.transportKind, CliTransportKind.ble);
+      expect(notifier.clearedEndpoints, [_kDeviceId]);
+    });
+
+    test('AuthRejectedException (endpoint canlı) cache KORUR', () async {
+      final devices = [_device(lastIp: '10.0.0.9', lastPort: 8080)];
+      final notifier = FakePairedDevicesNotifier(devices);
+      final p = _makeProvider(
+        tcpFactory: (_, _, _) => CliClient(FakeCliTransport(
+            connectError: const AuthRejectedException('token mismatch'))),
+        mdns: (_, _) async => null,
+        bleFactory: (_, _) =>
+            CliClient(FakeCliTransport(kind: CliTransportKind.ble)),
+      );
+      final c = _container(bond, devices, notifier: notifier);
+      addTearDown(c.dispose);
+
+      final session = await _run(c, p);
+      expect(session.transportKind, CliTransportKind.ble);
+      expect(notifier.clearedEndpoints, isEmpty,
+          reason: 'auth hatası endpoint\'in canlı olduğunu kanıtlar — '
+              'iyi cache silinmemeli');
     });
   });
 

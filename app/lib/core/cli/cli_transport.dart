@@ -35,3 +35,16 @@ class AuthRejectedException implements Exception {
   @override
   String toString() => 'AuthRejectedException($detail)';
 }
+
+/// Transport düştüğünde bekleyen CLI isteklerine verilen hata. [reason]
+/// düşüşe yol açan alt hata (socket reset, stream error); temiz lokal
+/// stop()'ta null. Eski çıplak StateError('CLI transport closed') sebebi
+/// yok ediyordu — "cihaz reboot" ile "auth iptal" ayırt edilemiyordu.
+class TransportClosedException implements Exception {
+  const TransportClosedException([this.reason]);
+  final Object? reason;
+  @override
+  String toString() => reason == null
+      ? 'TransportClosedException(clean close)'
+      : 'TransportClosedException($reason)';
+}
