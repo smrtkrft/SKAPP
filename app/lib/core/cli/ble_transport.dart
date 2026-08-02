@@ -28,6 +28,8 @@ import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import '../ble/paired_ble_scanner.dart' show beginBleExclusive, endBleExclusive;
+import '../pairing/pairing_link.dart'
+    show NdjsonLineBuffer, PairingLineOverflow;
 import 'cli_transport.dart';
 
 const _svcUuid = 'f100d001-7a5b-4c1e-8d2f-4a6b9c3e1d01';
@@ -109,7 +111,7 @@ class BleCliTransport implements CliTransport {
   BluetoothCharacteristic? _eventTx;
   StreamSubscription<List<int>>? _notifySub;
   StreamSubscription<BluetoothConnectionState>? _connSub;
-  final _lineBuf = StringBuffer();
+  final _lineBuf = NdjsonLineBuffer();
 
   @override
   Stream<String> get incoming => _incoming.stream;
@@ -225,15 +227,20 @@ class BleCliTransport implements CliTransport {
 
   void _onNotify(List<int> chunk) {
     _bleTrace('rx ${chunk.length}B');
-    _lineBuf.write(utf8.decode(chunk, allowMalformed: true));
-    while (true) {
-      final s = _lineBuf.toString();
-      final nl = s.indexOf('\n');
-      if (nl < 0) break;
-      final line = s.substring(0, nl);
-      _lineBuf
-        ..clear()
-        ..write(s.substring(nl + 1));
+    final List<String> lines;
+    try {
+      lines = _lineBuf.feed(utf8.decode(chunk, allowMalformed: true));
+    } on PairingLineOverflow catch (e) {
+      // İ-10: `\n` göndermeyen uç tamponu sınırsız büyütür. Bağlantıyı kes.
+      _bleTrace('$e — link kapatılıyor');
+      if (!_authDone.isCompleted) {
+        _authDone.completeError(TransportClosedException(e));
+      }
+      if (!_incoming.isClosed) _incoming.addError(e);
+      close();
+      return;
+    }
+    for (final line in lines) {
       // Only trace the raw line preview in debug; in release just note that
       // a line arrived so the pairing UI still shows progress without
       // surfacing response content.

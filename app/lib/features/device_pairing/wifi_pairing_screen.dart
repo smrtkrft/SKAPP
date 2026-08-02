@@ -95,7 +95,8 @@ class _WifiPairingScreenState extends ConsumerState<WifiPairingScreen> {
     try {
       try {
         link = await TcpPairingLink.connect(
-            widget.endpoint.host, widget.endpoint.port);
+            widget.endpoint.host, widget.endpoint.port,
+            onTrace: _trace);
       } catch (e) {
         _trace('connect failed: $e');
         _set(_Stage.failed, err: l.wifiPairingConnectFailed(e.toString()));

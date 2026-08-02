@@ -21,6 +21,8 @@ import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 
+import '../pairing/pairing_link.dart'
+    show NdjsonLineBuffer, PairingLineOverflow;
 import 'cli_transport.dart';
 
 class TcpCliTransport implements CliTransport {
@@ -44,7 +46,7 @@ class TcpCliTransport implements CliTransport {
   Socket? _socket;
   bool _authenticated = false;
   Uint8List? _ourChallenge;
-  final _buffer = StringBuffer();
+  final _buffer = NdjsonLineBuffer();
 
   @override
   Stream<String> get incoming => _incoming.stream;
@@ -67,16 +69,20 @@ class TcpCliTransport implements CliTransport {
   }
 
   void _onChunk(String chunk) {
-    _buffer.write(chunk);
-    while (true) {
-      final s = _buffer.toString();
-      final nl = s.indexOf('\n');
-      if (nl < 0) break;
-      final line = s.substring(0, nl);
-      _buffer
-        ..clear()
-        ..write(s.substring(nl + 1));
-      if (line.isEmpty) continue;
+    final List<String> lines;
+    try {
+      lines = _buffer.feed(chunk);
+    } on PairingLineOverflow catch (e) {
+      // İ-10: `\n` göndermeyen uç tamponu sınırsız büyütür. Bağlantıyı kes.
+      debugPrint('[TCP] $e — link kapatılıyor');
+      if (!_authDone.isCompleted) {
+        _authDone.completeError(TransportClosedException(e));
+      }
+      if (!_incoming.isClosed) _incoming.addError(e);
+      close();
+      return;
+    }
+    for (final line in lines) {
       _handleLine(line);
     }
   }

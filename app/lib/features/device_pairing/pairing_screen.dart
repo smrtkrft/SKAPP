@@ -398,8 +398,15 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     }
 
     // Notify aboneliği + satır pompası artık BlePairingLink'te (listener
-    // CCCD'den önce bağlanır — macOS notify yarışına karşı).
-    final link = BlePairingLink(cmdRx: cmdRx, eventTx: eventTx);
+    // CCCD'den önce bağlanır — macOS notify yarışına karşı). `device`
+    // veriliyor ki link kopuşu 20 s beklemek yerine anında yüzeye çıksın;
+    // onTrace ile ham rx izleri ekrandaki debug paneline düşer.
+    final link = BlePairingLink(
+      cmdRx: cmdRx,
+      eventTx: eventTx,
+      device: dev,
+      onTrace: _trace,
+    );
     try {
       await link.start();
     } catch (e) {
