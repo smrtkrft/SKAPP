@@ -27,8 +27,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 
+import '../pairing/pairing_link.dart'
+    show NdjsonLineBuffer, PairingLineOverflow;
 import 'cli_transport.dart';
 import 'usb_port_scanner.dart';
 import 'win_serial_transport.dart';
@@ -69,9 +71,25 @@ abstract class UsbCliTransportBase implements CliTransport {
   static const int kFirmwareUsbLineBuf = 1024;
 
   final _incoming = StreamController<String>.broadcast();
-  final _buffer = StringBuffer();
+
+  /// Satır tavanlı tampon (İ-10): `\n` göndermeyen bir uç — yanlış seçilmiş
+  /// COM portu, bootloader çıktısı, ikili modda bir çevre birimi — eskiden
+  /// tamponu sınırsız büyütüp her chunk'ta O(n) kopya ile ana isolate'i
+  /// dondurabiliyordu. 64 KiB tavan, firmware'in tek satırlık ~12 KB `help`
+  /// cevabına fazlasıyla yer bırakır.
+  final _buffer = NdjsonLineBuffer();
+
+  /// UTF-8 çözücüyü chunk'lar arasında DURUMLU tut: çok baytlı karakter
+  /// (Türkçe metinler) iki okuma arasında bölününce chunk-başına decode
+  /// mojibake üretiyordu. TCP/BLE zaten durumlu decoder kullanıyor.
+  late final _utf8Sink = _Utf8ChunkDecoder();
+
   bool _authenticated = false;
   bool _closed = false;
+
+  /// Kapanışa yol açan alt hata (unplug win32 kodu vb.); temiz kapanışta
+  /// null. CliClient bunu `closedReason` üzerinden taşır.
+  Object? _lostReason;
 
   @override
   Stream<String> get incoming => _incoming.stream;
@@ -89,10 +107,13 @@ abstract class UsbCliTransportBase implements CliTransport {
     _authenticated = true;
   }
 
+  /// Kapanış sebebi (varsa) — CliClient `closedReason` olarak taşır.
+  Object? get lostReason => _lostReason;
+
   @override
   Future<void> sendLine(String line) async {
     if (_closed) {
-      throw StateError('USB transport kapalı');
+      throw TransportClosedException(_lostReason ?? 'USB transport kapalı');
     }
     final wire = line.endsWith('\n') ? line : '$line\n';
     final bytes = utf8.encode(wire);
@@ -113,7 +134,11 @@ abstract class UsbCliTransportBase implements CliTransport {
     _authenticated = false;
     try {
       await closePort();
-    } catch (_) {/* zaten gone */}
+    } catch (e) {
+      // Kapanamayan port COM kilidini sızdırır ve sonraki açılış "erişim
+      // reddedildi" ile düşer — sessiz kalmamalı.
+      debugPrint('[USB] closePort failed: $e');
+    }
     if (!_incoming.isClosed) {
       await _incoming.close();
     }
@@ -130,16 +155,20 @@ abstract class UsbCliTransportBase implements CliTransport {
   /// stream'ine atar.
   void onChunk(List<int> bytes) {
     if (_closed || _incoming.isClosed) return;
-    final chunk = utf8.decode(bytes, allowMalformed: true);
-    _buffer.write(chunk);
-    while (true) {
-      final s = _buffer.toString();
-      final nl = s.indexOf('\n');
-      if (nl < 0) break;
-      var line = s.substring(0, nl);
-      _buffer
-        ..clear()
-        ..write(s.substring(nl + 1));
+    final List<String> lines;
+    try {
+      lines = _buffer.feed(_utf8Sink.decode(bytes));
+    } on PairingLineOverflow catch (e) {
+      // İ-10: satır tavanı aşıldı — karşı uç NDJSON konuşmuyor (yanlış COM
+      // portu / bootloader çıktısı). Sessizce büyümek yerine bağlantıyı
+      // sebebiyle birlikte kes.
+      debugPrint('[USB] $e — bağlantı kapatılıyor');
+      if (!_incoming.isClosed) _incoming.addError(e);
+      _lostReason = e;
+      close();
+      return;
+    }
+    for (var line in lines) {
       if (line.endsWith('\r')) {
         line = line.substring(0, line.length - 1);
       }
@@ -149,9 +178,43 @@ abstract class UsbCliTransportBase implements CliTransport {
   }
 
   /// Subclass kablo cekildi / cihaz reset edildi dedektör'ünden çağırır.
-  /// Idempotent close + stream done propagasyonu.
-  void onTransportLost() {
+  /// Idempotent close + stream done propagasyonu. [reason] verilirse
+  /// (unplug win32 kodu vb.) bekleyen isteklere ve `whenClosed`
+  /// dinleyicilerine gerçek sebep taşınır — eskiden fiziksel çekilme de
+  /// "temiz kapanış" gibi görünüyordu.
+  void onTransportLost([Object? reason]) {
     if (_closed) return;
+    if (reason != null) {
+      _lostReason = reason;
+      if (!_incoming.isClosed) _incoming.addError(reason);
+    }
     close();
   }
+}
+
+/// Durumlu UTF-8 chunk çözücü: çok baytlı karakter chunk sınırında
+/// bölünürse kalan baytları bir sonraki çağrıya taşır.
+class _Utf8ChunkDecoder {
+  final _out = StringBuffer();
+  late final _sink = utf8.decoder.startChunkedConversion(
+    _StringSink(_out),
+  );
+
+  String decode(List<int> bytes) {
+    _sink.add(bytes);
+    final s = _out.toString();
+    _out.clear();
+    return s;
+  }
+}
+
+class _StringSink implements Sink<String> {
+  _StringSink(this._buf);
+  final StringBuffer _buf;
+
+  @override
+  void add(String data) => _buf.write(data);
+
+  @override
+  void close() {}
 }

@@ -26,6 +26,7 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:win32/win32.dart';
 
+import 'cli_transport.dart' show TransportClosedException;
 import 'usb_cli_transport.dart';
 
 /// Windows için seri port transport implementasyonu. CreateFile +
@@ -41,8 +42,22 @@ class WinSerialTransport extends UsbCliTransportBase {
   /// non-blocking ayarlı olduğundan data yoksa hemen 0 döner.
   Timer? _readTimer;
 
-  /// ReadFile için reusable buffer (her tick yeniden tahsis etmemek için).
+  /// Üst üste gelen ERROR_OPERATION_ABORTED sayacı (bkz. _pollRead).
+  int _abortedTicks = 0;
+
+  /// ReadFile için tahsis edilen okuma buffer'ı boyutu (tick başına).
   static const int _readBufferSize = 4096;
+
+  /// DCB bit-packed bayrak dword'ü. Bit düzeni (LSB→MSB, Win32 DCB):
+  /// 0 fBinary · 1 fParity · 2 fOutxCtsFlow · 3 fOutxDsrFlow ·
+  /// 4-5 fDtrControl · 6 fDsrSensitivity · 7 fTXContinueOnXoff ·
+  /// 8 fOutX · 9 fInX · 10 fErrorChar · 11 fNull · 12-13 fRtsControl ·
+  /// 14 fAbortOnError.
+  ///
+  /// Değer = fBinary(1) yalnız: donanım/yazılım akış kontrolü KAPALI,
+  /// fDtrControl=DTR_CONTROL_DISABLE, fRtsControl=RTS_CONTROL_DISABLE
+  /// (ikisi de de-asserted → köprü çipli kartlarda auto-reset tetiklenmez).
+  static const int kDcbFlags = 0x00000001;
 
   @override
   Future<void> openPort() async {
@@ -89,10 +104,19 @@ class WinSerialTransport extends UsbCliTransportBase {
       dcb.ref.ByteSize = 8;
       dcb.ref.Parity = 0; // NOPARITY
       dcb.ref.StopBits = 0; // ONESTOPBIT
-      // DCB bit-packed flags (fBinary, fParity, fOutxCtsFlow, ...) win32
-      // paketinin bu sürümünde direkt setter olarak expose edilmiyor;
-      // GetCommState OS varsayılanlarını döndürdü (fBinary=1 dahil) ve
-      // bunlar virtual COM (USB-CDC) için yeterli. Bit'lere dokunmuyoruz.
+      // Bit-packed bayrakları AÇIKÇA yaz. Eskiden GetCommState'in
+      // döndürdüğü değer olduğu gibi bırakılıyordu ("paket setter
+      // sunmuyor" — win32 5.15'te `bitfield` alanı doğrudan yazılabilir);
+      // oysa DCB, sürücüde/önceki açan uygulamada ne kaldıysa onu yansıtır.
+      // Miras alınan iki ayar CLI'yı tamamen bozabiliyordu:
+      //   * fOutxCtsFlow=1 → CTS hiç gelmeyen bir CDC portunda her
+      //     WriteFile 1 sn timeout'la 0 byte yazar → "WriteFile
+      //     ilerlemiyor" ile TÜM komutlar düşer.
+      //   * DTR/RTS asserted → CP2102/CH340/FTDI köprülü kartlarda
+      //     auto-reset devresi çipi reset'te tutar → cihaz tamamen sessiz.
+      // Bu yüzden: yalnız fBinary=1; akış kontrolü kapalı, DTR/RTS
+      // de-asserted (native USB-Serial-JTAG bunları zaten umursamaz).
+      dcb.ref.bitfield = kDcbFlags;
       if (SetCommState(_handle, dcb) == 0) {
         final err = GetLastError();
         await _closeHandle();
@@ -190,9 +214,13 @@ class WinSerialTransport extends UsbCliTransportBase {
 
   Future<void> _closeHandle() async {
     if (_handle == INVALID_HANDLE_VALUE) return;
-    try {
-      CloseHandle(_handle);
-    } catch (_) {/* */}
+    // CloseHandle hatayı DÖNÜŞ DEĞERİYLE bildirir (0), exception ile
+    // değil — eski try/catch ölü koddu ve başarısız kapanış (sızan COM
+    // kilidi → sonraki açılışta "erişim reddedildi") görünmez kalıyordu.
+    if (CloseHandle(_handle) == 0) {
+      debugPrint('[win-serial] CloseHandle failed (win32 err=${GetLastError()})'
+          ' — COM kilidi sızmış olabilir');
+    }
     _handle = INVALID_HANDLE_VALUE;
   }
 
@@ -212,14 +240,20 @@ class WinSerialTransport extends UsbCliTransportBase {
       );
       if (ok == 0) {
         final err = GetLastError();
-        // ERROR_OPERATION_ABORTED (995): port kapatıldı, normal close
-        // sırasında olur; sessiz geç. Diğer hatalar transport loss.
-        if (err != 995) {
-          debugPrint('[win-serial] ReadFile failed (win32 err=$err)');
-          onTransportLost();
-        }
+        // ERROR_OPERATION_ABORTED (995) normalde kendi kapanışımızda
+        // görülür — ama closePort timer'ı CloseHandle'dan ÖNCE iptal
+        // ettiği için bu tick'e hiç düşmemesi gerekir. Israrla geliyorsa
+        // sürücü I/O'yu iptal etmiştir: sessizce yok saymak, portu sonsuza
+        // dek "bağlı" gösterip her komutu 10 sn timeout'a düşürürdü.
+        // Sayaçla tolere et, ısrar ederse kopuş say.
+        if (err == 995 && ++_abortedTicks < 5) return;
+        debugPrint('[win-serial] ReadFile failed (win32 err=$err)');
+        onTransportLost(
+          TransportClosedException('USB okuma hatası (win32 err=$err)'),
+        );
         return;
       }
+      _abortedTicks = 0;
       final n = read.value;
       if (n == 0) return; // available data yok, normal poll tick
       final chunk = Uint8List(n);

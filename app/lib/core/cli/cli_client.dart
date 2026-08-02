@@ -8,7 +8,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
 
 import 'cli_transport.dart';
 import 'cli_signer.dart';
@@ -75,6 +75,10 @@ class CliClient {
 
   StreamSubscription<String>? _sub;
 
+  /// Cevabı beklenen istek sayısı (test/tanılama).
+  @visibleForTesting
+  int get pendingCount => _pending.length;
+
   Future<void> start() async {
     await transport.connect();
     _sub = transport.incoming.listen(
@@ -127,7 +131,17 @@ class CliClient {
     // paths (USB, ECDH bootstrap) send the raw body directly.
     final wireLine =
         signer != null ? signer!.envelope(body) : jsonEncode(body);
-    await transport.sendLine(wireLine);
+    try {
+      await transport.sendLine(wireLine);
+    } catch (_) {
+      // Gönderim başarısızsa bu isteğin cevabı ASLA gelmez. Kaydı bırakmak
+      // sızıntıdır: transport kapanınca _onTransportClosed dinleyicisiz
+      // completer'a completeError yapar → zone'da yakalanmamış async hata.
+      // (USB'de sendLine tasarım gereği fırlayabiliyor: >1023B komut,
+      // kapalı port, WriteFile hatası.)
+      _pending.remove(id);
+      rethrow;
+    }
 
     return completer.future.timeout(timeout, onTimeout: () {
       _pending.remove(id);
