@@ -244,7 +244,9 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
       // Kullanıcı bağlanma sırasında ekrandan çıktı.
       try {
         await client.stop();
-      } catch (_) {/* */}
+      } catch (e) {
+        debugPrint('[USB-CONSOLE] stop after mid-connect dispose failed: $e');
+      }
       return;
     }
 
@@ -363,7 +365,11 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
             }
           }
         }
-      } catch (_) {/* retry */}
+      } catch (e) {
+        // Sözlük yüklenemezse boşluklu syntax (`wifi status`) nokta-katlama
+        // sezgisine düşer; hangi denemenin neden başarısız olduğu tek izdir.
+        debugPrint('[USB-CONSOLE] help dictionary attempt failed: $e');
+      }
       if (_knownCommands.isNotEmpty || _disposed) return;
       await Future.delayed(const Duration(seconds: 1));
     }

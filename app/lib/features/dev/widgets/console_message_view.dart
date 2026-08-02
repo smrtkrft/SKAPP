@@ -368,7 +368,10 @@ class _ResponseBlockData {
         final p = obj['params'];
         return _ResponseBlockData(p is Map ? p : null);
       }
-    } catch (_) {}
+    } catch (e) {
+      // Beklenmeyen gövde: ham JSON bloğuna düşeriz (görsel bozulma yok).
+      debugPrint('[USB-CONSOLE] response block parse failed: $e');
+    }
     return null;
   }
 }
@@ -1462,7 +1465,10 @@ class _RawJsonBlock extends StatelessWidget {
       final obj = jsonDecode(raw);
       const enc = JsonEncoder.withIndent('  ');
       pretty = enc.convert(obj);
-    } catch (_) {/* */}
+    } catch (e) {
+      // Pretty-print başarısız: ham satır gösterilir.
+      debugPrint('[USB-CONSOLE] raw JSON pretty-print failed: $e');
+    }
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
