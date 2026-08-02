@@ -137,10 +137,16 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
   /// ref.listen bunu yeni client'la tekrar çağırır; eski abonelik eski
   /// client'a bağlı kaldığı için olaylar aksi halde ölüyordu.
   Future<void> _bindSession(DeviceSession session) async {
-    if (identical(_boundClient, session.client)) return;
+    final client = session.client;
+    if (identical(_boundClient, client)) return;
+    // SENKRON ata: didChangeDependencies'teki _bootstrap ile build'deki
+    // ref.listen aynı mikrotask penceresinde aynı client'la gelebilir;
+    // atama ilk await'ten sonraya kalırsa ikisi de identical kontrolünü
+    // geçip ÇİFT olay aboneliği kurar (olaylar iki kez işlenir, ilk
+    // abonelik sızar).
+    _boundClient = client;
     await _eventSub?.cancel();
     _eventSub = null;
-    _boundClient = session.client;
 
     // Pull initial snapshot. firmware returns
     //   {state: ..., remaining: N, total: N, ...}
@@ -155,11 +161,14 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
       // UI inactive gösterir; olay aboneliği yine kurulur.
     }
     if (!mounted) return;
+    // Await sırasında daha yeni bir bind devralmış olabilir (oturum
+    // yenilendi); eski client'a abone olup yenisininkini gölgeleme.
+    if (!identical(_boundClient, client)) return;
 
     // Event subscription. We dispatch by name and patch the local
     // mirror; full status refetches are avoided so a brief tick storm
     // can't queue a wall of round-trips.
-    _eventSub = session.client.events.listen(_onEvent);
+    _eventSub = client.events.listen(_onEvent);
 
     // Local 1-Hz tick. Only decrements when running so vacation +
     // triggered stay frozen.
@@ -186,6 +195,8 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
   }
 
   void _onEvent(Map<String, dynamic> evt) {
+    // Geç kalan olay dispose sonrası setState'e çarpmasın.
+    if (!mounted) return;
     // Firmware event names per esp32/ls/protocol/v1/events.json:
     //   timer.tick        {remaining_sec}
     //   timer.state       {state, remaining_sec}

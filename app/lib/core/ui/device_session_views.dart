@@ -86,8 +86,7 @@ class DeviceSessionError extends ConsumerWidget {
   /// [isHardBondRejection]. AuthRejectedException'ı dışarıda bırakmak,
   /// cihaz başka bir telefonla yeniden eşleştiğinde kullanıcıyı sonsuz
   /// "Tekrar dene" döngüsünde bırakıyordu: tek çıkış yeniden eşleşmedir.
-  bool get _needsRepair =>
-      isHardBondRejection(error) || error is BondMissingException;
+  bool get _needsRepair => isHardBondRejection(error);
 
   /// Katlanır panelde gösterilecek teknik döküm. Unreachable'da her attempt
   /// satırı; diğer tiplerde ham `toString()`.

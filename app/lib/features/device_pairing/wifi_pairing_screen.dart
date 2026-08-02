@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ble/device_model.dart';
 import '../../core/cli/bond_store.dart';
+import '../../core/cli/cli_providers.dart';
 import '../../core/cli/mdns_discovery.dart';
 import '../../core/logging/app_logger.dart';
 import '../../core/pairing/pairing_error.dart';
@@ -158,14 +159,24 @@ class _WifiPairingScreenState extends ConsumerState<WifiPairingScreen> {
         slot: result.slot,
         aliasIds: aliases.toList(),
       );
-      await ref.read(pairedDevicesProvider.notifier).upsert(PairedDevice(
-            id: identity,
-            name: identity,
-            prefix: prefix,
-            pairedAt: DateTime.now(),
-            lastIp: widget.endpoint.host,
-            lastPort: widget.endpoint.port,
-          ));
+      // Mevcut kayıtla BİRLEŞTİR: onarım akışı da buradan geçtiği için
+      // sıfırdan PairedDevice yazmak kullanıcının customName'ini ve orijinal
+      // pairedAt'ini siliyordu (upsert kaydı bütünüyle değiştirir).
+      final existing =
+          ref.read(pairedDevicesProvider).matchDeviceId(identity);
+      await ref.read(pairedDevicesProvider.notifier).upsert(
+            (existing ??
+                    PairedDevice(
+                      id: identity,
+                      name: identity,
+                      prefix: prefix,
+                      pairedAt: DateTime.now(),
+                    ))
+                .copyWith(
+              lastIp: widget.endpoint.host,
+              lastPort: widget.endpoint.port,
+            ),
+          );
 
       // Cihaz socket'i kapatıyor; biz de kendi tarafımızdan kapatalım.
       await link.close();
@@ -178,6 +189,16 @@ class _WifiPairingScreenState extends ConsumerState<WifiPairingScreen> {
       // ~250ms sürer. SKAPP hemen reconnect denerse bind yarış olabilir.
       await Future.delayed(PairingTimeouts.tcpPostPairSettle);
       if (!mounted) return;
+
+      // Onarım senaryosu: oturum sağlayıcısı, onarım CTA'sını gösteren
+      // AsyncError'da KİLİTLİ olabilir (retry yok, keep-alive). Buradan
+      // tazele — pushAndRemoveUntil aşağıda ev ekranının route'unu
+      // kaldırdığı için repair_router'daki dönüş-sonrası invalidate hiç
+      // çalışmıyordu ve başarılı onarıma rağmen hata kartı geri geliyordu.
+      // Canlı oturum varsa dokunma (invalidate onu gereksiz düşürürdü).
+      if (ref.read(deviceSessionProvider(identity)) is AsyncError) {
+        ref.invalidate(deviceSessionProvider(identity));
+      }
 
       // Direkt cihaz home'a geç: cli_providers TCP cache fast-path ile
       // bonded TCP açar, secure session handshake yapar, dashboard render.

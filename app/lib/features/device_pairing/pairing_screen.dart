@@ -240,8 +240,13 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       // kalmış forget) aksi halde "eşleşti" görünüp listeye hiç düşmez —
       // uygulama yeniden başlayınca cihaza dönüş yolu kalmaz.
       final devicesStore = ref.read(pairedDevicesProvider.notifier);
+      // Hem id hem name ile sonda: yarım kalmış bir forget sonrası kayıt
+      // yalnız adla duruyor olabilir; MAC'le bulunamadı diye çift kayıt
+      // üretme.
       if (ref.read(pairedDevicesProvider).matchDeviceId(widget.device.id) ==
-          null) {
+              null &&
+          ref.read(pairedDevicesProvider).matchDeviceId(widget.device.name) ==
+              null) {
         await devicesStore.upsert(PairedDevice(
           id: widget.device.id,
           name: widget.device.name,
@@ -524,13 +529,21 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
         aliasIds: [widget.device.name],
       );
       // Persist user-visible metadata so home/devices listings can render
-      // this device even before any session is open.
-      await ref.read(pairedDevicesProvider.notifier).upsert(PairedDevice(
-            id: widget.device.id,
-            name: widget.device.name,
-            prefix: widget.device.typePrefix ?? '??',
-            pairedAt: DateTime.now(),
-          ));
+      // this device even before any session is open. Mevcut kayıtla
+      // birleştir: onarım akışında sıfırdan yazmak customName + orijinal
+      // pairedAt'i siliyordu (upsert kaydı bütünüyle değiştirir).
+      final existing =
+          ref.read(pairedDevicesProvider).matchDeviceId(widget.device.id) ??
+              ref.read(pairedDevicesProvider).matchDeviceId(widget.device.name);
+      await ref.read(pairedDevicesProvider.notifier).upsert(
+            existing ??
+                PairedDevice(
+                  id: widget.device.id,
+                  name: widget.device.name,
+                  prefix: widget.device.typePrefix ?? '??',
+                  pairedAt: DateTime.now(),
+                ),
+          );
     } catch (e, st) {
       // Bond diske yazılamadıysa eşleşme TAMAMLANMAMIŞTIR — sessiz devam
       // "eşleşti ama hiç bağlanamıyor" hayalet durumu üretir (audit C1).
@@ -656,7 +669,9 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       // Hangi adımda kırıldığını sakla: adım listesi başarılı adımları
       // yeşil bırakıp yalnız kırılan adımı kırmızı gösterebilsin (eskiden
       // hepsi kırmızıya boyanıyordu, kullanıcı nerede koptuğunu göremezdi).
-      _failedAt = _stage;
+      // Çift _fail durumunda ilk kırılma noktası korunur ("failed"
+      // üzerine yazılırsa tüm adımlar yeşile döner).
+      if (_stage != _PairStage.failed) _failedAt = _stage;
       _stage = _PairStage.failed;
       _errorMsg = msg;
     });

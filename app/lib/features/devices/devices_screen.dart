@@ -6,7 +6,6 @@ import '../../core/ble/device_model.dart';
 import '../../core/ble/notification_state.dart';
 import '../../core/ble/notification_state_provider.dart';
 import '../../core/cli/bond_store.dart';
-import '../../core/cli/device_id.dart';
 import '../../core/logging/app_logger.dart';
 import '../../core/network/mdns_browser.dart';
 import '../../core/network/skapp_http_client.dart';
@@ -455,13 +454,11 @@ class DevicesScreen extends ConsumerWidget {
     // token'i + alias'lari (BLE MAC ↔ SmartKraft id, case katlamalari)
     // secure storage'da yetim birakiyordu. Silme basarisizsa metadata
     // zaten gitti — devam ederiz ama E-log ile iz birakiriz.
+    // clear() case-varyantları kendisi katlar; burada yalnız iki farklı
+    // kimliği (BLE MAC ↔ SmartKraft adı) ayrı ayrı temizlemek yeterli.
+    // try AYRI AYRI: birinin silinememesi diğerini atlatmamalı.
     final bonds = ref.read(bondStoreProvider);
-    for (final key in {
-      ...deviceIdKeyVariants(paired.id),
-      ...deviceIdKeyVariants(paired.name),
-    }) {
-      // try DÖNGÜ İÇİNDE: tek bir anahtarın silinememesi kalan varyantları
-      // atlatmamalı, yoksa yetim bond kayıtları geride kalır.
+    for (final key in {paired.id, paired.name}) {
       try {
         await bonds.clear(key);
       } catch (e, st) {
