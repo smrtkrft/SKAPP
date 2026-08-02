@@ -64,6 +64,22 @@ class BindingsTriggerService {
       _deviceSubs.remove(id)?.close();
     }
     for (final device in devices) {
+      // Yeniden kurulum: bu geri çağrı, cihaz mDNS/BLE taramasında yeniden
+      // görüldüğünde de çalışır (touch → lastSeen → pairedDevicesProvider).
+      // Oturum sağlayıcıları bilinçli olarak retry etmiyor
+      // (sessionRetryPolicy), bu yüzden bir kez hataya düşen ARKA PLAN
+      // aboneliği kendiliğinden toparlanamaz — cihaz yeniden görünürse tek
+      // bir taze deneme başlat. Ekranlar için bu gerekmiyor: onların
+      // "Tekrar dene" butonu var.
+      if (_deviceSubs.containsKey(device.id)) {
+        final state = _ref.read(deviceEventsProvider(device.id));
+        if (state is AsyncError) {
+          debugPrint('[BIND] ${device.id} re-sighted while errored '
+              '— re-arming session');
+          _ref.invalidate(deviceSessionProvider(device.id));
+        }
+        continue;
+      }
       _deviceSubs.putIfAbsent(device.id, () {
         debugPrint('[BIND] subscribing to events for ${device.id}');
         return _ref.listen<AsyncValue<CliEvent>>(

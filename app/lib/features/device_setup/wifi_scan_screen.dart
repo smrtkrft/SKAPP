@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ble/device_model.dart';
 import '../../core/cli/cli_providers.dart';
+import '../../core/cli/transport_selector.dart';
 import '../../core/theme/responsive.dart';
 import '../../l10n/app_localizations.dart';
 import '../main_shell/main_shell.dart' show ShellNavBar;
@@ -78,13 +79,13 @@ class _WifiScanScreenState extends ConsumerState<WifiScanScreen> {
         ref.invalidate(deviceSessionProvider(widget.device.id));
       }
       _trace('opening session…');
-      // 30s: BLE zinciri (mDNS ~1.5s + BLE client.start 15s cap) + eslesme
-      // sonrasi yavas Android reconnect 12s'yi asabiliyor ve scan'e ulasmadan
-      // timeout dusuyordu. Reconnect yolu (pairing_screen) zaten 30s kullaniyor;
-      // wizard da ona hizalandi.
+      // Zincirin en kötü durumu tek kaynaktan: elle yazılan 30 s, BLE
+      // bütçesi 15 s→~45 s'ye çıkınca iç toplamın altında kalıyordu ve
+      // yavaş-ama-sağlıklı bir reconnect'i "başarısız" ilan edip arka
+      // planda kurulan canlı oturumu retry'da geçersiz kılıyordu.
       final session = await ref
           .read(deviceSessionProvider(widget.device.id).future)
-          .timeout(const Duration(seconds: 30));
+          .timeout(TransportSelector.chainWorstCase);
       _trace('session ready, sending wifi.scan');
       final reply = await session.client.send(
         'wifi.scan',
