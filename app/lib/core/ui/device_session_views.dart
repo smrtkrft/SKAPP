@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../cli/ble_transport.dart' show PairingRequiredException;
+import '../pairing/pairing_error.dart' show isHardBondRejection;
 import '../cli/cli_providers.dart';
 
 /// Cihaz oturumu çözülürken gösterilen spinner.
@@ -81,8 +82,12 @@ class DeviceSessionError extends ConsumerWidget {
 
   final bool withScaffold;
 
+  /// Bond'un gerçekten çürüdüğü durumlar — tek kaynak
+  /// [isHardBondRejection]. AuthRejectedException'ı dışarıda bırakmak,
+  /// cihaz başka bir telefonla yeniden eşleştiğinde kullanıcıyı sonsuz
+  /// "Tekrar dene" döngüsünde bırakıyordu: tek çıkış yeniden eşleşmedir.
   bool get _needsRepair =>
-      error is PairingRequiredException || error is BondMissingException;
+      isHardBondRejection(error) || error is BondMissingException;
 
   /// Katlanır panelde gösterilecek teknik döküm. Unreachable'da her attempt
   /// satırı; diğer tiplerde ham `toString()`.

@@ -253,6 +253,8 @@ class PairingSession {
     }
     final c = _armed;
     if (c == null || c.isCompleted) {
+      // Not: filtre kontrolü yukarıda; armed tur yokken gelen zarf da
+      // burada iz bırakır (sessizce düşmez).
       // Beklemediğimiz anda (ör. parola dialogu açıkken) veya cevabımız
       // gelmişken düşen fazladan zarf. Sessizce yutma — iz bırak.
       _trace('rx envelope with no armed turn, dropped: ${_shape(msg)}');

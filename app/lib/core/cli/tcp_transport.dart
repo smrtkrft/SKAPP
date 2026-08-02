@@ -148,7 +148,19 @@ class TcpCliTransport implements CliTransport {
         final data = msg['data'] as Map<String, dynamic>;
         final answerHex = data['answer'] as String?;
         if (answerHex == null || _ourChallenge == null) return;
-        final answer = Uint8List.fromList(hex.decode(answerHex));
+        // Hex koruması (bkz. ble_transport): auth öncesi çerçeve, hex
+        // olmayan `answer` ile yakalanmamış async hata üretmemeli.
+        final Uint8List answer;
+        try {
+          answer = Uint8List.fromList(hex.decode(answerHex));
+        } catch (e) {
+          debugPrint('[TCP] auth answer malformed: $e');
+          if (!_authDone.isCompleted) {
+            _authDone.completeError(
+                const AuthRejectedException('malformed auth answer'));
+          }
+          return;
+        }
         final expected = Hmac(sha256, _token)
             .convert(_ourChallenge!)
             .bytes

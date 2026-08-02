@@ -641,6 +641,18 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
   }
 
   Future<void> _retry() async {
+    // _manualRecovery ile aynı sözleşme: temizlik adımlarından biri
+    // fırlarsa (link.close, disconnect, ref.invalidate) fire-and-forget
+    // buton handler'ında yakalanmamış zone hatası olur ve ekran dönmeye
+    // devam eder — _guardedRun bunu hata kartına çevirir.
+    if (_decideRunning) {
+      debugPrint('[PAIR] _retry: reentrancy blocked');
+      return;
+    }
+    await _guardedRun(_retryLocked);
+  }
+
+  Future<void> _retryLocked() async {
     await _pairingLink?.close();
     _pairingLink = null;
     try {

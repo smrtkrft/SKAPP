@@ -78,11 +78,17 @@ final deviceSessionProvider =
 /// `ref.invalidate` ile taze bir deneme başlatır.
 Duration? sessionRetryPolicy(int retryCount, Object error) => null;
 
-final deviceEventsProvider =
-    StreamProvider.family<CliEvent, String>((ref, deviceId) async* {
-  final session = await ref.watch(deviceSessionProvider(deviceId).future);
-  yield* session.client.events;
-});
+final deviceEventsProvider = StreamProvider.family<CliEvent, String>(
+  (ref, deviceId) async* {
+    final session = await ref.watch(deviceSessionProvider(deviceId).future);
+    yield* session.client.events;
+  },
+  // Aynı gerekçe (bkz. sessionRetryPolicy): upstream oturum hatası buraya
+  // ham tipiyle geçer ve varsayılan politika 10 kez yeniden kurar. Çevrimdışı
+  // her cihaz için boot'ta ~38 sn boşuna rebuild demek (bindings_trigger_
+  // service tüm eşleşmiş cihazları dinliyor).
+  retry: sessionRetryPolicy,
+);
 
 /// SKAPP-only encrypted store client (`secure.*` + `userdata.*`). Always
 /// rides the authenticated CliClient, never falls back to an unsigned
@@ -92,9 +98,10 @@ final deviceEventsProvider =
 /// alive once a device is opened and only tear down on transport drop /
 /// explicit invalidate; this keeps every sub-screen tap instant instead
 /// of paying the handshake cost per navigation.
-final secureStoreProvider =
-    FutureProvider.family<SecureStoreClient, String>(
-        (ref, deviceId) async {
-  final session = await ref.watch(deviceSessionProvider(deviceId).future);
-  return SecureStoreClient(session.client);
-});
+final secureStoreProvider = FutureProvider.family<SecureStoreClient, String>(
+  (ref, deviceId) async {
+    final session = await ref.watch(deviceSessionProvider(deviceId).future);
+    return SecureStoreClient(session.client);
+  },
+  retry: sessionRetryPolicy,
+);

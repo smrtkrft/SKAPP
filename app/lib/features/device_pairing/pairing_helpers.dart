@@ -137,9 +137,16 @@ Future<String?> promptPairingPassphrase(
               onPressed: () => Navigator.of(dctx).pop(null),
               child: Text(l.commonCancel),
             ),
-            FilledButton(
-              onPressed: () => Navigator.of(dctx).pop(controller.text),
-              child: Text(l.passphraseVerifyButton),
+            // Boş parola cihazda bir deneme hakkı yakar (10 yanlışta
+            // fabrika sıfırlama), o yüzden alan boşken buton pasif.
+            ValueListenableBuilder<TextEditingValue>(
+              valueListenable: controller,
+              builder: (_, value, _) => FilledButton(
+                onPressed: value.text.isEmpty
+                    ? null
+                    : () => Navigator.of(dctx).pop(controller.text),
+                child: Text(l.passphraseVerifyButton),
+              ),
             ),
           ],
         ),

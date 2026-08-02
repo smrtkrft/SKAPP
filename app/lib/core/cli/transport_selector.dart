@@ -236,11 +236,17 @@ class TransportSelector {
       } catch (e2) {
         debugPrint('[session] TCP cleanup stop failed (best-effort): $e2');
       }
-      // Cache'i YALNIZ bağlantı kurulamadıysa temizle: SocketException =
-      // connect reddi/ulaşılamaz, TimeoutException = dış tavan. Auth
-      // aşaması hatası (AuthRejectedException) endpoint'in CANLI olduğunu
+      // Cache'i YALNIZ "bu uçta SKAPP cihazı yok" anlamına gelen hatalarda
+      // temizle: SocketException = connect reddi/ulaşılamaz,
+      // TimeoutException = dış tavan, TransportClosedException = uç el
+      // sıkışma bitmeden kapattı (yeni DHCP kirası sonrası o IP'de başka
+      // bir servis olması tipik durumu). Auth aşaması hatası
+      // (AuthRejectedException) endpoint'in CANLI ve SKAPP olduğunu
       // kanıtlar — iyi cache'i silmek her cold-start'ı yavaşlatır.
-      if (clearCacheOnFail && (e is SocketException || e is TimeoutException)) {
+      if (clearCacheOnFail &&
+          (e is SocketException ||
+              e is TimeoutException ||
+              e is TransportClosedException)) {
         try {
           await ref
               .read(pairedDevicesProvider.notifier)

@@ -224,6 +224,28 @@ void main() {
       expect(notifier.clearedEndpoints, [_kDeviceId]);
     });
 
+    test('TransportClosedException (el sıkışmada FIN) cache temizler', () async {
+      // Cihaz yeni DHCP kirası aldı; eski IP'de artık 8080'i kabul edip
+      // hemen kapatan başka bir servis var. Bayat kayıt temizlenmezse her
+      // oturum açılışı bu ölü uca takılır.
+      final devices = [_device(lastIp: '10.0.0.9', lastPort: 8080)];
+      final notifier = FakePairedDevicesNotifier(devices);
+      final p = _makeProvider(
+        tcpFactory: (_, _, _) => CliClient(FakeCliTransport(
+            connectError:
+                const TransportClosedException('peer closed during handshake'))),
+        mdns: (_, _) async => null,
+        bleFactory: (_, _) =>
+            CliClient(FakeCliTransport(kind: CliTransportKind.ble)),
+      );
+      final c = _container(bond, devices, notifier: notifier);
+      addTearDown(c.dispose);
+
+      final session = await _run(c, p);
+      expect(session.transportKind, CliTransportKind.ble);
+      expect(notifier.clearedEndpoints, [_kDeviceId]);
+    });
+
     test('AuthRejectedException (endpoint canlı) cache KORUR', () async {
       final devices = [_device(lastIp: '10.0.0.9', lastPort: 8080)];
       final notifier = FakePairedDevicesNotifier(devices);

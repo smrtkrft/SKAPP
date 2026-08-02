@@ -338,7 +338,20 @@ class BleCliTransport implements CliTransport {
           return;
         }
 
-        final answer = Uint8List.fromList(hex.decode(answerHex));
+        // Hex koruması: auth öncesi gelen bu çerçeve de güvenilmezdir;
+        // korumasız decode yakalanmamış async FormatException üretip
+        // _authDone'u askıda bırakıyordu (jenerik 8 s timeout).
+        final Uint8List answer;
+        try {
+          answer = Uint8List.fromList(hex.decode(answerHex));
+        } catch (e) {
+          _bleTrace('auth answer malformed: $e');
+          if (!_authDone.isCompleted) {
+            _authDone
+                .completeError(const AuthRejectedException('malformed auth answer'));
+          }
+          return;
+        }
         final expected = Hmac(sha256, _token)
             .convert(_ourChallenge!)
             .bytes
