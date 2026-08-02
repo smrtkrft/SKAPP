@@ -21,7 +21,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/colors.dart';
-import '../../../l10n/app_localizations.dart';
 import '../usb_console_providers.dart';
 
 class ConsoleMessageView extends StatelessWidget {
@@ -282,7 +281,7 @@ class _UnauthenticatedHint extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: SelectableText(
-              AppLocalizations.of(context).usbConsoleUnauthenticatedHint,
+              'This command requires an authenticated session (`requires_auth=true`). USB CLI is unauthenticated; run it from My Devices > [device] over a bonded BLE/WiFi session.',
               style: TextStyle(
                 fontFamily: 'monospace',
                 fontSize: 11.5,
@@ -416,8 +415,8 @@ class _CommandsList extends StatelessWidget {
         _Pill(label: 'OK', color: SkColors.attentionMustard),
         const SizedBox(width: 8),
         Text(
-          '${AppLocalizations.of(context).usbConsoleCommandCount(commands.length)}'
-          '${topics != null ? " · ${AppLocalizations.of(context).usbConsoleTopicCount(topics!.length)}" : ""}',
+          '${'${commands.length} commands'}'
+          '${topics != null ? " · ${'${topics!.length} topics'}" : ""}',
           style: mono.copyWith(
             color: cs.onSurface.withValues(alpha: 0.6),
           ),
@@ -573,7 +572,7 @@ class _CommandsList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: SelectableText(
-              AppLocalizations.of(context).usbConsoleUnknownTopic(target),
+              'No topic/command named “$target”. List:',
               style: mono.copyWith(color: SkColors.warnRed),
             ),
           ),
@@ -673,8 +672,8 @@ class _HelpHint extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 6),
       child: SelectableText(
-        '${AppLocalizations.of(context).usbConsoleHelpHintTopic(example)}\n'
-        '${AppLocalizations.of(context).usbConsoleHelpHintAll}',
+        '${'To see a topic’s commands: help $example'}\n'
+        '${'All commands (including hidden): help all'}',
         style: mono.copyWith(
           color: cs.onSurface.withValues(alpha: 0.55),
           fontSize: 11.5,
@@ -1120,13 +1119,13 @@ class _CommandDetail extends StatelessWidget {
         ],
         if (usage != null && usage.isNotEmpty) ...[
           const SizedBox(height: 12),
-          _DetailLabel(label: AppLocalizations.of(context).usbConsoleDetailUsage),
+          _DetailLabel(label: 'Usage'),
           const SizedBox(height: 4),
           _DetailBlock(text: usage, mono: mono, cs: cs),
         ],
         if (helpBlock != null && helpBlock.isNotEmpty) ...[
           const SizedBox(height: 10),
-          _DetailLabel(label: AppLocalizations.of(context).usbConsoleDetailHelp),
+          _DetailLabel(label: 'Details'),
           const SizedBox(height: 4),
           _DetailBlock(text: helpBlock, mono: mono, cs: cs),
         ],
@@ -1141,7 +1140,7 @@ class _CommandDetail extends StatelessWidget {
               border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
             ),
             child: SelectableText(
-              AppLocalizations.of(context).usbConsoleNoUsageDefined,
+              'This command has no usage / help_block definition. It must be added to its sk_cli_command_t entry in the firmware.',
               style: mono.copyWith(
                 color: cs.onSurface.withValues(alpha: 0.55),
                 fontSize: 11.5,
@@ -1225,7 +1224,7 @@ class _StringListBlock extends StatelessWidget {
             _Pill(label: 'OK', color: SkColors.attentionMustard),
             const SizedBox(width: 8),
             Text(
-              AppLocalizations.of(context).usbConsoleItemCount(items.length),
+              '${items.length} items',
               style: mono.copyWith(color: cs.onSurface.withValues(alpha: 0.6)),
             ),
           ],
@@ -1263,7 +1262,6 @@ class _EventBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final mono = _mono(context);
     final cs = Theme.of(context).colorScheme;
-    final l = AppLocalizations.of(context);
     final decoded = _safeDecode(entry.raw);
     final body = decoded is Map ? decoded.cast<String, dynamic>() : null;
     return Column(
@@ -1271,7 +1269,7 @@ class _EventBlock extends StatelessWidget {
       children: [
         Row(
           children: [
-            _Pill(label: l.usbConsoleEntryEvent, color: cs.onSurface),
+            _Pill(label: 'evt', color: cs.onSurface),
             const SizedBox(width: 8),
             SelectableText(
               entry.evt,
@@ -1315,11 +1313,10 @@ class _LocalErrorBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mono = _mono(context);
-    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Pill(label: l.usbConsoleEntryError, color: SkColors.warnRed),
+        _Pill(label: 'error', color: SkColors.warnRed),
         const SizedBox(height: 2),
         SelectableText(
           message,
@@ -1438,8 +1435,8 @@ class _RawToggle extends StatelessWidget {
             const SizedBox(width: 3),
             Text(
               open
-                  ? AppLocalizations.of(context).usbConsoleRawJsonHide
-                  : AppLocalizations.of(context).usbConsoleRawJsonShow,
+                  ? 'hide raw JSON'
+                  : 'raw JSON',
               style: TextStyle(
                 fontFamily: 'monospace',
                 fontSize: 10,

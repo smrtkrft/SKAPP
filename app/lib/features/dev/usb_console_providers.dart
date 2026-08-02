@@ -31,7 +31,6 @@ import '../../core/cli/cli_client.dart';
 import '../../core/cli/cli_transport.dart' show TransportClosedException;
 import '../../core/cli/usb_cli_transport.dart';
 import '../../core/pairing/pairing_link.dart' show PairingLineOverflow;
-import '../../l10n/app_localizations.dart';
 import '../../core/cli/usb_port_scanner.dart';
 
 /// Aktif USB portları. UI port-picker bunu watch eder; ekran açıkken
@@ -183,13 +182,6 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
   bool _connecting = false;
   bool _disposed = false;
 
-  /// Yerelleştirme: notifier'ın BuildContext'i yok, ekran build içinde
-  /// [attachLocalizations] ile bağlar. Hata metinleri 9 dilde üretilir.
-  AppLocalizations? _l10n;
-
-  /// Ekranın build'inden çağrılır (idempotent, ucuz).
-  void attachLocalizations(AppLocalizations l) => _l10n = l;
-
   /// Cihazdan `help` cevabıyla doldurulan komut adları seti
   /// (`wifi.connect`, `device.info`, ...). Parser greedy match için
   /// kullanır: kullanıcı `wifi connect X Y` yazdığında ardışık tokenları
@@ -236,7 +228,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
       if (_disposed) return;
       state = state.copyWith(
         connection: UsbConnectionState.error,
-        error: describeCliFailure(_l10n, e),
+        error: describeCliFailure(e),
       );
       return;
     }
@@ -261,7 +253,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
         // Uçan bir komut varsa onun catch'i aynı metni zaten yazdı; aynı
         // olay için iki kırmızı satır göstermeyelim.
         if (reason != null && _inFlightCommands == 0) {
-          _appendEntry(ConsoleEntryError(describeCliFailure(_l10n, reason)));
+          _appendEntry(ConsoleEntryError(describeCliFailure(reason)));
         }
         state = state.copyWith(connection: UsbConnectionState.disconnected);
       }
@@ -293,9 +285,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
       _appendEntry(ConsoleEntryResponse(
         ok: msg['ok'] == true,
         raw: const JsonEncoder.withIndent('  ').convert(msg),
-        cmd: _l10n?.usbConsoleUnmatchedReply(
-                (msg['id'] is int) ? msg['id'] as int : -1) ??
-            'unmatched reply · id=${msg['id']}',
+        cmd: 'Unmatched response · id=${msg['id']}',
         id: (msg['id'] is int) ? msg['id'] as int : -1,
         err: msg['err'] as String?,
       ));
@@ -397,7 +387,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     if (cmd.isEmpty) return;
     final client = _client;
     if (client == null || state.connection != UsbConnectionState.connected) {
-      _appendEntry(ConsoleEntryError(_l10n?.usbConsoleNotConnected ?? 'not connected'));
+      _appendEntry(ConsoleEntryError('Not connected'));
       return;
     }
 
@@ -429,7 +419,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
       try {
         await client.transport.sendLine(cmd);
       } catch (e) {
-        _appendEntry(ConsoleEntryError(describeCliFailure(_l10n, e)));
+        _appendEntry(ConsoleEntryError(describeCliFailure(e)));
       }
       return;
     }
@@ -467,8 +457,8 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
             ));
             if (!approved) {
               _appendEntry(ConsoleEntryError(
-                  _l10n?.usbConsoleCriticalCancelled(parsed.cmd) ??
-                      'critical command not confirmed: ${parsed.cmd}'));
+                  'Critical command not confirmed, not sent: '
+                  '${parsed.cmd}'));
               return;
             }
           }
@@ -499,7 +489,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
             !resp.ok && resp.err == 'ERR_NOT_AUTHENTICATED',
       ));
     } catch (e) {
-      _appendEntry(ConsoleEntryError(describeCliFailure(_l10n, e)));
+      _appendEntry(ConsoleEntryError(describeCliFailure(e)));
     } finally {
       if (_inFlightCommands > 0) _inFlightCommands--;
     }
@@ -751,10 +741,9 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
 /// transportlar tipli hata fırlatıyor; ham `toString()` kullanıcıya
 /// "TransportClosedException(SerialPortError…)" gibi satırlar
 /// gösteriyordu. Teknik ayrıntı korunur ama önüne ne olduğu yazılır.
-String describeCliFailure(AppLocalizations? l, Object e) {
-  if (l == null) return e.toString(); // yerelleştirme henüz bağlanmadı
+String describeCliFailure(Object e) {
   if (e is TimeoutException) {
-    return l.usbConsoleErrTimeout(e.message ?? 'timeout');
+    return 'Device did not respond in time. Check the cable/port and try again. (${e.message ?? 'timeout'})';
   }
   if (e is TransportClosedException) {
     // Sebep bir TransportClosedException ise iç içe sarmalama var
@@ -764,12 +753,12 @@ String describeCliFailure(AppLocalizations? l, Object e) {
     while (reason is TransportClosedException) {
       reason = reason.reason;
     }
-    if (reason is PairingLineOverflow) return l.usbConsoleErrLineOverflow;
+    if (reason is PairingLineOverflow) return 'The device sent very long data with no line break — this port may not be a SmartKraft device. Connection closed.';
     return reason == null
-        ? l.usbConsoleErrClosed
-        : l.usbConsoleErrClosedReason(reason.toString());
+        ? 'USB connection closed.'
+        : 'USB connection closed: ${reason.toString()}';
   }
-  if (e is PairingLineOverflow) return l.usbConsoleErrLineOverflow;
+  if (e is PairingLineOverflow) return 'The device sent very long data with no line break — this port may not be a SmartKraft device. Connection closed.';
   if (e is UnsupportedError) return e.message ?? e.toString();
   if (e is StateError) return e.message;
   return e.toString();

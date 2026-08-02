@@ -19,7 +19,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/cli/usb_port_scanner.dart';
 import '../../core/ui/sk_confirm_dialog.dart';
 import '../../core/ui/sk_neu_card.dart';
-import '../../l10n/app_localizations.dart';
 import '../main_shell/main_shell.dart' show ShellNavBar;
 import 'usb_console_providers.dart';
 import 'widgets/console_message_view.dart';
@@ -42,7 +41,6 @@ class _UsbConsoleScreenState extends ConsumerState<UsbConsoleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
     final selected = _selectedPort;
 
     // Auto-select listener: portsAsync ilk başarılı snapshot'unda eğer
@@ -73,26 +71,26 @@ class _UsbConsoleScreenState extends ConsumerState<UsbConsoleScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
-        title: Text(l.usbConsoleAppBarTitle),
+        title: Text('USB Console'),
         actions: selected == null
             ? [
                 IconButton(
                   icon: const Icon(Icons.refresh),
-                  tooltip: l.usbConsolePortRefreshTooltip,
+                  tooltip: 'Refresh ports',
                   onPressed: () => ref.invalidate(usbPortsProvider),
                 ),
               ]
             : [
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  tooltip: l.usbConsoleClear,
+                  tooltip: 'Clear console',
                   onPressed: () => ref
                       .read(usbConsoleSessionProvider(selected).notifier)
                       .clearEntries(),
                 ),
                 IconButton(
                   icon: const Icon(Icons.power_settings_new),
-                  tooltip: l.usbConsoleDisconnect,
+                  tooltip: 'Disconnect',
                   onPressed: () async {
                     await ref
                         .read(usbConsoleSessionProvider(selected).notifier)
@@ -121,7 +119,6 @@ class _PortPicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
     final portsAsync = ref.watch(usbPortsProvider);
     return portsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -147,7 +144,7 @@ class _PortPicker extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    l.usbConsolePickPortHint,
+                    'Plug a SmartKraft device via USB and tap refresh',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
@@ -165,7 +162,7 @@ class _PortPicker extends ConsumerWidget {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
                 child: Text(
-                  l.usbConsolePickPortTitle.toUpperCase(),
+                  'Select a port'.toUpperCase(),
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
               );
@@ -186,7 +183,6 @@ class _PortCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
     final cs = Theme.of(context).colorScheme;
     return SkNeuCard(
       onTap: onTap,
@@ -226,7 +222,7 @@ class _PortCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
-                              l.usbConsoleBfBadge,
+                              'SmartKraft',
                               style: TextStyle(
                                 color: cs.primary,
                                 fontSize: 10,
@@ -308,15 +304,10 @@ class _ConsoleBodyState extends ConsumerState<_ConsoleBody> {
 
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
     final cs = Theme.of(context).colorScheme;
     final state = ref.watch(usbConsoleSessionProvider(widget.port));
     final notifier =
         ref.read(usbConsoleSessionProvider(widget.port).notifier);
-    // Notifier'ın BuildContext'i yok; hata metinlerini kullanıcının dilinde
-    // üretebilmesi için yerelleştirmeyi buradan bağlıyoruz.
-    notifier.attachLocalizations(l);
-
     // Yeni entry geldiyse otomatik aşağı kaydır
     ref.listen(usbConsoleSessionProvider(widget.port), (prev, next) {
       if ((prev?.entries.length ?? 0) < next.entries.length) {
@@ -337,13 +328,13 @@ class _ConsoleBodyState extends ConsumerState<_ConsoleBody> {
               children: [
                 Expanded(
                   child: Text(
-                    l.usbConsoleErrorBanner(state.error!),
+                    'Error: ${state.error!}',
                     style: TextStyle(color: cs.onErrorContainer),
                   ),
                 ),
                 TextButton(
                   onPressed: notifier.reconnect,
-                  child: Text(l.usbConsoleReconnect),
+                  child: Text('Reconnect'),
                 ),
               ],
             ),
@@ -355,10 +346,10 @@ class _ConsoleBodyState extends ConsumerState<_ConsoleBody> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               children: [
-                Expanded(child: Text(l.usbConsoleDisconnected)),
+                Expanded(child: Text('Disconnected')),
                 TextButton(
                   onPressed: notifier.reconnect,
-                  child: Text(l.usbConsoleReconnect),
+                  child: Text('Reconnect'),
                 ),
               ],
             ),
@@ -369,7 +360,7 @@ class _ConsoleBodyState extends ConsumerState<_ConsoleBody> {
                   child: Padding(
                     padding: const EdgeInsets.all(32),
                     child: Text(
-                      l.usbConsoleEmptyHint,
+                      'Type a command and press Enter, try device.info',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: cs.onSurface.withValues(alpha: 0.5),
@@ -408,13 +399,12 @@ class _ConsoleBodyState extends ConsumerState<_ConsoleBody> {
     // cihazı geri dönülmez biçimde sıfırlayabiliyordu.
     notifier.send(cmd, confirmCritical: (req) async {
       if (!mounted) return false;
-      final l = AppLocalizations.of(context);
       return showSkConfirm(
         context,
-        title: l.usbConsoleCriticalConfirmTitle,
-        message: l.usbConsoleCriticalConfirmBody(req.cmd, req.ttlSec),
-        cancelLabel: l.commonCancel,
-        confirmLabel: l.usbConsoleCriticalConfirmRun,
+        title: 'Critical command confirmation',
+        message: '“${req.cmd}” cannot be undone. Continue? (confirmation window ${req.ttlSec}s)',
+        cancelLabel: 'Cancel',
+        confirmLabel: 'Run',
         destructive: true,
       );
     });
@@ -423,19 +413,11 @@ class _ConsoleBodyState extends ConsumerState<_ConsoleBody> {
 
   void _historyNav(List<String> history, int delta) {
     if (history.isEmpty) return;
-    // -1 = current draft. ↑ → en son komut (history.length - 1).
-    if (_historyIndex == -1 && delta < 0) {
-      _historyIndex = history.length - 1;
-    } else {
-      final next = _historyIndex + delta;
-      if (next < 0) {
-        _historyIndex = 0;
-      } else if (next >= history.length) {
-        _historyIndex = -1;
-      } else {
-        _historyIndex = next;
-      }
-    }
+    _historyIndex = consoleHistoryIndex(
+      current: _historyIndex,
+      delta: delta,
+      length: history.length,
+    );
     final text = _historyIndex == -1 ? '' : history[_historyIndex];
     _input.value = TextEditingValue(
       text: text,
@@ -450,16 +432,15 @@ class _StatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
     final cs = Theme.of(context).colorScheme;
     final (color, label) = switch (state.connection) {
       UsbConnectionState.connecting =>
-        (cs.onSurfaceVariant, l.usbConsoleConnecting),
+        (cs.onSurfaceVariant, 'Connecting…'),
       // tasarim.md: çevrimiçi/bağlı = tam opak foreground (renk değil).
-      UsbConnectionState.connected => (cs.onSurface, l.usbConsoleConnected),
+      UsbConnectionState.connected => (cs.onSurface, 'Connected'),
       UsbConnectionState.disconnected =>
-        (cs.onSurfaceVariant, l.usbConsoleDisconnected),
-      UsbConnectionState.error => (cs.error, l.usbConsoleDisconnected),
+        (cs.onSurfaceVariant, 'Disconnected'),
+      UsbConnectionState.error => (cs.error, 'Disconnected'),
     };
     return Container(
       width: double.infinity,
@@ -512,7 +493,6 @@ class _InputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
     final cs = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
@@ -558,7 +538,7 @@ class _InputBar extends StatelessWidget {
                   style: const TextStyle(fontFamily: 'monospace'),
                   decoration: InputDecoration(
                     isDense: true,
-                    hintText: l.usbConsoleInputHint,
+                    hintText: 'Type a command, e.g. device.info',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -572,7 +552,7 @@ class _InputBar extends StatelessWidget {
           IconButton.filled(
             icon: const Icon(Icons.send_rounded),
             onPressed: enabled ? onSubmit : null,
-            tooltip: l.usbConsoleSend,
+            tooltip: 'Send',
           ),
         ],
       ),
@@ -586,4 +566,30 @@ class _HistoryUpIntent extends Intent {
 
 class _HistoryDownIntent extends Intent {
   const _HistoryDownIntent();
+}
+
+/// Terminal-style command-history cursor math.
+///
+/// `current == -1` means "the draft line the user is typing". Pressing ↑
+/// (`delta == -1`) from the draft jumps to the most recent command, then
+/// keeps walking towards older entries and stops at the oldest. Pressing ↓
+/// (`delta == 1`) walks back towards newer entries and returns to the empty
+/// draft once it passes the newest one — the same behaviour bash/zsh have.
+///
+/// [length] must be > 0 (callers return early on an empty history).
+int consoleHistoryIndex({
+  required int current,
+  required int delta,
+  required int length,
+}) {
+  if (current == -1) {
+    // Draft: ↑ recalls the newest command, ↓ does nothing (pressing down
+    // with nothing recalled used to jump to the OLDEST entry — the
+    // opposite of what every terminal does).
+    return delta < 0 ? length - 1 : -1;
+  }
+  final next = current + delta;
+  if (next < 0) return 0; // clamp at the oldest entry
+  if (next >= length) return -1; // past the newest → back to draft
+  return next;
 }

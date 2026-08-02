@@ -1331,31 +1331,6 @@
   "deviceNameEmptyPlaceholder": "(kein eigener Name)",
   "settingsUsbConsoleTitle": "USB-CLI-Konsole",
   "settingsUsbConsoleSubtitle": "Rohe Befehle an ein per USB verbundenes Gerät senden",
-  "usbConsoleAppBarTitle": "USB-Konsole",
-  "usbConsolePickPortTitle": "Einen Port wählen",
-  "usbConsolePickPortHint": "Schließe ein SmartKraft-Gerät per USB an und tippe auf Aktualisieren",
-  "usbConsolePortRefreshTooltip": "Ports aktualisieren",
-  "usbConsoleBfBadge": "SmartKraft",
-  "usbConsoleConnecting": "Verbinde…",
-  "usbConsoleConnected": "Verbunden",
-  "usbConsoleDisconnected": "Getrennt",
-  "usbConsoleErrorBanner": "Fehler: {error}",
-  "@usbConsoleErrorBanner": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "usbConsoleReconnect": "Erneut verbinden",
-  "usbConsoleDisconnect": "Trennen",
-  "usbConsoleClear": "Konsole leeren",
-  "usbConsoleInputHint": "Gib einen Befehl ein, z. B. device.info",
-  "usbConsoleSend": "Senden",
-  "usbConsoleEmptyHint": "Gib einen Befehl ein und drücke Enter, probiere device.info",
-  "usbConsoleEntryEvent": "evt",
-  "usbConsoleEntryError": "Fehler",
-  "usbConsoleNotSupportedIos": "Die USB-Konsole wird unter iOS nicht unterstützt",
   "passphraseFieldLabel": "Passphrase",
   "passphraseVerifyButton": "Prüfen",
   "passphraseAttemptsLeft": "Verbleibende Versuche: {count}",
@@ -3622,40 +3597,8 @@
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Scan konnte nicht gestartet werden: {detail}",
   "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
-  "discoveryScanFailedTitle": "Scan fehlgeschlagen",
+  "discoveryScanFailedTitle": "Scan fehlgeschlagen"
 
-  "usbConsoleCriticalConfirmTitle": "Bestätigung für kritischen Befehl",
-  "usbConsoleCriticalConfirmBody": "„{cmd}“ kann nicht rückgängig gemacht werden. Fortfahren? (Bestätigungsfenster {ttl}s)",
-  "@usbConsoleCriticalConfirmBody": {"placeholders": {"cmd": {"type": "String"}, "ttl": {"type": "int"}}},
-  "usbConsoleCriticalConfirmRun": "Ausführen",
-  "usbConsoleCriticalCancelled": "Kritischer Befehl nicht bestätigt, nicht gesendet: {cmd}",
-  "@usbConsoleCriticalCancelled": {"placeholders": {"cmd": {"type": "String"}}},
-  "usbConsoleErrTimeout": "Gerät hat nicht rechtzeitig geantwortet. Kabel/Port prüfen und erneut versuchen. ({detail})",
-  "@usbConsoleErrTimeout": {"placeholders": {"detail": {"type": "String"}}},
-  "usbConsoleErrClosed": "USB-Verbindung geschlossen.",
-  "usbConsoleErrClosedReason": "USB-Verbindung geschlossen: {detail}",
-  "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
-  "usbConsoleErrLineOverflow": "Das Gerät sendete sehr lange Daten ohne Zeilenumbruch — dieser Port ist möglicherweise kein SmartKraft-Gerät. Verbindung getrennt.",
-  "usbConsoleUnmatchedReply": "Nicht zugeordnete Antwort · id={id}",
-  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}},
 
-  "usbConsoleUnauthenticatedHint": "Dieser Befehl erfordert eine authentifizierte Sitzung (`requires_auth=true`). Die USB-CLI ist nicht authentifiziert; führen Sie ihn unter Meine Geräte > [Gerät] in einer gekoppelten BLE/WLAN-Sitzung aus.",
-  "usbConsoleNotConnected": "Nicht verbunden",
-  "usbConsoleDetailUsage": "Verwendung",
-  "usbConsoleDetailHelp": "Details",
-  "usbConsoleItemCount": "{count} Einträge",
-  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}},
 
-  "usbConsoleCommandCount": "{count} Befehle",
-  "@usbConsoleCommandCount": {"placeholders": {"count": {"type": "int"}}},
-  "usbConsoleTopicCount": "{count} Themen",
-  "@usbConsoleTopicCount": {"placeholders": {"count": {"type": "int"}}},
-  "usbConsoleUnknownTopic": "Kein Thema/Befehl namens „{target}“. Liste:",
-  "@usbConsoleUnknownTopic": {"placeholders": {"target": {"type": "String"}}},
-  "usbConsoleHelpHintTopic": "Befehle eines Themas anzeigen: help {example}",
-  "@usbConsoleHelpHintTopic": {"placeholders": {"example": {"type": "String"}}},
-  "usbConsoleHelpHintAll": "Alle Befehle (inkl. versteckte): help all",
-  "usbConsoleNoUsageDefined": "Für diesen Befehl ist keine usage / help_block definiert. Sie muss in der Firmware im sk_cli_command_t-Eintrag ergänzt werden.",
-  "usbConsoleRawJsonHide": "Roh-JSON ausblenden",
-  "usbConsoleRawJsonShow": "Roh-JSON"
 }
