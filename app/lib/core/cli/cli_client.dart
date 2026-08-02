@@ -55,10 +55,18 @@ class CliClient {
   final CliSigner? signer;
 
   final _events = StreamController<CliEvent>.broadcast();
+  final _unmatched = StreamController<Map<String, dynamic>>.broadcast();
   final _pending = <int, Completer<CliResponse>>{};
   int _nextId = 1;
 
   Stream<CliEvent> get events => _events.stream;
+
+  /// Bekleyen bir isteğe eşleşmeyen cevaplar. İki gerçek durum:
+  ///   * Ham JSON modunda kullanıcının kendi `id`'siyle gönderdiği komut
+  ///     (istek CliClient'tan geçmediği için `_pending`'de yok).
+  ///   * Timeout'tan SONRA gelen geç cevap (id kaydı silinmiştir).
+  /// Eskiden ikisi de sessizce düşüyordu; konsol bunu dinleyip gösterir.
+  Stream<Map<String, dynamic>> get unmatched => _unmatched.stream;
 
   /// Completes when the underlying transport drops (socket onDone, BLE
   /// disconnect). Any pending requests are failed at the same moment so
@@ -196,6 +204,7 @@ class CliClient {
     await _sub?.cancel();
     await transport.close();
     if (!_events.isClosed) await _events.close();
+    if (!_unmatched.isClosed) await _unmatched.close();
   }
 
   void _onLine(String line) {
@@ -222,7 +231,8 @@ class CliClient {
         params: (msg['params'] as Map?)?.cast<String, dynamic>(),
       ));
     } else {
-      debugPrint('[cli] response with unknown id $idRaw dropped');
+      debugPrint('[cli] response with unknown id $idRaw surfaced as unmatched');
+      if (!_unmatched.isClosed) _unmatched.add(msg);
     }
   }
 }

@@ -1802,11 +1802,12 @@ class DeveloperToolsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // USB Konsolu: desktop-only push route.
-                  if (!kIsWeb &&
-                      (Platform.isWindows ||
-                          Platform.isMacOS ||
-                          Platform.isLinux)) ...[
+                  // USB Konsolu: şu an YALNIZ Windows. macOS/Linux'ta
+                  // port tarayıcı boş liste döner ve transport fabrikası
+                  // UnsupportedError fırlatır — kartı göstermek kullanıcıyı
+                  // açıklamasız boş bir ekrana sokuyordu (POSIX termios
+                  // desteği Faz 2).
+                  if (!kIsWeb && Platform.isWindows) ...[
                     _LiveCard(
                       icon: Icons.terminal_rounded,
                       title: l.settingsUsbConsoleTitle,

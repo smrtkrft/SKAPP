@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/cli/usb_port_scanner.dart';
+import '../../core/ui/sk_confirm_dialog.dart';
 import '../../core/ui/sk_neu_card.dart';
 import '../../l10n/app_localizations.dart';
 import '../main_shell/main_shell.dart' show ShellNavBar;
@@ -399,7 +400,21 @@ class _ConsoleBodyState extends ConsumerState<_ConsoleBody> {
     if (cmd.trim().isEmpty) return;
     _input.clear();
     _historyIndex = -1;
-    notifier.send(cmd);
+    // Kritik komutlar (firmware ERR_CONFIRM_TOKEN_REQUIRED ile işaretler)
+    // artık onay ister: USB fiziksel erişim gerektirse de tek yazım hatası
+    // cihazı geri dönülmez biçimde sıfırlayabiliyordu.
+    notifier.send(cmd, confirmCritical: (req) async {
+      if (!mounted) return false;
+      return showSkConfirm(
+        context,
+        title: 'Kritik komut onayı',
+        message: '“${req.cmd}” geri alınamaz bir işlem. '
+            'Devam edilsin mi? (onay süresi ${req.ttlSec} sn)',
+        cancelLabel: 'Vazgeç',
+        confirmLabel: 'Çalıştır',
+        destructive: true,
+      );
+    });
     _focusNode.requestFocus();
   }
 

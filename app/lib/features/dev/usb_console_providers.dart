@@ -23,11 +23,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 import '../../core/cli/cli_client.dart';
+import '../../core/cli/cli_transport.dart' show TransportClosedException;
 import '../../core/cli/usb_cli_transport.dart';
+import '../../core/pairing/pairing_link.dart' show PairingLineOverflow;
 import '../../core/cli/usb_port_scanner.dart';
 
 /// Aktif USB portları. UI port-picker bunu watch eder; ekran açıkken
@@ -161,6 +164,14 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
 
   CliClient? _client;
   StreamSubscription<Map<String, dynamic>>? _eventsSub;
+  StreamSubscription<Map<String, dynamic>>? _unmatchedSub;
+
+  /// Bağlanma akışı için reentrancy koruması: "Yeniden bağlan" butonu
+  /// disconnect'in await'leri sırasında canlı kaldığından çift dokunuş
+  /// iki paralel _connect() başlatabiliyordu — ikincisi exclusive
+  /// CreateFile'da düşüp state'i hata yapıyor, birincisinin canlı client'ı
+  /// ise sızıyordu (COM portu tutulu kalır).
+  bool _connecting = false;
   bool _disposed = false;
 
   /// Cihazdan `help` cevabıyla doldurulan komut adları seti
@@ -175,6 +186,22 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
   static const int _kMaxCommandHistory = 50;
 
   Future<void> _connect() async {
+    // Reentrancy: iki paralel bağlanma, exclusive COM açılışında ikinciyi
+    // düşürüp state'i hataya çeviriyor ve birincinin canlı client'ını
+    // sızdırıyordu (port tutulu kalır, sonraki denemeler de düşer).
+    if (_connecting) {
+      debugPrint('[USB-CONSOLE] _connect: reentrancy blocked');
+      return;
+    }
+    _connecting = true;
+    try {
+      await _connectLocked();
+    } finally {
+      _connecting = false;
+    }
+  }
+
+  Future<void> _connectLocked() async {
     final transport = createUsbCliTransport(portInfo: port);
     final client = CliClient(transport, signer: null);
     try {
@@ -182,11 +209,13 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     } catch (e) {
       try {
         await client.stop();
-      } catch (_) {/* */}
+      } catch (e2) {
+        debugPrint('[USB-CONSOLE] cleanup stop failed: $e2');
+      }
       if (_disposed) return;
       state = state.copyWith(
         connection: UsbConnectionState.error,
-        error: e.toString(),
+        error: describeCliFailure(e),
       );
       return;
     }
@@ -215,6 +244,20 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
         raw: jsonEncode(evt),
       );
       _appendEntry(entry);
+    });
+
+    // Eşleşmeyen cevaplar: ham JSON modunda kullanıcının kendi id'siyle
+    // gönderdiği komutun cevabı ve timeout'tan SONRA gelen geç cevaplar.
+    // İkisi de eskiden sessizce düşüyordu — "komut hiçbir şey yapmadı"
+    // ve "zaman aşımı ama cihaz aslında cevapladı" şikayetlerinin kaynağı.
+    _unmatchedSub = client.unmatched.listen((msg) {
+      _appendEntry(ConsoleEntryResponse(
+        ok: msg['ok'] == true,
+        raw: const JsonEncoder.withIndent('  ').convert(msg),
+        cmd: '(eşleşmeyen cevap · id=${msg['id']})',
+        id: (msg['id'] is int) ? msg['id'] as int : -1,
+        err: msg['err'] as String?,
+      ));
     });
 
     _client = client;
@@ -273,7 +316,14 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
   /// tek satır cevap görünür (auto-retry chip eklenir). Bu sayede
   /// `device.restart`, `wifi.forget`, `auth.passphrase.set` gibi
   /// critical=true komutlar USB CLI'dan da çalışır.
-  Future<void> send(String input) async {
+  /// [confirmCritical] verilirse, firmware `ERR_CONFIRM_TOKEN_REQUIRED`
+  /// döndüğünde (device.factory-reset gibi geri alınamaz komutlar) token
+  /// otomatik değil, kullanıcı onayıyla gönderilir. Eskiden onay tamamen
+  /// atlanıyordu: tek yazım hatası cihazı anında siliyordu.
+  Future<void> send(
+    String input, {
+    Future<bool> Function(CliConfirmRequest req)? confirmCritical,
+  }) async {
     final cmd = input.trim();
     if (cmd.isEmpty) return;
     final client = _client;
@@ -310,7 +360,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
       try {
         await client.transport.sendLine(cmd);
       } catch (e) {
-        _appendEntry(ConsoleEntryError(e.toString()));
+        _appendEntry(ConsoleEntryError(describeCliFailure(e)));
       }
       return;
     }
@@ -340,6 +390,17 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
           parsed.confirmToken == null) {
         final token = resp.params?['confirm_token'] as String?;
         if (token != null && token.isNotEmpty) {
+          if (confirmCritical != null) {
+            final approved = await confirmCritical(CliConfirmRequest(
+              cmd: (resp.params?['cmd'] as String?) ?? parsed.cmd,
+              ttlSec: (resp.params?['ttl_sec'] as num?)?.toInt() ?? 30,
+            ));
+            if (!approved) {
+              _appendEntry(ConsoleEntryError(
+                  'Kritik komut onaylanmadı, gönderilmedi: ${parsed.cmd}'));
+              return;
+            }
+          }
           resp = await client
               .send(
                 parsed.cmd,
@@ -367,7 +428,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
             !resp.ok && resp.err == 'ERR_NOT_AUTHENTICATED',
       ));
     } catch (e) {
-      _appendEntry(ConsoleEntryError(e.toString()));
+      _appendEntry(ConsoleEntryError(describeCliFailure(e)));
     }
   }
 
@@ -401,7 +462,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
 
     // 1) Komut adını belirle — sözlük varsa greedy longest-prefix match.
     int consumed = 1;
-    String cmdName = tokens[0];
+    String cmdName = tokens[0].text;
 
     // `help` / `?` bir topic ARGÜMANI alır (`help wifi`), namespace DEĞİL.
     // Bu yüzden sonraki token'ı asla nokta ile birleştirme: aksi halde
@@ -411,13 +472,13 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     // ham komuta göre overview'i filtreler (console_message_view _helpMode).
     const noFoldRoots = {'help', '?'};
 
-    if (!noFoldRoots.contains(tokens[0]) &&
-        !tokens[0].contains('.') &&
-        !tokens[0].contains('=')) {
+    if (!noFoldRoots.contains(tokens[0].text) &&
+        !tokens[0].text.contains('.') &&
+        !tokens[0].text.contains('=')) {
       // Greedy: 4 token derinliğine kadar dene (`a.b.c.d` formatı için).
       for (int n = math.min(tokens.length, 4); n >= 2; n--) {
-        if (_isFlagToken(tokens[n - 1])) continue;
-        final candidate = tokens.sublist(0, n).join('.');
+        if (_isFlagToken(tokens[n - 1].text)) continue;
+        final candidate = tokens.sublist(0, n).map((t) => t.text).join('.');
         if (_knownCommands.contains(candidate)) {
           cmdName = candidate;
           consumed = n;
@@ -428,38 +489,44 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
       if (consumed == 1 &&
           _knownCommands.isEmpty &&
           tokens.length >= 2 &&
-          !_isFlagToken(tokens[1]) &&
-          !tokens[1].contains('=')) {
-        cmdName = '${tokens[0]}.${tokens[1]}';
+          !_isFlagToken(tokens[1].text) &&
+          !tokens[1].text.contains('=')) {
+        cmdName = '${tokens[0].text}.${tokens[1].text}';
         consumed = 2;
       }
     }
 
-    // 2) Geri kalan tokenları argümanlara ayır.
+    // 2) Geri kalan tokenları argümanlara ayır. Değerler firmware'in
+    //    beklediği JSON tipine çevrilir (coerceCliArgValue); tırnaklı
+    //    yazılanlar metin kalır.
     final args = <String, dynamic>{};
     final argv = <String>[];
     int i = consumed;
     while (i < tokens.length) {
       final t = tokens[i];
-      if (t.startsWith('--')) {
-        final flag = t.substring(2);
+      final text = t.text;
+      if (text.startsWith('--')) {
+        final flag = text.substring(2);
         final eq = flag.indexOf('=');
         if (eq >= 0) {
-          args[flag.substring(0, eq)] = flag.substring(eq + 1);
+          args[flag.substring(0, eq)] =
+              coerceCliArgValue(flag.substring(eq + 1), quoted: t.quoted);
           i++;
-        } else if (i + 1 < tokens.length && !_isFlagToken(tokens[i + 1])) {
-          args[flag] = tokens[i + 1];
+        } else if (i + 1 < tokens.length && !_isFlagToken(tokens[i + 1].text)) {
+          final v = tokens[i + 1];
+          args[flag] = coerceCliArgValue(v.text, quoted: v.quoted);
           i += 2;
         } else {
           args[flag] = true;
           i++;
         }
-      } else if (t.contains('=') && !t.startsWith('=')) {
-        final eq = t.indexOf('=');
-        args[t.substring(0, eq)] = t.substring(eq + 1);
+      } else if (text.contains('=') && !text.startsWith('=')) {
+        final eq = text.indexOf('=');
+        args[text.substring(0, eq)] =
+            coerceCliArgValue(text.substring(eq + 1), quoted: t.quoted);
         i++;
       } else {
-        argv.add(t);
+        argv.add(text);
         i++;
       }
     }
@@ -491,10 +558,18 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
 
   /// Quote-aware tokenize: boşluklara böl ama tek/çift tırnak içindeki
   /// boşlukları korur. Tırnak kapanmazsa stringin sonuna kadar kabul edilir.
-  List<String> _tokenize(String input) {
-    final out = <String>[];
+  List<CliToken> _tokenize(String input) {
+    final out = <CliToken>[];
     final buf = StringBuffer();
     String? quote;
+    var sawQuote = false;
+    void flush() {
+      if (buf.isEmpty && !sawQuote) return;
+      out.add(CliToken(buf.toString(), quoted: sawQuote));
+      buf.clear();
+      sawQuote = false;
+    }
+
     for (int i = 0; i < input.length; i++) {
       final c = input[i];
       if (quote != null) {
@@ -505,16 +580,16 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
         }
       } else if (c == '"' || c == "'") {
         quote = c;
+        // Tırnak kullanıcının "bu bir metin" işaretidir; değer dönüşümü
+        // bunu görüp sayıya çevirmemeli (ör. parola "12345678").
+        sawQuote = true;
       } else if (c == ' ' || c == '\t') {
-        if (buf.isNotEmpty) {
-          out.add(buf.toString());
-          buf.clear();
-        }
+        flush();
       } else {
         buf.write(c);
       }
     }
-    if (buf.isNotEmpty) out.add(buf.toString());
+    flush();
     return out;
   }
 
@@ -553,11 +628,17 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
   Future<void> _disposeClient() async {
     try {
       await _eventsSub?.cancel();
-    } catch (_) {/* */}
+      await _unmatchedSub?.cancel();
+    } catch (e) {
+      debugPrint('[USB-CONSOLE] subscription cancel failed: $e');
+    }
     _eventsSub = null;
+    _unmatchedSub = null;
     try {
       await _client?.stop();
-    } catch (_) {/* */}
+    } catch (e) {
+      debugPrint('[USB-CONSOLE] client stop failed: $e');
+    }
     _client = null;
   }
 
@@ -591,6 +672,76 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
 /// (msg, "confirm_token")` ile orayı okur). Kullanıcı `--confirm-token`
 /// veya `--confirm_token` yazsa da aynı yere lift ediliyor; aksi halde
 /// kritik komut iki adımlı confirm-token akışı USB CLI'da hiç çalışmaz.
+/// Konsolda gösterilecek insan-okur hata metni. Refaktörden sonra
+/// transportlar tipli hata fırlatıyor; ham `toString()` kullanıcıya
+/// "TransportClosedException(SerialPortError…)" gibi satırlar
+/// gösteriyordu. Teknik ayrıntı korunur ama önüne ne olduğu yazılır.
+String describeCliFailure(Object e) {
+  if (e is TimeoutException) {
+    return 'Cihaz zamanında cevap vermedi. Kablo/port bağlantısını kontrol '
+        'edip tekrar deneyin. (${e.message ?? 'timeout'})';
+  }
+  if (e is TransportClosedException) {
+    final reason = e.reason;
+    return reason == null
+        ? 'USB bağlantısı kapandı.'
+        : 'USB bağlantısı kapandı: $reason';
+  }
+  if (e is PairingLineOverflow) {
+    return 'Cihazdan satır sonu olmayan çok uzun veri geldi — bu port '
+        'SmartKraft cihazı olmayabilir. Bağlantı kesildi. ($e)';
+  }
+  if (e is UnsupportedError) {
+    return e.message ?? 'Bu platformda desteklenmiyor.';
+  }
+  if (e is StateError) return e.message;
+  return e.toString();
+}
+
+/// Tokenizer çıktısı. `quoted`, kullanıcının değeri tırnak içine alıp
+/// almadığını taşır — [coerceCliArgValue] bunu görünce sayı/bool
+/// dönüşümü yapmaz.
+class CliToken {
+  const CliToken(this.text, {this.quoted = false});
+  final String text;
+  final bool quoted;
+  @override
+  String toString() => text;
+}
+
+/// Yalnız basit ondalık sayı: baştaki sıfır (`007`), `+`, `0x` gibi
+/// biçimler kimlik/kod olabilir, string kalmalı.
+final _plainNumberPattern = RegExp(r'^-?(0|[1-9]\d*)(\.\d+)?$');
+
+/// `key=value` argüman değerini firmware'in beklediği JSON tipine çevirir.
+///
+/// Makine-modu komutları cJSON'da gerçek sayı/bool bekliyor; eskiden her
+/// değer string gidiyordu (`brightness=128` → `"128"`) ve firmware
+/// `ERR_INVALID_ARGS` döndürüyordu. Tırnaklı değerler ([quoted]) dokunulmaz
+/// kalır: kullanıcı `password="12345678"` yazdığında bu bir metindir.
+Object? coerceCliArgValue(String raw, {bool quoted = false}) {
+  if (quoted || raw.isEmpty) return raw;
+  switch (raw.toLowerCase()) {
+    case 'true':
+      return true;
+    case 'false':
+      return false;
+    case 'null':
+      return null;
+  }
+  if (_plainNumberPattern.hasMatch(raw)) {
+    if (raw.contains('.')) {
+      final d = double.tryParse(raw);
+      if (d != null) return d;
+    } else {
+      // 64-bit'i aşan değerde tryParse null döner → string kalır.
+      final i = int.tryParse(raw);
+      if (i != null) return i;
+    }
+  }
+  return raw;
+}
+
 class _ParsedCommand {
   const _ParsedCommand(this.cmd, this.args, this.argv, this.confirmToken);
   final String cmd;
