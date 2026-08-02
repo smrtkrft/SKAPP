@@ -222,6 +222,13 @@ class DevicesScreen extends ConsumerWidget {
     final offline = ls == null ||
         DateTime.now().difference(ls) >= const Duration(seconds: 90);
     if (offline) {
+      // Bilgi ver ama ENGELLEME: lastSeen tazeliği yalnız in-process mDNS
+      // sweep'i (Windows güvenlik duvarı bloklar) + BLE sweep'i (masaüstünde
+      // yok/kırılgan) + açık oturumun touch'ından beslenir. Erken return,
+      // `.local` OS-resolver yolunun bağlanabileceği cihazı kalıcı olarak
+      // dokunulmaz yapıyordu (kısır döngü: tazelik için cihazı açmak gerek,
+      // kapı açmayı engelliyor). Gerçek erişilebilirlik kararını bağlantı
+      // zinciri verir; başarısızlıkta ekran dürüst hata + retry gösterir.
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(
@@ -231,7 +238,6 @@ class DevicesScreen extends ConsumerWidget {
           ),
           duration: const Duration(seconds: 2),
         ));
-      return;
     }
     _openDevice(context, paired);
   }

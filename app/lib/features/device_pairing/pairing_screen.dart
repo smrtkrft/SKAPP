@@ -69,6 +69,8 @@ class PairingScreen extends ConsumerStatefulWidget {
 
 class _PairingScreenState extends ConsumerState<PairingScreen> {
   _PairStage _stage = _PairStage.connecting;
+  // Kırılma anındaki aşama — adım listesi renklendirmesi için.
+  _PairStage? _failedAt;
   String? _errorMsg;
   BluetoothDevice? _btDevice;
   BlePairingLink? _pairingLink;
@@ -233,9 +235,22 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
         throw BondRejectedError(ping.err ?? 'device.info');
       }
 
-      await ref
-          .read(pairedDevicesProvider.notifier)
-          .touch(widget.device.id);
+      // Kayıt yoksa geri yaz: touch() kayıt yokken no-op'tur. Bond'u olan
+      // ama metadata'sı silinmiş cihaz (yarım kalmış persist / yarım
+      // kalmış forget) aksi halde "eşleşti" görünüp listeye hiç düşmez —
+      // uygulama yeniden başlayınca cihaza dönüş yolu kalmaz.
+      final devicesStore = ref.read(pairedDevicesProvider.notifier);
+      if (ref.read(pairedDevicesProvider).matchDeviceId(widget.device.id) ==
+          null) {
+        await devicesStore.upsert(PairedDevice(
+          id: widget.device.id,
+          name: widget.device.name,
+          prefix: widget.device.typePrefix ?? '??',
+          pairedAt: DateTime.now(),
+        ));
+      } else {
+        await devicesStore.touch(widget.device.id);
+      }
 
       _trace('reconnect: success');
       _set(_PairStage.done);
@@ -284,7 +299,10 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       }
 
       try {
+        // Alias da temizlenmeli: save() token'ı hem MAC hem SmartKraft adı
+        // altında yazar; yalnız id'yi silmek ad alias'ından dirilme demek.
         await ref.read(bondStoreProvider).clear(widget.device.id);
+        await ref.read(bondStoreProvider).clear(widget.device.name);
       } catch (e2, st2) {
         // Bayat bond diskte kalırsa bootstrap ERR_PAIRING_NOT_OPEN /
         // PlatformException döngüsüne girer — sessizce devam etmek YASAK
@@ -635,6 +653,10 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     if (!mounted) return;
     _trace('FAIL: ${msg.split("\n").first}');
     setState(() {
+      // Hangi adımda kırıldığını sakla: adım listesi başarılı adımları
+      // yeşil bırakıp yalnız kırılan adımı kırmızı gösterebilsin (eskiden
+      // hepsi kırmızıya boyanıyordu, kullanıcı nerede koptuğunu göremezdi).
+      _failedAt = _stage;
       _stage = _PairStage.failed;
       _errorMsg = msg;
     });
@@ -673,6 +695,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     setState(() {
       _stage = _PairStage.connecting;
       _errorMsg = null;
+      _failedAt = null;
       _isReconnect = null;
     });
     await _decideAndRun();
@@ -715,6 +738,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     }
     try {
       await ref.read(bondStoreProvider).clear(widget.device.id);
+      await ref.read(bondStoreProvider).clear(widget.device.name);
     } catch (e, st) {
       // Bond temizlenemeden bootstrap'a girmek bilinen döngüye sokar
       // (ERR_PAIRING_NOT_OPEN → PlatformException) — hatayı yüzeye çıkar.
@@ -729,6 +753,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       _isReconnect = false;
       _stage = _PairStage.connecting;
       _errorMsg = null;
+      _failedAt = null;
     });
     await _runFlow();
   }
@@ -930,9 +955,10 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
 
   _StepState _stateOf(_PairStage s) {
     if (_stage == _PairStage.failed) {
-      return s.index < _stage.index || s == _stage
-          ? _StepState.failed
-          : _StepState.pending;
+      final failedAt = _failedAt ?? _PairStage.connecting;
+      if (s.index < failedAt.index) return _StepState.done;
+      if (s == failedAt) return _StepState.failed;
+      return _StepState.pending;
     }
     if (_stage.index > s.index) return _StepState.done;
     if (_stage.index == s.index) return _StepState.active;

@@ -118,11 +118,16 @@ class BondStore {
   }
 
   Future<void> clear(String deviceId) async {
-    await Future.wait([
-      _storage.delete(key: _key(deviceId)),
-      _storage.delete(key: _peerKey(deviceId)),
-      _storage.delete(key: _slotKey(deviceId)),
-    ]);
+    // save() alias + case-varyant anahtarlar yazar, tokenFor da varyant
+    // sondasıyla okur; yalnız exact key silmek "başarıyla temizlenmiş"
+    // bond'un küçük/büyük harf alias'ından dirilmesine yol açıyordu.
+    for (final id in deviceIdKeyVariants(deviceId)) {
+      await Future.wait([
+        _storage.delete(key: _key(id)),
+        _storage.delete(key: _peerKey(id)),
+        _storage.delete(key: _slotKey(id)),
+      ]);
+    }
   }
 
   /// Reset Pairings için: tüm bond.* key'lerini siler. `app.peer_id`

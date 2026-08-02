@@ -142,7 +142,8 @@ class TransportSelector {
     if (ep == null) {
       attempts.add('mDNS resolve($mdnsInstance): cevap yok');
     } else {
-      final s = await _attemptTcp(deviceId, ep.host, ep.port, token, attempts);
+      final s = await _attemptTcp(deviceId, ep.host, ep.port, token, attempts,
+          identityAuthoritative: true);
       if (s != null) return s;
     }
 
@@ -159,7 +160,8 @@ class TransportSelector {
     {
       final port = paired?.lastPort ?? ep?.port ?? 8080;
       final s = await _attemptTcp(
-          deviceId, '$mdnsInstance.local', port, token, attempts);
+          deviceId, '$mdnsInstance.local', port, token, attempts,
+          identityAuthoritative: true);
       if (s != null) return s;
     }
 
@@ -222,6 +224,7 @@ class TransportSelector {
     Duration timeout = tcpFreshTimeout,
     Duration? connectTimeout,
     bool clearCacheOnFail = false,
+    bool identityAuthoritative = false,
   }) async {
     final client = _makeTcpClient(host, port, token,
         connectTimeout: connectTimeout);
@@ -235,6 +238,14 @@ class TransportSelector {
         await client.stop();
       } catch (e2) {
         debugPrint('[session] TCP cleanup stop failed (best-effort): $e2');
+      }
+      // Ad-hedefli denemede (mDNS çözümü / `<ad>.local`) karşı taraf KESİN
+      // bizim cihazımız: auth reddi "bond çürümüş" demektir; zincire devam
+      // edip DeviceUnreachable'a gömmek onarım CTA'sını gizliyordu. Cache
+      // IP adımı bilinçli olarak hariç — DHCP sonrası o IP'de BAŞKA bir
+      // SmartKraft cihazı oturuyor olabilir.
+      if (identityAuthoritative && e is AuthRejectedException) {
+        rethrow;
       }
       // Cache'i YALNIZ "bu uçta SKAPP cihazı yok" anlamına gelen hatalarda
       // temizle: SocketException = connect reddi/ulaşılamaz,

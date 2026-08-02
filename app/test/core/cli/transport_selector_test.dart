@@ -246,12 +246,18 @@ void main() {
       expect(notifier.clearedEndpoints, [_kDeviceId]);
     });
 
-    test('AuthRejectedException (endpoint canlı) cache KORUR', () async {
+    test('cache IP adımında AuthRejected: cache KORUR ve zincir devam eder',
+        () async {
+      // Cache IP'de auth reddi otoriter DEĞİL: DHCP sonrası o IP'de BAŞKA
+      // bir SmartKraft cihazı oturuyor olabilir. Zincir ad-hedefli
+      // adımlarla devam etmeli.
       final devices = [_device(lastIp: '10.0.0.9', lastPort: 8080)];
       final notifier = FakePairedDevicesNotifier(devices);
       final p = _makeProvider(
-        tcpFactory: (_, _, _) => CliClient(FakeCliTransport(
-            connectError: const AuthRejectedException('token mismatch'))),
+        tcpFactory: (host, _, _) => CliClient(FakeCliTransport(
+            connectError: host == '10.0.0.9'
+                ? const AuthRejectedException('token mismatch')
+                : const SocketException('refused'))),
         mdns: (_, _) async => null,
         bleFactory: (_, _) =>
             CliClient(FakeCliTransport(kind: CliTransportKind.ble)),
@@ -264,6 +270,26 @@ void main() {
       expect(notifier.clearedEndpoints, isEmpty,
           reason: 'auth hatası endpoint\'in canlı olduğunu kanıtlar — '
               'iyi cache silinmemeli');
+    });
+
+    test('ad-hedefli TCP adımında (mDNS çözümü) AuthRejected dışa fırlar',
+        () async {
+      // mDNS instance adıyla çözülen uç KESİN bizim cihaz: auth reddi
+      // "bond çürümüş" demektir. Zincire devam etmek yerine tipli hata
+      // dışa çıkmalı ki ev ekranındaki onarım CTA'sı tetiklenebilsin.
+      final devices = [_device()]; // lastIp yok → cache adımı atlanır
+      final p = _makeProvider(
+        tcpFactory: (_, _, _) => CliClient(FakeCliTransport(
+            connectError: const AuthRejectedException('token mismatch'))),
+        mdns: (instance, _) async =>
+            MdnsDeviceEndpoint(instance: instance, host: '10.0.0.7', port: 8080),
+        bleFactory: (_, _) =>
+            CliClient(FakeCliTransport(kind: CliTransportKind.ble)),
+      );
+      final c = _container(bond, devices);
+      addTearDown(c.dispose);
+
+      await expectLater(_run(c, p), throwsA(isA<AuthRejectedException>()));
     });
   });
 

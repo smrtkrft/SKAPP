@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/ble/device_model.dart';
 import '../../../core/cli/cli_providers.dart';
-import '../../../core/storage/paired_devices_store.dart';
 import '../../../core/ui/device_session_views.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../device_pairing/pairing_screen.dart';
+import '../../device_pairing/repair_router.dart';
 import 'bf_dashboard_screen.dart';
 import 'bf_session.dart';
 import 'passphrase_gate.dart';
@@ -64,29 +62,9 @@ class BfHomeScreen extends ConsumerWidget {
     );
   }
 
-  /// Cihaz "eşleşme yenilenmeli" durumundayken (bond yok / cihaz pairing
-  /// modunda) PairingScreen'i açar. PairingScreen yalnızca [DiscoveredDevice]
-  /// alıyor; saklı [PairedDevice] kaydından id + name ile yeniden kuruyoruz
-  /// (rssi pairing reconnect path'inde kullanılmıyor). Dönüşte oturum
-  /// provider'ını invalidate ederek taze handshake'i tetikliyoruz.
-  Future<void> _startRepair(BuildContext context, WidgetRef ref) async {
-    final paired = ref.read(pairedDevicesProvider).firstWhere(
-          (d) => d.id == deviceId,
-          orElse: () => PairedDevice(
-            id: deviceId,
-            name: deviceId,
-            prefix: '',
-            pairedAt: DateTime.now(),
-          ),
-        );
-    final device = DiscoveredDevice(
-      id: paired.id,
-      name: paired.name,
-      rssi: 0,
-    );
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => PairingScreen(device: device)),
-    );
-    ref.invalidate(deviceSessionProvider(deviceId));
-  }
+  /// Onarım artık taşıyıcı-farkındalı tek yönlendiriciden geçer
+  /// (repair_router.dart): BLE ile eşleşmiş cihaz → PairingScreen,
+  /// WiFi/mDNS ile eşleşmiş cihaz → WifiPairingScreen.
+  Future<void> _startRepair(BuildContext context, WidgetRef ref) =>
+      startRepairFlow(context, ref, deviceId);
 }

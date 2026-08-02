@@ -40,6 +40,11 @@ class DiscoveredDevice {
   static final _identityPattern =
       RegExp(r'^([A-Z]{2})-([A-Z0-9]{6,12})$');
 
+  /// True when [s] is a SmartKraft device identity ("BF-A06TMFSQT").
+  /// Kullanım: PairedDevice.id bu kalıba uyuyorsa cihaz WiFi/mDNS akışıyla
+  /// eşleşmiştir (BLE MAC değil) — onarım yönlendirmesi buna bakar.
+  static bool isSmartKraftIdentity(String s) => _identityPattern.hasMatch(s);
+
   /// Two-letter device-type prefix, or null if the name doesn't match.
   String? get typePrefix => _identityPattern.firstMatch(name)?.group(1);
 

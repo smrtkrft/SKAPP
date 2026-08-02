@@ -5,6 +5,7 @@
 // çevirir, debug trail teknik detayı korur.
 
 import '../cli/ble_transport.dart' show PairingRequiredException;
+import '../cli/cli_session.dart' show BondMissingException;
 import '../cli/cli_transport.dart' show AuthRejectedException;
 
 enum PairingStage {
@@ -90,6 +91,10 @@ bool isHardBondRejection(Object e) {
   return e is BondRejectedError ||
       e is PairingRequiredException ||
       e is AuthRejectedException ||
+      // Bond hiç yoksa reconnect imkânsızdır; tek çıkış yeniden eşleşme.
+      // Transient saymak, "cihaza ulaşılamadı, mevcut eşleşme korunuyor"
+      // gibi iki yönden yanlış bir mesajla sonsuz retry döngüsü üretiyordu.
+      e is BondMissingException ||
       (e is PairingException &&
           (e.code == PairingErrorCode.rejected ||
               e.code == PairingErrorCode.pairingNotOpen));

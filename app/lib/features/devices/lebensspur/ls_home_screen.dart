@@ -21,7 +21,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/ble/device_model.dart';
+import '../../../core/cli/cli_client.dart';
 import '../../../core/cli/cli_providers.dart';
 import '../../../core/cli/cli_transport.dart';
 import '../../../core/storage/paired_devices_store.dart';
@@ -30,7 +30,7 @@ import '../../../core/theme/responsive.dart';
 import '../../../core/ui/device_session_views.dart';
 import '../../../core/ui/sk_neu_card.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../device_pairing/pairing_screen.dart';
+import '../../device_pairing/repair_router.dart';
 import '../../main_shell/main_shell.dart';
 import 'ls_logs_screen.dart';
 import 'ls_theme_tokens.dart';
@@ -98,6 +98,10 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
   StreamSubscription<Map<String, dynamic>>? _eventSub;
   bool _bootstrapped = false;
 
+  /// Olay aboneliğinin bağlı olduğu client — oturum yenilenince
+  /// _bindSession yeni client'a geçer (bkz. build'deki ref.listen).
+  CliClient? _boundClient;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -107,10 +111,36 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
   }
 
   Future<void> _bootstrap() async {
-    final session = await ref.read(
-      deviceSessionProvider(widget.deviceId).future,
-    );
+    // İlk oturum denemesi başarısız olabilir (cihaz kapalı, geçici ağ).
+    // Korumasız await hem yakalanmamış async hata üretiyordu hem de
+    // _bootstrapped=true kaldığından retry sonrası snapshot + olay
+    // aboneliği bir daha HİÇ kurulmuyordu: hero süresiz "inactive 00:00"
+    // kalıyordu (BF/SD'yi 3 sn'lik polling maskeler; LS'de polling yok).
+    final DeviceSession session;
+    try {
+      session = await ref.read(
+        deviceSessionProvider(widget.deviceId).future,
+      );
+    } catch (e) {
+      debugPrint('[LS] bootstrap session failed: $e');
+      // Hata kartı deviceSessionProvider watch'ı üzerinden zaten görünür;
+      // retry taze oturum kurunca bootstrap yeniden denenebilsin.
+      _bootstrapped = false;
+      return;
+    }
     if (!mounted) return;
+    await _bindSession(session);
+  }
+
+  /// Snapshot + olay aboneliğini VERİLEN oturuma bağlar. Oturum yenilenince
+  /// (otomatik reconnect → invalidateSelf → yeni CliClient) build'deki
+  /// ref.listen bunu yeni client'la tekrar çağırır; eski abonelik eski
+  /// client'a bağlı kaldığı için olaylar aksi halde ölüyordu.
+  Future<void> _bindSession(DeviceSession session) async {
+    if (identical(_boundClient, session.client)) return;
+    await _eventSub?.cancel();
+    _eventSub = null;
+    _boundClient = session.client;
 
     // Pull initial snapshot. firmware returns
     //   {state: ..., remaining: N, total: N, ...}
@@ -120,7 +150,11 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
       if (r.ok && r.data is Map) {
         _applyStatusSnapshot((r.data as Map).cast<String, dynamic>());
       }
-    } catch (_) {/* silent, UI shows inactive */}
+    } catch (e) {
+      debugPrint('[LS] timer.status snapshot failed: $e');
+      // UI inactive gösterir; olay aboneliği yine kurulur.
+    }
+    if (!mounted) return;
 
     // Event subscription. We dispatch by name and patch the local
     // mirror; full status refetches are avoided so a brief tick storm
@@ -275,23 +309,25 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
     _sendCli('vacation.set', args: {'days': 7});
   }
 
-  /// "Eşleşme yenilenmeli" durumunda PairingScreen'i açar. Saklı
-  /// [PairedDevice] kaydından DiscoveredDevice kurar; dönüşte oturum
-  /// provider'ını invalidate edip taze handshake'i tetikler.
-  Future<void> _startRepair(PairedDevice paired) async {
-    final device = DiscoveredDevice(
-      id: paired.id,
-      name: paired.name,
-      rssi: 0,
-    );
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => PairingScreen(device: device)),
-    );
-    ref.invalidate(deviceSessionProvider(widget.deviceId));
-  }
+  /// Onarım artık taşıyıcı-farkındalı tek yönlendiriciden geçer
+  /// (repair_router.dart): BLE ile eşleşmiş cihaz → PairingScreen,
+  /// WiFi/mDNS ile eşleşmiş cihaz → WifiPairingScreen.
+  Future<void> _startRepair(PairedDevice paired) =>
+      startRepairFlow(context, ref, widget.deviceId);
 
   @override
   Widget build(BuildContext context) {
+    // Oturum yenilenince (otomatik reconnect, retry) snapshot + olay
+    // aboneliğini yeni client'a taşı; _bindSession aynı client için no-op.
+    ref.listen<AsyncValue<DeviceSession>>(
+        deviceSessionProvider(widget.deviceId), (previous, next) {
+      final session =
+          next.maybeWhen(data: (s) => s, orElse: () => null);
+      if (session != null) {
+        _bootstrapped = true;
+        _bindSession(session);
+      }
+    });
     final sessionAsync =
         ref.watch(deviceSessionProvider(widget.deviceId));
     final paired = ref.watch(pairedDevicesProvider).firstWhere(

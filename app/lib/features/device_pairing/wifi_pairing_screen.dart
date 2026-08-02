@@ -57,6 +57,10 @@ class _WifiPairingScreenState extends ConsumerState<WifiPairingScreen> {
   TcpPairingLink? _link;
   final List<String> _trail = [];
 
+  // Reentrancy guard: "Eşleştir"e çift dokunuş iki paralel TCP eşleştirme
+  // başlatıyordu (BLE ekranındaki _decideRunning'in karşılığı).
+  bool _starting = false;
+
   @override
   void dispose() {
     _link?.close();
@@ -84,6 +88,19 @@ class _WifiPairingScreenState extends ConsumerState<WifiPairingScreen> {
   }
 
   Future<void> _start() async {
+    if (_starting) {
+      debugPrint('[WIFI-PAIR] _start: reentrancy blocked');
+      return;
+    }
+    _starting = true;
+    try {
+      await _startLocked();
+    } finally {
+      _starting = false;
+    }
+  }
+
+  Future<void> _startLocked() async {
     final l = AppLocalizations.of(context);
     _set(_Stage.connecting);
     _trace('connect ${widget.endpoint.host}:${widget.endpoint.port}');

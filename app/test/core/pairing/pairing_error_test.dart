@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skapp/core/cli/ble_transport.dart' show PairingRequiredException;
+import 'package:skapp/core/cli/cli_session.dart' show BondMissingException;
 import 'package:skapp/core/cli/cli_transport.dart' show AuthRejectedException;
 import 'package:skapp/core/pairing/pairing_error.dart';
 
@@ -29,6 +30,10 @@ void main() {
       expect(isHardBondRejection(BondRejectedError('device.info')), isTrue);
       expect(
           isHardBondRejection(const PairingRequiredException('no_bond')), isTrue);
+      // Bond hiç yoksa reconnect matematiksel olarak imkânsızdır: tek çıkış
+      // yeniden eşleşme. Transient saymak kullanıcıya "cihaza ulaşılamadı,
+      // eşleşme korunuyor" gibi iki yönden yanlış bir mesaj gösteriyordu.
+      expect(isHardBondRejection(BondMissingException('BF-TEST')), isTrue);
       expect(isHardBondRejection(const AuthRejectedException('mismatch')), isTrue);
       expect(
           isHardBondRejection(PairingException(

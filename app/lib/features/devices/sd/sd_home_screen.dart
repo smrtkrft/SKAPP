@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/ble/device_model.dart';
 import '../../../core/cli/cli_providers.dart';
-import '../../../core/storage/paired_devices_store.dart';
 import '../../../core/ui/device_session_views.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../device_pairing/pairing_screen.dart';
+import '../../device_pairing/repair_router.dart';
 import '../bf/passphrase_gate.dart';
 import 'sd_dashboard_screen.dart';
 import 'sd_session.dart';
@@ -55,26 +53,9 @@ class SdHomeScreen extends ConsumerWidget {
     );
   }
 
-  /// Reopens PairingScreen from the stored PairedDevice record and
-  /// invalidates the session provider on return (fresh handshake).
-  Future<void> _startRepair(BuildContext context, WidgetRef ref) async {
-    final paired = ref.read(pairedDevicesProvider).firstWhere(
-          (d) => d.id == deviceId,
-          orElse: () => PairedDevice(
-            id: deviceId,
-            name: deviceId,
-            prefix: '',
-            pairedAt: DateTime.now(),
-          ),
-        );
-    final device = DiscoveredDevice(
-      id: paired.id,
-      name: paired.name,
-      rssi: 0,
-    );
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => PairingScreen(device: device)),
-    );
-    ref.invalidate(deviceSessionProvider(deviceId));
-  }
+  /// Onarım artık taşıyıcı-farkındalı tek yönlendiriciden geçer
+  /// (repair_router.dart): BLE ile eşleşmiş cihaz → PairingScreen,
+  /// WiFi/mDNS ile eşleşmiş cihaz → WifiPairingScreen.
+  Future<void> _startRepair(BuildContext context, WidgetRef ref) =>
+      startRepairFlow(context, ref, deviceId);
 }
