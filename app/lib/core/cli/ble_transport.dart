@@ -288,18 +288,26 @@ class BleCliTransport implements CliTransport {
       // Phase 1: device challenge → mutual response
       if (msg['evt'] == 'auth.challenge') {
         _bleTrace('auth.challenge received, sending response');
-        final hexChallenge = msg['data'] as String?;
-        if (hexChallenge == null) {
-          // Sessiz return _authDone'u askıda bırakıp 8 s jenerik timeout
-          // üretiyordu; asıl sebep ("cihaz bozuk challenge gönderdi")
-          // artık anında yüzeye çıkıyor.
+        // Sessiz return _authDone'u askıda bırakıp 8 s jenerik timeout
+        // üretiyordu; asıl sebep ("cihaz bozuk challenge gönderdi") artık
+        // anında yüzeye çıkıyor. Hex decode da korumalı: hex-olmayan veri
+        // eskiden yakalanmamış async FormatException üretiyordu.
+        final Uint8List challenge;
+        try {
+          final hexChallenge = msg['data'];
+          if (hexChallenge is! String) {
+            throw const AuthRejectedException('malformed auth.challenge');
+          }
+          challenge = Uint8List.fromList(hex.decode(hexChallenge));
+        } catch (e) {
+          _bleTrace('auth.challenge malformed: $e');
           if (!_authDone.isCompleted) {
-            _authDone.completeError(
-                const AuthRejectedException('malformed auth.challenge'));
+            _authDone.completeError(e is AuthRejectedException
+                ? e
+                : const AuthRejectedException('malformed auth.challenge'));
           }
           return;
         }
-        final challenge = Uint8List.fromList(hex.decode(hexChallenge));
 
         // Our response = HMAC(token, deviceChallenge)[:16]
         final resp = Hmac(sha256, _token).convert(challenge).bytes.sublist(0, 16);

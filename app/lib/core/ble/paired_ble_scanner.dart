@@ -199,6 +199,15 @@ class PairedBleScannerNotifier extends Notifier<PairedBleScannerState> {
         return;
       }
 
+      // Sonda 8 sn'ye kadar bloklayabiliyor; girişteki exclusive kontrolü
+      // artık bayat. Bu pencerede kullanıcı bir cihaza dokunup transport
+      // connect başlatmış olabilir — scan başlatırsak Android adapter
+      // state machine'i bozulur (auth.challenge notify kaybı).
+      if (bleExclusiveActive || FlutterBluePlus.isScanningNow) {
+        state = state.copyWith(isScanning: false, lastScanAt: DateTime.now());
+        return;
+      }
+
       // Listener'ı önce kur, sonra startScan; aksi halde ilk advertisement'lar
       // sub kurulmadan gelirse kaçar.
       await _resultSub?.cancel();

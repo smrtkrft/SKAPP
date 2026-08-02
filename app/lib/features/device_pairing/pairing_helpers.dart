@@ -115,7 +115,11 @@ Future<String?> promptPairingPassphrase(
                     onPressed: () => setLocal(() => obscured = !obscured),
                   ),
                 ),
-                onSubmitted: (v) => Navigator.of(dctx).pop(v),
+                // Boş girdiyle gönderme: cihaz tarafında bir deneme hakkı
+                // yakar (10 yanlışta fabrika sıfırlama) — yanlışlıkla
+                // basılan Enter kullanıcıyı kilide yaklaştırmamalı.
+                onSubmitted: (v) =>
+                    v.isEmpty ? null : Navigator.of(dctx).pop(v),
               ),
               const SizedBox(height: 8),
               Text(

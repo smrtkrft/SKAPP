@@ -46,6 +46,7 @@ class _WifiSuccessScreenState extends ConsumerState<WifiSuccessScreen> {
   String? _status;
   String? _errorNote;
   Timer? _safetyAdvance;
+  bool _advanced = false;
 
   @override
   void initState() {
@@ -153,6 +154,12 @@ class _WifiSuccessScreenState extends ConsumerState<WifiSuccessScreen> {
   }
 
   void _advance() {
+    // Tek seferlik: güvenlik zamanlayıcısı, kopuk follow-up ve kullanıcı
+    // dokunuşu aynı hedefe koşuyor. Route kaldırıldıktan sonra State ~300 ms
+    // daha `mounted` kalır; bu pencerede ikinci push DeviceHomeScreen'i iki
+    // kez kurar (ikinci oturum açılışı + çift geçiş animasyonu).
+    if (_advanced) return;
+    _advanced = true;
     _safetyAdvance?.cancel();
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(

@@ -449,16 +449,18 @@ class DevicesScreen extends ConsumerWidget {
     // token'i + alias'lari (BLE MAC ↔ SmartKraft id, case katlamalari)
     // secure storage'da yetim birakiyordu. Silme basarisizsa metadata
     // zaten gitti — devam ederiz ama E-log ile iz birakiriz.
-    try {
-      final bonds = ref.read(bondStoreProvider);
-      for (final key in {
-        ...deviceIdKeyVariants(paired.id),
-        ...deviceIdKeyVariants(paired.name),
-      }) {
+    final bonds = ref.read(bondStoreProvider);
+    for (final key in {
+      ...deviceIdKeyVariants(paired.id),
+      ...deviceIdKeyVariants(paired.name),
+    }) {
+      // try DÖNGÜ İÇİNDE: tek bir anahtarın silinememesi kalan varyantları
+      // atlatmamalı, yoksa yetim bond kayıtları geride kalır.
+      try {
         await bonds.clear(key);
+      } catch (e, st) {
+        AppLogger.instance.error('devices.forget', e, st);
       }
-    } catch (e, st) {
-      AppLogger.instance.error('devices.forget', e, st);
     }
     if (!context.mounted) return;
     ScaffoldMessenger.of(context)

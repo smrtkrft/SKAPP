@@ -64,7 +64,17 @@ class TcpCliTransport implements CliTransport {
       if (!_authDone.isCompleted) _authDone.completeError(e, st);
       if (!_incoming.isClosed) _incoming.addError(e, st);
       close();
-    }, onDone: close);
+    }, onDone: () {
+      // Uzak uç el sıkışma bitmeden kapattı (yanlış IP'deki bir servis
+      // "accept-then-FIN" yapıyor olabilir). _authDone'u hemen düşür;
+      // aksi halde 10 sn'lik auth timeout'u boşa beklenir ve cache
+      // yolunun "hızlı düş" amacı bozulur.
+      if (!_authDone.isCompleted) {
+        _authDone.completeError(
+            const TransportClosedException('peer closed during handshake'));
+      }
+      close();
+    });
     await _authDone.future.timeout(const Duration(seconds: 10));
   }
 
@@ -101,9 +111,24 @@ class TcpCliTransport implements CliTransport {
     if (!_authenticated) {
       // Step 1: device sends auth.challenge.
       if (msg['evt'] == 'auth.challenge') {
-        final hexChallenge = msg['data'] as String?;
-        if (hexChallenge == null) return;
-        final challenge = Uint8List.fromList(hex.decode(hexChallenge));
+        // Şekil/hex doğrulaması: yanlış IP'deki yabancı bir NDJSON servisi
+        // (veya hasım uç) `data`'yı Map/sayı ya da hex-olmayan gönderirse
+        // eskiden yakalanmamış async hata + askıda el sıkışma oluyordu.
+        final Uint8List challenge;
+        try {
+          final hexChallenge = msg['data'];
+          if (hexChallenge is! String) {
+            throw const AuthRejectedException('malformed auth.challenge');
+          }
+          challenge = Uint8List.fromList(hex.decode(hexChallenge));
+        } catch (e) {
+          if (!_authDone.isCompleted) {
+            _authDone.completeError(e is AuthRejectedException
+                ? e
+                : const AuthRejectedException('malformed auth.challenge'));
+          }
+          return;
+        }
         final resp =
             Hmac(sha256, _token).convert(challenge).bytes.sublist(0, 16);
         _ourChallenge = _randomBytes(16);
