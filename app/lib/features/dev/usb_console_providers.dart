@@ -171,6 +171,10 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
   /// geç gelen cevapları konsola dökmemek için.
   final Set<int> _internalRequestIds = <int>{};
 
+  /// Cevabı beklenen kullanıcı komutu sayısı. Kablo çekilmesinde hem
+  /// komutun catch'i hem `whenClosed` aynı hatayı yazmasın diye.
+  int _inFlightCommands = 0;
+
   /// Bağlanma akışı için reentrancy koruması: "Yeniden bağlan" butonu
   /// disconnect'in await'leri sırasında canlı kaldığından çift dokunuş
   /// iki paralel _connect() başlatabiliyordu — ikincisi exclusive
@@ -252,7 +256,9 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
         // yalnız o an bir komut uçuyorsa görünüyordu; boştayken kopunca
         // kullanıcı açıklamasız "bağlantı kesildi" görüyordu.
         final reason = client.closedReason;
-        if (reason != null) {
+        // Uçan bir komut varsa onun catch'i aynı metni zaten yazdı; aynı
+        // olay için iki kırmızı satır göstermeyelim.
+        if (reason != null && _inFlightCommands == 0) {
           _appendEntry(ConsoleEntryError(describeCliFailure(_l10n, reason)));
         }
         state = state.copyWith(connection: UsbConnectionState.disconnected);
@@ -318,14 +324,33 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     for (int attempt = 0; attempt < 3 && !_disposed && _knownCommands.isEmpty;
         attempt++) {
       try {
+        // Bu client hâlâ güncel mi? Kullanıcı yeniden bağlandıysa bu döngü
+        // ESKİ client üstünde dönüyordur; id kaydı yeni oturumun setini
+        // kirletir ve yeni oturumdaki AYNI id'li kullanıcı komutunun geç
+        // cevabı yutulur.
+        if (!identical(_client, client)) return;
+        int? sentId;
         final resp = await client
             .send('help',
                 timeout: const Duration(seconds: 6),
                 // Bu istek kullanıcının yazdığı bir komut DEĞİL. Geç gelen
                 // cevabı `unmatched`'te ~12 KB'lık, kimsenin istemediği bir
                 // satır olarak konsola dökmeyelim.
-                onRequestId: _internalRequestIds.add)
-            .timeout(const Duration(seconds: 8));
+                onRequestId: (id) {
+              sentId = id;
+              _internalRequestIds.add(id);
+            })
+            .timeout(const Duration(seconds: 8))
+            // Cevap ZAMANINDA geldiyse id'yi sette tutmanın anlamı yok:
+            // kalırsa, ileride aynı id'yi alan kullanıcı komutunun geç
+            // cevabı (ör. ham JSON modunda `"id":1`) sessizce yutulur.
+            // Zaman aşımında ise id KALIR — geç gelen cevabı yutmak zaten
+            // bu setin varlık sebebi.
+            .then((r) {
+          final id = sentId;
+          if (id != null) _internalRequestIds.remove(id);
+          return r;
+        });
         if (_disposed) return;
         final data = resp.data;
         if (resp.ok && data is Map && data['commands'] is List) {
@@ -404,6 +429,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     }
 
     final parsed = _parseCommand(cmd);
+    _inFlightCommands++;
     try {
       var resp = await client
           .send(
@@ -468,6 +494,8 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
       ));
     } catch (e) {
       _appendEntry(ConsoleEntryError(describeCliFailure(_l10n, e)));
+    } finally {
+      if (_inFlightCommands > 0) _inFlightCommands--;
     }
   }
 

@@ -6917,4 +6917,38 @@ class AppLocalizationsEs extends AppLocalizations {
   String usbConsoleItemCount(int count) {
     return '$count elementos';
   }
+
+  @override
+  String usbConsoleCommandCount(int count) {
+    return '$count comandos';
+  }
+
+  @override
+  String usbConsoleTopicCount(int count) {
+    return '$count temas';
+  }
+
+  @override
+  String usbConsoleUnknownTopic(String target) {
+    return 'No existe el tema/comando «$target». Lista:';
+  }
+
+  @override
+  String usbConsoleHelpHintTopic(String example) {
+    return 'Para ver los comandos de un tema: help $example';
+  }
+
+  @override
+  String get usbConsoleHelpHintAll =>
+      'Todos los comandos (incluidos ocultos): help all';
+
+  @override
+  String get usbConsoleNoUsageDefined =>
+      'Este comando no tiene definición usage / help_block. Debe añadirse a su entrada sk_cli_command_t en el firmware.';
+
+  @override
+  String get usbConsoleRawJsonHide => 'ocultar JSON sin procesar';
+
+  @override
+  String get usbConsoleRawJsonShow => 'JSON sin procesar';
 }

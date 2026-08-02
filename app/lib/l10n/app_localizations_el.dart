@@ -6902,4 +6902,38 @@ class AppLocalizationsEl extends AppLocalizations {
   String usbConsoleItemCount(int count) {
     return '$count στοιχεία';
   }
+
+  @override
+  String usbConsoleCommandCount(int count) {
+    return '$count εντολές';
+  }
+
+  @override
+  String usbConsoleTopicCount(int count) {
+    return '$count θέματα';
+  }
+
+  @override
+  String usbConsoleUnknownTopic(String target) {
+    return 'Δεν υπάρχει θέμα/εντολή «$target». Λίστα:';
+  }
+
+  @override
+  String usbConsoleHelpHintTopic(String example) {
+    return 'Για τις εντολές ενός θέματος: help $example';
+  }
+
+  @override
+  String get usbConsoleHelpHintAll =>
+      'Όλες οι εντολές (και οι κρυφές): help all';
+
+  @override
+  String get usbConsoleNoUsageDefined =>
+      'Αυτή η εντολή δεν έχει ορισμό usage / help_block. Πρέπει να προστεθεί στην εγγραφή sk_cli_command_t στο firmware.';
+
+  @override
+  String get usbConsoleRawJsonHide => 'απόκρυψη ακατέργαστου JSON';
+
+  @override
+  String get usbConsoleRawJsonShow => 'ακατέργαστο JSON';
 }

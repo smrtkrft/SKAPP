@@ -6878,4 +6878,37 @@ class AppLocalizationsRu extends AppLocalizations {
   String usbConsoleItemCount(int count) {
     return '$count элементов';
   }
+
+  @override
+  String usbConsoleCommandCount(int count) {
+    return '$count команд';
+  }
+
+  @override
+  String usbConsoleTopicCount(int count) {
+    return '$count тем';
+  }
+
+  @override
+  String usbConsoleUnknownTopic(String target) {
+    return 'Нет темы/команды «$target». Список:';
+  }
+
+  @override
+  String usbConsoleHelpHintTopic(String example) {
+    return 'Чтобы увидеть команды темы: help $example';
+  }
+
+  @override
+  String get usbConsoleHelpHintAll => 'Все команды (включая скрытые): help all';
+
+  @override
+  String get usbConsoleNoUsageDefined =>
+      'У этой команды нет определения usage / help_block. Его нужно добавить в запись sk_cli_command_t в прошивке.';
+
+  @override
+  String get usbConsoleRawJsonHide => 'скрыть сырой JSON';
+
+  @override
+  String get usbConsoleRawJsonShow => 'сырой JSON';
 }

@@ -6843,4 +6843,37 @@ class AppLocalizationsTr extends AppLocalizations {
   String usbConsoleItemCount(int count) {
     return '$count öğe';
   }
+
+  @override
+  String usbConsoleCommandCount(int count) {
+    return '$count komut';
+  }
+
+  @override
+  String usbConsoleTopicCount(int count) {
+    return '$count topic';
+  }
+
+  @override
+  String usbConsoleUnknownTopic(String target) {
+    return '“$target” diye bir topic/komut yok. Liste:';
+  }
+
+  @override
+  String usbConsoleHelpHintTopic(String example) {
+    return 'Bir topic’in komutlarını görmek için: help $example';
+  }
+
+  @override
+  String get usbConsoleHelpHintAll => 'Tüm komutlar (gizliler dahil): help all';
+
+  @override
+  String get usbConsoleNoUsageDefined =>
+      'Bu komutta usage / help_block tanımı yok. Firmware tarafında sk_cli_command_t kaydına eklenmesi gerekir.';
+
+  @override
+  String get usbConsoleRawJsonHide => 'ham JSON gizle';
+
+  @override
+  String get usbConsoleRawJsonShow => 'ham JSON';
 }

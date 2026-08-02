@@ -2304,5 +2304,18 @@
   "usbConsoleDetailUsage": "Χρήση",
   "usbConsoleDetailHelp": "Λεπτομέρειες",
   "usbConsoleItemCount": "{count} στοιχεία",
-  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}},
+
+  "usbConsoleCommandCount": "{count} εντολές",
+  "@usbConsoleCommandCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleTopicCount": "{count} θέματα",
+  "@usbConsoleTopicCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleUnknownTopic": "Δεν υπάρχει θέμα/εντολή «{target}». Λίστα:",
+  "@usbConsoleUnknownTopic": {"placeholders": {"target": {"type": "String"}}},
+  "usbConsoleHelpHintTopic": "Για τις εντολές ενός θέματος: help {example}",
+  "@usbConsoleHelpHintTopic": {"placeholders": {"example": {"type": "String"}}},
+  "usbConsoleHelpHintAll": "Όλες οι εντολές (και οι κρυφές): help all",
+  "usbConsoleNoUsageDefined": "Αυτή η εντολή δεν έχει ορισμό usage / help_block. Πρέπει να προστεθεί στην εγγραφή sk_cli_command_t στο firmware.",
+  "usbConsoleRawJsonHide": "απόκρυψη ακατέργαστου JSON",
+  "usbConsoleRawJsonShow": "ακατέργαστο JSON"
 }

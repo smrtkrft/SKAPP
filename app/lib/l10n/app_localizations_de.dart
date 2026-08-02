@@ -6874,4 +6874,38 @@ class AppLocalizationsDe extends AppLocalizations {
   String usbConsoleItemCount(int count) {
     return '$count Einträge';
   }
+
+  @override
+  String usbConsoleCommandCount(int count) {
+    return '$count Befehle';
+  }
+
+  @override
+  String usbConsoleTopicCount(int count) {
+    return '$count Themen';
+  }
+
+  @override
+  String usbConsoleUnknownTopic(String target) {
+    return 'Kein Thema/Befehl namens „$target“. Liste:';
+  }
+
+  @override
+  String usbConsoleHelpHintTopic(String example) {
+    return 'Befehle eines Themas anzeigen: help $example';
+  }
+
+  @override
+  String get usbConsoleHelpHintAll =>
+      'Alle Befehle (inkl. versteckte): help all';
+
+  @override
+  String get usbConsoleNoUsageDefined =>
+      'Für diesen Befehl ist keine usage / help_block definiert. Sie muss in der Firmware im sk_cli_command_t-Eintrag ergänzt werden.';
+
+  @override
+  String get usbConsoleRawJsonHide => 'Roh-JSON ausblenden';
+
+  @override
+  String get usbConsoleRawJsonShow => 'Roh-JSON';
 }

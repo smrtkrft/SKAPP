@@ -413,8 +413,8 @@ class _CommandsList extends StatelessWidget {
         _Pill(label: 'OK', color: SkColors.attentionMustard),
         const SizedBox(width: 8),
         Text(
-          '${commands.length} komut'
-          '${topics != null ? " · ${topics!.length} topic" : ""}',
+          '${AppLocalizations.of(context).usbConsoleCommandCount(commands.length)}'
+          '${topics != null ? " · ${AppLocalizations.of(context).usbConsoleTopicCount(topics!.length)}" : ""}',
           style: mono.copyWith(
             color: cs.onSurface.withValues(alpha: 0.6),
           ),
@@ -570,7 +570,7 @@ class _CommandsList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: SelectableText(
-              "'$target' diye bir topic/komut yok. Liste:",
+              AppLocalizations.of(context).usbConsoleUnknownTopic(target),
               style: mono.copyWith(color: SkColors.warnRed),
             ),
           ),
@@ -670,8 +670,8 @@ class _HelpHint extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 6),
       child: SelectableText(
-        "Bir topic'in komutlarini gormek icin: help $example\n"
-        "Tum komutlar (gizliler dahil): help all",
+        '${AppLocalizations.of(context).usbConsoleHelpHintTopic(example)}\n'
+        '${AppLocalizations.of(context).usbConsoleHelpHintAll}',
         style: mono.copyWith(
           color: cs.onSurface.withValues(alpha: 0.55),
           fontSize: 11.5,
@@ -1138,8 +1138,7 @@ class _CommandDetail extends StatelessWidget {
               border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
             ),
             child: SelectableText(
-              "Bu komutta usage / help_block tanimi yok. "
-              "Firmware tarafinda sk_cli_command_t kaydina eklenmesi gerekir.",
+              AppLocalizations.of(context).usbConsoleNoUsageDefined,
               style: mono.copyWith(
                 color: cs.onSurface.withValues(alpha: 0.55),
                 fontSize: 11.5,
@@ -1435,7 +1434,9 @@ class _RawToggle extends StatelessWidget {
             ),
             const SizedBox(width: 3),
             Text(
-              open ? 'ham JSON gizle' : 'ham JSON',
+              open
+                  ? AppLocalizations.of(context).usbConsoleRawJsonHide
+                  : AppLocalizations.of(context).usbConsoleRawJsonShow,
               style: TextStyle(
                 fontFamily: 'monospace',
                 fontSize: 10,

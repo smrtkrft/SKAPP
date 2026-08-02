@@ -2165,5 +2165,18 @@
   "usbConsoleDetailUsage": "Использование",
   "usbConsoleDetailHelp": "Подробности",
   "usbConsoleItemCount": "{count} элементов",
-  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}},
+
+  "usbConsoleCommandCount": "{count} команд",
+  "@usbConsoleCommandCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleTopicCount": "{count} тем",
+  "@usbConsoleTopicCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleUnknownTopic": "Нет темы/команды «{target}». Список:",
+  "@usbConsoleUnknownTopic": {"placeholders": {"target": {"type": "String"}}},
+  "usbConsoleHelpHintTopic": "Чтобы увидеть команды темы: help {example}",
+  "@usbConsoleHelpHintTopic": {"placeholders": {"example": {"type": "String"}}},
+  "usbConsoleHelpHintAll": "Все команды (включая скрытые): help all",
+  "usbConsoleNoUsageDefined": "У этой команды нет определения usage / help_block. Его нужно добавить в запись sk_cli_command_t в прошивке.",
+  "usbConsoleRawJsonHide": "скрыть сырой JSON",
+  "usbConsoleRawJsonShow": "сырой JSON"
 }

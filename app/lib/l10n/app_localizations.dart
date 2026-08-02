@@ -11601,6 +11601,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} items'**
   String usbConsoleItemCount(int count);
+
+  /// No description provided for @usbConsoleCommandCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} commands'**
+  String usbConsoleCommandCount(int count);
+
+  /// No description provided for @usbConsoleTopicCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} topics'**
+  String usbConsoleTopicCount(int count);
+
+  /// No description provided for @usbConsoleUnknownTopic.
+  ///
+  /// In en, this message translates to:
+  /// **'No topic/command named “{target}”. List:'**
+  String usbConsoleUnknownTopic(String target);
+
+  /// No description provided for @usbConsoleHelpHintTopic.
+  ///
+  /// In en, this message translates to:
+  /// **'To see a topic’s commands: help {example}'**
+  String usbConsoleHelpHintTopic(String example);
+
+  /// No description provided for @usbConsoleHelpHintAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All commands (including hidden): help all'**
+  String get usbConsoleHelpHintAll;
+
+  /// No description provided for @usbConsoleNoUsageDefined.
+  ///
+  /// In en, this message translates to:
+  /// **'This command has no usage / help_block definition. It must be added to its sk_cli_command_t entry in the firmware.'**
+  String get usbConsoleNoUsageDefined;
+
+  /// No description provided for @usbConsoleRawJsonHide.
+  ///
+  /// In en, this message translates to:
+  /// **'hide raw JSON'**
+  String get usbConsoleRawJsonHide;
+
+  /// No description provided for @usbConsoleRawJsonShow.
+  ///
+  /// In en, this message translates to:
+  /// **'raw JSON'**
+  String get usbConsoleRawJsonShow;
 }
 
 class _AppLocalizationsDelegate

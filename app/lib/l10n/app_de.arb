@@ -3644,5 +3644,18 @@
   "usbConsoleDetailUsage": "Verwendung",
   "usbConsoleDetailHelp": "Details",
   "usbConsoleItemCount": "{count} Einträge",
-  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}},
+
+  "usbConsoleCommandCount": "{count} Befehle",
+  "@usbConsoleCommandCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleTopicCount": "{count} Themen",
+  "@usbConsoleTopicCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleUnknownTopic": "Kein Thema/Befehl namens „{target}“. Liste:",
+  "@usbConsoleUnknownTopic": {"placeholders": {"target": {"type": "String"}}},
+  "usbConsoleHelpHintTopic": "Befehle eines Themas anzeigen: help {example}",
+  "@usbConsoleHelpHintTopic": {"placeholders": {"example": {"type": "String"}}},
+  "usbConsoleHelpHintAll": "Alle Befehle (inkl. versteckte): help all",
+  "usbConsoleNoUsageDefined": "Für diesen Befehl ist keine usage / help_block definiert. Sie muss in der Firmware im sk_cli_command_t-Eintrag ergänzt werden.",
+  "usbConsoleRawJsonHide": "Roh-JSON ausblenden",
+  "usbConsoleRawJsonShow": "Roh-JSON"
 }

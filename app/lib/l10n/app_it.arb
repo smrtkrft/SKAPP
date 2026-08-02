@@ -3644,5 +3644,18 @@
   "usbConsoleDetailUsage": "Uso",
   "usbConsoleDetailHelp": "Dettagli",
   "usbConsoleItemCount": "{count} elementi",
-  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}},
+
+  "usbConsoleCommandCount": "{count} comandi",
+  "@usbConsoleCommandCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleTopicCount": "{count} argomenti",
+  "@usbConsoleTopicCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleUnknownTopic": "Nessun argomento/comando chiamato «{target}». Elenco:",
+  "@usbConsoleUnknownTopic": {"placeholders": {"target": {"type": "String"}}},
+  "usbConsoleHelpHintTopic": "Per vedere i comandi di un argomento: help {example}",
+  "@usbConsoleHelpHintTopic": {"placeholders": {"example": {"type": "String"}}},
+  "usbConsoleHelpHintAll": "Tutti i comandi (inclusi nascosti): help all",
+  "usbConsoleNoUsageDefined": "Questo comando non ha una definizione usage / help_block. Va aggiunta alla voce sk_cli_command_t nel firmware.",
+  "usbConsoleRawJsonHide": "nascondi JSON grezzo",
+  "usbConsoleRawJsonShow": "JSON grezzo"
 }

@@ -3644,5 +3644,18 @@
   "usbConsoleDetailUsage": "Utilização",
   "usbConsoleDetailHelp": "Detalhes",
   "usbConsoleItemCount": "{count} itens",
-  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}},
+
+  "usbConsoleCommandCount": "{count} comandos",
+  "@usbConsoleCommandCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleTopicCount": "{count} tópicos",
+  "@usbConsoleTopicCount": {"placeholders": {"count": {"type": "int"}}},
+  "usbConsoleUnknownTopic": "Não existe o tópico/comando «{target}». Lista:",
+  "@usbConsoleUnknownTopic": {"placeholders": {"target": {"type": "String"}}},
+  "usbConsoleHelpHintTopic": "Para ver os comandos de um tópico: help {example}",
+  "@usbConsoleHelpHintTopic": {"placeholders": {"example": {"type": "String"}}},
+  "usbConsoleHelpHintAll": "Todos os comandos (incluindo ocultos): help all",
+  "usbConsoleNoUsageDefined": "Este comando não tem definição usage / help_block. Tem de ser adicionada à entrada sk_cli_command_t no firmware.",
+  "usbConsoleRawJsonHide": "ocultar JSON bruto",
+  "usbConsoleRawJsonShow": "JSON bruto"
 }
