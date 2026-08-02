@@ -2158,5 +2158,12 @@
   "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
   "usbConsoleErrLineOverflow": "L'appareil a envoyé des données très longues sans fin de ligne — ce port n'est peut-être pas un appareil SmartKraft. Connexion fermée.",
   "usbConsoleUnmatchedReply": "Réponse non appariée · id={id}",
-  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}},
+
+  "usbConsoleUnauthenticatedHint": "Cette commande nécessite une session authentifiée (`requires_auth=true`). La CLI USB n'est pas authentifiée ; lancez-la depuis Mes appareils > [appareil] sur une session BLE/WiFi appairée.",
+  "usbConsoleNotConnected": "Non connecté",
+  "usbConsoleDetailUsage": "Utilisation",
+  "usbConsoleDetailHelp": "Détails",
+  "usbConsoleItemCount": "{count} éléments",
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
 }

@@ -282,10 +282,7 @@ class _UnauthenticatedHint extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: SelectableText(
-              "Bu komut authenticated session gerektiriyor "
-              "(`requires_auth=true`). USB CLI unauthenticated; "
-              "komutu Cihazlarım > [cihaz] üstünden BLE/WiFi bonded "
-              "oturumda çağır.",
+              AppLocalizations.of(context).usbConsoleUnauthenticatedHint,
               style: TextStyle(
                 fontFamily: 'monospace',
                 fontSize: 11.5,
@@ -1120,13 +1117,13 @@ class _CommandDetail extends StatelessWidget {
         ],
         if (usage != null && usage.isNotEmpty) ...[
           const SizedBox(height: 12),
-          _DetailLabel(label: 'Kullanim'),
+          _DetailLabel(label: AppLocalizations.of(context).usbConsoleDetailUsage),
           const SizedBox(height: 4),
           _DetailBlock(text: usage, mono: mono, cs: cs),
         ],
         if (helpBlock != null && helpBlock.isNotEmpty) ...[
           const SizedBox(height: 10),
-          _DetailLabel(label: 'Detay'),
+          _DetailLabel(label: AppLocalizations.of(context).usbConsoleDetailHelp),
           const SizedBox(height: 4),
           _DetailBlock(text: helpBlock, mono: mono, cs: cs),
         ],
@@ -1226,7 +1223,7 @@ class _StringListBlock extends StatelessWidget {
             _Pill(label: 'OK', color: SkColors.attentionMustard),
             const SizedBox(width: 8),
             Text(
-              '${items.length} öğe',
+              AppLocalizations.of(context).usbConsoleItemCount(items.length),
               style: mono.copyWith(color: cs.onSurface.withValues(alpha: 0.6)),
             ),
           ],

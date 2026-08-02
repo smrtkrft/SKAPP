@@ -6860,4 +6860,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String usbConsoleUnmatchedReply(int id) {
     return 'Несопоставленный ответ · id=$id';
   }
+
+  @override
+  String get usbConsoleUnauthenticatedHint =>
+      'Эта команда требует аутентифицированной сессии (`requires_auth=true`). USB CLI не аутентифицирован; выполните её в разделе Мои устройства > [устройство] в сопряжённой сессии BLE/Wi-Fi.';
+
+  @override
+  String get usbConsoleNotConnected => 'Нет подключения';
+
+  @override
+  String get usbConsoleDetailUsage => 'Использование';
+
+  @override
+  String get usbConsoleDetailHelp => 'Подробности';
+
+  @override
+  String usbConsoleItemCount(int count) {
+    return '$count элементов';
+  }
 }

@@ -2297,5 +2297,12 @@
   "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
   "usbConsoleErrLineOverflow": "Η συσκευή έστειλε πολύ μεγάλα δεδομένα χωρίς τέλος γραμμής — αυτή η θύρα ίσως δεν είναι συσκευή SmartKraft. Η σύνδεση τερματίστηκε.",
   "usbConsoleUnmatchedReply": "Αντιστοίχιστη απάντηση · id={id}",
-  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}},
+
+  "usbConsoleUnauthenticatedHint": "Αυτή η εντολή απαιτεί πιστοποιημένη συνεδρία (`requires_auth=true`). Το USB CLI δεν είναι πιστοποιημένο· εκτελέστε την από Οι συσκευές μου > [συσκευή] σε συζευγμένη συνεδρία BLE/WiFi.",
+  "usbConsoleNotConnected": "Χωρίς σύνδεση",
+  "usbConsoleDetailUsage": "Χρήση",
+  "usbConsoleDetailHelp": "Λεπτομέρειες",
+  "usbConsoleItemCount": "{count} στοιχεία",
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
 }

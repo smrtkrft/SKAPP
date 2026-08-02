@@ -2308,5 +2308,12 @@
   "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
   "usbConsoleErrLineOverflow": "Cihazdan satır sonu olmayan çok uzun veri geldi — bu port SmartKraft cihazı olmayabilir. Bağlantı kesildi.",
   "usbConsoleUnmatchedReply": "Eşleşmeyen cevap · id={id}",
-  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}},
+
+  "usbConsoleUnauthenticatedHint": "Bu komut authenticated session gerektiriyor (`requires_auth=true`). USB CLI unauthenticated; komutu Cihazlarım > [cihaz] üstünden BLE/WiFi bonded oturumda çağır.",
+  "usbConsoleNotConnected": "Bağlı değil",
+  "usbConsoleDetailUsage": "Kullanım",
+  "usbConsoleDetailHelp": "Detay",
+  "usbConsoleItemCount": "{count} öğe",
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
 }

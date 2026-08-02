@@ -6879,4 +6879,22 @@ class AppLocalizationsPt extends AppLocalizations {
   String usbConsoleUnmatchedReply(int id) {
     return 'Resposta sem correspondência · id=$id';
   }
+
+  @override
+  String get usbConsoleUnauthenticatedHint =>
+      'Este comando requer uma sessão autenticada (`requires_auth=true`). A CLI USB não é autenticada; execute-o em Os meus dispositivos > [dispositivo] numa sessão BLE/WiFi emparelhada.';
+
+  @override
+  String get usbConsoleNotConnected => 'Não ligado';
+
+  @override
+  String get usbConsoleDetailUsage => 'Utilização';
+
+  @override
+  String get usbConsoleDetailHelp => 'Detalhes';
+
+  @override
+  String usbConsoleItemCount(int count) {
+    return '$count itens';
+  }
 }

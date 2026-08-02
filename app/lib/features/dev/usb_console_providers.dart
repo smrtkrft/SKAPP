@@ -214,6 +214,11 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
   }
 
   Future<void> _connectLocked() async {
+    // Her yeni CliClient id sayacını 1'den başlatır. Eski oturumun
+    // id'leri sette kalırsa, yeni oturumda AYNI id'yi alan KULLANICI
+    // komutunun geç cevabı "iç istek" sanılıp sessizce yutulur — tam da
+    // düzeltmeye çalıştığımız görünmezlik. Oturum başında temizle.
+    _internalRequestIds.clear();
     final transport = createUsbCliTransport(portInfo: port);
     final client = CliClient(transport, signer: null);
     try {
@@ -243,6 +248,13 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     client.whenClosed.then((_) {
       if (_disposed) return;
       if (state.connection == UsbConnectionState.connected) {
+        // Sebebi de göster: kablo çekilme/satır taşması gibi nedenler
+        // yalnız o an bir komut uçuyorsa görünüyordu; boştayken kopunca
+        // kullanıcı açıklamasız "bağlantı kesildi" görüyordu.
+        final reason = client.closedReason;
+        if (reason != null) {
+          _appendEntry(ConsoleEntryError(describeCliFailure(_l10n, reason)));
+        }
         state = state.copyWith(connection: UsbConnectionState.disconnected);
       }
     });
@@ -354,7 +366,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     if (cmd.isEmpty) return;
     final client = _client;
     if (client == null || state.connection != UsbConnectionState.connected) {
-      _appendEntry(ConsoleEntryError('Bağlı değil'));
+      _appendEntry(ConsoleEntryError(_l10n?.usbConsoleNotConnected ?? 'not connected'));
       return;
     }
 
@@ -542,7 +554,12 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
           args[flag] = cliArgValue(tokens[i + 1].text);
           i += 2;
         } else {
-          args[flag] = true;
+          // Yalın `--flag`: firmware'de hiçbir okuyucu JSON bool göremez
+          // (sk_cli_arg_named string olmayan değere NULL, sk_cli_arg_long
+          // bool'u reddeder), yani `true` göndermek bayrağı SESSİZCE yok
+          // eder. String "true" en azından sk_cli_arg_long'un strtol
+          // yoluna ve string okuyuculara ulaşır — aynı sözleşme.
+          args[flag] = cliArgValue('true');
           i++;
         }
       } else if (text.contains('=') && !text.startsWith('=')) {

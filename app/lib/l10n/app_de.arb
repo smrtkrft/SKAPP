@@ -3637,5 +3637,12 @@
   "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
   "usbConsoleErrLineOverflow": "Das Gerät sendete sehr lange Daten ohne Zeilenumbruch — dieser Port ist möglicherweise kein SmartKraft-Gerät. Verbindung getrennt.",
   "usbConsoleUnmatchedReply": "Nicht zugeordnete Antwort · id={id}",
-  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}},
+
+  "usbConsoleUnauthenticatedHint": "Dieser Befehl erfordert eine authentifizierte Sitzung (`requires_auth=true`). Die USB-CLI ist nicht authentifiziert; führen Sie ihn unter Meine Geräte > [Gerät] in einer gekoppelten BLE/WLAN-Sitzung aus.",
+  "usbConsoleNotConnected": "Nicht verbunden",
+  "usbConsoleDetailUsage": "Verwendung",
+  "usbConsoleDetailHelp": "Details",
+  "usbConsoleItemCount": "{count} Einträge",
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
 }

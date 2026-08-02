@@ -11571,6 +11571,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unmatched response · id={id}'**
   String usbConsoleUnmatchedReply(int id);
+
+  /// No description provided for @usbConsoleUnauthenticatedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This command requires an authenticated session (`requires_auth=true`). USB CLI is unauthenticated; run it from My Devices > [device] over a bonded BLE/WiFi session.'**
+  String get usbConsoleUnauthenticatedHint;
+
+  /// No description provided for @usbConsoleNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get usbConsoleNotConnected;
+
+  /// No description provided for @usbConsoleDetailUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage'**
+  String get usbConsoleDetailUsage;
+
+  /// No description provided for @usbConsoleDetailHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get usbConsoleDetailHelp;
+
+  /// No description provided for @usbConsoleItemCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String usbConsoleItemCount(int count);
 }
 
 class _AppLocalizationsDelegate

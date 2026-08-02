@@ -2158,5 +2158,12 @@
   "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
   "usbConsoleErrLineOverflow": "Устройство отправило очень длинные данные без переноса строки — возможно, этот порт не является устройством SmartKraft. Соединение закрыто.",
   "usbConsoleUnmatchedReply": "Несопоставленный ответ · id={id}",
-  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}},
+
+  "usbConsoleUnauthenticatedHint": "Эта команда требует аутентифицированной сессии (`requires_auth=true`). USB CLI не аутентифицирован; выполните её в разделе Мои устройства > [устройство] в сопряжённой сессии BLE/Wi-Fi.",
+  "usbConsoleNotConnected": "Нет подключения",
+  "usbConsoleDetailUsage": "Использование",
+  "usbConsoleDetailHelp": "Подробности",
+  "usbConsoleItemCount": "{count} элементов",
+  "@usbConsoleItemCount": {"placeholders": {"count": {"type": "int"}}}
 }
