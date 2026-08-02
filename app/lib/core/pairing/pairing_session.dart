@@ -63,6 +63,11 @@ class PairingSession {
 
   int _malformed = 0;
   Completer<Map<String, dynamic>>? _armed;
+
+  /// O anki tur için "bu zarf gerçekten benim cevabım mı?" yordamı. Wire
+  /// protokolünde istek-id yok, bu yüzden şekle bakarız: parola turunda
+  /// gelen `our_pub`'lı zarf bayat bir exchange cevabıdır, kapıyı açamaz.
+  bool Function(Map<String, dynamic> msg)? _armedFilter;
   StreamSubscription<String>? _sub;
   bool _linkDown = false;
   Object? _linkDownCause;
@@ -164,10 +169,19 @@ class PairingSession {
           throw PairingException(
               PairingStage.passphrase, PairingErrorCode.cancelled);
         }
-        await _sendExpectingReply({
-          'cmd': 'pairing.passphrase.verify',
-          'args': {'plain': plain},
-        }, PairingStage.passphrase);
+        await _sendExpectingReply(
+          {
+            'cmd': 'pairing.passphrase.verify',
+            'args': {'plain': plain},
+          },
+          PairingStage.passphrase,
+          // Parola cevabında `our_pub` bulunmaz; taşıyan zarf, tekrar
+          // gönderilmiş exchange cevabıdır ve kapıyı açamaz.
+          accept: (msg) {
+            final d = msg['data'];
+            return !(d is Map && d.containsKey('our_pub'));
+          },
+        );
         final vr = await _awaitReply(
             PairingStage.passphrase, PairingTimeouts.passphraseReply);
 
@@ -221,8 +235,41 @@ class PairingSession {
       _trace('rx evt ${msg['evt']} (skipped during pairing)');
       return;
     }
+    if (!msg.containsKey('ok')) {
+      // Zarf değil (ne evt ne ok): firmware'in araya sıkıştırdığı durum/log
+      // satırı olabilir. Bunu "cevap" saymak akışı ERR_UNKNOWN ile
+      // düşürüyordu — gerçek cevap bir satır arkadayken.
+      _trace('rx non-envelope line skipped: ${_shape(msg)}');
+      return;
+    }
+    final filter = _armedFilter;
+    if (filter != null && !filter(msg)) {
+      // Doğru şekilde ama YANLIŞ tura ait zarf (tipik olarak tekrar
+      // gönderilmiş exchange cevabı). Kabul etmek parola kapısını cihaz
+      // doğrulamadan "açılmış" gösterirdi: uygulama token'ı yazar, cihazda
+      // bond olmaz — "eşleşti ama bağlanamıyor" hayaleti.
+      _trace('rx stale/out-of-turn envelope skipped: ${_shape(msg)}');
+      return;
+    }
     final c = _armed;
-    if (c != null && !c.isCompleted) c.complete(msg);
+    if (c == null || c.isCompleted) {
+      // Beklemediğimiz anda (ör. parola dialogu açıkken) veya cevabımız
+      // gelmişken düşen fazladan zarf. Sessizce yutma — iz bırak.
+      _trace('rx envelope with no armed turn, dropped: ${_shape(msg)}');
+      return;
+    }
+    c.complete(msg);
+  }
+
+  /// Gizlilik dostu şekil özeti: değerleri değil anahtarları loglar
+  /// (parola/token gibi içerikler ekrandaki debug paneline sızmasın).
+  String _shape(Map<String, dynamic> msg) {
+    final keys = msg.keys.take(6).join(',');
+    final data = msg['data'];
+    if (data is Map) {
+      return '{$keys; data:{${data.keys.take(6).join(',')}}}';
+    }
+    return '{$keys}';
   }
 
   /// Cevap completer'ını yazmadan ÖNCE kurar (cevap yazma ACK'inden önce
@@ -230,13 +277,17 @@ class PairingSession {
   /// bekler: geldiyse hata zararsızdır (reply-then-close), gelmediyse
   /// gerçek teslim hatasıdır.
   Future<void> _sendExpectingReply(
-      Map<String, dynamic> obj, PairingStage stage) async {
+    Map<String, dynamic> obj,
+    PairingStage stage, {
+    bool Function(Map<String, dynamic> msg)? accept,
+  }) async {
     if (_linkDown) {
       throw PairingException(stage, PairingErrorCode.linkClosed,
           cause: _linkDownCause);
     }
     final c = Completer<Map<String, dynamic>>();
     _armed = c;
+    _armedFilter = accept;
     try {
       await link.sendJson(obj);
     } catch (e) {

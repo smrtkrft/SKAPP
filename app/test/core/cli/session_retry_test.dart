@@ -10,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skapp/core/cli/ble_transport.dart' show PairingRequiredException;
 import 'package:skapp/core/cli/cli_providers.dart';
-import 'package:skapp/core/cli/cli_session.dart';
 
 void main() {
   group('sessionRetryPolicy', () {

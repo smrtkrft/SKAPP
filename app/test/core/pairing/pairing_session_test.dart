@@ -145,6 +145,67 @@ void main() {
     );
   });
 
+  test('non-envelope JSON lines are skipped, not consumed as the reply',
+      () async {
+    final device = await FakeDeviceCrypto.create();
+    final link = FakePairingLink();
+    final trail = <String>[];
+    link.onSend = (msg, l) async {
+      // Cihazın araya sıkıştırdığı, zarf olmayan bir JSON satırı: ne `evt`
+      // ne `ok` içeriyor. Eskiden bu satır "cevap" sayılıp akışı
+      // ERR_UNKNOWN ile düşürüyordu.
+      l.emit({'status': 'busy'});
+      l.emit({
+        'ok': true,
+        'data': {'our_pub': hex.encode(device.publicKey)},
+      });
+    };
+    final r =
+        await _session(link, trail: trail).run(promptPassphrase: (_) async => null);
+    expect(r.token, hasLength(32));
+    expect(trail.join('\n'), contains('non-envelope'));
+  });
+
+  test('stale ok-envelope cannot satisfy the passphrase gate silently',
+      () async {
+    // Regresyon: parola aşamasında bekleyen completer'ı, cihazın
+    // doğrulamasını temsil ETMEYEN bayat bir exchange zarfı tamamlarsa
+    // kapı sahte açılır → token kaydedilir ama cihazda bond yoktur.
+    final device = await FakeDeviceCrypto.create();
+    final link = FakePairingLink();
+    var verifySeen = false;
+    link.onSend = (msg, l) async {
+      if (msg['cmd'] == 'pairing.ecdh.exchange') {
+        l.emit({
+          'ok': true,
+          'data': {
+            'our_pub': hex.encode(device.publicKey),
+            'need_passphrase': true,
+            'attempts_left': 3,
+          },
+        });
+      } else if (msg['cmd'] == 'pairing.passphrase.verify') {
+        verifySeen = true;
+        // Araya bayat bir EXCHANGE zarfı düşüyor (our_pub taşıyor) — bu,
+        // parola doğrulamasının cevabı DEĞİLDİR. Ardından gerçek verify
+        // cevabı geliyor. Doğru davranış: bayatı atla, gerçeği bekle.
+        l.emit({
+          'ok': true,
+          'data': {'our_pub': hex.encode(device.publicKey), 'need_passphrase': true},
+        });
+        l.emit({
+          'ok': true,
+          'data': {'slot': 2},
+        });
+      }
+    };
+    final r = await _session(link).run(promptPassphrase: (_) async => 'pw');
+    expect(verifySeen, isTrue);
+    // slot=2 ancak GERÇEK verify cevabı işlendiyse gelir; bayat zarf kapıyı
+    // açsaydı slot null kalırdı.
+    expect(r.slot, 2);
+  });
+
   test('malformed lines are counted, not fatal', () async {
     final device = await FakeDeviceCrypto.create();
     final link = FakePairingLink();
