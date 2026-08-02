@@ -54,7 +54,29 @@ final currentDeviceIdProvider =
 final deviceSessionProvider =
     FutureProvider.family<DeviceSession, String>(
   (ref, deviceId) => TransportSelector(ref: ref).selectAndConnect(deviceId),
+  retry: sessionRetryPolicy,
 );
+
+/// Bağlantı sağlayıcıları için retry politikası: **hiç retry etme**.
+///
+/// Riverpod 3'ün varsayılanı (ProviderContainer.defaultRetry) HER Exception'ı
+/// 10 kez, 200 ms→6.4 s artan gecikmeyle yeniden dener ve bu süre boyunca
+/// `provider.future` beklemede kalır. Bu davranış eşleştirme akışını iki
+/// yönden bozuyordu:
+///
+///   1. Tipli kararlar ekrana ulaşmıyordu. TransportSelector'ın bilinçli
+///      olarak dışa fırlattığı [PairingRequiredException] ("cihazın bond'u
+///      yok, bootstrap gerekli") sessizce retry'lanıyor, ekran ise kendi
+///      timeout'unda jenerik bir hata görüyordu — otomatik "eşleşmeyi yenile"
+///      akışı hiç tetiklenmiyordu.
+///   2. Zaten yedekli bir zincir gereksiz yere tekrarlanıyordu.
+///      selectAndConnect kendi içinde TCP cache → mDNS → .local → BLE
+///      sırasını deniyor; üstüne 10 sessiz tekrar, ölü bir cihaz için
+///      dakikalarca BLE trafiği ve donuk UI demek.
+///
+/// Yeniden deneme kararı kullanıcınındır: ekranlardaki "Tekrar dene" butonu
+/// `ref.invalidate` ile taze bir deneme başlatır.
+Duration? sessionRetryPolicy(int retryCount, Object error) => null;
 
 final deviceEventsProvider =
     StreamProvider.family<CliEvent, String>((ref, deviceId) async* {
