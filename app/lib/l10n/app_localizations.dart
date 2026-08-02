@@ -11517,6 +11517,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan failed'**
   String get discoveryScanFailedTitle;
+
+  /// No description provided for @usbConsoleCriticalConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical command confirmation'**
+  String get usbConsoleCriticalConfirmTitle;
+
+  /// No description provided for @usbConsoleCriticalConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'“{cmd}” cannot be undone. Continue? (confirmation window {ttl}s)'**
+  String usbConsoleCriticalConfirmBody(String cmd, int ttl);
+
+  /// No description provided for @usbConsoleCriticalConfirmRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Run'**
+  String get usbConsoleCriticalConfirmRun;
+
+  /// No description provided for @usbConsoleCriticalCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical command not confirmed, not sent: {cmd}'**
+  String usbConsoleCriticalCancelled(String cmd);
+
+  /// No description provided for @usbConsoleErrTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Device did not respond in time. Check the cable/port and try again. ({detail})'**
+  String usbConsoleErrTimeout(String detail);
+
+  /// No description provided for @usbConsoleErrClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'USB connection closed.'**
+  String get usbConsoleErrClosed;
+
+  /// No description provided for @usbConsoleErrClosedReason.
+  ///
+  /// In en, this message translates to:
+  /// **'USB connection closed: {detail}'**
+  String usbConsoleErrClosedReason(String detail);
+
+  /// No description provided for @usbConsoleErrLineOverflow.
+  ///
+  /// In en, this message translates to:
+  /// **'The device sent very long data with no line break — this port may not be a SmartKraft device. Connection closed.'**
+  String get usbConsoleErrLineOverflow;
+
+  /// No description provided for @usbConsoleUnmatchedReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmatched response · id={id}'**
+  String usbConsoleUnmatchedReply(int id);
 }
 
 class _AppLocalizationsDelegate

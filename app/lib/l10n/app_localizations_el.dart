@@ -6846,4 +6846,42 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get discoveryScanFailedTitle => 'Η σάρωση απέτυχε';
+
+  @override
+  String get usbConsoleCriticalConfirmTitle => 'Επιβεβαίωση κρίσιμης εντολής';
+
+  @override
+  String usbConsoleCriticalConfirmBody(String cmd, int ttl) {
+    return 'Η «$cmd» δεν αναιρείται. Συνέχεια; (παράθυρο επιβεβαίωσης $ttl δευτ.)';
+  }
+
+  @override
+  String get usbConsoleCriticalConfirmRun => 'Εκτέλεση';
+
+  @override
+  String usbConsoleCriticalCancelled(String cmd) {
+    return 'Η κρίσιμη εντολή δεν επιβεβαιώθηκε, δεν στάλθηκε: $cmd';
+  }
+
+  @override
+  String usbConsoleErrTimeout(String detail) {
+    return 'Η συσκευή δεν απάντησε εγκαίρως. Ελέγξτε καλώδιο/θύρα και δοκιμάστε ξανά. ($detail)';
+  }
+
+  @override
+  String get usbConsoleErrClosed => 'Η σύνδεση USB έκλεισε.';
+
+  @override
+  String usbConsoleErrClosedReason(String detail) {
+    return 'Η σύνδεση USB έκλεισε: $detail';
+  }
+
+  @override
+  String get usbConsoleErrLineOverflow =>
+      'Η συσκευή έστειλε πολύ μεγάλα δεδομένα χωρίς τέλος γραμμής — αυτή η θύρα ίσως δεν είναι συσκευή SmartKraft. Η σύνδεση τερματίστηκε.';
+
+  @override
+  String usbConsoleUnmatchedReply(int id) {
+    return 'Αντιστοίχιστη απάντηση · id=$id';
+  }
 }

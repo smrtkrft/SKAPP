@@ -2282,5 +2282,20 @@
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Δεν ήταν δυνατή η έναρξη της σάρωσης: {detail}",
   "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
-  "discoveryScanFailedTitle": "Η σάρωση απέτυχε"
+  "discoveryScanFailedTitle": "Η σάρωση απέτυχε",
+
+  "usbConsoleCriticalConfirmTitle": "Επιβεβαίωση κρίσιμης εντολής",
+  "usbConsoleCriticalConfirmBody": "Η «{cmd}» δεν αναιρείται. Συνέχεια; (παράθυρο επιβεβαίωσης {ttl} δευτ.)",
+  "@usbConsoleCriticalConfirmBody": {"placeholders": {"cmd": {"type": "String"}, "ttl": {"type": "int"}}},
+  "usbConsoleCriticalConfirmRun": "Εκτέλεση",
+  "usbConsoleCriticalCancelled": "Η κρίσιμη εντολή δεν επιβεβαιώθηκε, δεν στάλθηκε: {cmd}",
+  "@usbConsoleCriticalCancelled": {"placeholders": {"cmd": {"type": "String"}}},
+  "usbConsoleErrTimeout": "Η συσκευή δεν απάντησε εγκαίρως. Ελέγξτε καλώδιο/θύρα και δοκιμάστε ξανά. ({detail})",
+  "@usbConsoleErrTimeout": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrClosed": "Η σύνδεση USB έκλεισε.",
+  "usbConsoleErrClosedReason": "Η σύνδεση USB έκλεισε: {detail}",
+  "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrLineOverflow": "Η συσκευή έστειλε πολύ μεγάλα δεδομένα χωρίς τέλος γραμμής — αυτή η θύρα ίσως δεν είναι συσκευή SmartKraft. Η σύνδεση τερματίστηκε.",
+  "usbConsoleUnmatchedReply": "Αντιστοίχιστη απάντηση · id={id}",
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
 }

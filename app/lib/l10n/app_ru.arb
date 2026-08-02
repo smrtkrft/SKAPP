@@ -2143,5 +2143,20 @@
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Не удалось запустить сканирование: {detail}",
   "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
-  "discoveryScanFailedTitle": "Сбой сканирования"
+  "discoveryScanFailedTitle": "Сбой сканирования",
+
+  "usbConsoleCriticalConfirmTitle": "Подтверждение критической команды",
+  "usbConsoleCriticalConfirmBody": "«{cmd}» необратима. Продолжить? (окно подтверждения {ttl} с)",
+  "@usbConsoleCriticalConfirmBody": {"placeholders": {"cmd": {"type": "String"}, "ttl": {"type": "int"}}},
+  "usbConsoleCriticalConfirmRun": "Выполнить",
+  "usbConsoleCriticalCancelled": "Критическая команда не подтверждена, не отправлена: {cmd}",
+  "@usbConsoleCriticalCancelled": {"placeholders": {"cmd": {"type": "String"}}},
+  "usbConsoleErrTimeout": "Устройство не ответило вовремя. Проверьте кабель/порт и повторите. ({detail})",
+  "@usbConsoleErrTimeout": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrClosed": "USB-соединение закрыто.",
+  "usbConsoleErrClosedReason": "USB-соединение закрыто: {detail}",
+  "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrLineOverflow": "Устройство отправило очень длинные данные без переноса строки — возможно, этот порт не является устройством SmartKraft. Соединение закрыто.",
+  "usbConsoleUnmatchedReply": "Несопоставленный ответ · id={id}",
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
 }

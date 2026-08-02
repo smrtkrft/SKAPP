@@ -1,53 +1,45 @@
-// USB konsolunda `key=value` argümanları firmware'e HEP string olarak
-// gidiyordu: `brightness=128` → {"brightness":"128"}. Makine-modu komutları
-// cJSON'da sayı/bool beklediği için ERR_INVALID_ARGS dönüyordu — kullanıcının
-// gördüğü "komut hatalarının" en olası kaynağı.
+// Firmware sözleşmesi: konsol argüman değerleri HER ZAMAN string gider.
+//
+// sk_cli.c:sk_cli_arg_named makine modunda cJSON değeri string değilse NULL
+// döner; sk_cli_arg_long ise sayısal string'i strtol ile okur. Yani string
+// göndermek her iki okuyucu için de çalışır, sayı/bool göndermek string
+// bekleyen alanları sessizce düşürür.
+//
+// Bu bir kez "iyileştirme" sanılıp sayıya çevrildi ve WiFi parolasını
+// bozdu: password=12345678 → sk_wifi.c parolayı NULL görür, strncpy
+// atlanır, cihaz "ok" der ve ağı PAROLASIZ kaydeder. Bu test o refleksin
+// tekrarını engeller.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:skapp/features/dev/usb_console_providers.dart';
 
 void main() {
-  group('coerceCliArgValue', () {
-    test('integers become num', () {
-      expect(coerceCliArgValue('128'), 128);
-      expect(coerceCliArgValue('-5'), -5);
-      expect(coerceCliArgValue('0'), 0);
+  group('cliArgValue — firmware string sözleşmesi', () {
+    test('sayı gibi görünen değerler string kalır', () {
+      expect(cliArgValue('128'), '128');
+      expect(cliArgValue('1754169600'), '1754169600'); // time.set unix
+      expect(cliArgValue('12345678'), '12345678'); // WiFi parolası
+      expect(cliArgValue('-5'), '-5');
+      expect(cliArgValue('1.5'), '1.5');
     });
 
-    test('doubles become num', () {
-      expect(coerceCliArgValue('1.5'), 1.5);
+    test('bool/null sözcükleri string kalır', () {
+      expect(cliArgValue('true'), 'true');
+      expect(cliArgValue('false'), 'false');
+      expect(cliArgValue('null'), 'null');
     });
 
-    test('booleans become bool', () {
-      expect(coerceCliArgValue('true'), isTrue);
-      expect(coerceCliArgValue('false'), isFalse);
-      // Büyük/küçük harf duyarsız.
-      expect(coerceCliArgValue('TRUE'), isTrue);
+    test('metinler değişmeden geçer', () {
+      expect(cliArgValue('ofis_wifi'), 'ofis_wifi');
+      expect(cliArgValue('BF-A06TMFSQT'), 'BF-A06TMFSQT');
+      expect(cliArgValue(''), '');
     });
 
-    test('null literal becomes null', () {
-      expect(coerceCliArgValue('null'), isNull);
-    });
-
-    test('everything else stays a string', () {
-      expect(coerceCliArgValue('ofis_wifi'), 'ofis_wifi');
-      expect(coerceCliArgValue('BF-A06TMFSQT'), 'BF-A06TMFSQT');
-      // SSID/parola gibi sayı GİBİ görünen ama string kalması gerekenler
-      // tırnakla korunur (tokenizer tırnağı ayıklar, biz işareti alırız).
-      expect(coerceCliArgValue('12345678', quoted: true), '12345678');
-    });
-
-    test('leading-zero and oversized numerics stay strings', () {
-      // "007" bir kimlik/kod olabilir; sayıya çevirmek anlamı bozar.
-      expect(coerceCliArgValue('007'), '007');
-      // 64-bit'i aşan değer sayıya sığmaz, string kalmalı.
-      expect(coerceCliArgValue('123456789012345678901234567890'),
-          '123456789012345678901234567890');
-    });
-
-    test('hex/plus forms stay strings', () {
-      expect(coerceCliArgValue('0x1F'), '0x1F');
-      expect(coerceCliArgValue('+5'), '+5');
+    test('dönüş tipi String — sayısal tip sızıntısı olmamalı', () {
+      // Tip düzeyinde de sabitle: dönüş `String`, dynamic değil.
+      const String v = 'x';
+      expect(cliArgValue(v), isA<String>());
+      expect(cliArgValue('42'), isA<String>());
     });
   });
 }

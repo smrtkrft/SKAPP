@@ -6859,4 +6859,43 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get discoveryScanFailedTitle => 'Échec du scan';
+
+  @override
+  String get usbConsoleCriticalConfirmTitle =>
+      'Confirmation de commande critique';
+
+  @override
+  String usbConsoleCriticalConfirmBody(String cmd, int ttl) {
+    return '« $cmd » est irréversible. Continuer ? (fenêtre de confirmation $ttl s)';
+  }
+
+  @override
+  String get usbConsoleCriticalConfirmRun => 'Exécuter';
+
+  @override
+  String usbConsoleCriticalCancelled(String cmd) {
+    return 'Commande critique non confirmée, non envoyée : $cmd';
+  }
+
+  @override
+  String usbConsoleErrTimeout(String detail) {
+    return 'L\'appareil n\'a pas répondu à temps. Vérifiez le câble/port et réessayez. ($detail)';
+  }
+
+  @override
+  String get usbConsoleErrClosed => 'Connexion USB fermée.';
+
+  @override
+  String usbConsoleErrClosedReason(String detail) {
+    return 'Connexion USB fermée : $detail';
+  }
+
+  @override
+  String get usbConsoleErrLineOverflow =>
+      'L\'appareil a envoyé des données très longues sans fin de ligne — ce port n\'est peut-être pas un appareil SmartKraft. Connexion fermée.';
+
+  @override
+  String usbConsoleUnmatchedReply(int id) {
+    return 'Réponse non appariée · id=$id';
+  }
 }

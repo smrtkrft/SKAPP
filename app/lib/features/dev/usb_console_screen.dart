@@ -313,6 +313,9 @@ class _ConsoleBodyState extends ConsumerState<_ConsoleBody> {
     final state = ref.watch(usbConsoleSessionProvider(widget.port));
     final notifier =
         ref.read(usbConsoleSessionProvider(widget.port).notifier);
+    // Notifier'ın BuildContext'i yok; hata metinlerini kullanıcının dilinde
+    // üretebilmesi için yerelleştirmeyi buradan bağlıyoruz.
+    notifier.attachLocalizations(l);
 
     // Yeni entry geldiyse otomatik aşağı kaydır
     ref.listen(usbConsoleSessionProvider(widget.port), (prev, next) {
@@ -405,13 +408,13 @@ class _ConsoleBodyState extends ConsumerState<_ConsoleBody> {
     // cihazı geri dönülmez biçimde sıfırlayabiliyordu.
     notifier.send(cmd, confirmCritical: (req) async {
       if (!mounted) return false;
+      final l = AppLocalizations.of(context);
       return showSkConfirm(
         context,
-        title: 'Kritik komut onayı',
-        message: '“${req.cmd}” geri alınamaz bir işlem. '
-            'Devam edilsin mi? (onay süresi ${req.ttlSec} sn)',
-        cancelLabel: 'Vazgeç',
-        confirmLabel: 'Çalıştır',
+        title: l.usbConsoleCriticalConfirmTitle,
+        message: l.usbConsoleCriticalConfirmBody(req.cmd, req.ttlSec),
+        cancelLabel: l.commonCancel,
+        confirmLabel: l.usbConsoleCriticalConfirmRun,
         destructive: true,
       );
     });

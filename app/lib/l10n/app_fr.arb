@@ -2143,5 +2143,20 @@
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Impossible de démarrer le scan : {detail}",
   "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
-  "discoveryScanFailedTitle": "Échec du scan"
+  "discoveryScanFailedTitle": "Échec du scan",
+
+  "usbConsoleCriticalConfirmTitle": "Confirmation de commande critique",
+  "usbConsoleCriticalConfirmBody": "« {cmd} » est irréversible. Continuer ? (fenêtre de confirmation {ttl} s)",
+  "@usbConsoleCriticalConfirmBody": {"placeholders": {"cmd": {"type": "String"}, "ttl": {"type": "int"}}},
+  "usbConsoleCriticalConfirmRun": "Exécuter",
+  "usbConsoleCriticalCancelled": "Commande critique non confirmée, non envoyée : {cmd}",
+  "@usbConsoleCriticalCancelled": {"placeholders": {"cmd": {"type": "String"}}},
+  "usbConsoleErrTimeout": "L'appareil n'a pas répondu à temps. Vérifiez le câble/port et réessayez. ({detail})",
+  "@usbConsoleErrTimeout": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrClosed": "Connexion USB fermée.",
+  "usbConsoleErrClosedReason": "Connexion USB fermée : {detail}",
+  "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrLineOverflow": "L'appareil a envoyé des données très longues sans fin de ligne — ce port n'est peut-être pas un appareil SmartKraft. Connexion fermée.",
+  "usbConsoleUnmatchedReply": "Réponse non appariée · id={id}",
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
 }

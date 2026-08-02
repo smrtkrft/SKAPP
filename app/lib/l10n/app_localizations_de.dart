@@ -6817,4 +6817,43 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get discoveryScanFailedTitle => 'Scan fehlgeschlagen';
+
+  @override
+  String get usbConsoleCriticalConfirmTitle =>
+      'Bestätigung für kritischen Befehl';
+
+  @override
+  String usbConsoleCriticalConfirmBody(String cmd, int ttl) {
+    return '„$cmd“ kann nicht rückgängig gemacht werden. Fortfahren? (Bestätigungsfenster ${ttl}s)';
+  }
+
+  @override
+  String get usbConsoleCriticalConfirmRun => 'Ausführen';
+
+  @override
+  String usbConsoleCriticalCancelled(String cmd) {
+    return 'Kritischer Befehl nicht bestätigt, nicht gesendet: $cmd';
+  }
+
+  @override
+  String usbConsoleErrTimeout(String detail) {
+    return 'Gerät hat nicht rechtzeitig geantwortet. Kabel/Port prüfen und erneut versuchen. ($detail)';
+  }
+
+  @override
+  String get usbConsoleErrClosed => 'USB-Verbindung geschlossen.';
+
+  @override
+  String usbConsoleErrClosedReason(String detail) {
+    return 'USB-Verbindung geschlossen: $detail';
+  }
+
+  @override
+  String get usbConsoleErrLineOverflow =>
+      'Das Gerät sendete sehr lange Daten ohne Zeilenumbruch — dieser Port ist möglicherweise kein SmartKraft-Gerät. Verbindung getrennt.';
+
+  @override
+  String usbConsoleUnmatchedReply(int id) {
+    return 'Nicht zugeordnete Antwort · id=$id';
+  }
 }

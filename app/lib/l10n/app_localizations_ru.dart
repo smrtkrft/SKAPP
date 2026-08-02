@@ -6821,4 +6821,43 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get discoveryScanFailedTitle => 'Сбой сканирования';
+
+  @override
+  String get usbConsoleCriticalConfirmTitle =>
+      'Подтверждение критической команды';
+
+  @override
+  String usbConsoleCriticalConfirmBody(String cmd, int ttl) {
+    return '«$cmd» необратима. Продолжить? (окно подтверждения $ttl с)';
+  }
+
+  @override
+  String get usbConsoleCriticalConfirmRun => 'Выполнить';
+
+  @override
+  String usbConsoleCriticalCancelled(String cmd) {
+    return 'Критическая команда не подтверждена, не отправлена: $cmd';
+  }
+
+  @override
+  String usbConsoleErrTimeout(String detail) {
+    return 'Устройство не ответило вовремя. Проверьте кабель/порт и повторите. ($detail)';
+  }
+
+  @override
+  String get usbConsoleErrClosed => 'USB-соединение закрыто.';
+
+  @override
+  String usbConsoleErrClosedReason(String detail) {
+    return 'USB-соединение закрыто: $detail';
+  }
+
+  @override
+  String get usbConsoleErrLineOverflow =>
+      'Устройство отправило очень длинные данные без переноса строки — возможно, этот порт не является устройством SmartKraft. Соединение закрыто.';
+
+  @override
+  String usbConsoleUnmatchedReply(int id) {
+    return 'Несопоставленный ответ · id=$id';
+  }
 }

@@ -6860,4 +6860,43 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get discoveryScanFailedTitle => 'Error de escaneo';
+
+  @override
+  String get usbConsoleCriticalConfirmTitle =>
+      'Confirmación de comando crítico';
+
+  @override
+  String usbConsoleCriticalConfirmBody(String cmd, int ttl) {
+    return '«$cmd» no se puede deshacer. ¿Continuar? (ventana de confirmación $ttl s)';
+  }
+
+  @override
+  String get usbConsoleCriticalConfirmRun => 'Ejecutar';
+
+  @override
+  String usbConsoleCriticalCancelled(String cmd) {
+    return 'Comando crítico no confirmado, no enviado: $cmd';
+  }
+
+  @override
+  String usbConsoleErrTimeout(String detail) {
+    return 'El dispositivo no respondió a tiempo. Comprueba el cable/puerto e inténtalo de nuevo. ($detail)';
+  }
+
+  @override
+  String get usbConsoleErrClosed => 'Conexión USB cerrada.';
+
+  @override
+  String usbConsoleErrClosedReason(String detail) {
+    return 'Conexión USB cerrada: $detail';
+  }
+
+  @override
+  String get usbConsoleErrLineOverflow =>
+      'El dispositivo envió datos muy largos sin salto de línea; puede que este puerto no sea un dispositivo SmartKraft. Conexión cerrada.';
+
+  @override
+  String usbConsoleUnmatchedReply(int id) {
+    return 'Respuesta sin coincidencia · id=$id';
+  }
 }

@@ -88,7 +88,9 @@ abstract class UsbCliTransportBase implements CliTransport {
   bool _closed = false;
 
   /// Kapanışa yol açan alt hata (unplug win32 kodu vb.); temiz kapanışta
-  /// null. CliClient bunu `closedReason` üzerinden taşır.
+  /// null. Dışarıya `incoming.addError` ile taşınır — CliClient bunu
+  /// `closedReason` olarak saklar. Burada yalnız `sendLine`'ın kapalı-port
+  /// hatasını zenginleştirmek için tutuluyor.
   Object? _lostReason;
 
   @override
@@ -106,9 +108,6 @@ abstract class UsbCliTransportBase implements CliTransport {
     // firmware'da reddedilir (kasıtlı, dev mod sınırını ifade eder).
     _authenticated = true;
   }
-
-  /// Kapanış sebebi (varsa) — CliClient `closedReason` olarak taşır.
-  Object? get lostReason => _lostReason;
 
   @override
   Future<void> sendLine(String line) async {
@@ -196,9 +195,16 @@ abstract class UsbCliTransportBase implements CliTransport {
 /// bölünürse kalan baytları bir sonraki çağrıya taşır.
 class _Utf8ChunkDecoder {
   final _out = StringBuffer();
-  late final _sink = utf8.decoder.startChunkedConversion(
-    _StringSink(_out),
-  );
+
+  /// `allowMalformed: true` ŞART: varsayılan KATI çözücü, geçersiz bayt
+  /// görünce FormatException fırlatır. Bu istisna 30 ms'lik okuma
+  /// timer'ının içinde doğar (yakalayan yok) → her tick'te yakalanmamış
+  /// zone hatası, üstelik bağlantı "bağlı" görünmeye devam eder ve satır
+  /// tavanı guard'ına hiç ulaşılmaz. Tam da yanlış COM portu / bootloader
+  /// çıktısı / baud uyuşmazlığı senaryolarında olur — yani bu dosyanın
+  /// korumak zorunda olduğu durumda. Bozuk baytlar U+FFFD olur, akış sürer.
+  late final _sink = const Utf8Decoder(allowMalformed: true)
+      .startChunkedConversion(_StringSink(_out));
 
   String decode(List<int> bytes) {
     _sink.add(bytes);

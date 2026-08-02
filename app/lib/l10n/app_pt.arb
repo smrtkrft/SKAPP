@@ -3622,5 +3622,20 @@
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Não foi possível iniciar a busca: {detail}",
   "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
-  "discoveryScanFailedTitle": "Falha na busca"
+  "discoveryScanFailedTitle": "Falha na busca",
+
+  "usbConsoleCriticalConfirmTitle": "Confirmação de comando crítico",
+  "usbConsoleCriticalConfirmBody": "«{cmd}» não pode ser desfeito. Continuar? (janela de confirmação {ttl} s)",
+  "@usbConsoleCriticalConfirmBody": {"placeholders": {"cmd": {"type": "String"}, "ttl": {"type": "int"}}},
+  "usbConsoleCriticalConfirmRun": "Executar",
+  "usbConsoleCriticalCancelled": "Comando crítico não confirmado, não enviado: {cmd}",
+  "@usbConsoleCriticalCancelled": {"placeholders": {"cmd": {"type": "String"}}},
+  "usbConsoleErrTimeout": "O dispositivo não respondeu a tempo. Verifique o cabo/porta e tente novamente. ({detail})",
+  "@usbConsoleErrTimeout": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrClosed": "Ligação USB fechada.",
+  "usbConsoleErrClosedReason": "Ligação USB fechada: {detail}",
+  "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrLineOverflow": "O dispositivo enviou dados muito longos sem fim de linha — esta porta pode não ser um dispositivo SmartKraft. Ligação terminada.",
+  "usbConsoleUnmatchedReply": "Resposta sem correspondência · id={id}",
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
 }

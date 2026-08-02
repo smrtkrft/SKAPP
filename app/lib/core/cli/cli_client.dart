@@ -121,8 +121,13 @@ class CliClient {
     List<String>? argv,
     String? confirmToken,
     Duration timeout = const Duration(seconds: 10),
+    void Function(int id)? onRequestId,
   }) async {
     final id = _nextId++;
+    // Çağıran isterse istek id'sini öğrenir: timeout'tan sonra gelen geç
+    // cevap `unmatched`'e düşer ve tüketici onun KENDİ isteği mi yoksa
+    // beklenmedik bir çerçeve mi olduğunu ayırt edebilsin.
+    onRequestId?.call(id);
     final body = <String, dynamic>{
       'cmd': cmd,
       'id': id,

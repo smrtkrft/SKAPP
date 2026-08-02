@@ -2297,5 +2297,20 @@
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Scan could not start: {detail}",
   "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
-  "discoveryScanFailedTitle": "Scan failed"
+  "discoveryScanFailedTitle": "Scan failed",
+
+  "usbConsoleCriticalConfirmTitle": "Critical command confirmation",
+  "usbConsoleCriticalConfirmBody": "“{cmd}” cannot be undone. Continue? (confirmation window {ttl}s)",
+  "@usbConsoleCriticalConfirmBody": {"placeholders": {"cmd": {"type": "String"}, "ttl": {"type": "int"}}},
+  "usbConsoleCriticalConfirmRun": "Run",
+  "usbConsoleCriticalCancelled": "Critical command not confirmed, not sent: {cmd}",
+  "@usbConsoleCriticalCancelled": {"placeholders": {"cmd": {"type": "String"}}},
+  "usbConsoleErrTimeout": "Device did not respond in time. Check the cable/port and try again. ({detail})",
+  "@usbConsoleErrTimeout": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrClosed": "USB connection closed.",
+  "usbConsoleErrClosedReason": "USB connection closed: {detail}",
+  "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrLineOverflow": "The device sent very long data with no line break — this port may not be a SmartKraft device. Connection closed.",
+  "usbConsoleUnmatchedReply": "Unmatched response · id={id}",
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
 }

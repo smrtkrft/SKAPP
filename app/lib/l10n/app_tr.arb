@@ -2293,5 +2293,20 @@
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Tarama başlatılamadı: {detail}",
   "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
-  "discoveryScanFailedTitle": "Tarama başarısız"
+  "discoveryScanFailedTitle": "Tarama başarısız",
+
+  "usbConsoleCriticalConfirmTitle": "Kritik komut onayı",
+  "usbConsoleCriticalConfirmBody": "“{cmd}” geri alınamaz bir işlem. Devam edilsin mi? (onay süresi {ttl} sn)",
+  "@usbConsoleCriticalConfirmBody": {"placeholders": {"cmd": {"type": "String"}, "ttl": {"type": "int"}}},
+  "usbConsoleCriticalConfirmRun": "Çalıştır",
+  "usbConsoleCriticalCancelled": "Kritik komut onaylanmadı, gönderilmedi: {cmd}",
+  "@usbConsoleCriticalCancelled": {"placeholders": {"cmd": {"type": "String"}}},
+  "usbConsoleErrTimeout": "Cihaz zamanında cevap vermedi. Kablo/port bağlantısını kontrol edip tekrar deneyin. ({detail})",
+  "@usbConsoleErrTimeout": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrClosed": "USB bağlantısı kapandı.",
+  "usbConsoleErrClosedReason": "USB bağlantısı kapandı: {detail}",
+  "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrLineOverflow": "Cihazdan satır sonu olmayan çok uzun veri geldi — bu port SmartKraft cihazı olmayabilir. Bağlantı kesildi.",
+  "usbConsoleUnmatchedReply": "Eşleşmeyen cevap · id={id}",
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
 }

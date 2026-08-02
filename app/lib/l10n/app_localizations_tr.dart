@@ -6787,4 +6787,42 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get discoveryScanFailedTitle => 'Tarama başarısız';
+
+  @override
+  String get usbConsoleCriticalConfirmTitle => 'Kritik komut onayı';
+
+  @override
+  String usbConsoleCriticalConfirmBody(String cmd, int ttl) {
+    return '“$cmd” geri alınamaz bir işlem. Devam edilsin mi? (onay süresi $ttl sn)';
+  }
+
+  @override
+  String get usbConsoleCriticalConfirmRun => 'Çalıştır';
+
+  @override
+  String usbConsoleCriticalCancelled(String cmd) {
+    return 'Kritik komut onaylanmadı, gönderilmedi: $cmd';
+  }
+
+  @override
+  String usbConsoleErrTimeout(String detail) {
+    return 'Cihaz zamanında cevap vermedi. Kablo/port bağlantısını kontrol edip tekrar deneyin. ($detail)';
+  }
+
+  @override
+  String get usbConsoleErrClosed => 'USB bağlantısı kapandı.';
+
+  @override
+  String usbConsoleErrClosedReason(String detail) {
+    return 'USB bağlantısı kapandı: $detail';
+  }
+
+  @override
+  String get usbConsoleErrLineOverflow =>
+      'Cihazdan satır sonu olmayan çok uzun veri geldi — bu port SmartKraft cihazı olmayabilir. Bağlantı kesildi.';
+
+  @override
+  String usbConsoleUnmatchedReply(int id) {
+    return 'Eşleşmeyen cevap · id=$id';
+  }
 }

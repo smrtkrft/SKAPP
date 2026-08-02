@@ -3622,5 +3622,20 @@
   "@pairingBondClearFailed": {"placeholders": {"detail": {"type": "String"}}},
   "discoveryScanFailed": "Scan konnte nicht gestartet werden: {detail}",
   "@discoveryScanFailed": {"placeholders": {"detail": {"type": "String"}}},
-  "discoveryScanFailedTitle": "Scan fehlgeschlagen"
+  "discoveryScanFailedTitle": "Scan fehlgeschlagen",
+
+  "usbConsoleCriticalConfirmTitle": "Bestätigung für kritischen Befehl",
+  "usbConsoleCriticalConfirmBody": "„{cmd}“ kann nicht rückgängig gemacht werden. Fortfahren? (Bestätigungsfenster {ttl}s)",
+  "@usbConsoleCriticalConfirmBody": {"placeholders": {"cmd": {"type": "String"}, "ttl": {"type": "int"}}},
+  "usbConsoleCriticalConfirmRun": "Ausführen",
+  "usbConsoleCriticalCancelled": "Kritischer Befehl nicht bestätigt, nicht gesendet: {cmd}",
+  "@usbConsoleCriticalCancelled": {"placeholders": {"cmd": {"type": "String"}}},
+  "usbConsoleErrTimeout": "Gerät hat nicht rechtzeitig geantwortet. Kabel/Port prüfen und erneut versuchen. ({detail})",
+  "@usbConsoleErrTimeout": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrClosed": "USB-Verbindung geschlossen.",
+  "usbConsoleErrClosedReason": "USB-Verbindung geschlossen: {detail}",
+  "@usbConsoleErrClosedReason": {"placeholders": {"detail": {"type": "String"}}},
+  "usbConsoleErrLineOverflow": "Das Gerät sendete sehr lange Daten ohne Zeilenumbruch — dieser Port ist möglicherweise kein SmartKraft-Gerät. Verbindung getrennt.",
+  "usbConsoleUnmatchedReply": "Nicht zugeordnete Antwort · id={id}",
+  "@usbConsoleUnmatchedReply": {"placeholders": {"id": {"type": "int"}}}
 }
