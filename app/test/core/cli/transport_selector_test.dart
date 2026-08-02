@@ -175,6 +175,36 @@ void main() {
     });
   });
 
+  group('tipli hard-rejection propagasyonu', () {
+    test('BLE AuthRejectedException sarmalanmadan dışa çıkar', () async {
+      // pairing_screen.isHardBondRejection bu tipi görmeli; sarmalanırsa
+      // transient sanılıp bond onarımı hiç tetiklenmez.
+      final p = _makeProvider(
+        tcpFactory: _failTcp,
+        mdns: (_, _) async => null,
+        bleFactory: (_, _) => CliClient(FakeCliTransport(
+            connectError: const AuthRejectedException('token mismatch'))),
+      );
+      final c = _container(bond, [_device()]);
+      addTearDown(c.dispose);
+
+      await expectLater(_run(c, p), throwsA(isA<AuthRejectedException>()));
+    });
+
+    test('PairingRequiredException sarmalanmadan dışa çıkar', () async {
+      final p = _makeProvider(
+        tcpFactory: _failTcp,
+        mdns: (_, _) async => null,
+        bleFactory: (_, _) => CliClient(FakeCliTransport(
+            connectError: const PairingRequiredException('no_bond'))),
+      );
+      final c = _container(bond, [_device()]);
+      addTearDown(c.dispose);
+
+      await expectLater(_run(c, p), throwsA(isA<PairingRequiredException>()));
+    });
+  });
+
   group('TCP cache temizleme semantiği', () {
     test('SocketException (connect reddi) cache temizler', () async {
       final devices = [_device(lastIp: '10.0.0.9', lastPort: 8080)];

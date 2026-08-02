@@ -89,9 +89,10 @@ class TransportSelector {
   /// Tries TCP cache → mDNS fresh-resolve + TCP → BLE in order.
   ///
   /// Throws [BondMissingException] if no stored bond is found.
-  /// Throws [PairingRequiredException] (re-throws from BLE) if the device
-  /// reports it needs re-pairing — do NOT wrap this in
-  /// [DeviceUnreachableException]; the caller's pairing flow depends on it.
+  /// Throws [PairingRequiredException] or [AuthRejectedException] (re-thrown
+  /// from BLE) when the device reports it needs re-pairing or rejects our
+  /// bond — do NOT wrap these in [DeviceUnreachableException]; the caller's
+  /// pairing recovery (isHardBondRejection) depends on seeing the real type.
   /// Throws [DeviceUnreachableException] when all three paths fail.
   Future<DeviceSession> selectAndConnect(String deviceId) async {
     final bondStore = ref.read(bondStoreProvider);
@@ -168,7 +169,13 @@ class TransportSelector {
     try {
       return await _openBle(deviceId, token);
     } catch (e) {
-      if (e is PairingRequiredException) rethrow;
+      // Tipli "bond çürümüş" sinyalleri DeviceUnreachable içine gömülmemeli:
+      // pairing_screen bunlara bakıp bond'u temizleyip bootstrap'a düşüyor.
+      // Sarmalanınca sınıflandırıcı transient sanıyor ve kullanıcı sonsuz
+      // "Tekrar dene" döngüsüne sıkışıyordu (ör. cihaz başka bir telefonla
+      // yeniden eşleşmişse: cihaz pairing.required DEĞİL, auth.challenge
+      // gönderir ve doğrulama başarısız olur).
+      if (e is PairingRequiredException || e is AuthRejectedException) rethrow;
       attempts.add('BLE fallback: $e');
       throw DeviceUnreachableException(List.unmodifiable(attempts));
     }
