@@ -254,7 +254,11 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
       if (r.ok && r.data is Map) {
         _applyStatusSnapshot((r.data as Map).cast<String, dynamic>());
       }
-    } catch (_) {/* silent */}
+    } catch (e) {
+      // Best-effort: bir sonraki status olayı durumu düzeltir — ama
+      // sürekli başarısızlık "sayaç neden güncellenmiyor"un tek izidir.
+      debugPrint('[LS] status refresh failed: $e');
+    }
   }
 
   @override
