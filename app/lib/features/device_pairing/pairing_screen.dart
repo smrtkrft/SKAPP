@@ -141,6 +141,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     }
     _decideRunning = true;
     try {
+      await _guardedRun(() async {
       // REQUEST-DRIVEN BOOTSTRAP FIRST (deterministik, yarış-bağışık).
       //
       // Eski tasarım: bond varsa reconnect'e giriyordu ve cihazın abonelik
@@ -156,22 +157,33 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       // `ERR_PAIRING_NOT_OPEN` döner → _runFlow mevcut bond'la reconnect'e
       // devreder. Böylece hem taze-ekleme hem repair tek deterministik yolla
       // çalışır.
-      if (!mounted) return;
-      setState(() => _isReconnect = false);
-      await _runFlow();
+        if (!mounted) return;
+        setState(() => _isReconnect = false);
+        await _runFlow();
+      });
+    } finally {
+      _decideRunning = false;
+    }
+  }
+
+  /// Son savunma hattı: akıştan kaçan HERHANGİ bir hata (kripto
+  /// ArgumentError, secure-storage PlatformException, provider hatası)
+  /// spinner'ı sonsuza kadar döndürmek yerine hata kartına iner. Zone
+  /// handler'a hiçbir eşleştirme hatası kaçmaz (audit C1 — kalıcı-takılı
+  /// UI'nin tek kaynağı buydu).
+  ///
+  /// Ekrandan tetiklenen HER akış (ilk çalıştırma, Tekrar dene, manuel
+  /// yenileme) bu sarmalayıcıdan geçmeli; doğrudan `_runFlow()` çağrısı
+  /// korumayı delip eski davranışı geri getirir.
+  Future<void> _guardedRun(Future<void> Function() body) async {
+    try {
+      await body();
     } catch (e, st) {
-      // Son savunma hattı: _runFlow/_runReconnect'ten kaçan HERHANGİ bir
-      // hata (kripto ArgumentError, secure-storage PlatformException,
-      // provider hatası) spinner'ı sonsuza kadar döndürmek yerine hata
-      // kartına iner. Zone handler'a hiçbir eşleştirme hatası kaçmaz
-      // (audit C1 — kalıcı-takılı-UI'nin tek kaynağı buydu).
       AppLogger.instance.error('pair.ble', e, st);
       _trace('unhandled: $e');
       if (mounted) {
         _fail(AppLocalizations.of(context).pairingUnexpectedError(e.toString()));
       }
-    } finally {
-      _decideRunning = false;
     }
   }
 
@@ -636,6 +648,10 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     } catch (e) {
       _trace('retry cleanup disconnect: $e');
     }
+    // Yukarıdaki await'ler sırasında kullanıcı ekrandan çıkmış olabilir;
+    // unmount sonrası `ref` kullanmak Riverpod'da fırlatır ve bu
+    // fire-and-forget buton handler'ında yakalanmamış zone hatası olur.
+    if (!mounted) return;
     // KRİTİK: deviceSessionProvider AsyncError state'inde takılı kalmış
     // olabilir; .future her okumada cached hatayı 1ms'de döndürür. Bu
     // yüzden retry sahte "transient" oluyordu — gerçek BLE denemesi
@@ -656,11 +672,28 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
   /// (auth.challenge hiç gelmez); bu durumda otomatik tanı koyamadığımız
   /// için kullanıcıya kaçış kapısı bırakmak şart.
   Future<void> _manualRecovery() async {
+    // Reentrancy guard: bu akış da _decideAndRun ile AYNI BLE kaynaklarını
+    // kullanır. Onay dialogu ile setState arasında ekran hâlâ `failed`
+    // durumunda olduğu için "Tekrar dene" butonu canlıdır; koruma olmadan
+    // iki paralel BLE akışı başlayıp notify dinleyicilerini çakıştırıyordu.
+    if (_decideRunning) {
+      debugPrint('[PAIR] _manualRecovery: reentrancy blocked');
+      return;
+    }
     if (!mounted) return;
     final proceed = await _confirmPairingMode();
     if (!mounted) return;
     if (proceed != true) return;
+    if (_decideRunning) return; // dialog açıkken başka akış başlamış olabilir
+    _decideRunning = true;
+    try {
+      await _guardedRun(_manualRecoveryLocked);
+    } finally {
+      _decideRunning = false;
+    }
+  }
 
+  Future<void> _manualRecoveryLocked() async {
     await _pairingLink?.close();
     _pairingLink = null;
     try {
@@ -678,8 +711,8 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       _fail(AppLocalizations.of(context).pairingBondClearFailed(e.toString()));
       return;
     }
-    ref.invalidate(deviceSessionProvider(widget.device.id));
     if (!mounted) return;
+    ref.invalidate(deviceSessionProvider(widget.device.id));
     setState(() {
       _isReconnect = false;
       _stage = _PairStage.connecting;
