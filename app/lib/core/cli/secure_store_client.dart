@@ -14,6 +14,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show debugPrint;
+
 import 'cli_client.dart';
 
 class SecureStoreException implements Exception {
@@ -38,7 +40,10 @@ class SecureStoreClient {
   /// Returns the decrypted value for [key], or `null` if it's not set.
   Future<String?> get(String key) async {
     final r = await _cli.send('secure.get', args: {'key': key});
-    if (r.ok) return (r.data as Map)['value'] as String?;
+    if (r.ok) {
+      final d = r.data;
+      return d is Map ? d['value']?.toString() : null;
+    }
     if (r.err == 'ERR_NOT_FOUND') return null;
     throw SecureStoreException(r.err ?? 'ERR_INTERNAL', r.params);
   }
@@ -61,8 +66,12 @@ class SecureStoreClient {
   Future<List<String>> list() async {
     final r = await _cli.send('secure.list');
     if (!r.ok) throw SecureStoreException(r.err ?? 'ERR_INTERNAL', r.params);
-    final keys = (r.data as Map)['keys'] as List;
-    return keys.cast<String>();
+    final d = r.data;
+    final keys = d is Map ? d['keys'] : null;
+    if (keys is! List) {
+      throw SecureStoreException('ERR_MALFORMED_RESPONSE', r.params);
+    }
+    return keys.map((k) => k.toString()).toList(growable: false);
   }
 
   // ---- Userdata blob ------------------------------------------------------
@@ -71,7 +80,12 @@ class SecureStoreClient {
   Future<int> userdataSize() async {
     final r = await _cli.send('userdata.size');
     if (!r.ok) throw SecureStoreException(r.err ?? 'ERR_INTERNAL', r.params);
-    return ((r.data as Map)['size'] as num).toInt();
+    final d = r.data;
+    final size = d is Map ? d['size'] : null;
+    if (size is! num) {
+      throw SecureStoreException('ERR_MALFORMED_RESPONSE', r.params);
+    }
+    return size.toInt();
   }
 
   /// Read `[offset, offset+len)` from the blob. The firmware caps each
@@ -89,14 +103,32 @@ class SecureStoreClient {
       if (!r.ok) {
         throw SecureStoreException(r.err ?? 'ERR_INTERNAL', r.params);
       }
-      final data = r.data as Map;
-      final actual = (data['len'] as num).toInt();
-      if (actual == 0) break;        // hit EOF early
-      final b64 = data['data_b64'] as String;
-      builder.add(base64Decode(b64));
-      cursor += actual;
-      remaining -= actual;
-      if (actual < take) break;      // partial = end-of-blob
+      final data = r.data;
+      final b64 = data is Map ? data['data_b64'] : null;
+      if (b64 is! String) {
+        throw SecureStoreException('ERR_MALFORMED_RESPONSE', r.params);
+      }
+      final Uint8List chunk;
+      try {
+        chunk = base64Decode(b64);
+      } on FormatException catch (e) {
+        throw SecureStoreException('ERR_MALFORMED_RESPONSE', {'detail': '$e'});
+      }
+      if (chunk.isEmpty) break; // gerçek EOF
+      // GERÇEK bayt sayısına göre ilerle: cihazın bildirdiği `len` ile
+      // çözülen uzunluk ayrışırsa offsetler kayar ve sonuç sessizce bozulur.
+      builder.add(chunk);
+      cursor += chunk.length;
+      remaining -= chunk.length;
+      if (chunk.length < take && remaining > 0) {
+        // Blob'un ortasında kısa okuma: eskiden "blob bitti" sayılıp
+        // eksik içerik TAM gibi döndürülüyordu.
+        throw SecureStoreException('ERR_SHORT_READ', {
+          'offset': cursor,
+          'expected': take,
+          'got': chunk.length,
+        });
+      }
     }
     return builder.toBytes();
   }
@@ -130,11 +162,32 @@ class SecureStoreClient {
     }
   }
 
+  /// Yarım kalan yazımı GÖRÜNÜR kıl.
+  ///
+  /// Chunk'lı yazım atomik değil: 5 parçanın 3'ünde bağlantı düşerse ilk
+  /// parçalar eski blob'un üzerine yazılmış, mantıksal `size` ise
+  /// değişmemiş olur. Sonraki okuma yeni+eski karışımı bir "frankenblob"u
+  /// HATASIZ döndürüyordu (kullanıcı betiği sessizce bozuk). Blob zaten
+  /// bozulduğu için yapılacak doğru şey onu boşaltıp durumu bildirmek:
+  /// sessiz bozulma yerine görünür kayıp.
+  Future<void> _abandonPartialWrite(Object cause) async {
+    try {
+      await userdataTruncate(0);
+    } catch (e) {
+      debugPrint('[secure-store] partial-write cleanup failed: $e');
+    }
+  }
+
   /// Convenience: replace the entire blob with [text]. Truncates afterwards
   /// so any leftover bytes from a previously-larger blob are dropped.
   Future<void> userdataWriteString(String text) async {
     final bytes = Uint8List.fromList(utf8.encode(text));
-    await userdataWrite(bytes);
+    try {
+      await userdataWrite(bytes);
+    } catch (e) {
+      await _abandonPartialWrite(e);
+      rethrow;
+    }
     await userdataTruncate(bytes.length);
   }
 

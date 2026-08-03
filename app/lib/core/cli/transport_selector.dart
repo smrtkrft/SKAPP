@@ -6,7 +6,7 @@
 // Tests inject [tcpClientFactory], [bleClientFactory] and [mdnsResolver] to
 // avoid real sockets / BLE adapters while exercising the full selection logic.
 
-import 'dart:async' show TimeoutException;
+import 'dart:async' show TimeoutException, unawaited;
 import 'dart:io' show SocketException;
 
 import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
@@ -287,6 +287,7 @@ class TransportSelector {
       transportKind: CliTransportKind.tcp,
     );
     _wireSessionLifetime(client, session);
+    _pushDeviceClock(client, deviceId);
     return session;
   }
 
@@ -316,6 +317,7 @@ class TransportSelector {
       transportKind: CliTransportKind.ble,
     );
     _wireSessionLifetime(client, session);
+    _pushDeviceClock(client, deviceId);
     return session;
   }
 
@@ -329,6 +331,35 @@ class TransportSelector {
   /// Called from both TCP and BLE success paths. The BLE exclusive lock
   /// (beginBleExclusive / endBleExclusive in paired_ble_scanner.dart) is
   /// managed by the scanner layer before this method is reached.
+  /// Oturum kurulur kurulmaz cihaz saatini ayarla — GÜVENLİK gereği.
+  ///
+  /// Firmware'in imzalı-mesaj tekrar-oynatma (replay) savunmasının zaman
+  /// penceresi YALNIZCA cihaz saati kurulmuşsa devrededir
+  /// (`sk_auth_verify_message`: `if (wall > SK_AUTH_CLOCK_SET_EPOCH)`).
+  /// ESP32'de saat her reboot/güç kesintisinde sıfırlanır ve SKAPP `time.set`
+  /// komutunu yalnızca WiFi kurulum sihirbazında gönderiyordu — yani normal
+  /// yeniden bağlanmalarda cihaz ~1970'te kalıyor, zaman penceresi hiç
+  /// çalışmıyor ve savunma tek başına 64 kayıtlık nonce halkasına iniyor.
+  /// Yakalanan imzalı bir zarf, nonce'u halkadan düştükten sonra (yoğun bir
+  /// senkronda 64 komut = birkaç saniye) yeniden oynatılabiliyordu.
+  ///
+  /// Fire-and-forget: bağlantı gecikmesini artırmaz, başarısızlığı loglanır
+  /// (eski firmware `time.set` bilmiyorsa akış bozulmasın).
+  void _pushDeviceClock(CliClient client, String deviceId) {
+    final unix = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
+    unawaited(client
+        .send('time.set',
+            args: {'unix': '$unix'}, timeout: const Duration(seconds: 5))
+        .then((r) {
+      if (!r.ok) {
+        debugPrint('[session] time.set rejected by $deviceId: ${r.err} — '
+            'firmware replay window stays inactive');
+      }
+    }).catchError((Object e) {
+      debugPrint('[session] time.set failed for $deviceId: $e');
+    }, test: (_) => true));
+  }
+
   void _wireSessionLifetime(CliClient client, DeviceSession session) {
     ref.onDispose(session.dispose);
     client.whenClosed.then((_) {
