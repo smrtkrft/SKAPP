@@ -23,6 +23,7 @@ import 'dart:async';
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:win32/win32.dart';
 
 /// ESP32-C6 native USB-Serial/JTAG VID/PID.
@@ -98,8 +99,13 @@ abstract class WinPortScanner {
       DIGCF_PRESENT,
     );
     if (hDevInfo == INVALID_HANDLE_VALUE) {
+      final err = GetLastError();
       free(guid);
-      return const [];
+      // Boş liste DÖNDÜRMEK yalan olur: kullanıcı "Cihazı USB ile takın"
+      // ekranını görüp kabloyu boşuna takıp çıkarır, hiçbir iz kalmaz.
+      // Fırlat — usbPortsProvider bir StreamProvider ve port seçicinin
+      // `error:` dalı var, sebep ekranda görünür.
+      throw StateError('SetupDiGetClassDevs failed (win32 err=$err)');
     }
     final out = <WinPortInfo>[];
     try {
@@ -110,7 +116,16 @@ abstract class WinPortScanner {
         final hasMore =
             SetupDiEnumDeviceInfo(hDevInfo, index, devInfo) != 0;
         if (!hasMore) {
+          // FALSE hem "liste bitti" (ERROR_NO_MORE_ITEMS) hem gerçek hata
+          // demek. Ayırt etmezsek bir hata listeyi sessizce yarıda keser
+          // (ya da index 0'da boş bırakır) ve kullanıcı eksik listeyi
+          // doğru sanır.
+          final err = GetLastError();
           free(devInfo);
+          if (err != ERROR_NO_MORE_ITEMS) {
+            debugPrint('[win-scan] SetupDiEnumDeviceInfo failed at index '
+                '$index (win32 err=$err) — list may be truncated');
+          }
           break;
         }
         try {
@@ -161,10 +176,19 @@ abstract class WinPortScanner {
   static Stream<List<WinPortInfo>> watch({
     Duration interval = const Duration(seconds: 2),
   }) async* {
-    yield await list();
+    // İlk tarama hata verirse bunu YAY (port seçicinin error dalı gösterir),
+    // ama stream'i ÖLDÜRME: geçici bir SetupAPI hıçkırığı 2 sn'lik canlı
+    // yenilemeyi kalıcı olarak sonlandırmamalı.
+    List<WinPortInfo> last = const [];
     while (true) {
+      try {
+        last = await list();
+        yield last;
+      } catch (e) {
+        debugPrint('[win-scan] port enumeration failed: $e');
+        yield last; // son bilinen liste; bir sonraki tick yeniden dener
+      }
       await Future<void>.delayed(interval);
-      yield await list();
     }
   }
 
@@ -200,11 +224,22 @@ abstract class WinPortScanner {
           neededBytes.value,
           nullptr,
         );
-        if (ok == 0) return null;
-        // REG_SZ veya REG_MULTI_SZ döner (UTF-16). REG_MULTI_SZ ise
-        // ilk null'a kadar parse et.
+        if (ok == 0) {
+          // Boyut az önce başarıyla okundu; buranın patlaması BEKLENMEZ.
+          // Sessiz null, cihazı listeden düşürür (friendly==null) ya da
+          // gerçek bir BF kartını rozetsiz/otomatik-seçimsiz bırakır
+          // (hardwareId==null) — teşhis edilemez bir bozulma.
+          debugPrint('[win-scan] SPDRP property $property read failed '
+              '(win32 err=${GetLastError()})');
+          return null;
+        }
+        // REG_SZ veya REG_MULTI_SZ döner (UTF-16). Uzunluğu SINIRLA:
+        // NUL ile bitmeyen bozuk bir registry değeri, uzunluksuz
+        // toDartString ile tahsis dışını okur.
         final ptr = buffer.cast<Utf16>();
-        return ptr.toDartString();
+        final full = ptr.toDartString(length: neededBytes.value ~/ 2);
+        final nul = full.indexOf('\x00');
+        return nul >= 0 ? full.substring(0, nul) : full;
       } finally {
         free(buffer);
       }

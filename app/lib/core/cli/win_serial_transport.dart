@@ -62,7 +62,7 @@ class WinSerialTransport extends UsbCliTransportBase {
   @override
   Future<void> openPort() async {
     if (!Platform.isWindows) {
-      throw UnsupportedError('WinSerialTransport sadece Windows için.');
+      throw UnsupportedError('WinSerialTransport is Windows-only.');
     }
 
     // COM10+ portları için "\\\\.\\COMx" prefix'i gerek (COM1-9 prefix'siz
@@ -86,8 +86,9 @@ class WinSerialTransport extends UsbCliTransportBase {
     if (_handle == INVALID_HANDLE_VALUE) {
       final err = GetLastError();
       throw StateError(
-        'CreateFile başarısız: ${portInfo.portPath} (win32 err=$err). '
-        'Cihaz takılı mı, başka bir uygulama portu açmış olabilir mi?',
+        'CreateFile failed: ${portInfo.portPath} (win32 err=$err). '
+        'Is the device plugged in, or has another application opened '
+        'the port?',
       );
     }
 
@@ -98,7 +99,7 @@ class WinSerialTransport extends UsbCliTransportBase {
       if (GetCommState(_handle, dcb) == 0) {
         final err = GetLastError();
         await _closeHandle();
-        throw StateError('GetCommState başarısız (win32 err=$err)');
+        throw StateError('GetCommState failed (win32 err=$err)');
       }
       dcb.ref.BaudRate = baudRate;
       dcb.ref.ByteSize = 8;
@@ -120,7 +121,7 @@ class WinSerialTransport extends UsbCliTransportBase {
       if (SetCommState(_handle, dcb) == 0) {
         final err = GetLastError();
         await _closeHandle();
-        throw StateError('SetCommState başarısız (win32 err=$err)');
+        throw StateError('SetCommState failed (win32 err=$err)');
       }
     } finally {
       free(dcb);
@@ -140,14 +141,18 @@ class WinSerialTransport extends UsbCliTransportBase {
       if (SetCommTimeouts(_handle, timeouts) == 0) {
         final err = GetLastError();
         await _closeHandle();
-        throw StateError('SetCommTimeouts başarısız (win32 err=$err)');
+        throw StateError('SetCommTimeouts failed (win32 err=$err)');
       }
     } finally {
       free(timeouts);
     }
 
     // RX/TX buffer'ları temizle (önceki açılışta kalmış byte olabilir).
-    PurgeComm(_handle, PURGE_RXCLEAR | PURGE_TXCLEAR);
+    if (PurgeComm(_handle, PURGE_RXCLEAR | PURGE_TXCLEAR) == 0) {
+      // Purge başarısızsa önceki oturumdan kalan yarım satır ilk cevabın
+      // başına yapışır ve ikisi birden tek bozuk satır olarak düşer.
+      debugPrint('[win-serial] PurgeComm failed (win32 err=${GetLastError()})');
+    }
 
     // Read polling timer'ı başlat. 30ms aralık: gözle algılanmaz latency
     // ama CPU tüketimi minimal (her tick'te sadece bir ReadFile çağrısı).
@@ -160,7 +165,7 @@ class WinSerialTransport extends UsbCliTransportBase {
   @override
   Future<void> writeBytes(List<int> bytes) async {
     if (_handle == INVALID_HANDLE_VALUE) {
-      throw StateError('USB port açık değil');
+      throw StateError('USB port is not open');
     }
     final buffer = calloc<Uint8>(bytes.length);
     final written = calloc<Uint32>();
@@ -186,13 +191,13 @@ class WinSerialTransport extends UsbCliTransportBase {
         );
         if (ok == 0) {
           final err = GetLastError();
-          throw StateError('WriteFile başarısız (win32 err=$err)');
+          throw StateError('WriteFile failed (win32 err=$err)');
         }
         final n = written.value;
         if (n <= 0) {
           if (++stalls >= 3) {
-            throw StateError('WriteFile ilerlemiyor: '
-                '$offset/${bytes.length} byte yazıldı');
+            throw StateError('WriteFile made no progress: '
+                '$offset/${bytes.length} bytes written');
           }
           continue;
         }
@@ -249,7 +254,7 @@ class WinSerialTransport extends UsbCliTransportBase {
         if (err == 995 && ++_abortedTicks < 5) return;
         debugPrint('[win-serial] ReadFile failed (win32 err=$err)');
         onTransportLost(
-          TransportClosedException('USB okuma hatası (win32 err=$err)'),
+          TransportClosedException('USB read error (win32 err=$err)'),
         );
         return;
       }

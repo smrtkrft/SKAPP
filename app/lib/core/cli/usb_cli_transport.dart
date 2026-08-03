@@ -41,14 +41,14 @@ CliTransport createUsbCliTransport({
   int baudRate = 115200,
 }) {
   if (kIsWeb) {
-    throw UnsupportedError('USB CLI web\'de desteklenmiyor.');
+    throw UnsupportedError('USB CLI is not supported on the web.');
   }
   if (Platform.isWindows) {
     return WinSerialTransport(portInfo: portInfo, baudRate: baudRate);
   }
   // Mac/Linux → Faz 2 (POSIX termios FFI). Şu an placeholder hata.
   throw UnsupportedError(
-    'USB CLI bu platformda henüz desteklenmiyor. Şu an sadece Windows.',
+    'USB CLI is not supported on this platform yet (Windows only).',
   );
 }
 
@@ -112,15 +112,15 @@ abstract class UsbCliTransportBase implements CliTransport {
   @override
   Future<void> sendLine(String line) async {
     if (_closed) {
-      throw TransportClosedException(_lostReason ?? 'USB transport kapalı');
+      throw TransportClosedException(_lostReason ?? 'USB transport is closed');
     }
     final wire = line.endsWith('\n') ? line : '$line\n';
     final bytes = utf8.encode(wire);
     if (bytes.length > kFirmwareUsbLineBuf - 1) {
       throw StateError(
-        'USB komutu firmware buffer sınırını aşıyor '
-        '(${bytes.length} byte > ${kFirmwareUsbLineBuf - 1}). '
-        'Daha kısa komut gönder veya BLE/WiFi kullan.',
+        'Command exceeds the firmware line buffer '
+        '(${bytes.length} B > ${kFirmwareUsbLineBuf - 1} B). '
+        'Send a shorter command, or use BLE/WiFi.',
       );
     }
     await writeBytes(bytes);
@@ -161,7 +161,7 @@ abstract class UsbCliTransportBase implements CliTransport {
       // İ-10: satır tavanı aşıldı — karşı uç NDJSON konuşmuyor (yanlış COM
       // portu / bootloader çıktısı). Sessizce büyümek yerine bağlantıyı
       // sebebiyle birlikte kes.
-      debugPrint('[USB] $e — bağlantı kapatılıyor');
+      debugPrint('[USB] $e — closing connection');
       if (!_incoming.isClosed) _incoming.addError(e);
       _lostReason = e;
       close();

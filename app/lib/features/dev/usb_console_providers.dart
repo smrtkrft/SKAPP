@@ -165,6 +165,7 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
   CliClient? _client;
   StreamSubscription<Map<String, dynamic>>? _eventsSub;
   StreamSubscription<Map<String, dynamic>>? _unmatchedSub;
+  StreamSubscription<String>? _unparsedSub;
 
   /// Arka planda (kullanıcı yazmadan) gönderilen isteklerin id'leri —
   /// geç gelen cevapları konsola dökmemek için.
@@ -204,6 +205,19 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     _connecting = true;
     try {
       await _connectLocked();
+    } catch (e) {
+      // Son çare: createUsbCliTransport (platform kapısı) ve aradaki
+      // senkron kablolama try/catch'in DIŞINDA kalıyordu; oradan kaçan bir
+      // hata Future.microtask üzerinden zone'a düşüyor ve ekran sonsuza
+      // kadar "Connecting…" durumunda kalıyordu — hata banner'ı yok,
+      // yeniden bağlan butonu yok.
+      debugPrint('[USB-CONSOLE] connect failed: $e');
+      if (!_disposed) {
+        state = state.copyWith(
+          connection: UsbConnectionState.error,
+          error: describeCliFailure(e),
+        );
+      }
     } finally {
       _connecting = false;
     }
@@ -274,6 +288,14 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     // gönderdiği komutun cevabı ve timeout'tan SONRA gelen geç cevaplar.
     // İkisi de eskiden sessizce düşüyordu — "komut hiçbir şey yapmadı"
     // ve "zaman aşımı ama cihaz aslında cevapladı" şikayetlerinin kaynağı.
+    // Non-NDJSON device output: ESP-IDF boot logs, printf debug lines and
+    // panic backtraces share the USB wire with the protocol. Showing them
+    // is the whole point of a dev console — a firmware crash used to look
+    // like a plain "device did not respond in time".
+    _unparsedSub = client.unparsed.listen((line) {
+      _appendEntry(ConsoleEntryEvent(evt: 'device output', raw: line));
+    });
+
     _unmatchedSub = client.unmatched.listen((msg) {
       final id = msg['id'];
       // Arka planda gönderdiğimiz `help` isteklerinin geç cevabı kullanıcı
@@ -694,11 +716,13 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
     try {
       await _eventsSub?.cancel();
       await _unmatchedSub?.cancel();
+      await _unparsedSub?.cancel();
     } catch (e) {
       debugPrint('[USB-CONSOLE] subscription cancel failed: $e');
     }
     _eventsSub = null;
     _unmatchedSub = null;
+    _unparsedSub = null;
     try {
       await _client?.stop();
     } catch (e) {

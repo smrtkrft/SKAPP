@@ -11,6 +11,8 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart' show debugPrint;
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'win_port_scanner.dart' as win;
@@ -83,10 +85,20 @@ abstract class UsbPortScanner {
   static Stream<List<UsbPortInfo>> watch({
     Duration interval = const Duration(seconds: 2),
   }) async* {
-    yield await list();
+    // Enumeration hatası artık sessiz boş liste değil, gerçek bir hata
+    // (bkz. WinPortScanner.list). Hatayı yay ki port seçicinin `error:`
+    // dalı sebebi göstersin, ama stream'i sonlandırma — geçici bir hata
+    // canlı yenilemeyi kalıcı öldürmemeli.
+    List<UsbPortInfo> last = const [];
     while (true) {
+      try {
+        last = await list();
+        yield last;
+      } catch (e) {
+        debugPrint('[usb-scan] port enumeration failed: $e');
+        yield last;
+      }
       await Future<void>.delayed(interval);
-      yield await list();
     }
   }
 

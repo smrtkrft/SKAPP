@@ -56,10 +56,18 @@ class CliClient {
 
   final _events = StreamController<CliEvent>.broadcast();
   final _unmatched = StreamController<Map<String, dynamic>>.broadcast();
+  final _unparsed = StreamController<String>.broadcast();
   final _pending = <int, Completer<CliResponse>>{};
   int _nextId = 1;
 
   Stream<CliEvent> get events => _events.stream;
+
+  /// Lines the device sent that are not NDJSON at all — ESP-IDF boot logs,
+  /// `printf` debug output, panic backtraces. On a USB-Serial-JTAG port
+  /// these share the wire with the protocol, and dropping them hides
+  /// exactly the evidence a dev console exists to show (firmware crashes
+  /// would surface only as a generic command timeout).
+  Stream<String> get unparsed => _unparsed.stream;
 
   /// Bekleyen bir isteğe eşleşmeyen cevaplar. İki gerçek durum:
   ///   * Ham JSON modunda kullanıcının kendi `id`'siyle gönderdiği komut
@@ -194,9 +202,23 @@ class CliClient {
     final token = params?['confirm_token'] as String?;
     if (token == null || token.isEmpty) return first;
 
+    // GÜVENLİK: dialog, GÖNDERECEĞİMİZ komutla etiketlenir — cihazın
+    // yankıladığı `params.cmd` ile DEĞİL. Aksi halde sahte/kurcalanmış bir
+    // cihaz, factory-reset isteğine `params.cmd:"device.status"` cevabı
+    // vererek kullanıcıya zararsız görünen bir onay penceresi gösterir,
+    // onay alınınca app yıkıcı komutu gönderir. Yankı yalnız tutarlılık
+    // kontrolü için kullanılır.
+    final echoed = params?['cmd'];
+    if (echoed is String && echoed != cmd) {
+      debugPrint('[cli] confirm echo mismatch: device said "$echoed", '
+          'we are sending "$cmd"');
+    }
+    // Cihazdan gelen TTL'i makul aralığa sıkıştır (UI'da "onay süresi
+    // 99999 sn" gibi güven telkin eden saçmalık görünmesin).
+    final rawTtl = (params?['ttl_sec'] as num?)?.toInt() ?? 30;
     final confirmed = await confirmRequest(CliConfirmRequest(
-      cmd: (params?['cmd'] as String?) ?? cmd,
-      ttlSec: (params?['ttl_sec'] as num?)?.toInt() ?? 30,
+      cmd: cmd,
+      ttlSec: rawTtl.clamp(1, 300),
     ));
     if (!confirmed) return first;
 
@@ -210,6 +232,7 @@ class CliClient {
     await transport.close();
     if (!_events.isClosed) await _events.close();
     if (!_unmatched.isClosed) await _unmatched.close();
+    if (!_unparsed.isClosed) await _unparsed.close();
   }
 
   void _onLine(String line) {
@@ -217,8 +240,10 @@ class CliClient {
     try {
       msg = jsonDecode(line) as Map<String, dynamic>;
     } catch (_) {
-      // Sessiz düşürme garantili TimeoutException üretiyordu; iz bırak.
-      debugPrint('[cli] malformed line dropped (${line.length}B)');
+      // Not NDJSON: firmware boot log / printf / panic backtrace. Surface
+      // it instead of dropping — see [unparsed].
+      debugPrint('[cli] non-JSON line surfaced (${line.length}B)');
+      if (!_unparsed.isClosed) _unparsed.add(line);
       return;
     }
     if (msg.containsKey('evt')) {
@@ -228,12 +253,17 @@ class CliClient {
     final idRaw = msg['id'];
     if (idRaw is int && _pending.containsKey(idRaw)) {
       final c = _pending.remove(idRaw)!;
+      // Korumalı okuma: yabancı/kurcalanmış bir cihaz `"err":1` veya
+      // `"params":[]` gönderirse çıplak cast, stream callback'i içinde
+      // yakalanmamış TypeError üretiyordu (istek de timeout'a kalıyordu).
+      final errRaw = msg['err'];
+      final paramsRaw = msg['params'];
       c.complete(CliResponse(
         id: idRaw,
         ok: msg['ok'] == true,
         data: msg['data'],
-        err: msg['err'] as String?,
-        params: (msg['params'] as Map?)?.cast<String, dynamic>(),
+        err: errRaw?.toString(),
+        params: paramsRaw is Map ? paramsRaw.cast<String, dynamic>() : null,
       ));
     } else {
       debugPrint('[cli] response with unknown id $idRaw surfaced as unmatched');
