@@ -56,7 +56,7 @@ class _DeviceLogsScreenState extends State<DeviceLogsScreen> {
     try {
       final r = await widget.client.send(
         'logs.get',
-        args: {'level': _minLevel.cliName, 'limit': 200},
+        args: {'level': _minLevel.cliName, 'limit': '200'},
       );
       if (!mounted) return;
       if (!r.ok) {

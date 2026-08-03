@@ -108,7 +108,7 @@ class _BfBondListScreenState extends ConsumerState<BfBondListScreen> {
     if (!confirm) return;
     final r = await _client.sendCritical(
       'bond.remove',
-      args: {'slot': row.slot},
+      args: {'slot': '${row.slot}'},
       confirmRequest: (_) async => true,
     );
     if (!mounted) return;

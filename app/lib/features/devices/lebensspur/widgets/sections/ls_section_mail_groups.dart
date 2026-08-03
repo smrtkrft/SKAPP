@@ -236,7 +236,7 @@ class _LsSectionMailGroupsState extends ConsumerState<LsSectionMailGroups> {
 
   Future<void> _setEnabled(int id, bool enabled) async {
     final ok = await _send('mail.group.enable',
-        {'id': id, 'enabled': enabled ? 'on' : 'off'});
+        {'id': '$id', 'enabled': enabled ? 'on' : 'off'});
     if (!ok || !mounted) return;
     setState(() {
       final ix = _groups.indexWhere((g) => g.id == id);
@@ -313,7 +313,7 @@ class _LsSectionMailGroupsState extends ConsumerState<LsSectionMailGroups> {
       return;
     }
     final ok = await _send(
-        'mail.group.recipient.add', {'id': id, 'email': email});
+        'mail.group.recipient.add', {'id': '$id', 'email': email});
     if (!ok || !mounted) return;
     setState(() {
       final d = _details[id];
@@ -329,7 +329,7 @@ class _LsSectionMailGroupsState extends ConsumerState<LsSectionMailGroups> {
 
   Future<void> _removeRecipient(int id, String email) async {
     final ok = await _send(
-        'mail.group.recipient.remove', {'id': id, 'email': email});
+        'mail.group.recipient.remove', {'id': '$id', 'email': email});
     if (!ok || !mounted) return;
     setState(() {
       final d = _details[id];

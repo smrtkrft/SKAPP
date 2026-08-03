@@ -321,6 +321,8 @@ class TransportSelector {
     return session;
   }
 
+  // (Aşağıdaki iki yorum bloğu ayrı fonksiyonlara aittir.)
+
   /// Two-way Riverpod ↔ CliClient lifetime wiring.
   ///
   ///   1. Provider teardown (invalidate / app shutdown) → session.dispose()

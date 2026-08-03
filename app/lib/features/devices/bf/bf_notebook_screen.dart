@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/colors.dart';
+import '../../../core/cli/cli_client.dart';
 import '../../../core/theme/responsive.dart';
 import '../../../core/ui/sk_confirm_dialog.dart';
 import '../../../core/ui/sk_neu_card.dart';
@@ -133,10 +134,25 @@ class _BfNotebookScreenState extends ConsumerState<BfNotebookScreen> {
         }
         final m = r.data as Map;
         final b64 = m['data_b64']?.toString() ?? '';
-        final actual = ((m['len']) as num?)?.toInt() ?? 0;
-        if (b64.isEmpty || actual == 0) break;
-        bytes.addAll(base64Decode(b64));
-        offset += actual;
+        if (b64.isEmpty) break;
+        final chunk = base64Decode(b64);
+        if (chunk.isEmpty) break;
+        // GERÇEK bayt sayısına göre ilerle. Cihazın bildirdiği `len` ile
+        // çözülen uzunluk ayrışırsa offsetler kayar ve sonuç SESSİZCE
+        // bozulur (SecureStoreClient'ta da aynı hata düzeltildi).
+        bytes.addAll(chunk);
+        offset += chunk.length;
+        if (chunk.length < len && offset < total) {
+          // Blob ortasında kısa okuma: "bitti" saymak eksik içeriği TAM
+          // gibi gösterirdi.
+          if (!mounted) return;
+          setState(() {
+            _error = 'short read at offset $offset '
+                '(expected $len, got ${chunk.length})';
+            _loading = false;
+          });
+          return;
+        }
       } catch (e) {
         if (!mounted) return;
         final l = AppLocalizations.of(context);
@@ -201,7 +217,15 @@ class _BfNotebookScreenState extends ConsumerState<BfNotebookScreen> {
           'userdata.write',
           args: {'offset': '$offset', 'data_b64': base64Encode(chunk)},
         );
-        if (!w.ok) throw 'write fail (offset=$offset): ${w.err ?? "?"}';
+        if (!w.ok) {
+          // Yarım kalan yazımı GÖRÜNÜR kıl: truncate zaten yeni boyuta
+          // çekildiği için cihazda "yeni baş + eski kuyruk" karışımı, üstelik
+          // DOĞRU boyutta duruyor — sonraki okuma bunu hatasız, tam bir
+          // içerik gibi döndürürdü (sessiz bozulma). Blob zaten bozulduğu
+          // için doğru davranış onu boşaltıp durumu bildirmek.
+          await _abandonPartialWrite(client);
+          throw 'write fail (offset=$offset): ${w.err ?? "?"}';
+        }
         offset += len;
       }
 
@@ -222,6 +246,16 @@ class _BfNotebookScreenState extends ConsumerState<BfNotebookScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l.notebookSaveError(e.toString()))),
       );
+    }
+  }
+
+  /// Yarım kalan yazımdan sonra blob'u boşalt (bkz. _save). Bağlantı
+  /// koptuysa bu da başarısız olur; o durumda en azından iz kalsın.
+  Future<void> _abandonPartialWrite(CliClient client) async {
+    try {
+      await client.send('userdata.truncate', args: {'size': '0'});
+    } catch (e) {
+      debugPrint('[notebook] partial-write cleanup failed: $e');
     }
   }
 

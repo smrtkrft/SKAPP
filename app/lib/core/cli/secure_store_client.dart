@@ -146,6 +146,9 @@ class SecureStoreClient {
     int cursor = offset;
     int remaining = bytes.length;
     int srcOff = 0;
+    // Kaç parçanın karşı tarafa indiğini izle: hiçbiri inmediyse blob
+    // bozulmamıştır ve yıkmaya gerek yok (bkz. _abandonPartialWrite).
+    _lastWriteLanded = false;
     while (remaining > 0) {
       final take = remaining < _chunkSize ? remaining : _chunkSize;
       final slice = bytes.sublist(srcOff, srcOff + take);
@@ -156,11 +159,15 @@ class SecureStoreClient {
       if (!r.ok) {
         throw SecureStoreException(r.err ?? 'ERR_INTERNAL', r.params);
       }
+      _lastWriteLanded = true;
       cursor    += take;
       srcOff    += take;
       remaining -= take;
     }
   }
+
+  /// [userdataWrite]'ın son çağrısında en az bir parça cihaza indi mi.
+  bool _lastWriteLanded = false;
 
   /// Yarım kalan yazımı GÖRÜNÜR kıl.
   ///
@@ -170,11 +177,21 @@ class SecureStoreClient {
   /// HATASIZ döndürüyordu (kullanıcı betiği sessizce bozuk). Blob zaten
   /// bozulduğu için yapılacak doğru şey onu boşaltıp durumu bildirmek:
   /// sessiz bozulma yerine görünür kayıp.
-  Future<void> _abandonPartialWrite(Object cause) async {
+  Future<void> _abandonPartialWrite(Object cause, {required bool anyWritten}) async {
+    if (!anyWritten) {
+      // Hiçbir parça yazılmadıysa cihazdaki blob BOZULMADI (ör. ilk chunk'ı
+      // firmware reddetti). Sağlam veriyi yok etmek zarar verir.
+      debugPrint('[secure-store] write rejected before any chunk landed, '
+          'blob left intact: $cause');
+      return;
+    }
     try {
       await userdataTruncate(0);
+      debugPrint('[secure-store] partial write discarded after: $cause');
     } catch (e) {
-      debugPrint('[secure-store] partial-write cleanup failed: $e');
+      // Tipik sebep: bağlantı koptu — temizlik de geçmez. Bu durumda
+      // karışık blob cihazda kalır; en azından iz bırak.
+      debugPrint('[secure-store] partial-write cleanup failed ($cause): $e');
     }
   }
 
@@ -185,7 +202,7 @@ class SecureStoreClient {
     try {
       await userdataWrite(bytes);
     } catch (e) {
-      await _abandonPartialWrite(e);
+      await _abandonPartialWrite(e, anyWritten: _lastWriteLanded);
       rethrow;
     }
     await userdataTruncate(bytes.length);

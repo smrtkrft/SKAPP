@@ -145,7 +145,7 @@ class _BfPassphraseScreenState extends State<BfPassphraseScreen> {
     final a = always ?? _always;
     final r = await _client.sendCritical(
       'auth.passphrase.mode.set',
-      args: {'pairing': p ? 1 : 0, 'always': a ? 1 : 0},
+      args: {'pairing': p ? '1' : '0', 'always': a ? '1' : '0'},
       confirmRequest: _confirmCritical,
     );
     if (!r.ok) _toastResult(r, '');

@@ -282,10 +282,15 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
   // SnackBar but leave local state untouched (the next status event
   // will reconcile reality).
   Future<void> _sendCli(String cmd, {Map<String, dynamic>? args}) async {
-    final session =
-        await ref.read(deviceSessionProvider(widget.deviceId).future);
-    if (!mounted) return;
+    // Oturum açılışı da try İÇİNDE olmalı: cihaz erişilemezse buradan
+    // fırlayan hata, çağıranlar (_onVacation vb.) await etmediği için
+    // yakalanmadan kayboluyordu — iyimser setState yerinde kalıyor,
+    // snackbar da çıkmıyordu. Yani "cihaz kapalıyken sahte tatil modu"
+    // senaryosu ok-kontrolüne rağmen bu yoldan hâlâ mümkündü.
     try {
+      final session =
+          await ref.read(deviceSessionProvider(widget.deviceId).future);
+      if (!mounted) return;
       final resp = await session.client.send(cmd, args: args);
       // `ok:false` DA bir başarısızlıktır. Eskiden yalnız fırlatılan
       // istisnalar yakalanıyordu; cihazın açık reddi (ERR_*) sessizce
