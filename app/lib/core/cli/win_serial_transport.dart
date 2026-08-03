@@ -224,7 +224,7 @@ class WinSerialTransport extends UsbCliTransportBase {
     // kilidi → sonraki açılışta "erişim reddedildi") görünmez kalıyordu.
     if (CloseHandle(_handle) == 0) {
       debugPrint('[win-serial] CloseHandle failed (win32 err=${GetLastError()})'
-          ' — COM kilidi sızmış olabilir');
+          ' — the COM lock may have leaked');
     }
     _handle = INVALID_HANDLE_VALUE;
   }

@@ -1291,6 +1291,19 @@ class _EventBlock extends StatelessWidget {
             ),
             depth: 0,
           ),
+        ] else if (body == null && entry.raw.isNotEmpty) ...[
+          // Plain-text device output: ESP-IDF boot logs, printf lines and
+          // panic backtraces are NOT JSON. Rendering only decoded maps left
+          // these rows completely empty — the crash evidence this console
+          // exists to show was invisible even after it reached the entry list.
+          const SizedBox(height: 4),
+          SelectableText(
+            entry.raw,
+            style: mono.copyWith(
+              color: cs.onSurface.withValues(alpha: 0.75),
+              height: 1.35,
+            ),
+          ),
         ],
       ],
     );
@@ -1299,8 +1312,10 @@ class _EventBlock extends StatelessWidget {
   static dynamic _safeDecode(String raw) {
     try {
       return jsonDecode(raw);
-    } catch (e) {
-      debugPrint('[USB-CONSOLE] event decode failed: $e');
+    } catch (_) {
+      // NOT an error here: plain-text device output (boot logs, backtraces)
+      // legitimately isn't JSON and is rendered as text above. Logging would
+      // fire on every rebuild of every such row.
       return null;
     }
   }

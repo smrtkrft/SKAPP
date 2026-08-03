@@ -176,17 +176,21 @@ abstract class WinPortScanner {
   static Stream<List<WinPortInfo>> watch({
     Duration interval = const Duration(seconds: 2),
   }) async* {
-    // İlk tarama hata verirse bunu YAY (port seçicinin error dalı gösterir),
-    // ama stream'i ÖLDÜRME: geçici bir SetupAPI hıçkırığı 2 sn'lik canlı
-    // yenilemeyi kalıcı olarak sonlandırmamalı.
+    // İlk tarama hatası KULLANICIYA ULAŞMALI: yutulursa boş liste
+    // "cihaz takılı değil" yalanına dönüşür ve port seçicinin `error:`
+    // dalı asla görünmez. İlk BAŞARILI taramadan sonra dayanıklı ol —
+    // geçici bir SetupAPI hıçkırığı canlı yenilemeyi öldürmesin.
+    var everSucceeded = false;
     List<WinPortInfo> last = const [];
     while (true) {
       try {
         last = await list();
+        everSucceeded = true;
         yield last;
       } catch (e) {
         debugPrint('[win-scan] port enumeration failed: $e');
-        yield last; // son bilinen liste; bir sonraki tick yeniden dener
+        if (!everSucceeded) rethrow;
+        yield last;
       }
       await Future<void>.delayed(interval);
     }

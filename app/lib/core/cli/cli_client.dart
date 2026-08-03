@@ -23,8 +23,9 @@ typedef CliEvent = Map<String, dynamic>;
 class CliConfirmRequest {
   const CliConfirmRequest({required this.cmd, required this.ttlSec});
 
-  /// Canonical command name as the dispatcher echoed it back, e.g.
-  /// `device.factory-reset`. Useful for diagnostic dialog copy.
+  /// The command WE are about to send, e.g. `device.factory-reset`.
+  /// Deliberately NOT the name the device echoed back: the dialog must
+  /// describe what will actually run (see sendCritical).
   final String cmd;
 
   /// Seconds remaining before the token expires. Dialog can hide or
@@ -199,7 +200,8 @@ class CliClient {
     if (first.err != 'ERR_CONFIRM_TOKEN_REQUIRED') return first;
 
     final params = first.params;
-    final token = params?['confirm_token'] as String?;
+    final tokenRaw = params?['confirm_token'];
+    final token = tokenRaw is String ? tokenRaw : null;
     if (token == null || token.isEmpty) return first;
 
     // GÜVENLİK: dialog, GÖNDERECEĞİMİZ komutla etiketlenir — cihazın

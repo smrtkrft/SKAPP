@@ -309,7 +309,9 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
         raw: const JsonEncoder.withIndent('  ').convert(msg),
         cmd: 'Unmatched response · id=${msg['id']}',
         id: (msg['id'] is int) ? msg['id'] as int : -1,
-        err: msg['err'] as String?,
+        // Korumalı: yabancı cihaz `"err":1` gönderirse çıplak cast bu
+        // stream callback'inde yakalanmamış TypeError üretiyordu.
+        err: msg['err']?.toString(),
       ));
     });
 
@@ -470,12 +472,24 @@ class UsbConsoleSessionNotifier extends StateNotifier<UsbConsoleState> {
       if (!resp.ok &&
           resp.err == 'ERR_CONFIRM_TOKEN_REQUIRED' &&
           parsed.confirmToken == null) {
-        final token = resp.params?['confirm_token'] as String?;
+        final tokenRaw = resp.params?['confirm_token'];
+        final token = tokenRaw is String ? tokenRaw : null;
         if (token != null && token.isNotEmpty) {
           if (confirmCritical != null) {
+            // GÜVENLİK (CliClient.sendCritical ile aynı sözleşme): dialog
+            // KULLANICININ YAZDIĞI komutla etiketlenir, cihazın yankısıyla
+            // değil — sahte bir cihaz onay penceresine zararsız bir komut
+            // adı yazdıramasın. TTL de makul aralığa sıkıştırılır ve tipler
+            // korumalı okunur (hasım şekiller TypeError üretmesin).
+            final echoed = resp.params?['cmd'];
+            if (echoed is String && echoed != parsed.cmd) {
+              debugPrint('[USB-CONSOLE] confirm echo mismatch: device said '
+                  '"$echoed", sending "${parsed.cmd}"');
+            }
+            final ttlRaw = resp.params?['ttl_sec'];
             final approved = await confirmCritical(CliConfirmRequest(
-              cmd: (resp.params?['cmd'] as String?) ?? parsed.cmd,
-              ttlSec: (resp.params?['ttl_sec'] as num?)?.toInt() ?? 30,
+              cmd: parsed.cmd,
+              ttlSec: (ttlRaw is num ? ttlRaw.toInt() : 30).clamp(1, 300),
             ));
             if (!approved) {
               _appendEntry(ConsoleEntryError(
