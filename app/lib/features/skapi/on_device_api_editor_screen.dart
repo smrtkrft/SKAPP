@@ -329,7 +329,7 @@ class _OnDeviceApiEditorScreenState extends State<OnDeviceApiEditorScreen> {
         // `device` alanı GERÇEK cihaz kimliğini taşımalı: firmware
         // şablonları `{device}`'ı bu alandan doldurur. Buraya düz metin
         // `$id` yazılıyordu ve zincir testi kullanıcının webhook'una
-        // cihaz kimliği yerine "\$id" gönderiyordu (doğal `timer.expired`
+        // cihaz kimliği yerine "$id" gönderiyordu (doğal `timer.expired`
         // tetiklemesi ise sk_identity_get() değerini taşır).
         'payload': '{"event":"timer.expired","source":"manual_test",'
             '"device":"${widget.deviceId}"}',
