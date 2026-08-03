@@ -208,25 +208,34 @@ class _BfNotebookScreenState extends ConsumerState<BfNotebookScreen> {
 
       // 2) Chunked write, boş içerik için truncate yeterli, yazmaya
       //    gerek yok.
+      //
+      // Yarım kalan yazım GÖRÜNÜR kılınmalı: truncate zaten yeni boyuta
+      // çekildiği için cihazda "yeni baş + eski kuyruk" karışımı, üstelik
+      // DOĞRU boyutta durur — sonraki okuma bunu hatasız, tam bir içerik
+      // gibi döndürür (sessiz bozulma). Temizlik SADECE `ok:false` dalında
+      // değil, FIRLAYAN hatalarda da çalışmalı: BLE'de en olası senaryo
+      // zaten chunk ortasında timeout / bağlantı kopması.
       int offset = 0;
-      while (offset < newBytes.length) {
-        final remain = newBytes.length - offset;
-        final len = remain < _kChunkBytes ? remain : _kChunkBytes;
-        final chunk = newBytes.sublist(offset, offset + len);
-        final w = await client.send(
-          'userdata.write',
-          args: {'offset': '$offset', 'data_b64': base64Encode(chunk)},
-        );
-        if (!w.ok) {
-          // Yarım kalan yazımı GÖRÜNÜR kıl: truncate zaten yeni boyuta
-          // çekildiği için cihazda "yeni baş + eski kuyruk" karışımı, üstelik
-          // DOĞRU boyutta duruyor — sonraki okuma bunu hatasız, tam bir
-          // içerik gibi döndürürdü (sessiz bozulma). Blob zaten bozulduğu
-          // için doğru davranış onu boşaltıp durumu bildirmek.
-          await _abandonPartialWrite(client);
-          throw 'write fail (offset=$offset): ${w.err ?? "?"}';
+      try {
+        while (offset < newBytes.length) {
+          final remain = newBytes.length - offset;
+          final len = remain < _kChunkBytes ? remain : _kChunkBytes;
+          final chunk = newBytes.sublist(offset, offset + len);
+          final w = await client.send(
+            'userdata.write',
+            args: {'offset': '$offset', 'data_b64': base64Encode(chunk)},
+          );
+          if (!w.ok) {
+            throw 'write fail (offset=$offset): ${w.err ?? "?"}';
+          }
+          offset += len;
         }
-        offset += len;
+      } catch (_) {
+        // offset > 0 ise en az bir parça indi → blob bozuldu, boşalt.
+        // Hiç inmediyse eski içerik zaten truncate ile kısaldı; yine de
+        // tutarlı bir duruma çekmek için aynı yolu kullanıyoruz.
+        await _abandonPartialWrite(client);
+        rethrow;
       }
 
       if (!mounted) return;
