@@ -147,7 +147,7 @@ class _LsSectionDurationState extends ConsumerState<LsSectionDuration> {
           .read(deviceSessionProvider(widget.deviceId).future);
       final r = await session.client.send(
         'timer.set',
-        args: {'unit': _unit, 'value': v, 'alarms': a},
+        args: {'unit': _unit, 'value': '$v', 'alarms': '$a'},
       );
       if (!mounted) return;
       if (r.ok) {

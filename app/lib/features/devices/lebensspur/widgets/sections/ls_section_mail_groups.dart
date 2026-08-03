@@ -188,7 +188,7 @@ class _LsSectionMailGroupsState extends ConsumerState<LsSectionMailGroups> {
           .read(deviceSessionProvider(widget.deviceId).future);
       final r = await session.client.send(
         'mail.group.get',
-        args: {'id': id},
+        args: {'id': '$id'},
       );
       if (!mounted) return;
       if (r.ok && r.data is Map) {
@@ -256,7 +256,7 @@ class _LsSectionMailGroupsState extends ConsumerState<LsSectionMailGroups> {
       _snack(l.lsMailGroupsNameValidation);
       return;
     }
-    final ok = await _send('mail.group.name', {'id': id, 'name': v});
+    final ok = await _send('mail.group.name', {'id': '$id', 'name': v});
     if (!ok || !mounted) return;
     setState(() {
       final ix = _groups.indexWhere((g) => g.id == id);
@@ -276,7 +276,7 @@ class _LsSectionMailGroupsState extends ConsumerState<LsSectionMailGroups> {
       _snack(l.lsMailGroupsSubjectValidation);
       return;
     }
-    final ok = await _send('mail.group.subject', {'id': id, 'subject': v});
+    final ok = await _send('mail.group.subject', {'id': '$id', 'subject': v});
     if (!ok || !mounted) return;
     setState(() {
       final d = _details[id];
@@ -294,7 +294,7 @@ class _LsSectionMailGroupsState extends ConsumerState<LsSectionMailGroups> {
       _snack(l.lsMailGroupsBodyValidation);
       return;
     }
-    final ok = await _send('mail.group.body', {'id': id, 'body': v});
+    final ok = await _send('mail.group.body', {'id': '$id', 'body': v});
     if (!ok || !mounted) return;
     setState(() {
       final d = _details[id];
@@ -396,7 +396,7 @@ class _LsSectionMailGroupsState extends ConsumerState<LsSectionMailGroups> {
       ),
     );
     if (confirmed != true) return;
-    final ok = await _send('mail.group.delete', {'id': id});
+    final ok = await _send('mail.group.delete', {'id': '$id'});
     if (!ok || !mounted) return;
     setState(() {
       _expanded.remove(id);

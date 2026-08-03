@@ -238,7 +238,7 @@ class _LsSectionRelayState extends ConsumerState<LsSectionRelay> {
       // Push only the deltas. Keeps the log readable and avoids no-op
       // writes that re-trigger NVS commits.
       if (gpio != _deviceGpio) {
-        if (!await _send('relay.gpio', {'gpio': gpio})) return;
+        if (!await _send('relay.gpio', {'gpio': '$gpio'})) return;
       }
       if (_invert != _deviceInvert) {
         if (!await _send(
@@ -247,10 +247,10 @@ class _LsSectionRelayState extends ConsumerState<LsSectionRelay> {
         }
       }
       if (_delay != _deviceDelay) {
-        if (!await _send('relay.delay', {'delay': _delay})) return;
+        if (!await _send('relay.delay', {'delay': '$_delay'})) return;
       }
       if (secs != _deviceDuration) {
-        if (!await _send('relay.duration', {'duration': secs})) return;
+        if (!await _send('relay.duration', {'duration': '$secs'})) return;
       }
       // Pulse: mode changes go via on/off; custom half-cycle via the
       // numeric form of `relay pulse <N>`.
@@ -268,14 +268,14 @@ class _LsSectionRelayState extends ConsumerState<LsSectionRelay> {
             // Some firmwares need explicit numeric to set the value;
             // safe extra call when value differs.
             if ((_devicePulseDuration ?? 0) != 1) {
-              if (!await _send('relay.pulse', {'pulse': 1})) return;
+              if (!await _send('relay.pulse', {'pulse': '1'})) return;
             }
           }
           break;
         case _PulseMode.custom:
           final half = _pulseHalfSeconds()!;
           if (!wasPulse || (_devicePulseDuration ?? 0) != half) {
-            if (!await _send('relay.pulse', {'pulse': half})) return;
+            if (!await _send('relay.pulse', {'pulse': '$half'})) return;
           }
           break;
       }

@@ -132,6 +132,24 @@ class CliClient {
     Duration timeout = const Duration(seconds: 10),
     void Function(int id)? onRequestId,
   }) async {
+    // Firmware sözleşmesi: makine modunda `sk_cli_arg_named` STRING olmayan
+    // cJSON değeri için NULL döner (sk_cli.c:209-227), `sk_cli_arg_long` ise
+    // sayısal string'i de kabul eder (:229-261). Yani sayı/bool göndermek
+    // string bekleyen alanı SESSİZCE düşürür — komut eksik argümanla işlenir
+    // ya da reddedilir. İki kez sahaya çıktı: `time.set` (cihaz saati 1970'te
+    // kaldı) ve `vacation.set` (ölü-adam cihazında "tatil" göründü, geri
+    // sayım devam etti). Debug/test build'lerinde erken yakala.
+    assert(() {
+      args?.forEach((k, v) {
+        if (v is num || v is bool) {
+          throw StateError(
+            'CLI arg "$k" of $cmd is ${v.runtimeType}; firmware reads named '
+            'args as strings — send "\$value" instead.',
+          );
+        }
+      });
+      return true;
+    }());
     final id = _nextId++;
     // Çağıran isterse istek id'sini öğrenir: timeout'tan sonra gelen geç
     // cevap `unmatched`'e düşer ve tüketici onun KENDİ isteği mi yoksa

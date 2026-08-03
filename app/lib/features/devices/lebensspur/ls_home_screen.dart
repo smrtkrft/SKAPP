@@ -286,13 +286,31 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
         await ref.read(deviceSessionProvider(widget.deviceId).future);
     if (!mounted) return;
     try {
-      await session.client.send(cmd, args: args);
+      final resp = await session.client.send(cmd, args: args);
+      // `ok:false` DA bir başarısızlıktır. Eskiden yalnız fırlatılan
+      // istisnalar yakalanıyordu; cihazın açık reddi (ERR_*) sessizce
+      // yutuluyor ve iyimser UI güncellemesi olduğu gibi kalıyordu —
+      // ölü-adam anahtarı cihazında "tatil moduna alındı" görüp aslında
+      // geri sayımın devam etmesi demek.
+      if (!resp.ok && mounted) {
+        final l = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              l.lsRelayCmdFailedWith(cmd, resp.err ?? 'ERR_UNKNOWN'),
+            ),
+          ),
+        );
+        // Cihazın gerçek durumunu geri çek: iyimser setState yanlış kaldı.
+        unawaited(_sessionStatusRefresh());
+      }
     } catch (e) {
       if (!mounted) return;
       final l = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l.lsRelayCmdFailedWith(cmd, e.toString()))),
       );
+      unawaited(_sessionStatusRefresh());
     }
   }
 
@@ -321,7 +339,7 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
     setState(() => _state = LsTimerStateKind.vacation);
     // Default 7 days, matching the design's mockup. The Vacation Mode
     // section owns the editable value; this button is a quick shortcut.
-    _sendCli('vacation.set', args: {'days': 7});
+    _sendCli('vacation.set', args: {'days': '7'});
   }
 
   /// Onarım artık taşıyıcı-farkındalı tek yönlendiriciden geçer

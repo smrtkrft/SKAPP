@@ -120,7 +120,7 @@ class _LsSectionVacationState extends ConsumerState<LsSectionVacation> {
           .read(deviceSessionProvider(widget.deviceId).future);
       final r = await session.client.send(
         'vacation.set',
-        args: {'days': days},
+        args: {'days': '$days'},
       );
       if (!mounted) return;
       if (r.ok) {

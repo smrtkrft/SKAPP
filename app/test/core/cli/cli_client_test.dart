@@ -173,6 +173,32 @@ void main() {
     await client.stop();
   });
 
+  test('numeric/bool args are rejected in debug builds', () async {
+    // Firmware sk_cli_arg_named is string-only: a numeric arg is silently
+    // dropped device-side. Catch it at the source instead of shipping a
+    // command that "succeeds" while doing the wrong thing.
+    final transport = _ThrowingTransport()..throwOnSend = false;
+    final client = CliClient(transport);
+    await client.start();
+
+    expect(
+      () => client.send('vacation.set', args: {'days': 7}),
+      throwsA(isA<StateError>()),
+      reason: 'int arg must be caught',
+    );
+    expect(
+      () => client.send('relay.set', args: {'on': true}),
+      throwsA(isA<StateError>()),
+      reason: 'bool arg must be caught',
+    );
+    // Strings pass through untouched.
+    final ok = client.send('vacation.set',
+        args: {'days': '7'}, timeout: const Duration(milliseconds: 50));
+    await expectLater(ok, throwsA(isA<TimeoutException>()));
+
+    await client.stop();
+  });
+
   test('closedReason carries the transport failure to pending requests',
       () async {
     final transport = _ThrowingTransport()..throwOnSend = false;

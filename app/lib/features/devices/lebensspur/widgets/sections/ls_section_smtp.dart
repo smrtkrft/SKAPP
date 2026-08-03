@@ -188,7 +188,7 @@ class _LsSectionSmtpState extends ConsumerState<LsSectionSmtp> {
         err = await step(l.lsSmtpFieldHost, 'smtp.host', {'host': host});
       }
       if (err == null && port != _devicePort) {
-        err = await step(l.lsSmtpFieldPort, 'smtp.port', {'port': port});
+        err = await step(l.lsSmtpFieldPort, 'smtp.port', {'port': '$port'});
       }
       if (err == null && sender != _deviceSender) {
         err = await step(l.lsSmtpFieldSender, 'smtp.sender', {'sender': sender});

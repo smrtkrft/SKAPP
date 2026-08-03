@@ -121,7 +121,7 @@ class _BfNotebookScreenState extends ConsumerState<BfNotebookScreen> {
       try {
         final r = await client.send(
           'userdata.read',
-          args: {'offset': offset, 'len': len},
+          args: {'offset': '$offset', 'len': '$len'},
         );
         if (!r.ok || r.data is! Map) {
           if (!mounted) return;
@@ -186,7 +186,7 @@ class _BfNotebookScreenState extends ConsumerState<BfNotebookScreen> {
       //    içerikten kalan tail bayt'larının silinmesini garanti eder.
       final t = await client.send(
         'userdata.truncate',
-        args: {'size': newBytes.length},
+        args: {'size': '${newBytes.length}'},
       );
       if (!t.ok) throw 'truncate fail: ${t.err ?? "?"}';
 
@@ -199,7 +199,7 @@ class _BfNotebookScreenState extends ConsumerState<BfNotebookScreen> {
         final chunk = newBytes.sublist(offset, offset + len);
         final w = await client.send(
           'userdata.write',
-          args: {'offset': offset, 'data_b64': base64Encode(chunk)},
+          args: {'offset': '$offset', 'data_b64': base64Encode(chunk)},
         );
         if (!w.ok) throw 'write fail (offset=$offset): ${w.err ?? "?"}';
         offset += len;
