@@ -185,7 +185,10 @@ class _OkBody extends StatelessWidget {
   static dynamic _decode(String raw) {
     try {
       return jsonDecode(raw);
-    } catch (_) {
+    } catch (e) {
+      // Silent null used to render a bare "OK" pill for a response that
+      // actually carried data — a success shown as data-less.
+      debugPrint('[USB-CONSOLE] ok-body decode failed: $e');
       return null;
     }
   }
@@ -1296,7 +1299,8 @@ class _EventBlock extends StatelessWidget {
   static dynamic _safeDecode(String raw) {
     try {
       return jsonDecode(raw);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[USB-CONSOLE] event decode failed: $e');
       return null;
     }
   }
