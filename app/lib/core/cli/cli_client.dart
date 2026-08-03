@@ -217,7 +217,11 @@ class CliClient {
     }
     // Cihazdan gelen TTL'i makul aralığa sıkıştır (UI'da "onay süresi
     // 99999 sn" gibi güven telkin eden saçmalık görünmesin).
-    final rawTtl = (params?['ttl_sec'] as num?)?.toInt() ?? 30;
+    // Korumalı okuma (confirm_token ile aynı sözleşme): kurcalanmış bir
+    // firmware `"ttl_sec":"30"` gönderirse çıplak cast, onay dialogu yerine
+    // yakalanmamış TypeError üretiyordu.
+    final ttlRaw = params?['ttl_sec'];
+    final rawTtl = ttlRaw is num ? ttlRaw.toInt() : 30;
     final confirmed = await confirmRequest(CliConfirmRequest(
       cmd: cmd,
       ttlSec: rawTtl.clamp(1, 300),
