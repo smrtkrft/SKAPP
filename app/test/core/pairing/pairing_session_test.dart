@@ -373,6 +373,35 @@ void main() {
     );
   });
 
+  // Firmware pencereyi 60 sn sonra kapatır; kullanıcı parolayı yazarken bu
+  // süre dolabilir. Kod `rejected`'a düşürülürse kullanıcı ham ERR_* dizesi
+  // görür ve BLE ekranı bunu "cihaz zaten bond'lu" sanıp reconnect'e
+  // devreder — hiç kaydedilmemiş bir bond'la sert-red döngüsü.
+  test('ERR_PAIRING_NOT_OPEN during passphrase → pairingNotOpen (stage kept)',
+      () async {
+    final device = await FakeDeviceCrypto.create();
+    final link = FakePairingLink();
+    link.onSend = (msg, l) async {
+      if (msg['cmd'] == 'pairing.ecdh.exchange') {
+        l.emit({
+          'ok': true,
+          'data': {
+            'our_pub': hex.encode(device.publicKey),
+            'need_passphrase': true,
+          },
+        });
+      } else {
+        l.emit({'ok': false, 'err': 'ERR_PAIRING_NOT_OPEN'});
+      }
+    };
+    await expectLater(
+      _session(link).run(promptPassphrase: (_) async => 'pw'),
+      throwsA(isA<PairingException>()
+          .having((e) => e.code, 'code', PairingErrorCode.pairingNotOpen)
+          .having((e) => e.stage, 'stage', PairingStage.passphrase)),
+    );
+  });
+
   test('invalid our_pub → invalidReply', () async {
     final link = FakePairingLink();
     link.onSend = (msg, l) async => l.emit({

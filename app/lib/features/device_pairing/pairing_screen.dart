@@ -85,6 +85,17 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
   // çakışıyor, auth.challenge dinleyicisi yarışta kayboluyor.
   bool _decideRunning = false;
 
+  // Bootstrap ↔ reconnect el değiştirme sayacı. İki yol karşılıklı çağrılı:
+  // bootstrap ERR_PAIRING_NOT_OPEN alınca reconnect'e devreder, reconnect
+  // sert red alınca bond'u temizleyip bootstrap'a döner. Cihaz BAŞKA bir
+  // telefona bağlıysa (bond var, pencere kapalı) ve kullanıcı cihaz
+  // butonuna basmadıysa bu çift kendini sınırsız tekrarlar: her turda bir
+  // onay dialogu, hiçbir zaman nihai hata — ve her tur bir öncekinin await
+  // zincirinin İÇİNDE durur. Tek kullanıcı eylemi başına bir tam tura izin
+  // ver, sonrasında "cihazda pencere açık değil" hatasını göster.
+  static const _maxHandoffs = 1;
+  int _handoffs = 0;
+
   // In-memory debug trail, kullanıcı failed olduğunda son adımları
   // ekranda görür, kopyalayıp paylaşabilir. logcat alamayan kullanıcılar
   // için tek pratik debug yöntemi.
@@ -142,6 +153,9 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       return;
     }
     _decideRunning = true;
+    // Yeni bir kullanıcı eylemi (ilk çalıştırma / Tekrar dene) el değiştirme
+    // bütçesini sıfırlar.
+    _handoffs = 0;
     try {
       await _guardedRun(() async {
       // REQUEST-DRIVEN BOOTSTRAP FIRST (deterministik, yarış-bağışık).
@@ -491,7 +505,25 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       // yeni eşleşme değil, mevcut bond'la RECONNECT gerekir. Bu bağlantıyı
       // temizce kapatıp reconnect yoluna devret. (Bootstrap-first tasarımın
       // repair ayağı.)
-      if (e.code == PairingErrorCode.pairingNotOpen) {
+      // Aşama koşulu ŞART: ERR_PAIRING_NOT_OPEN parola aşamasında da gelebilir
+      // (pencere kullanıcı parolayı yazarken doldu). O durumda "cihaz zaten
+      // bond'lu" çıkarımı YANLIŞ — reconnect'e devretmek hiç kaydedilmemiş bir
+      // bond'la sert-red döngüsüne sokardı. Devretme yalnız bootstrap
+      // exchange'inin cevabı için geçerli.
+      if (e.code == PairingErrorCode.pairingNotOpen &&
+          e.stage == PairingStage.awaitReply) {
+        if (_handoffs >= _maxHandoffs) {
+          // Bir tam tur denendi ve cihaz hâlâ eşleşmeye kapalı: bond'umuz
+          // yok/çürük ve pencere açılmadı. Yeni bir tur aynı sonucu verir —
+          // kullanıcıya nihai hatayı göster, "Tekrar dene" onun kararı olsun.
+          _trace('bootstrap: still not pairable after $_handoffs handoff — stop');
+          await link.close();
+          _pairingLink = null;
+          if (!mounted) return;
+          _fail(pairingFailureMessage(context, e, wifiFlow: false));
+          return;
+        }
+        _handoffs++;
         _trace('bootstrap: device already bonded (window closed) → reconnect');
         await link.close();
         _pairingLink = null;
@@ -764,6 +796,8 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
     }
     if (!mounted) return;
     ref.invalidate(deviceSessionProvider(widget.device.id));
+    // Kullanıcı butona bastığını onayladı — taze bir tur hakkı.
+    _handoffs = 0;
     setState(() {
       _isReconnect = false;
       _stage = _PairStage.connecting;

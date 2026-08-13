@@ -201,9 +201,14 @@ class PairingSession {
                   deviceErr: err, params: params);
             }
             _trace('passphrase incorrect, $attemptsLeft attempts left');
-          } else if (code == PairingErrorCode.noPendingBond) {
-            throw PairingException(
-                PairingStage.passphrase, PairingErrorCode.noPendingBond,
+          } else if (code == PairingErrorCode.noPendingBond ||
+              code == PairingErrorCode.pairingNotOpen) {
+            // İkisi de "baştan başla" demek: pencere parola sorulurken doldu
+            // (60 sn) ya da bekleyen bond düştü. Kodu KORUYARAK fırlat —
+            // `rejected`'a düşürmek kullanıcıya ham ERR_* dizesi gösteriyordu,
+            // oysa iki kodun da anlaşılır bir "butona bas, tekrar dene"
+            // karşılığı var.
+            throw PairingException(PairingStage.passphrase, code,
                 deviceErr: err, params: params);
           } else {
             throw PairingException(
