@@ -29,6 +29,9 @@ import '_ls_section_kit.dart';
 ///
 /// Üst seviyede: hero halkasının dolabilmesi bu türetmeye bağlı, bu yüzden
 /// widget'tan bağımsız test edilebilir olması gerekiyor.
+/// Firmware `MAX_ALARMS` ile aynı: maske genişliği (uint32) 31 alarm taşır.
+const int kLsMaxAlarms = 31;
+
 int lsDurationTotalSeconds(String unit, int value) {
   const secs = {'minute': 60, 'hour': 3600, 'day': 86400};
   return value * (secs[unit] ?? 86400);
@@ -159,8 +162,17 @@ class _LsSectionDurationState extends ConsumerState<LsSectionDuration> {
       _snack(l.lsDurationValueValidationError);
       return;
     }
-    if (a == null || a < 0 || a > 10) {
-      _snack(l.lsDurationAlarmsValidationError);
+    // ÜRÜN KURALI (firmware ls_timer_engine ile aynı): alarmlar sondan
+    // geriye 1 birim arayla dizilir, N. alarm "N birim kala" çalar. N ==
+    // value olsaydı alarm geri sayım daha başlarken çalardı — bu yüzden
+    // alarm sayısı value'dan KÜÇÜK olmalı (24 saat → en fazla 23).
+    // Mutlak tavan 31 (firmware maske genişliği).
+    if (a == null || a < 0 || a > kLsMaxAlarms) {
+      _snack(l.lsDurationAlarmsValidationError(kLsMaxAlarms));
+      return;
+    }
+    if (a >= v) {
+      _snack(l.lsDurationAlarmsExceedValue(v, v - 1));
       return;
     }
     setState(() => _saving = true);

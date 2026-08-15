@@ -5996,8 +5996,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get lsDurationValueValidationError => 'Değer 1 ile 60 arasında olmalı';
 
   @override
-  String get lsDurationAlarmsValidationError =>
-      'Alarm sayısı 0 ile 10 arasında olmalı';
+  String lsDurationAlarmsValidationError(int max) {
+    return 'Alarm sayısı 0 ile $max arasında olmalı';
+  }
+
+  @override
+  String lsDurationAlarmsExceedValue(int value, int max) {
+    return 'Alarm sayısı değerden küçük olmalı ($value → en fazla $max)';
+  }
 
   @override
   String get lsDurationConfiguredSnack => 'Zamanlayıcı ayarlandı';

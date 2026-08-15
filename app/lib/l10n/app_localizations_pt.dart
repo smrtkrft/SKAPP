@@ -6044,8 +6044,14 @@ class AppLocalizationsPt extends AppLocalizations {
       'O valor deve estar entre 1 e 60';
 
   @override
-  String get lsDurationAlarmsValidationError =>
-      'A contagem de alarmes deve estar entre 0 e 10';
+  String lsDurationAlarmsValidationError(int max) {
+    return 'O número de alarmes deve estar entre 0 e $max';
+  }
+
+  @override
+  String lsDurationAlarmsExceedValue(int value, int max) {
+    return 'Os alarmes devem ser menos que o valor ($value → máx $max)';
+  }
 
   @override
   String get lsDurationConfiguredSnack => 'Timer configurado';

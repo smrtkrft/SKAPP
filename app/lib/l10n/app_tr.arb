@@ -2032,7 +2032,10 @@
   "@lsCommonSaveFailedWith": {"placeholders": {"err": {"type": "String"}}},
 
   "lsDurationValueValidationError": "Değer 1 ile 60 arasında olmalı",
-  "lsDurationAlarmsValidationError": "Alarm sayısı 0 ile 10 arasında olmalı",
+  "lsDurationAlarmsValidationError": "Alarm sayısı 0 ile {max} arasında olmalı",
+  "@lsDurationAlarmsValidationError": {"placeholders": {"max": {"type": "int"}}},
+  "lsDurationAlarmsExceedValue": "Alarm sayısı değerden küçük olmalı ({value} → en fazla {max})",
+  "@lsDurationAlarmsExceedValue": {"placeholders": {"value": {"type": "int"}, "max": {"type": "int"}}},
   "lsDurationConfiguredSnack": "Zamanlayıcı ayarlandı",
   "lsDurationUnitMinute": "{value, plural, =1{1 dakika} other{{value} dakika}}",
   "@lsDurationUnitMinute": {"placeholders": {"value": {"type": "int"}}},

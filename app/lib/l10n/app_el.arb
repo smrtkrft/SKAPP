@@ -2020,7 +2020,10 @@
   "@lsCommonSaveFailedWith": {"placeholders": {"err": {"type": "String"}}},
 
   "lsDurationValueValidationError": "Η τιμή πρέπει να είναι μεταξύ 1 και 60",
-  "lsDurationAlarmsValidationError": "Ο αριθμός ξυπνητηριών πρέπει να είναι μεταξύ 0 και 10",
+  "lsDurationAlarmsValidationError": "Ο αριθμός ειδοποιήσεων πρέπει να είναι από 0 έως {max}",
+  "@lsDurationAlarmsValidationError": {"placeholders": {"max": {"type": "int"}}},
+  "lsDurationAlarmsExceedValue": "Οι ειδοποιήσεις πρέπει να είναι λιγότερες από την τιμή ({value} → μέγ. {max})",
+  "@lsDurationAlarmsExceedValue": {"placeholders": {"value": {"type": "int"}, "max": {"type": "int"}}},
   "lsDurationConfiguredSnack": "Το χρονόμετρο διαμορφώθηκε",
   "lsDurationUnitMinute": "{value, plural, =1{1 λεπτό} other{{value} λεπτά}}",
   "@lsDurationUnitMinute": {"placeholders": {"value": {"type": "int"}}},

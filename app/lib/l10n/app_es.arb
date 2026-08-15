@@ -2020,7 +2020,10 @@
   "@lsCommonSaveFailedWith": {"placeholders": {"err": {"type": "String"}}},
 
   "lsDurationValueValidationError": "El valor debe estar entre 1 y 60",
-  "lsDurationAlarmsValidationError": "El número de alarmas debe estar entre 0 y 10",
+  "lsDurationAlarmsValidationError": "El número de alarmas debe estar entre 0 y {max}",
+  "@lsDurationAlarmsValidationError": {"placeholders": {"max": {"type": "int"}}},
+  "lsDurationAlarmsExceedValue": "Las alarmas deben ser menos que el valor ({value} → máx {max})",
+  "@lsDurationAlarmsExceedValue": {"placeholders": {"value": {"type": "int"}, "max": {"type": "int"}}},
   "lsDurationConfiguredSnack": "Temporizador configurado",
   "lsDurationUnitMinute": "{value, plural, =1{1 minuto} other{{value} minutos}}",
   "@lsDurationUnitMinute": {"placeholders": {"value": {"type": "int"}}},

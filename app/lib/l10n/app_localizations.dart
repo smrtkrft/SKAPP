@@ -10207,8 +10207,14 @@ abstract class AppLocalizations {
   /// No description provided for @lsDurationAlarmsValidationError.
   ///
   /// In en, this message translates to:
-  /// **'Alarm count must be between 0 and 10'**
-  String get lsDurationAlarmsValidationError;
+  /// **'Alarm count must be between 0 and {max}'**
+  String lsDurationAlarmsValidationError(int max);
+
+  /// No description provided for @lsDurationAlarmsExceedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarms must be fewer than the value ({value} → max {max})'**
+  String lsDurationAlarmsExceedValue(int value, int max);
 
   /// No description provided for @lsDurationConfiguredSnack.
   ///

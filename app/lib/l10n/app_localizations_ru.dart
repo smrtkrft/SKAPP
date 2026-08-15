@@ -6026,8 +6026,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Значение должно быть от 1 до 60';
 
   @override
-  String get lsDurationAlarmsValidationError =>
-      'Число сигналов должно быть от 0 до 10';
+  String lsDurationAlarmsValidationError(int max) {
+    return 'Количество будильников должно быть от 0 до $max';
+  }
+
+  @override
+  String lsDurationAlarmsExceedValue(int value, int max) {
+    return 'Будильников должно быть меньше значения ($value → максимум $max)';
+  }
 
   @override
   String get lsDurationConfiguredSnack => 'Таймер настроен';

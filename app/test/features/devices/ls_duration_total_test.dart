@@ -37,4 +37,42 @@ void main() {
       }
     });
   });
+  _alarmRuleTests();
+}
+
+// ── Alarm kuralı · firmware ls_timer_engine ile aynı sözleşme ────────
+//
+// Alarmlar sondan geriye 1 birim arayla dizilir: N. alarm "N birim kala"
+// çalar. N == value olsaydı alarm geri sayım daha BAŞLARKEN çalardı
+// (remaining == total == eşik). Bu yüzden alarm sayısı value'dan küçük
+// olmalı — 24 saat için en fazla 23.
+void _alarmRuleTests() {
+  group('alarm kuralı', () {
+    bool valid(int alarms, int value) =>
+        alarms >= 0 && alarms <= kLsMaxAlarms && alarms < value;
+
+    test('24 saat → 23 alarm geçerli, 24 değil', () {
+      expect(valid(23, 24), isTrue);
+      expect(valid(24, 24), isFalse, reason: 'başlangıçta çalardı');
+      expect(valid(25, 24), isFalse);
+    });
+
+    test('küçük değerlerde sınır', () {
+      expect(valid(0, 1), isTrue, reason: 'alarmsız 1 birim geçerli');
+      expect(valid(1, 1), isFalse, reason: '1 birim → alarm kurulamaz');
+      expect(valid(2, 3), isTrue);
+      expect(valid(3, 3), isFalse);
+    });
+
+    test('mutlak tavan maske genişliği (31)', () {
+      expect(kLsMaxAlarms, 31);
+      expect(valid(31, 60), isTrue);
+      expect(valid(32, 60), isFalse, reason: 'maskeye sığmaz');
+    });
+
+    test('60 gün en uzun süre · 31 alarm ile birlikte geçerli', () {
+      expect(lsDurationTotalSeconds('day', 60), 60 * 86400);
+      expect(valid(31, 60), isTrue);
+    });
+  });
 }

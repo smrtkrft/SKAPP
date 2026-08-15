@@ -6047,8 +6047,14 @@ class AppLocalizationsEl extends AppLocalizations {
       'Η τιμή πρέπει να είναι μεταξύ 1 και 60';
 
   @override
-  String get lsDurationAlarmsValidationError =>
-      'Ο αριθμός ξυπνητηριών πρέπει να είναι μεταξύ 0 και 10';
+  String lsDurationAlarmsValidationError(int max) {
+    return 'Ο αριθμός ειδοποιήσεων πρέπει να είναι από 0 έως $max';
+  }
+
+  @override
+  String lsDurationAlarmsExceedValue(int value, int max) {
+    return 'Οι ειδοποιήσεις πρέπει να είναι λιγότερες από την τιμή ($value → μέγ. $max)';
+  }
 
   @override
   String get lsDurationConfiguredSnack => 'Το χρονόμετρο διαμορφώθηκε';

@@ -3123,7 +3123,10 @@
     }
   },
   "lsDurationValueValidationError": "Der Wert muss zwischen 1 und 60 liegen",
-  "lsDurationAlarmsValidationError": "Die Alarmanzahl muss zwischen 0 und 10 liegen",
+  "lsDurationAlarmsValidationError": "Alarmanzahl muss zwischen 0 und {max} liegen",
+  "@lsDurationAlarmsValidationError": {"placeholders": {"max": {"type": "int"}}},
+  "lsDurationAlarmsExceedValue": "Alarme müssen kleiner als der Wert sein ({value} → max. {max})",
+  "@lsDurationAlarmsExceedValue": {"placeholders": {"value": {"type": "int"}, "max": {"type": "int"}}},
   "lsDurationConfiguredSnack": "Timer konfiguriert",
   "lsDurationUnitMinute": "{value, plural, =1{1 Minute} other{{value} Minuten}}",
   "@lsDurationUnitMinute": {

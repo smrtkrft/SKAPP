@@ -2035,7 +2035,10 @@
   "@lsCommonSaveFailedWith": {"placeholders": {"err": {"type": "String"}}},
 
   "lsDurationValueValidationError": "Value must be between 1 and 60",
-  "lsDurationAlarmsValidationError": "Alarm count must be between 0 and 10",
+  "lsDurationAlarmsValidationError": "Alarm count must be between 0 and {max}",
+  "@lsDurationAlarmsValidationError": {"placeholders": {"max": {"type": "int"}}},
+  "lsDurationAlarmsExceedValue": "Alarms must be fewer than the value ({value} → max {max})",
+  "@lsDurationAlarmsExceedValue": {"placeholders": {"value": {"type": "int"}, "max": {"type": "int"}}},
   "lsDurationConfiguredSnack": "Timer configured",
   "lsDurationUnitMinute": "{value, plural, =1{1 minute} other{{value} minutes}}",
   "@lsDurationUnitMinute": {"placeholders": {"value": {"type": "int"}}},
