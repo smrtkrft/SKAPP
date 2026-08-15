@@ -8,8 +8,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Index map (must match `_tabs` order in `main_shell.dart`):
 ///   0 = SmartKraft (home — V5 ticket tasarımı)
 ///   1 = Devices / Cihazlarım
-///   2 = SKAPI
-///   3 = Settings / Ayarlar
+///   2 = Settings / Ayarlar
+///
+/// SKAPI 2026-08-15'te sekme olmaktan çıktı (cihaz ayarlarına taşındı);
+/// Ayarlar 3 → 2'ye kaydı. Seçim KALICI DEĞİL (build() => 0) olduğu için
+/// migrasyon gerekmedi — kalıcı olsaydı eski index 3 artık taşmış olurdu.
 ///
 /// Provider transient (build() -> 0) — persisted seçim yok.
 class SelectedTabNotifier extends Notifier<int> {

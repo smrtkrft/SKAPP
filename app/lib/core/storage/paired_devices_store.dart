@@ -27,6 +27,7 @@ class PairedDevice {
     this.lastIp,
     this.lastPort,
     this.lastSeen,
+    this.groupId,
   });
 
   final String id;
@@ -43,12 +44,19 @@ class PairedDevice {
   final int? lastPort;
   final DateTime? lastSeen;
 
+  /// Kullanıcının tanımladığı yer grubunun kimliği (Büro · Ev · Salon).
+  /// null = gruplanmamış. Eski kayıtlarda alan olmadığı için null gelir,
+  /// yani güncelleyen kullanıcının tüm cihazları "Gruplanmamış"ta başlar.
+  /// Grup silinince bu alan null'a döner — cihaz KAYBOLMAZ.
+  final String? groupId;
+
   PairedDevice copyWith({
     String? name,
     Object? customName = _sentinel,
     String? lastIp,
     int? lastPort,
     DateTime? lastSeen,
+    Object? groupId = _sentinel,
   }) =>
       PairedDevice(
         id: id,
@@ -61,6 +69,11 @@ class PairedDevice {
         lastIp: lastIp ?? this.lastIp,
         lastPort: lastPort ?? this.lastPort,
         lastSeen: lastSeen ?? this.lastSeen,
+        // Sentinel: null GEÇERLİ bir değer (gruptan çıkar) olduğu için
+        // `?? this.groupId` kalıbı kullanılamaz.
+        groupId: identical(groupId, _sentinel)
+            ? this.groupId
+            : groupId as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -72,6 +85,7 @@ class PairedDevice {
         if (lastIp != null) 'lastIp': lastIp,
         if (lastPort != null) 'lastPort': lastPort,
         if (lastSeen != null) 'lastSeen': lastSeen!.toIso8601String(),
+        if (groupId != null) 'groupId': groupId,
       };
 
   factory PairedDevice.fromJson(Map<String, dynamic> j) => PairedDevice(
@@ -85,6 +99,7 @@ class PairedDevice {
         lastSeen: j['lastSeen'] != null
             ? DateTime.parse(j['lastSeen'] as String)
             : null,
+        groupId: j['groupId'] as String?,
       );
 
   /// Human-readable product name from the two-letter [prefix]. Brand
@@ -253,9 +268,49 @@ class PairedDevicesStore {
           pairedAt: d.pairedAt,
           customName: d.customName,
           lastSeen: d.lastSeen,
+          // Yer grubu korunmalı: burada kayıt elle yeniden kuruluyor,
+          // alan eklenince sessizce düşerdi (cihaz gruptan çıkardı).
+          groupId: d.groupId,
           // lastIp/lastPort omitted → cleared
         );
         await _write(list);
+      });
+
+  /// Bir cihazı yer grubuna taşır. [groupId] null → gruplanmamış.
+  Future<void> setGroup(String id, String? groupId) => _locked(() async {
+        final list = [...read()];
+        final i = list.indexWhere((d) => d.id == id);
+        if (i < 0) return;
+        list[i] = list[i].copyWith(groupId: groupId);
+        await _write(list);
+      });
+
+  /// Toplu taşıma (düzenleme modundaki çoklu seçim) — tek yazma.
+  Future<void> setGroupMany(Set<String> ids, String? groupId) =>
+      _locked(() async {
+        if (ids.isEmpty) return;
+        final list = [...read()];
+        var touched = false;
+        for (var i = 0; i < list.length; i++) {
+          if (!ids.contains(list[i].id)) continue;
+          list[i] = list[i].copyWith(groupId: groupId);
+          touched = true;
+        }
+        if (touched) await _write(list);
+      });
+
+  /// Grup silinince çağrılır: o gruptaki cihazlar SİLİNMEZ, yalnız
+  /// gruplanmamışa döner. Kaç cihazın taşındığını döndürür.
+  Future<int> detachGroup(String groupId) => _locked(() async {
+        final list = [...read()];
+        var n = 0;
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].groupId != groupId) continue;
+          list[i] = list[i].copyWith(groupId: null);
+          n++;
+        }
+        if (n > 0) await _write(list);
+        return n;
       });
 
   Future<void> remove(String id) => _locked(() async {
@@ -306,6 +361,24 @@ class PairedDevicesNotifier extends Notifier<List<PairedDevice>> {
   Future<void> clearLastEndpoint(String id) async {
     await _store.clearLastEndpoint(id);
     state = _store.read();
+  }
+
+  Future<void> setGroup(String id, String? groupId) async {
+    await _store.setGroup(id, groupId);
+    state = _store.read();
+  }
+
+  Future<void> setGroupMany(Set<String> ids, String? groupId) async {
+    await _store.setGroupMany(ids, groupId);
+    state = _store.read();
+  }
+
+  /// Grup silinirken: cihazları gruplanmamışa taşır, taşınan sayıyı döner
+  /// (SnackBar "N cihaz gruplanmamışa taşındı" için).
+  Future<int> detachGroup(String groupId) async {
+    final n = await _store.detachGroup(groupId);
+    state = _store.read();
+    return n;
   }
 
   Future<void> remove(String id) async {

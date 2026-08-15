@@ -1219,6 +1219,85 @@ class AppLocalizationsDe extends AppLocalizations {
   String get devicesForgetDialogCancel => 'Abbrechen';
 
   @override
+  String get devicesViewConstellation => 'Konstellation';
+
+  @override
+  String get devicesViewCards => 'Karten';
+
+  @override
+  String get devicesAllDevices => 'Alle Geräte';
+
+  @override
+  String get devicesUngrouped => 'Ohne Gruppe';
+
+  @override
+  String get devicesEdit => 'Bearbeiten';
+
+  @override
+  String get devicesEditDone => 'Fertig';
+
+  @override
+  String get devicesAddGroup => '+ Gruppe hinzufügen';
+
+  @override
+  String get devicesNewGroup => 'Neue Gruppe';
+
+  @override
+  String get devicesGroupNameHint => 'Büro · Zuhause · Wohnzimmer…';
+
+  @override
+  String get devicesGroupNameEmpty => 'Gruppenname darf nicht leer sein';
+
+  @override
+  String get devicesGroupNameDuplicate =>
+      'Eine Gruppe mit diesem Namen existiert bereits';
+
+  @override
+  String get devicesRenameGroup => 'Gruppe umbenennen';
+
+  @override
+  String get devicesDeleteGroup => 'Gruppe löschen';
+
+  @override
+  String get devicesDeleteGroupBody =>
+      'Die Gruppe wird entfernt. Geräte darin werden NICHT gelöscht — sie wandern zu „Ohne Gruppe“.';
+
+  @override
+  String get devicesGroupDeleted => 'Gruppe gelöscht';
+
+  @override
+  String devicesGroupDeletedWithDevices(int count) {
+    return 'Gruppe gelöscht · $count Gerät(e) nach „Ohne Gruppe“ verschoben';
+  }
+
+  @override
+  String get devicesMoveToGroup => 'In Gruppe verschieben';
+
+  @override
+  String devicesSelectedCount(int count) {
+    return '$count ausgewählt';
+  }
+
+  @override
+  String devicesMovedToGroup(int count, String name) {
+    return '$count Gerät(e) → $name';
+  }
+
+  @override
+  String devicesRemovedFromGroup(int count) {
+    return '$count Gerät(e) aus der Gruppe entfernt';
+  }
+
+  @override
+  String get devicesGroupEmpty => 'Noch keine Geräte hier';
+
+  @override
+  String get devicesGroupMoveUp => 'Nach oben';
+
+  @override
+  String get devicesGroupMoveDown => 'Nach unten';
+
+  @override
   String devicesForgotToast(String name) {
     return '$name aus SKAPP entfernt';
   }
@@ -2936,6 +3015,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String bfBondListFetchError(String error) {
     return 'bond.list fehlgeschlagen: $error';
   }
+
+  @override
+  String get bfSettingsSectionLibrary => 'Bibliothek';
+
+  @override
+  String get bfSettingsLibraryTitle => 'SKAPI-Bibliothek';
+
+  @override
+  String get bfSettingsLibrarySubtitle => 'Vorlagen, Skripte und Aktionen';
 
   @override
   String get bfSettingsSectionSecurity => 'SICHERHEIT';
@@ -5911,6 +5999,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get lsVacationStartingButton => 'Wird gestartet…';
+
+  @override
+  String get lsVacationNeedsRunningTimer =>
+      'Starte den Countdown, bevor du ihn für den Urlaub pausierst';
 
   @override
   String get lsVacationStartButton => 'Urlaub starten';

@@ -2212,6 +2212,144 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get devicesForgetDialogCancel;
 
+  /// No description provided for @devicesViewConstellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Constellation'**
+  String get devicesViewConstellation;
+
+  /// No description provided for @devicesViewCards.
+  ///
+  /// In en, this message translates to:
+  /// **'Cards'**
+  String get devicesViewCards;
+
+  /// No description provided for @devicesAllDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'All devices'**
+  String get devicesAllDevices;
+
+  /// No description provided for @devicesUngrouped.
+  ///
+  /// In en, this message translates to:
+  /// **'Ungrouped'**
+  String get devicesUngrouped;
+
+  /// No description provided for @devicesEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get devicesEdit;
+
+  /// No description provided for @devicesEditDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get devicesEditDone;
+
+  /// No description provided for @devicesAddGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add group'**
+  String get devicesAddGroup;
+
+  /// No description provided for @devicesNewGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'New group'**
+  String get devicesNewGroup;
+
+  /// No description provided for @devicesGroupNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Office · Home · Living room…'**
+  String get devicesGroupNameHint;
+
+  /// No description provided for @devicesGroupNameEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Group name cannot be empty'**
+  String get devicesGroupNameEmpty;
+
+  /// No description provided for @devicesGroupNameDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'A group with this name already exists'**
+  String get devicesGroupNameDuplicate;
+
+  /// No description provided for @devicesRenameGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename group'**
+  String get devicesRenameGroup;
+
+  /// No description provided for @devicesDeleteGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete group'**
+  String get devicesDeleteGroup;
+
+  /// No description provided for @devicesDeleteGroupBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The group is removed. Devices in it are NOT deleted — they move to Ungrouped.'**
+  String get devicesDeleteGroupBody;
+
+  /// No description provided for @devicesGroupDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Group deleted'**
+  String get devicesGroupDeleted;
+
+  /// No description provided for @devicesGroupDeletedWithDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Group deleted · {count} device(s) moved to Ungrouped'**
+  String devicesGroupDeletedWithDevices(int count);
+
+  /// No description provided for @devicesMoveToGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to group'**
+  String get devicesMoveToGroup;
+
+  /// No description provided for @devicesSelectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String devicesSelectedCount(int count);
+
+  /// No description provided for @devicesMovedToGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} device(s) → {name}'**
+  String devicesMovedToGroup(int count, String name);
+
+  /// No description provided for @devicesRemovedFromGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} device(s) removed from group'**
+  String devicesRemovedFromGroup(int count);
+
+  /// No description provided for @devicesGroupEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No devices here yet'**
+  String get devicesGroupEmpty;
+
+  /// No description provided for @devicesGroupMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get devicesGroupMoveUp;
+
+  /// No description provided for @devicesGroupMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get devicesGroupMoveDown;
+
   /// No description provided for @devicesForgotToast.
   ///
   /// In en, this message translates to:
@@ -5169,6 +5307,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'bond.list failed: {error}'**
   String bfBondListFetchError(String error);
+
+  /// No description provided for @bfSettingsSectionLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get bfSettingsSectionLibrary;
+
+  /// No description provided for @bfSettingsLibraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SKAPI library'**
+  String get bfSettingsLibraryTitle;
+
+  /// No description provided for @bfSettingsLibrarySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Templates, scripts and actions'**
+  String get bfSettingsLibrarySubtitle;
 
   /// No description provided for @bfSettingsSectionSecurity.
   ///
@@ -10011,6 +10167,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Starting…'**
   String get lsVacationStartingButton;
+
+  /// No description provided for @lsVacationNeedsRunningTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the countdown before pausing it for a holiday'**
+  String get lsVacationNeedsRunningTimer;
 
   /// No description provided for @lsVacationStartButton.
   ///

@@ -1225,6 +1225,84 @@ class AppLocalizationsPt extends AppLocalizations {
   String get devicesForgetDialogCancel => 'Cancelar';
 
   @override
+  String get devicesViewConstellation => 'Constelação';
+
+  @override
+  String get devicesViewCards => 'Cartões';
+
+  @override
+  String get devicesAllDevices => 'Todos os dispositivos';
+
+  @override
+  String get devicesUngrouped => 'Sem grupo';
+
+  @override
+  String get devicesEdit => 'Editar';
+
+  @override
+  String get devicesEditDone => 'Concluído';
+
+  @override
+  String get devicesAddGroup => '+ Adicionar grupo';
+
+  @override
+  String get devicesNewGroup => 'Novo grupo';
+
+  @override
+  String get devicesGroupNameHint => 'Escritório · Casa · Sala…';
+
+  @override
+  String get devicesGroupNameEmpty => 'O nome do grupo não pode estar vazio';
+
+  @override
+  String get devicesGroupNameDuplicate => 'Já existe um grupo com esse nome';
+
+  @override
+  String get devicesRenameGroup => 'Renomear grupo';
+
+  @override
+  String get devicesDeleteGroup => 'Excluir grupo';
+
+  @override
+  String get devicesDeleteGroupBody =>
+      'O grupo é removido. Os dispositivos NÃO são excluídos — vão para «Sem grupo».';
+
+  @override
+  String get devicesGroupDeleted => 'Grupo excluído';
+
+  @override
+  String devicesGroupDeletedWithDevices(int count) {
+    return 'Grupo excluído · $count dispositivo(s) movido(s) para «Sem grupo»';
+  }
+
+  @override
+  String get devicesMoveToGroup => 'Mover para o grupo';
+
+  @override
+  String devicesSelectedCount(int count) {
+    return '$count selecionado(s)';
+  }
+
+  @override
+  String devicesMovedToGroup(int count, String name) {
+    return '$count dispositivo(s) → $name';
+  }
+
+  @override
+  String devicesRemovedFromGroup(int count) {
+    return '$count dispositivo(s) removido(s) do grupo';
+  }
+
+  @override
+  String get devicesGroupEmpty => 'Ainda não há dispositivos aqui';
+
+  @override
+  String get devicesGroupMoveUp => 'Mover para cima';
+
+  @override
+  String get devicesGroupMoveDown => 'Mover para baixo';
+
+  @override
   String devicesForgotToast(String name) {
     return '$name removido do SKAPP';
   }
@@ -2953,6 +3031,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String bfBondListFetchError(String error) {
     return 'bond.list falhou: $error';
   }
+
+  @override
+  String get bfSettingsSectionLibrary => 'Biblioteca';
+
+  @override
+  String get bfSettingsLibraryTitle => 'Biblioteca SKAPI';
+
+  @override
+  String get bfSettingsLibrarySubtitle => 'Modelos, scripts e ações';
 
   @override
   String get bfSettingsSectionSecurity => 'SEGURANÇA';
@@ -5933,6 +6020,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get lsVacationStartingButton => 'Iniciando…';
+
+  @override
+  String get lsVacationNeedsRunningTimer =>
+      'Inicie a contagem regressiva antes de pausá-la para as férias';
 
   @override
   String get lsVacationStartButton => 'Iniciar férias';

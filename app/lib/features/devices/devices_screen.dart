@@ -22,7 +22,9 @@ import '../device_discovery/setup_choice_screen.dart';
 import '../device_home/device_home_screen.dart';
 import '../skapi/data/mobile_event_catalog.dart';
 import '../skapi/data/skapi_providers.dart';
+import 'devices_view_mode.dart';
 import 'widgets/constellation_view.dart';
+import 'widgets/devices_card_view.dart';
 import 'widgets/devices_legend.dart';
 import 'widgets/devices_stats_card.dart';
 
@@ -45,14 +47,21 @@ class DevicesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
-    final devices = ref.watch(pairedDevicesProvider);
+    final allPaired = ref.watch(pairedDevicesProvider);
     // mDNS sweep'i canlı tut: her sweep `lastSeen` günceller, halka
     // animasyonu tek başına yetmeyebilir (uygulama back planda iken
     // değişen değer rebuild tetiklemez), bu provider zorunlu izleyici.
     ref.watch(mdnsBrowserProvider);
-    // Mobil sürümde paired Desktop SKAPP'ler. Desktop sürümde bu liste boş
-    // kalır (oradaki yön zaten tersine, PairedDevice MS olarak yazılır).
-    final desktopPeers = ref.watch(skappPeersProvider);
+    // TELEFON (MS) ve MASAÜSTÜ (DK) EŞLEŞMELERİ BU SEKMEDE GÖSTERİLMEZ
+    // (ürün kararı 2026-08-15): Cihazlarım yalnız SmartKraft donanımını
+    // listeler; eşli SKAPP'ler cihaz ayarlarının altına taşındı.
+    //
+    // Kayıtlar SİLİNMEDİ ve servisler (skappPeerHealthProber,
+    // skappHttpServer) çalışmaya devam ediyor — burada yalnız görünürlük
+    // kesildi. Widget'ların imzası korunuyor ki eşli-SKAPP ekranı aynı
+    // parçaları yeniden kullanabilsin.
+    const desktopPeers = <SkappPeerTarget>[];
+    final devices = allPaired.where((d) => !d.isMobilePeer).toList();
 
     final identity = ref.watch(networkIdentityProvider);
     final compact = !context.isDesktop;
@@ -72,6 +81,9 @@ class DevicesScreen extends ConsumerWidget {
             children: [
               _Header(
                 compact: compact,
+                viewMode: ref.watch(devicesViewModeProvider),
+                onViewMode: (m) =>
+                    ref.read(devicesViewModeProvider.notifier).set(m),
                 // Header sayacı: SK cihazları (BF, LS, ...) + mobil sürümde
                 // paired desktop peer'lar. Mobil peer'lar (prefix MS)
                 // online/offline takibi yok diye ayrı kategoride, sayıma
@@ -82,7 +94,15 @@ class DevicesScreen extends ConsumerWidget {
                 onAdd: () => _pushAdd(context),
               ),
               Expanded(
-                child: Stack(
+                child: ref.watch(devicesViewModeProvider) ==
+                        DevicesViewMode.cards
+                    ? DevicesCardView(
+                        devices: devices,
+                        isOnline: _isOnline,
+                        onOpenDevice: (d) => _onDeviceTap(context, d),
+                        onForgetDevice: (d) => _confirmForget(context, ref, d),
+                      )
+                    : Stack(
                 clipBehavior: Clip.none,
                 children: [
                   // Constellation merkez
@@ -168,6 +188,14 @@ class DevicesScreen extends ConsumerWidget {
   /// gerçek online tespit altyapısı yok; lastSeen sadece pairing anında
   /// set ediliyor, sonra hiç refresh edilmiyor, bu yüzden online sayımına
   /// dahil edilmezler.
+  /// Çevrimiçilik ölçütü TEK YERDE: header sayacı, legend ve kart
+  /// görünümü aynı kuralı paylaşsın (iki yerde tanımlanınca ıraksıyordu).
+  static bool _isOnline(PairedDevice d) {
+    final ls = d.lastSeen;
+    return ls != null &&
+        DateTime.now().difference(ls) < const Duration(seconds: 90);
+  }
+
   int _onlineCount(List<PairedDevice> list) {
     int c = 0;
     for (final d in list) {
@@ -482,12 +510,16 @@ class _Header extends StatelessWidget {
     required this.total,
     required this.online,
     required this.onAdd,
+    required this.viewMode,
+    required this.onViewMode,
   });
 
   final bool compact;
   final int total;
   final int online;
   final VoidCallback onAdd;
+  final DevicesViewMode viewMode;
+  final ValueChanged<DevicesViewMode> onViewMode;
 
   @override
   Widget build(BuildContext context) {
@@ -543,11 +575,79 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
+          // Görünüm anahtarı ekleme pill'inin SOLUNDA: ekleme birincil
+          // eylem olduğu için en sağda (başparmak yolu), görünüm seçimi
+          // ikincil olarak onun solunda durur.
+          _ViewToggle(mode: viewMode, onChanged: onViewMode, fg: fg),
+          const SizedBox(width: 8),
           _AddPillButton(
             label: l.devicesAddPillLabel,
             onTap: onAdd,
             iconOnly: compact,
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Takımyıldız ↔ kart segment anahtarı. İkonlu ve etiketsiz: mobilde yer
+/// kazandırır, iki ikon zaten kendini anlatır.
+class _ViewToggle extends StatelessWidget {
+  const _ViewToggle({
+    required this.mode,
+    required this.onChanged,
+    required this.fg,
+  });
+
+  final DevicesViewMode mode;
+  final ValueChanged<DevicesViewMode> onChanged;
+  final Color fg;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final card = isDark ? const Color(0xFF1F1D18) : const Color(0xFFFFFEFA);
+    Widget tile(IconData icon, DevicesViewMode m, String tooltip) {
+      final on = mode == m;
+      return Tooltip(
+        message: tooltip,
+        child: InkWell(
+          onTap: () => onChanged(m),
+          borderRadius: BorderRadius.circular(99),
+          child: Container(
+            width: 34,
+            height: 30,
+            decoration: BoxDecoration(
+              color: on ? card : Colors.transparent,
+              borderRadius: BorderRadius.circular(99),
+            ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: on ? fg : fg.withValues(alpha: 0.55),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: fg.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: fg.withValues(alpha: 0.08)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          tile(Icons.bubble_chart_outlined, DevicesViewMode.constellation,
+              l.devicesViewConstellation),
+          const SizedBox(width: 2),
+          tile(Icons.grid_view_rounded, DevicesViewMode.cards,
+              l.devicesViewCards),
         ],
       ),
     );

@@ -18,7 +18,6 @@ import '../../core/network/skapp_listener_service.dart';
 import '../skapi/data/bindings_trigger_service.dart';
 import '../skapi/data/skapi_providers.dart';
 import '../skapi/data/system_endpoint_sync_service.dart';
-import '../skapi/skapi_screen.dart';
 import 'selected_tab_provider.dart';
 
 /// Bottom navigation on phones is a *floating pill* rather than an
@@ -41,10 +40,16 @@ class _MainShellState extends ConsumerState<MainShell> {
   StreamSubscription<BindingTriggerNotice>? _bindingSub;
   StreamSubscription<void>? _firstHideSub;
 
+  // SKAPI sekme olarak KALDIRILDI (ürün kararı 2026-08-15): kütüphane
+  // artık cihaz ayarlarından açılıyor (bkz. bf_settings_screen). Ekran ve
+  // `features/skapi/**` ağacı YERİNDE — yalnız navigasyon girişi düştü.
+  //
+  // DİKKAT: SKAPI'nin arka plan servisleri (bindingsTriggerService,
+  // systemEndpointSyncService) initState'te başlamaya DEVAM EDİYOR;
+  // sekmeyi gizlemek onları kapatmak değildir.
   static const _tabs = [
     HomeScreen(),
     DevicesScreen(),
-    SkapiScreen(),
     SettingsScreen(),
   ];
 
@@ -178,7 +183,6 @@ class _MainShellState extends ConsumerState<MainShell> {
         logoAssetDark: 'assets/branding/logo_white.png',
       ),
       _NavSpec(Icons.devices_outlined, Icons.devices_rounded, l.tabDevices),
-      _NavSpec(Icons.extension_outlined, Icons.extension_rounded, l.tabSkapi),
       _NavSpec(Icons.tune_outlined, Icons.tune_rounded, l.tabSettings),
     ];
 
@@ -245,7 +249,6 @@ class ShellNavBar extends ConsumerWidget {
         logoAssetDark: 'assets/branding/logo_white.png',
       ),
       _NavSpec(Icons.devices_outlined, Icons.devices_rounded, l.tabDevices),
-      _NavSpec(Icons.extension_outlined, Icons.extension_rounded, l.tabSkapi),
       _NavSpec(Icons.tune_outlined, Icons.tune_rounded, l.tabSettings),
     ];
 

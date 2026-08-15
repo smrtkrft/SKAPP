@@ -1222,6 +1222,85 @@ class AppLocalizationsRu extends AppLocalizations {
   String get devicesForgetDialogCancel => 'Отмена';
 
   @override
+  String get devicesViewConstellation => 'Созвездие';
+
+  @override
+  String get devicesViewCards => 'Карточки';
+
+  @override
+  String get devicesAllDevices => 'Все устройства';
+
+  @override
+  String get devicesUngrouped => 'Без группы';
+
+  @override
+  String get devicesEdit => 'Изменить';
+
+  @override
+  String get devicesEditDone => 'Готово';
+
+  @override
+  String get devicesAddGroup => '+ Добавить группу';
+
+  @override
+  String get devicesNewGroup => 'Новая группа';
+
+  @override
+  String get devicesGroupNameHint => 'Офис · Дом · Гостиная…';
+
+  @override
+  String get devicesGroupNameEmpty => 'Название группы не может быть пустым';
+
+  @override
+  String get devicesGroupNameDuplicate =>
+      'Группа с таким названием уже существует';
+
+  @override
+  String get devicesRenameGroup => 'Переименовать группу';
+
+  @override
+  String get devicesDeleteGroup => 'Удалить группу';
+
+  @override
+  String get devicesDeleteGroupBody =>
+      'Группа удаляется. Устройства НЕ удаляются — они переходят в «Без группы».';
+
+  @override
+  String get devicesGroupDeleted => 'Группа удалена';
+
+  @override
+  String devicesGroupDeletedWithDevices(int count) {
+    return 'Группа удалена · $count устройств(о) перемещено в «Без группы»';
+  }
+
+  @override
+  String get devicesMoveToGroup => 'Переместить в группу';
+
+  @override
+  String devicesSelectedCount(int count) {
+    return 'Выбрано: $count';
+  }
+
+  @override
+  String devicesMovedToGroup(int count, String name) {
+    return '$count устройств(о) → $name';
+  }
+
+  @override
+  String devicesRemovedFromGroup(int count) {
+    return '$count устройств(о) удалено из группы';
+  }
+
+  @override
+  String get devicesGroupEmpty => 'Здесь пока нет устройств';
+
+  @override
+  String get devicesGroupMoveUp => 'Вверх';
+
+  @override
+  String get devicesGroupMoveDown => 'Вниз';
+
+  @override
   String devicesForgotToast(String name) {
     return '$name удалено из SKAPP';
   }
@@ -2937,6 +3016,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String bfBondListFetchError(String error) {
     return 'Сбой bond.list: $error';
   }
+
+  @override
+  String get bfSettingsSectionLibrary => 'Библиотека';
+
+  @override
+  String get bfSettingsLibraryTitle => 'Библиотека SKAPI';
+
+  @override
+  String get bfSettingsLibrarySubtitle => 'Шаблоны, скрипты и действия';
 
   @override
   String get bfSettingsSectionSecurity => 'БЕЗОПАСНОСТЬ';
@@ -5914,6 +6002,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get lsVacationStartingButton => 'Запуск…';
+
+  @override
+  String get lsVacationNeedsRunningTimer =>
+      'Запустите обратный отсчёт, прежде чем ставить его на паузу на время отпуска';
 
   @override
   String get lsVacationStartButton => 'Начать отпуск';

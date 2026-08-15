@@ -26,6 +26,7 @@ import '../../main_shell/main_shell.dart';
 import 'bf_bond_list_screen.dart';
 import 'bf_ota_screen.dart';
 import 'bf_passphrase_screen.dart';
+import '../../skapi/skapi_screen.dart';
 import 'bf_session.dart';
 import 'bf_wifi_management_screen.dart';
 import 'widgets/bootstrap_banner.dart';
@@ -242,6 +243,21 @@ class _BfSettingsScreenState extends ConsumerState<BfSettingsScreen> {
               subtitle: _wifiSubtitle(l, _slot('backup')),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => _openWifiManagement(context),
+            ),
+          ]),
+          const SizedBox(height: 24),
+          // SKAPI kütüphanesi · 2026-08-15'te ana sekmeden buraya taşındı.
+          // Ekranın kendisi değişmedi, yalnız giriş noktası cihazın altına
+          // indi (features/skapi/** yerinde duruyor).
+          _Section(title: l.bfSettingsSectionLibrary, children: [
+            _Row(
+              icon: Icons.extension_outlined,
+              title: l.bfSettingsLibraryTitle,
+              subtitle: l.bfSettingsLibrarySubtitle,
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SkapiScreen()),
+              ),
             ),
           ]),
           const SizedBox(height: 24),

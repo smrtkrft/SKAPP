@@ -23,11 +23,23 @@ import '../../../../../core/theme/colors.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '_ls_section_kit.dart';
 
+/// unit+value → saniye. Firmware `timer.get`/`timer.set` sözleşmesindeki
+/// birim adları tekil ('minute'/'hour'/'day'); bilinmeyen bir birim gelirse
+/// gün varsayılır (cihazın varsayılanı).
+///
+/// Üst seviyede: hero halkasının dolabilmesi bu türetmeye bağlı, bu yüzden
+/// widget'tan bağımsız test edilebilir olması gerekiyor.
+int lsDurationTotalSeconds(String unit, int value) {
+  const secs = {'minute': 60, 'hour': 3600, 'day': 86400};
+  return value * (secs[unit] ?? 86400);
+}
+
 class LsSectionDuration extends ConsumerStatefulWidget {
   const LsSectionDuration({
     super.key,
     required this.deviceId,
     required this.onStatusChanged,
+    this.onTotalChanged,
   });
 
   final String deviceId;
@@ -35,6 +47,15 @@ class LsSectionDuration extends ConsumerStatefulWidget {
   /// Pushed up to LsHomeScreen so its status line ("30 days · 3 alarms")
   /// reflects the latest device config without re-querying.
   final ValueChanged<String> onStatusChanged;
+
+  /// Total countdown length in SECONDS, derived from `timer.get`'s
+  /// unit+value pair (and re-pushed after a successful save).
+  ///
+  /// The hero needs this to draw the ring: without it `_totalSec` stayed 0
+  /// forever, `remaining / total` was always 0.0 and the ring never filled.
+  /// `onStatusChanged` only carries a formatted string, so it could not
+  /// serve as the channel.
+  final ValueChanged<int>? onTotalChanged;
 
   @override
   ConsumerState<LsSectionDuration> createState() =>
@@ -104,6 +125,7 @@ class _LsSectionDurationState extends ConsumerState<LsSectionDuration> {
           _loading = false;
         });
         widget.onStatusChanged(_summary(l, u, v, a));
+        widget.onTotalChanged?.call(lsDurationTotalSeconds(u, v));
       } else {
         setState(() {
           _loading = false;
@@ -158,6 +180,7 @@ class _LsSectionDurationState extends ConsumerState<LsSectionDuration> {
           _saving = false;
         });
         widget.onStatusChanged(_summary(l, _unit, v, a));
+        widget.onTotalChanged?.call(lsDurationTotalSeconds(_unit, v));
         _snack(l.lsDurationConfiguredSnack);
       } else {
         setState(() => _saving = false);

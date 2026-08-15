@@ -66,7 +66,14 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
   // stay smooth even if the firmware throttles `timer.tick` cadence.
   LsTimerStateKind _state = LsTimerStateKind.inactive;
   int _remainingSec = 0;
-  final int _totalSec = 0;
+
+  /// Toplam geri sayım süresi (saniye). Duration bölümü `timer.get`'ten
+  /// türetip `onTotalChanged` ile buraya iter.
+  ///
+  /// Eskiden `final int _totalSec = 0` idi ve ASLA atanmıyordu: halka
+  /// `remaining / total` oranını hep 0 buluyor (yani hiç dolmuyor) ve
+  /// `_onReset` `_remainingSec = _totalSec` ile ekrana 00:00:00 yazıyordu.
+  int _totalSec = 0;
 
   // CONFIGURATION cluster status lines · pushed up by the four section
   // bodies via their onStatusChanged callbacks. They start as
@@ -236,8 +243,18 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
     if (name == 'timer.vacation' && data is Map) {
       final active = data['active'] == true;
       setState(() {
-        _state = active ? LsTimerStateKind.vacation : LsTimerStateKind.running;
+        // Tatil bitti → KOŞULSUZ 'running' YAZMA. Sayaç hiç başlatılmamışsa
+        // (remaining == 0) cihaz aslında inactive'dir; 'running' yazmak
+        // ekrana REMAINING 00:00:00 bastırıyordu. Ölü-adam anahtarında
+        // durum satırının yalan söylemesi kabul edilemez.
+        _state = active
+            ? LsTimerStateKind.vacation
+            : (_remainingSec > 0
+                ? LsTimerStateKind.running
+                : LsTimerStateKind.inactive);
       });
+      // Yine de gerçeği cihazdan doğrula: olay yalnız `active` taşıyor.
+      if (!active) unawaited(_sessionStatusRefresh());
       return;
     }
   }
@@ -327,7 +344,10 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
   void _onReset() {
     setState(() {
       _state = LsTimerStateKind.running;
-      _remainingSec = _totalSec;
+      // Toplam henüz bilinmiyorsa (Duration bölümü hiç açılmadı) mevcut
+      // kalanı KORU. Sıfır yazmak ekrana 00:00:00 basıyordu; cihazın
+      // `timer.reset` olayı doğru değeri zaten hemen ardından getiriyor.
+      if (_totalSec > 0) _remainingSec = _totalSec;
     });
     _sendCli('timer.reset');
   }
@@ -341,6 +361,16 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
   }
 
   void _onVacation() {
+    // Duran bir sayacı duraklatmanın karşılığı yok: tatil yalnız ÇALIŞAN
+    // geri sayımı dondurur. Kapı olmadan ekran "VACATION 00:00:00" gibi
+    // anlamsız bir duruma giriyordu.
+    if (_state == LsTimerStateKind.inactive || _remainingSec <= 0) {
+      final l = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(l.lsVacationNeedsRunningTimer)));
+      return;
+    }
     setState(() => _state = LsTimerStateKind.vacation);
     // Default 7 days, matching the design's mockup. The Vacation Mode
     // section owns the editable value; this button is a quick shortcut.
@@ -445,6 +475,8 @@ class _LsHomeScreenState extends ConsumerState<LsHomeScreen> {
             deviceId: widget.deviceId,
             onStatusChanged: (s) =>
                 setState(() => _durationStatus = s),
+            // Halkanın dolabilmesi için toplam süre şart (bkz. _totalSec).
+            onTotalChanged: (secs) => setState(() => _totalSec = secs),
           ),
         ),
         LsSection(

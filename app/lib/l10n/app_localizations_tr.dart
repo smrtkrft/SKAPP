@@ -1215,6 +1215,84 @@ class AppLocalizationsTr extends AppLocalizations {
   String get devicesForgetDialogCancel => 'Vazgeç';
 
   @override
+  String get devicesViewConstellation => 'Takımyıldız';
+
+  @override
+  String get devicesViewCards => 'Kartlar';
+
+  @override
+  String get devicesAllDevices => 'Tüm cihazlar';
+
+  @override
+  String get devicesUngrouped => 'Gruplanmamış';
+
+  @override
+  String get devicesEdit => 'Düzenle';
+
+  @override
+  String get devicesEditDone => 'Bitti';
+
+  @override
+  String get devicesAddGroup => '+ Yer grubu ekle';
+
+  @override
+  String get devicesNewGroup => 'Yeni yer grubu';
+
+  @override
+  String get devicesGroupNameHint => 'Büro · Ev · Salon…';
+
+  @override
+  String get devicesGroupNameEmpty => 'Grup adı boş olamaz';
+
+  @override
+  String get devicesGroupNameDuplicate => 'Bu adda bir grup zaten var';
+
+  @override
+  String get devicesRenameGroup => 'Adını değiştir';
+
+  @override
+  String get devicesDeleteGroup => 'Grubu sil';
+
+  @override
+  String get devicesDeleteGroupBody =>
+      'Grup kaldırılır. İçindeki cihazlar SİLİNMEZ, Gruplanmamış\'a taşınır.';
+
+  @override
+  String get devicesGroupDeleted => 'Grup silindi';
+
+  @override
+  String devicesGroupDeletedWithDevices(int count) {
+    return 'Grup silindi · $count cihaz Gruplanmamış\'a taşındı';
+  }
+
+  @override
+  String get devicesMoveToGroup => 'Gruba taşı';
+
+  @override
+  String devicesSelectedCount(int count) {
+    return '$count cihaz seçili';
+  }
+
+  @override
+  String devicesMovedToGroup(int count, String name) {
+    return '$count cihaz → $name';
+  }
+
+  @override
+  String devicesRemovedFromGroup(int count) {
+    return '$count cihaz gruptan çıkarıldı';
+  }
+
+  @override
+  String get devicesGroupEmpty => 'Bu grupta cihaz yok';
+
+  @override
+  String get devicesGroupMoveUp => 'Yukarı taşı';
+
+  @override
+  String get devicesGroupMoveDown => 'Aşağı taşı';
+
+  @override
   String devicesForgotToast(String name) {
     return '$name SKAPP\'tan kaldırıldı';
   }
@@ -2923,6 +3001,15 @@ class AppLocalizationsTr extends AppLocalizations {
   String bfBondListFetchError(String error) {
     return 'bond.list başarısız: $error';
   }
+
+  @override
+  String get bfSettingsSectionLibrary => 'Kütüphane';
+
+  @override
+  String get bfSettingsLibraryTitle => 'SKAPI kütüphanesi';
+
+  @override
+  String get bfSettingsLibrarySubtitle => 'Şablonlar, scriptler ve aksiyonlar';
 
   @override
   String get bfSettingsSectionSecurity => 'GÜVENLİK';
@@ -5886,6 +5973,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get lsVacationStartingButton => 'Başlatılıyor…';
+
+  @override
+  String get lsVacationNeedsRunningTimer =>
+      'Tatile almak için önce geri sayımı başlat';
 
   @override
   String get lsVacationStartButton => 'Tatili başlat';
